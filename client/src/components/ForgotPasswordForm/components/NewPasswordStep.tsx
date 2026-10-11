@@ -21,6 +21,8 @@ function NewPasswordStep({
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       <PasswordField
+        disabled={loading}
+        floatingLabel
         label="رمز عبور جدید"
         id="forgot-new-password"
         name="new-password"
@@ -32,6 +34,8 @@ function NewPasswordStep({
         showStrength
       />
       <PasswordField
+        disabled={loading}
+        floatingLabel
         label="تکرار رمز عبور جدید"
         id="forgot-confirm-password"
         name="new-password"

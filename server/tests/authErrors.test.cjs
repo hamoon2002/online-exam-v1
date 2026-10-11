@@ -66,3 +66,54 @@ test('OTP diagnosis: unknown account has no code, login/reset for an existing ac
  assert.match(logs[1][0],/RESET_PASSWORD: code_created/);assert.match(logs[2][0],/LOGIN: code_created/);
  const count=logs.length;env.NODE_ENV='production';exists=false;await requestOtp({identifier:'09123456789',purpose:'RESET_PASSWORD'},'test-ip');assert.equal(logs.length,count);
 });
+
+test('HTTP auth entry: normalized identifiers select signup, SMS or password without exposing a profile', async t => {
+  let user = null;
+  const queries = [];
+  const { load } = setup({
+    'lib/prisma.ts': { prisma: { user: { findFirst: async query => { queries.push(query); return user; } } } },
+  });
+  const app = express();
+  app.use(express.json());
+  app.use('/auth', load('routes/auth/entry/entry.routes.ts').default);
+  app.use(load('middleware/errorHandler.ts').errorHandler);
+  const request = await listen(t, app);
+  for (const invalid of ['', 'invalid', 'x'.repeat(255), 123, null]) {
+    assert.equal((await request('/auth/entry', { identifier: invalid })).status, 400);
+  }
+  assert.equal(queries.length, 0);
+  let response = await request('/auth/entry', { identifier: ' New@Example.com ' });
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.deepEqual(await response.json(), { identifier: 'new@example.com', next: 'signup' });
+  user = { id: 'private-id', emailVerifiedAt: new Date(), phoneVerifiedAt: new Date(), role: 'SuperAdmin' };
+  response = await request('/auth/entry', { identifier: '+۹۸۹۱۲۳۴۵۶۷۸۹' });
+  assert.deepEqual(await response.json(), { identifier: '09123456789', next: 'otp' });
+  assert.equal(queries.at(-1).where.phone, '09123456789');
+  response = await request('/auth/entry', { identifier: ' USER@Example.com ' });
+  assert.deepEqual(await response.json(), { identifier: 'user@example.com', next: 'password' });
+  user = { id: 'unfinished', emailVerifiedAt: null, phoneVerifiedAt: null };
+  assert.equal((await (await request('/auth/entry', { identifier: 'user@example.com' })).json()).next, 'signup');
+});
+
+test('HTTP auth entry: database failure is an error, never a signup decision', async t => {
+  const { load } = setup({ 'lib/prisma.ts': { prisma: { user: { findFirst: async () => { throw new Prisma.PrismaClientInitializationError('private database', '5.22', 'P1001'); } } } } });
+  const app = express(); app.use(express.json());
+  app.use('/auth', load('routes/auth/entry/entry.routes.ts').default);
+  app.use(load('middleware/errorHandler.ts').errorHandler);
+  const request = await listen(t, app);
+  const response = await request('/auth/entry', { identifier: 'user@example.com' });
+  assert.equal(response.status, 503);
+  const body = await response.json(); assert.equal(body.next, undefined); assert.doesNotMatch(body.error, /private/);
+});
+
+test('HTTP auth entry: successful lookups count toward the limit and unavailable Redis fails closed', async t => {
+  const { load, redis } = setup();
+  const app = express(); app.use(express.json());
+  app.post('/entry', load('middleware/rateLimiters.ts').authEntryLimiter, (_req, res) => res.json({ next: 'signup' }));
+  app.use(load('middleware/errorHandler.ts').errorHandler);
+  const request = await listen(t, app);
+  for (let i = 0; i < 20; i++) assert.equal((await request('/entry')).status, 200);
+  assert.equal((await request('/entry')).status, 429);
+  redis.isReady = false;
+  assert.equal((await request('/entry')).status, 503);
+});

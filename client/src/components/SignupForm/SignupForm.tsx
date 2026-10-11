@@ -1,7 +1,8 @@
 import { useRef, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import GoogleAccess from '../GoogleAccess/GoogleAccess';
+import AuthBack from '../AuthBack/AuthBack';
 import Button from '../Button/Button';
 import StepIndicator from '../StepIndicator/StepIndicator';
 
@@ -31,13 +32,16 @@ import Captcha from '../Captcha/Captcha';
 
 function SignupForm() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const initialIdentifier = typeof location.state?.identifier === 'string' ? location.state.identifier : '';
+  function exitSignup() { navigate('/login', { state: { identifier } }); }
   const requesting = useRef(false);
   const [googleActive, setGoogleActive] = useState(false);
 
   const [step, setStep] = useState<SignupStep>('role');
   const [role, setRole] = useState<AccountRole | null>(null);
   const [name, setName] = useState('');
-  const [identifier, setIdentifier] = useState('');
+  const [identifier, setIdentifier] = useState(initialIdentifier);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [code, setCode] = useState('');
@@ -63,7 +67,7 @@ function SignupForm() {
     // (کلیک دوباره روی همون نقش چیزی رو پاک نمی‌کنه)
     if (role !== null && nextRole !== role) {
       setName('');
-      setIdentifier('');
+      setIdentifier(initialIdentifier);
       setPassword('');
       setConfirmPassword('');
       setCode('');
@@ -214,6 +218,7 @@ function SignupForm() {
   if (pendingMessage) {
     return (
       <div className="flex flex-col gap-4 text-center">
+        <AuthBack onClick={exitSignup} />
         <p className="rounded-lg border border-brand-100 bg-brand-50 px-3 py-3 text-sm text-gray-700 dark:border-brand-900 dark:bg-brand-950/30 dark:text-gray-200">
           {pendingMessage}
         </p>
@@ -227,6 +232,8 @@ function SignupForm() {
 
   if (step === 'otp') {
     return (
+      <>
+      <AuthBack onClick={handleOtpBack} disabled={loading || resending} />
       <OtpStep
         identifier={identifier}
         code={code}
@@ -247,11 +254,13 @@ function SignupForm() {
         onResend={() => void handleResendCode()}
         onSubmit={handleOtpSubmit}
       />
+      </>
     );
   }
 
   return (
     <div className="flex flex-col gap-5">
+      <AuthBack disabled={loading || resending} onClick={() => { if (step === 'role') exitSignup(); else goToWizardStep(step === 'identity' ? 'role' : 'identity'); }} />
       <StepIndicator
         steps={WIZARD_LABELS}
         currentIndex={WIZARD_ORDER.indexOf(step)}
@@ -263,7 +272,7 @@ function SignupForm() {
         </div>
       )}
 
-      {step === 'role' && <GoogleAccess onFlowChange={setGoogleActive} onSuccess={(completed) => navigate(completed ? '/dashboard' : '/onboarding')} />}
+      {step === 'role' && !location.state?.fromEntry && <GoogleAccess onFlowChange={setGoogleActive} onSuccess={(completed) => navigate(completed ? '/dashboard' : '/onboarding')} />}
       {step === 'role' && !googleActive && (
         <RoleStep
           role={role}

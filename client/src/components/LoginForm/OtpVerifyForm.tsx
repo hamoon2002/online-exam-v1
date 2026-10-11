@@ -4,12 +4,14 @@ import { OTP_CODE_LENGTH } from '../../constants/otp';
 import { formatCountdown } from '../../utils/formatCountdown';
 import Button from '../Button/Button';
 import OtpInput from '../OtpInput/OtpInput';
+import AuthBack from '../AuthBack/AuthBack';
 import IdentifierSummary from './IdentifierSummary';
 
 type Props = {
   identifier: string;
   rememberMe: boolean;
   onSuccess: (completed: boolean) => void;
+  onBack?: () => void;
   onEdit: () => void;
   onPassword: () => void;
   sent: boolean;
@@ -23,6 +25,7 @@ export default function OtpVerifyForm({
   identifier,
   rememberMe,
   onSuccess,
+  onBack,
   onEdit,
   onPassword,
   sent,
@@ -71,6 +74,7 @@ export default function OtpVerifyForm({
   }
   return (
     <form onSubmit={submit} className="flex flex-col gap-4">
+      <AuthBack onClick={onBack ?? onEdit} disabled={busy} />
       <IdentifierSummary
         identifier={identifier}
         onEdit={onEdit}

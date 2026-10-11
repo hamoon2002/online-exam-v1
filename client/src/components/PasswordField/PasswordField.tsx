@@ -5,6 +5,7 @@ import TextBox from '../TextBox/TextBox';
 import { getPasswordStrength } from './passwordStrength';
 
 type PasswordFieldProps = {
+  floatingLabel?: boolean;
   label: string;
   placeholder: string;
   value: string;
@@ -35,6 +36,7 @@ const PASSWORD_REQUIREMENTS = [
 ] as const;
 
 function PasswordField({
+  floatingLabel = false,
   label,
   placeholder,
   value,
@@ -55,12 +57,13 @@ function PasswordField({
 
   return (
     <div className="flex flex-col gap-1">
-      <label htmlFor={id} className="text-sm text-gray-600 dark:text-gray-300">
+      {!floatingLabel && <label htmlFor={id} className="text-sm text-gray-600 dark:text-gray-300">
         {label}
-      </label>
+      </label>}
       <TextBox
         ref={ref}
         type="password"
+        floatingLabel={floatingLabel ? label : undefined}
         placeholder={placeholder}
         value={value}
         onChange={onChange}

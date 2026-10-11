@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import LogoutDialog from '../LogoutDialog/LogoutDialog';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, LogOut, X } from 'lucide-react';
@@ -20,6 +22,7 @@ function Sidebar({
   onToggleCollapse,
 }: SidebarProps) {
   const navigate = useNavigate();
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const { guardNavigation } = useExamGuard();
   const user = getCurrentUser();
 
@@ -42,6 +45,7 @@ function Sidebar({
   }
 
   function handleLogout() {
+    setConfirmLogout(false);
     guardNavigation(() => {
       logout();
       navigate('/login');
@@ -53,6 +57,7 @@ function Sidebar({
 
   return (
     <>
+      <LogoutDialog open={confirmLogout} onCancel={() => setConfirmLogout(false)} onConfirm={handleLogout} />
       {/* پس‌زمینه‌ی تیره‌ی موبایل، فقط وقتی سایدبار بازه */}
       <AnimatePresence>
         {isOpen && (
@@ -181,7 +186,7 @@ function Sidebar({
               </div>
             </div>
             <button
-              onClick={handleLogout}
+              onClick={() => setConfirmLogout(true)}
               className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-400 transition duration-200 hover:bg-danger-50 hover:text-danger-600 dark:hover:bg-danger-950/40 dark:hover:text-danger-400"
               title="خروج"
             >

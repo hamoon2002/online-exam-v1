@@ -1,5 +1,5 @@
 import { useRef, useState, type ChangeEvent } from 'react';
-import { Mail, Smartphone, User } from 'lucide-react';
+
 
 import {
   detectIdentifierType,
@@ -133,14 +133,6 @@ function IdentityStep({
     onNext(normalizeIdentifier(identifier, type));
   }
 
-  const identifierIcon = /^[+\d\u06F0-\u06F9\u0660-\u0669]/.test(
-    identifier.trim()
-  ) ? (
-    <Smartphone size={16} />
-  ) : (
-    <Mail size={16} />
-  );
-
   return (
     <form
       noValidate
@@ -151,12 +143,6 @@ function IdentityStep({
       className="flex flex-col gap-4"
     >
       <div className="flex flex-col gap-1">
-        <label
-          htmlFor="signup-name"
-          className="text-sm text-gray-600 dark:text-gray-300"
-        >
-          نام و نام خانوادگی
-        </label>
 
         <TextBox
           ref={nameRef}
@@ -169,19 +155,13 @@ function IdentityStep({
           value={name}
           onChange={handleChange('name', onNameChange)}
           onBlur={() => handleBlur('name')}
-          icon={<User size={16} />}
+          floatingLabel="نام و نام خانوادگی"
           error={errors.name}
           reserveErrorSpace
         />
       </div>
 
       <div className="flex flex-col gap-1">
-        <label
-          htmlFor="signup-identifier"
-          className="text-sm text-gray-600 dark:text-gray-300"
-        >
-          ایمیل یا شماره تماس
-        </label>
 
         <TextBox
           ref={identifierRef}
@@ -193,7 +173,7 @@ function IdentityStep({
           value={identifier}
           onChange={handleChange('identifier', onIdentifierChange)}
           onBlur={() => handleBlur('identifier')}
-          icon={identifierIcon}
+          floatingLabel="شماره تماس یا پست الکترونیکی"
           error={errors.identifier}
           reserveErrorSpace
           ltrInput
@@ -201,6 +181,7 @@ function IdentityStep({
       </div>
 
       <PasswordField
+        floatingLabel
         ref={passwordRef}
         label="رمز عبور"
         id="signup-password"
@@ -217,6 +198,7 @@ function IdentityStep({
       />
 
       <PasswordField
+        floatingLabel
         ref={confirmPasswordRef}
         label="تکرار رمز عبور"
         id="signup-confirm-password"

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 
 import { loginWithPassword, type CaptchaAnswer } from '../../api/authApi';
 
+import AuthBack from '../AuthBack/AuthBack';
 import IdentifierSummary from './IdentifierSummary';
 import Button from '../Button/Button';
 import Captcha from '../Captcha/Captcha';
@@ -17,6 +18,7 @@ type Props = {
   captcha: CaptchaAnswer | null;
 
   /** برگشت به مرحله‌ی اول برای ویرایش شناسه */
+  onBack?: () => void;
   onEdit: () => void;
 
   /** برگشت به انتخاب روش ورود */
@@ -39,6 +41,7 @@ function PasswordLoginForm({
   rememberMe,
   captchaRequired,
   captcha,
+  onBack,
   onEdit,
   onChangeMethod,
   codeLabel,
@@ -138,6 +141,7 @@ function PasswordLoginForm({
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
+      <AuthBack onClick={onBack ?? onEdit} disabled={loading} />
       {serverError && (
         <p
           role="alert"
@@ -165,6 +169,7 @@ function PasswordLoginForm({
 
       <PasswordField
         ref={passwordRef}
+        floatingLabel
         label="رمز عبور"
         id="login-password"
         name="password"

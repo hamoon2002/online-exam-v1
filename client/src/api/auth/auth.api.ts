@@ -152,3 +152,9 @@ export async function googleLogin(idToken: string, registration?: { role: 'Stude
     };
   }
 }
+
+export async function resolveAuthEntry(identifier: string) {
+  return apiRequest<{ identifier: string; next: 'signup' | 'password' | 'otp' }>('/auth/entry', {
+    method: 'POST', body: { identifier },
+  });
+}

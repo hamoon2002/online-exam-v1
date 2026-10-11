@@ -1,4 +1,3 @@
-import { Mail } from 'lucide-react';
 import Button from '../../Button/Button';
 import TextBox from '../../TextBox/TextBox';
 import Captcha from '../../Captcha/Captcha';
@@ -29,22 +28,16 @@ function IdentifierStep({
     <form onSubmit={onSubmit} className="flex flex-col gap-4">
       <fieldset disabled={loading} className="contents">
       <div className="flex flex-col gap-1">
-        <label
-          htmlFor="forgot-identifier"
-          className="text-sm text-gray-600 dark:text-gray-300"
-        >
-          ایمیل یا شماره تماس
-        </label>
         <TextBox
           type="text"
           id="forgot-identifier"
           name="username"
           autoComplete="username"
-          autoFocus
-          placeholder="ایمیل یا شماره تماس"
+          ltrInput
+          placeholder="شماره تماس یا پست الکترونیکی بازیابی"
+          floatingLabel="شماره تماس یا پست الکترونیکی"
           value={identifier}
           onChange={(e) => onIdentifierChange(e.target.value)}
-          icon={<Mail size={16} />}
         />
         <p className="text-xs text-gray-400 dark:text-gray-500">
           همان ایمیل یا شماره‌ای که هنگام ثبت‌نام وارد کرده‌اید

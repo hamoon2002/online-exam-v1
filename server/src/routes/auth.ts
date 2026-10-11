@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import entryRoutes from './auth/entry/entry.routes';
 import publicRoutes from './auth/public.routes';
 import registerRoutes from './auth/register/register.routes';
 import otpRoutes from './auth/otp/otp.routes';
@@ -11,6 +12,7 @@ import googleRoutes from './auth/google/google.routes';
 const router = Router();
 
 router.use('/', publicRoutes);
+router.use('/', entryRoutes);
 router.use('/', registerRoutes);
 router.use('/', otpRoutes);
 router.use('/', passwordRoutes);

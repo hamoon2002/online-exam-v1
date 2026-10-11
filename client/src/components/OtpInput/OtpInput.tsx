@@ -47,7 +47,13 @@ function OtpInput({
   }
 
   function handleChange(index: number, raw: string) {
+    if (disabled) return;
     const cleaned = digitsOnly(raw);
+    if (cleaned.length >= length) {
+      onChange(cleaned.slice(0, length));
+      focusIndex(length - 1);
+      return;
+    }
     if (!cleaned) {
       setDigitAt(index, '');
       return;

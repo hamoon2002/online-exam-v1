@@ -114,3 +114,14 @@ export const checkoutLimiter = rateLimit({
       'تعداد درخواست‌های پرداخت بیش از حد مجاز بود. کمی بعد دوباره امتحان کن.',
   },
 });
+
+// Entry lookups count successful responses too, unlike password attempts.
+export const authEntryLimiter = rateLimit({
+  store: new RedisRateLimitStore(rateLimitRedis, 'authEntry'),
+  passOnStoreError: false,
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'تعداد درخواست‌ها بیش از حد مجاز است؛ کمی صبر کنید.' },
+});

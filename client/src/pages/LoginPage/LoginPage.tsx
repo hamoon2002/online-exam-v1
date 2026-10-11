@@ -1,30 +1,13 @@
-import { useNavigate } from 'react-router-dom';
 import LoginForm from '../../components/LoginForm/LoginForm';
 import AuthLayout from '../../components/AuthLayout/AuthLayout';
-
-function LoginPage() {
-  const navigate = useNavigate();
-
+export default function LoginPage() {
   return (
     <AuthLayout
-      title="ورود به حساب"
+      title="ورود یا ثبت‌نام"
       subtitle="به سامانه آزمون آنلاین خوش آمدید"
-      footer={
-        <>
-          حساب ندارید؟{' '}
-          <button
-            type="button"
-            onClick={() => navigate('/signup')}
-            className="font-bold text-brand-600 hover:underline dark:text-brand-400"
-          >
-            ساخت حساب
-          </button>
-        </>
-      }
+      footer={null}
     >
       <LoginForm />
     </AuthLayout>
   );
 }
-
-export default LoginPage;

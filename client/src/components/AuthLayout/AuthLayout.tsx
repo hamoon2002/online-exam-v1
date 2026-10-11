@@ -109,7 +109,7 @@ function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
             </button>
           </div>
 
-          <div className="animate-fade-slide-up rounded-2xl border border-gray-100 bg-white p-5 sm:p-8 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:shadow-none">
+          <div className="relative animate-fade-slide-up rounded-2xl border border-gray-100 bg-white px-5 pb-5 pt-16 sm:px-8 sm:pb-8 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:shadow-none">
             <h1 className="text-center text-2xl font-bold text-gray-800 dark:text-white">
               {title}
             </h1>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import AuthBack from '../AuthBack/AuthBack';
 import Button from '../Button/Button';
 import StepIndicator from '../StepIndicator/StepIndicator';
 import IdentifierStep from './components/IdentifierStep';
@@ -169,9 +170,17 @@ function ForgotPasswordForm() {
     }
   }
 
+  function back() {
+    if (requesting.current) return;
+    setError(''); setCode(''); setNewPassword(''); setConfirmPassword('');
+    if (step === 'identifier' || step === 'done') navigate('/login', { state: { identifier: location.state?.identifier ?? identifier, step: 'password' } });
+    else if (step === 'newPassword') { setResetTicket(''); setStep('code'); setError('کد قبلی مصرف شده است؛ برای ادامه، پس از پایان شمارنده کد جدید دریافت کنید.'); }
+    else setStep('identifier');
+  }
   if (step === 'done') {
     return (
       <div className="flex flex-col gap-4 text-center">
+        <AuthBack onClick={back} />
         <p className="text-sm text-gray-700 dark:text-gray-200 bg-brand-50 dark:bg-brand-950/30 border border-brand-100 dark:border-brand-900 rounded-lg px-3 py-3">
           رمز عبورت با موفقیت عوض شد. حالا می‌تونی با رمز جدید وارد بشی
         </p>
@@ -186,6 +195,7 @@ function ForgotPasswordForm() {
 
   return (
     <div className="flex flex-col gap-5">
+      <AuthBack onClick={back} disabled={loading || resending} />
       <StepIndicator steps={STEP_LABELS} currentIndex={wizardIndex} />
 
       {error && (

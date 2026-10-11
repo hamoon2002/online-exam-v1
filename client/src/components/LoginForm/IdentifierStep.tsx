@@ -1,5 +1,4 @@
 import { useRef, useState, type FormEvent } from 'react';
-import { Mail, Smartphone } from 'lucide-react';
 
 import {
   detectIdentifierType,
@@ -12,6 +11,7 @@ import GoogleAccess from '../GoogleAccess/GoogleAccess';
 import TextBox from '../TextBox/TextBox';
 
 type Props = {
+  busy?: boolean;
   identifier: string;
   onIdentifierChange: (value: string) => void;
   /** شناسه‌ی معتبر و نرمال‌شده رو تحویل می‌ده */
@@ -19,20 +19,8 @@ type Props = {
   onSuccess: (completed: boolean) => void;
 };
 
-// آیکن کنار فیلد بر اساس چیزی که کاربر تایپ کرده عوض می‌شه
-function getIdentifierIcon(value: string) {
-  if (value.includes('@')) {
-    return <Mail size={16} />;
-  }
-
-  if (/^[+\d\u06F0-\u06F9\u0660-\u0669]/.test(value.trim())) {
-    return <Smartphone size={16} />;
-  }
-
-  return <Mail size={16} />;
-}
-
 function IdentifierStep({
+  busy = false,
   identifier,
   onIdentifierChange,
   onContinue,
@@ -63,6 +51,7 @@ function IdentifierStep({
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (busy) return;
     setSubmitted(true);
 
     const validationError = validateIdentifier(identifier);
@@ -84,48 +73,47 @@ function IdentifierStep({
 
   return (
     <div className="flex flex-col gap-4">
-      {!googleActive && <><form
-        onSubmit={handleSubmit}
-        noValidate
-        className="flex flex-col gap-4"
-      >
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor="login-identifier"
-            className="text-sm text-gray-600 dark:text-gray-300"
+      {!googleActive && (
+        <>
+          <form
+            onSubmit={handleSubmit}
+            noValidate
+            className="flex flex-col gap-4"
           >
-            شماره موبایل یا ایمیل
-          </label>
+            <div className="flex flex-col gap-1">
+              <TextBox
+                ref={inputRef}
+                type="text"
+                id="login-identifier"
+                name="username"
+                autoComplete="username"
+                placeholder="شماره تماس یا پست الکترونیکی"
+                floatingLabel="شماره تماس یا پست الکترونیکی"
+                disabled={busy}
+                value={identifier}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={error}
+                reserveErrorSpace
+                ltrInput
+              />
+            </div>
 
-          <TextBox
-            ref={inputRef}
-            type="text"
-            id="login-identifier"
-            name="username"
-            autoComplete="username"
-            autoFocus
-            placeholder="مثلاً 09123456789 یا name@example.com"
-            value={identifier}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            icon={getIdentifierIcon(identifier)}
-            error={error}
-            reserveErrorSpace
-            ltrInput
-          />
-        </div>
+            <Button type="submit" disabled={busy}>
+              {busy ? 'در حال بررسی…' : 'ادامه'}
+            </Button>
+          </form>
 
-        <Button type="submit">ادامه</Button>
-      </form>
-
-      <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
-        <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
-        <span>یا</span>
-        <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
-      </div>
-
-      </>}
-      <GoogleAccess onSuccess={onSuccess} onFlowChange={setGoogleActive} />
+          <div className="flex items-center gap-3 text-xs text-gray-400 dark:text-gray-500">
+            <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+            <span>یا</span>
+            <span className="h-px flex-1 bg-gray-200 dark:bg-gray-700" />
+          </div>
+        </>
+      )}
+      {!busy && (
+        <GoogleAccess onSuccess={onSuccess} onFlowChange={setGoogleActive} />
+      )}
     </div>
   );
 }

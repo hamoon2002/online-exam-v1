@@ -2,6 +2,7 @@ import { useState, type ReactNode, type Ref } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
 type TextBoxProps = {
+  floatingLabel?: string;
   type: string;
   placeholder: string;
   value: string;
@@ -44,6 +45,7 @@ type TextBoxProps = {
 };
 
 function TextBox({
+  floatingLabel,
   type,
   placeholder,
   value,
@@ -63,6 +65,7 @@ function TextBox({
   disabled,
   ref,
 }: TextBoxProps) {
+  const [focused, setFocused] = useState(false);
   const [revealed, setRevealed] = useState(false);
   const isPasswordField = type === 'password';
   const resolvedType = isPasswordField && revealed ? 'text' : type;
@@ -88,10 +91,11 @@ function TextBox({
         <input
           ref={ref}
           type={resolvedType}
-          placeholder={placeholder}
+          placeholder={floatingLabel ? ' ' : placeholder}
           value={value}
           onChange={onChange}
-          onBlur={onBlur}
+          onFocus={() => setFocused(true)}
+          onBlur={(event) => { setFocused(false); onBlur?.(event); }}
           id={id}
           name={name}
           autoComplete={autoComplete}
@@ -102,7 +106,7 @@ function TextBox({
           dir={inputDirection}
           aria-invalid={error ? true : undefined}
           aria-describedby={error ? errorId : undefined}
-          className={`w-full border rounded-xl py-2.5 text-sm outline-none transition duration-300 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white disabled:cursor-not-allowed disabled:opacity-60
+          className={`peer w-full border rounded-xl ${floatingLabel ? 'h-14 pt-6 pb-1.5' : 'py-2.5'} text-sm outline-none transition duration-300 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white disabled:cursor-not-allowed disabled:opacity-60
             ${rightPadding} ${leftPadding}
             ${
               error
@@ -110,6 +114,11 @@ function TextBox({
                 : 'border-gray-200 dark:border-gray-600 focus:bg-white dark:focus:bg-gray-700 focus:border-brand-400 focus:ring-4 focus:ring-brand-50 dark:focus:ring-brand-900'
             }`}
         />
+        {floatingLabel && (
+          <label htmlFor={id} className={`pointer-events-none absolute right-4 top-4 max-w-[calc(100%-2rem)] origin-right truncate text-sm leading-5 transition-[transform,color] duration-200 ease-out motion-reduce:transition-none ${focused || value ? '-translate-y-3 scale-[0.8]' : 'translate-y-0 scale-100'} ${error ? 'text-danger-600 dark:text-danger-400' : focused ? 'text-brand-600 dark:text-brand-300' : 'text-gray-500 dark:text-gray-300'} peer-autofill:-translate-y-3 peer-autofill:scale-[0.8]`}>
+            {floatingLabel}
+          </label>
+        )}
         {isPasswordField && toggleablePassword && (
           <button
             type="button"

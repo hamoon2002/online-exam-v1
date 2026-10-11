@@ -146,6 +146,22 @@ test('OTP send in flight disables edit, resend, verification and method switchin
     }),
   );
   const controls = html.match(/<(?:button|input)\b[^>]*>/g) ?? [];
-  assert.equal(controls.length, 10);
+  assert.equal(controls.length, 11);
   assert.ok(controls.every((tag) => tag.includes('disabled')));
+});
+
+test('unified entry API preserves navigation and propagates outages instead of starting signup', async () => {
+  const { resolveAuthEntry } = await import('../src/api/authApi');
+  const original = globalThis.fetch;
+  try {
+    for (const next of ['otp', 'password', 'signup']) {
+      globalThis.fetch = (async (_url, init) => {
+        assert.deepEqual(JSON.parse(String(init?.body)), { identifier: 'user@example.com' });
+        return new Response(JSON.stringify({ identifier: 'user@example.com', next }));
+      }) as typeof fetch;
+      assert.equal((await resolveAuthEntry('user@example.com')).next, next);
+    }
+    globalThis.fetch = (async () => new Response(JSON.stringify({ error: 'سرویس در دسترس نیست' }), { status: 503 })) as typeof fetch;
+    await assert.rejects(resolveAuthEntry('user@example.com'), /سرویس در دسترس نیست/);
+  } finally { globalThis.fetch = original; }
 });

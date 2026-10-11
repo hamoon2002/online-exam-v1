@@ -52,5 +52,5 @@ test('instructor directory and detail routes are protected for SuperAdmin only',
   }
   const entry = navigationItems.find(item => item.to === '/instructors');
   assert.deepEqual(entry?.roles, ['SuperAdmin']);
-  assert.equal(navigationItems.find(item => item.to === '/question-banks')?.adminLabel, 'همهٔ بانک‌های سوال');
+  assert.equal(navigationItems.find(item => item.to === '/question-banks')?.adminLabel, undefined);
 });

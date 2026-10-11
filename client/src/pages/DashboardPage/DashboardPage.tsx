@@ -7,6 +7,8 @@ import DashboardHeader from './components/DashboardHeader';
 import StatsCards from './components/StatsCards';
 import RecentExamsTable from './components/RecentExamsTable';
 import useDashboardData from './useDashboardData';
+import AdminDashboard from './admin/AdminDashboard';
+import { getCurrentUser } from '../../api/authApi';
 import {
   buildAverageScorePercent,
   buildProgressData,
@@ -17,7 +19,7 @@ import {
 
 // این صفحه دیگه خودش منطقی نداره: فچ/فیلتر توی useDashboardData، محاسبات آماری
 // و آماده‌سازی داده‌ی چارت‌ها توی dashboard.utils، و UI توی components/ هستن.
-function DashboardPage() {
+function MemberDashboard() {
   const { user, exams, attempts, studentCount, error, clearError } =
     useDashboardData();
 
@@ -30,7 +32,7 @@ function DashboardPage() {
   const progressData = buildProgressData(attempts);
 
   return (
-    <AppLayout title={user?.role === 'Student' ? 'داشبورد' : 'داشبورد مدیریتی'}>
+    <AppLayout title="داشبورد">
       {error && (
         <Toast
           message={error}
@@ -62,6 +64,14 @@ function DashboardPage() {
         getParticipantCount={getParticipantCount}
       />
     </AppLayout>
+  );
+}
+
+function DashboardPage() {
+  return getCurrentUser()?.role === 'SuperAdmin' ? (
+    <AdminDashboard />
+  ) : (
+    <MemberDashboard />
   );
 }
 

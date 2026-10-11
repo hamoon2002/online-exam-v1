@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import ListPagination from '../../components/ListPagination/ListPagination';
 import Spinner from '../../components/Spinner/Spinner';
@@ -7,23 +7,19 @@ import { ApiError } from '../../lib/apiClient';
 import usePagedList from '../../hooks/usePagedList';
 import { getAdminInstructor, getInstructorContent, type ContentTab, type InstructorSummary } from '../../api/adminInstructorApi';
 import InstructorContentList from './components/InstructorContentList';
+import { instructorTabs as tabs, parseInstructorTab } from './instructorTabs';
 
-const tabs: { key: ContentTab; label: string }[] = [
-  { key: 'groups', label: 'گروه‌ها' }, { key: 'students', label: 'دانشجوها' },
-  { key: 'lessons', label: 'درس‌ها' }, { key: 'handouts', label: 'جزوه‌ها' },
-  { key: 'attachments', label: 'پیوست‌های درس' }, { key: 'banks', label: 'بانک سوال' },
-  { key: 'questions', label: 'سوال‌ها' }, { key: 'exams', label: 'آزمون‌ها' },
-  { key: 'results', label: 'نتایج' },
-];
 export default function AdminInstructorDetailPage() {
   const { instructorId = '' } = useParams();
   const [profile, setProfile] = useState<InstructorSummary | null>(null);
   const [profileError, setProfileError] = useState('');
-  const [tab, setTab] = useState<ContentTab>('groups');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab = parseInstructorTab(searchParams.get('tab'));
+  const setTab = (next: ContentTab) => setSearchParams({ tab: next }, { replace: true });
   const [bank, setBank] = useState<{ id: string; name: string } | null>(null);
   useEffect(() => {
     let active = true;
-    setProfile(null); setProfileError(''); setTab('groups'); setBank(null);
+    setProfile(null); setProfileError(''); setBank(null);
     getAdminInstructor(instructorId)
       .then(result => { if (active) setProfile(result); })
       .catch(error => { if (active) setProfileError(error instanceof ApiError ? error.message : 'دریافت مدرس با خطا مواجه شد'); });

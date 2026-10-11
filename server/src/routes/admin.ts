@@ -7,6 +7,7 @@ import usersRoutes from './admin/users.routes';
 
 import approvalPolicyRoutes from './admin/approvalPolicy.routes';
 import groupApprovalsRoutes from './admin/groupApprovals.routes';
+import dashboardRoutes from './admin/dashboard.routes';
 
 const router = Router();
 // فقط SuperAdmin به این route ها دسترسی داره
@@ -17,5 +18,6 @@ router.use('/categories', categoriesRoutes);
 router.use('/users', usersRoutes);
 router.use('/approval-policy', approvalPolicyRoutes);
 router.use('/group-approvals', groupApprovalsRoutes);
+router.use('/dashboard', dashboardRoutes);
 
 export default router;

@@ -37,7 +37,7 @@ test('Postgres approval: isolated schema, concurrent revisions, registration and
     await assert.rejects(assertOwnsAllGroups([group.id],'Instructor','owner'));
     const {ownedGroupIds}=load('routes/lessonSessions/lessonSessions.service.ts');
     assert.equal((await ownedGroupIds('owner')).has(group.id),false);
-    const free=await r(null,'POST','/register',{identifier:'free@example.test',username:'free_instructor',role:'Instructor'});assert.equal(free.status,200,JSON.stringify(free.body));
+    const free=await r(null,'POST','/register',{identifier:'free@example.test',username:'free_instructor',role:'Instructor',password:'Passw0rd1'});assert.equal(free.status,200,JSON.stringify(free.body));
     assert.equal((await db.user.findUnique({where:{email:'free@example.test'}})).approvalStatus,'Approved');
     const current=await r(actor,'GET',url);
     assert.equal((await r(actor,'PUT',url,{revision:current.body.revision,requireInstructorApproval:false,requireGroupApproval:false,pendingInstructors:'approve',pendingGroups:'approve'})).status,200);

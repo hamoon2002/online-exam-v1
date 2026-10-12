@@ -6,6 +6,7 @@ import useTheme from '../../hooks/useTheme';
 import useGroupMembership from '../../hooks/useGroupMembership';
 import { getCurrentUser } from '../../api/authApi';
 import ProfileSection from './components/ProfileSection';
+import PasswordSection from './components/PasswordSection';
 import GroupMembershipSection from './components/GroupMembershipSection';
 import AppearanceSection from './components/AppearanceSection';
 import ConnectedAccountsSection from './components/ConnectedAccountsSection';
@@ -50,6 +51,8 @@ function SettingsPage() {
       <div className="flex flex-col gap-4 max-w-xl">
         {currentUser?.role === 'SuperAdmin' && <ApprovalPolicySection />}
         <ProfileSection currentUser={currentUser} />
+
+        <PasswordSection />
 
         <ConnectedAccountsSection />
 

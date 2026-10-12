@@ -5,7 +5,9 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, LogOut, X } from 'lucide-react';
 import Logo from '../Logo/Logo';
 import { useExamGuard } from '../../context/ExamGuardContext';
-import { getCurrentUser, logout } from '../../api/authApi';
+import { logout } from '../../api/authApi';
+import { useAuth } from '../../context/AuthContext';
+import Avatar from '../Avatar/Avatar';
 import { navigationItems, roleLabel } from './navigationItems';
 
 type SidebarProps = {
@@ -24,7 +26,7 @@ function Sidebar({
   const navigate = useNavigate();
   const [confirmLogout, setConfirmLogout] = useState(false);
   const { guardNavigation } = useExamGuard();
-  const user = getCurrentUser();
+  const { user } = useAuth();
 
   const visibleItems = navigationItems.filter((item) =>
     user ? item.roles.includes(user.role) : false
@@ -51,9 +53,6 @@ function Sidebar({
       navigate('/login');
     });
   }
-
-  const initial =
-    (user?.name?.trim() || user?.username?.trim())?.[0]?.toUpperCase() ?? '؟';
 
   return (
     <>
@@ -173,9 +172,11 @@ function Sidebar({
                 isCollapsed ? 'flex-col' : ''
               }`}
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-500 to-brand-700 text-sm font-bold text-white shadow-sm shadow-brand-600/30">
-                {initial}
-              </div>
+              <Avatar
+                name={user?.name || user?.username}
+                src={user?.avatarUrl}
+                size={36}
+              />
               <div className={`min-w-0 ${isCollapsed ? 'hidden' : ''}`}>
                 <p className="truncate text-xs font-medium text-gray-800 dark:text-gray-200">
                   {user?.name || user?.username}

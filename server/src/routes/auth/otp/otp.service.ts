@@ -7,7 +7,10 @@ import {
   verifyOtp,
 } from '../../../lib/otp';
 
-import { assertOtpSendAllowed } from '../../../lib/otpAbuseGuard';
+import {
+  assertOtpSendAllowed,
+  assertOtpVerifyCaptcha,
+} from '../../../lib/otpAbuseGuard';
 
 import { sendOtp } from '../../../services/otpSender';
 
@@ -36,6 +39,8 @@ type VerifyOtpData = {
   purpose: OtpPurpose;
   code: string;
   rememberMe?: boolean;
+  captchaId?: string;
+  captchaAnswer?: string;
 };
 
 const OTP_ERROR_MESSAGES: Record<string, string> = {
@@ -118,7 +123,7 @@ export async function requestOtp(data: RequestOtpData, ip: string) {
   };
 }
 
-export async function verifyOtpCode(data: VerifyOtpData) {
+export async function verifyOtpCode(data: VerifyOtpData, ip: string) {
   const resolved = resolveIdentifier(data.identifier);
 
   if (!resolved) {
@@ -126,6 +131,15 @@ export async function verifyOtpCode(data: VerifyOtpData) {
   }
 
   const { value, type } = resolved;
+
+  // قبل از verifyOtp: کپچای غلط نباید یکی از تلاش‌های مجاز کد رو بسوزونه
+  if (data.purpose === 'LOGIN') {
+    await assertOtpVerifyCaptcha({
+      ip,
+      captchaId: data.captchaId,
+      captchaAnswer: data.captchaAnswer,
+    });
+  }
 
   const result = await verifyOtp({
     identifier: value,

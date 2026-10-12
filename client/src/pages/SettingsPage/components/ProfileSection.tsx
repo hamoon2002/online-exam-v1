@@ -1,11 +1,21 @@
-import { useEffect, useState } from 'react';
-import { User, Check } from 'lucide-react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
+import { User, Check, Loader2 } from 'lucide-react';
 import {
+  removeAvatar,
   updateCurrentUserName,
+  uploadAvatar,
   type User as UserType,
 } from '../../../api/authApi';
+import { useAuth } from '../../../context/AuthContext';
+import Avatar from '../../../components/Avatar/Avatar';
+
+// همان سقف و فرمت‌های سرور (imageUpload.ts)؛ سرور دوباره محتوای واقعی را بررسی می‌کند
+const AVATAR_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
 
 function ProfileSection({ currentUser }: { currentUser: UserType | null }) {
+  // کاربر واکنش‌گرا: بعد از آپلود/حذف تصویر همین‌جا و در سایدبار بلافاصله عوض می‌شود
+  const { user } = useAuth();
   const initialName = currentUser?.name ?? currentUser?.username ?? '';
   const [name, setName] = useState<string>(initialName);
   // آخرین نامِ ذخیره‌شده تو سرور - نه prop ـِ currentUser که بعد از ذخیره
@@ -14,6 +24,10 @@ function ProfileSection({ currentUser }: { currentUser: UserType | null }) {
   const [savedName, setSavedName] = useState<string>(initialName);
   const [justSaved, setJustSaved] = useState(false);
   const [error, setError] = useState('');
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [avatarError, setAvatarError] = useState('');
 
   useEffect(() => {
     if (!justSaved) return;
@@ -39,6 +53,43 @@ function ProfileSection({ currentUser }: { currentUser: UserType | null }) {
     }
   }
 
+  async function handleAvatarChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    // بدون پاک‌کردن مقدار، انتخاب دوباره‌ی همان فایل رویداد change نمی‌دهد
+    event.target.value = '';
+    if (!file) return;
+
+    if (!AVATAR_TYPES.includes(file.type)) {
+      setAvatarError('فقط تصویر JPEG، PNG یا WEBP مجاز است');
+      return;
+    }
+
+    if (file.size > AVATAR_MAX_BYTES) {
+      setAvatarError('حجم تصویر نباید بیشتر از ۵ مگابایت باشد');
+      return;
+    }
+
+    setAvatarError('');
+    setAvatarBusy(true);
+    try {
+      const result = await uploadAvatar(file);
+      if (result.status === 'error') setAvatarError(result.message);
+    } finally {
+      setAvatarBusy(false);
+    }
+  }
+
+  async function handleAvatarRemove() {
+    setAvatarError('');
+    setAvatarBusy(true);
+    try {
+      const result = await removeAvatar();
+      if (result.status === 'error') setAvatarError(result.message);
+    } finally {
+      setAvatarBusy(false);
+    }
+  }
+
   return (
     <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="flex items-center gap-3 mb-4">
@@ -47,7 +98,54 @@ function ProfileSection({ currentUser }: { currentUser: UserType | null }) {
         </div>
         <h2 className="font-semibold text-gray-900 dark:text-white">پروفایل</h2>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4">
+          <Avatar
+            name={savedName || user?.username}
+            src={user?.avatarUrl}
+            size={64}
+          />
+          <div className="flex flex-col gap-1.5">
+            <div className="flex flex-wrap items-center gap-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept={AVATAR_TYPES.join(',')}
+                onChange={handleAvatarChange}
+                className="hidden"
+                aria-label="انتخاب تصویر پروفایل"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={avatarBusy}
+                className="flex cursor-pointer items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800"
+              >
+                {avatarBusy && <Loader2 size={13} className="animate-spin" />}
+                {user?.avatarUrl ? 'تغییر تصویر' : 'انتخاب تصویر'}
+              </button>
+              {user?.avatarUrl && (
+                <button
+                  type="button"
+                  onClick={handleAvatarRemove}
+                  disabled={avatarBusy}
+                  className="cursor-pointer text-xs font-medium text-danger-600 hover:underline disabled:cursor-not-allowed disabled:opacity-60 dark:text-danger-400"
+                >
+                  حذف تصویر
+                </button>
+              )}
+            </div>
+            <span className="text-xs text-gray-400 dark:text-gray-500">
+              JPEG، PNG یا WEBP تا ۵ مگابایت
+            </span>
+            {avatarError && (
+              <span role="alert" className="text-xs font-medium text-danger-600 dark:text-danger-400">
+                {avatarError}
+              </span>
+            )}
+          </div>
+        </div>
+
         <div>
           <label
             htmlFor="profile-name"
@@ -58,6 +156,7 @@ function ProfileSection({ currentUser }: { currentUser: UserType | null }) {
           <input
             id="profile-name"
             autoComplete="name"
+            placeholder="نام و نام خانوادگی"
             value={name}
             onChange={(e) => setName(e.target.value)}
             onBlur={handleNameBlur}

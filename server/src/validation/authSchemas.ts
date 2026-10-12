@@ -42,6 +42,8 @@ export const otpVerifySchema = z.object({
   purpose: otpPurposeSchema,
   code: z.string().regex(/^\d{6}$/, 'کد تایید باید ۶ رقم باشه'),
   rememberMe: z.boolean().optional().default(false),
+  captchaId: z.string().min(1).max(64).optional(),
+  captchaAnswer: z.string().min(1).max(32).optional(),
 });
 
 export const passwordLoginSchema = z.object({
@@ -82,4 +84,18 @@ export const updateMeSchema = z.object({
 
 export const onboardingSchema = z.object({
   organizationName: z.string().trim().min(1).max(120).optional(),
+});
+
+// currentPassword فقط وقتی لازمه که حساب از قبل رمز داره (حساب‌هایی که با
+// موبایل و کد یکبارمصرف ساخته شدن اول‌بار رمز رو بدون رمز قبلی تعیین می‌کنن)
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1).max(200).optional(),
+
+  newPassword: z
+    .string()
+    .regex(
+      PASSWORD_REGEX,
+      'رمز باید حداقل ۶ کاراکتر و ترکیبی از حرف و عدد باشه'
+    )
+    .max(PASSWORD_MAX, passwordMaxMessage),
 });

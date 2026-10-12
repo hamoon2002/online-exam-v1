@@ -45,7 +45,7 @@ test('approval HTTP: review is idempotent, stale decisions conflict, active grou
   assert.equal((await r(admin,'GET','/admin/group-approvals?pageSize=101')).status,400);
 }));
 test('approval registration: new instructors follow policy; student and prior review decisions are preserved',t=>fixture(t,async(r,m)=>{
-  const signup=(identifier,role='Instructor',extra={})=>r(null,'POST','/register',{identifier,role,username:identifier.split('@')[0],...extra});
+  const signup=(identifier,role='Instructor',extra={})=>r(null,'POST','/register',{identifier,role,username:identifier.split('@')[0],password:'Passw0rd1',...extra});
   assert.equal((await signup('first@test.local')).status,200);assert.equal(m.users.find(x=>x.email==='first@test.local').approvalStatus,'Pending');
   m.policy.requireInstructorApproval=false;
   assert.equal((await signup('second@test.local')).status,200);assert.equal(m.users.find(x=>x.email==='second@test.local').approvalStatus,'Approved');
@@ -65,4 +65,11 @@ test('approval eligibility: pending/rejected groups cannot be assigned to exams,
   }
   assert.deepEqual([...(await ownedGroupIds('owner'))],['old']);
   await assertOwnsAllGroups(['old'],'Instructor','owner');await assertGroupsExist(['old']);
+}));
+test('registration: email needs a password (rejected before any account is created); the password is hashed',t=>fixture(t,async(r,m)=>{
+  const before=m.users.length;
+  const missing=await r(null,'POST','/register',{identifier:'nopass@test.local',role:'Student'});
+  assert.equal(missing.status,400);assert.match(missing.body.error,/رمز/);assert.equal(m.users.length,before);
+  assert.equal((await r(null,'POST','/register',{identifier:'withpass@test.local',role:'Student',password:'Passw0rd1'})).status,200);
+  assert.equal(m.users.find(x=>x.email==='withpass@test.local').passwordHash,'test-only-hash');
 }));

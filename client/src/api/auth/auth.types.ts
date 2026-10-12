@@ -10,6 +10,7 @@ export type User = {
   name?: string;
   onboardingCompleted: boolean;
   organizationName?: string;
+  avatarUrl?: string;
 };
 
 export type MeResponse = {
@@ -19,6 +20,7 @@ export type MeResponse = {
   username: string | null;
   onboardingCompleted: boolean;
   organizationName: string | null;
+  avatarUrl?: string | null;
 };
 
 export type CaptchaAnswer = {
@@ -70,6 +72,7 @@ export type VerifyOtpResult =
   | {
       status: 'error';
       message: string;
+      captchaRequired?: boolean;
     };
 
 export type VerifyResetOtpResult =
@@ -168,6 +171,25 @@ export type ConnectedAccountsResult =
   | ({
       status: 'success';
     } & ConnectedAccountsStatus)
+  | {
+      status: 'error';
+      message: string;
+    };
+
+export type UpdateAvatarResult =
+  | {
+      status: 'success';
+      user: User;
+    }
+  | {
+      status: 'error';
+      message: string;
+    };
+
+export type ChangePasswordResult =
+  | {
+      status: 'success';
+    }
   | {
       status: 'error';
       message: string;

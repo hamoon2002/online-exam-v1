@@ -94,6 +94,7 @@ model User {
   approvalStatus      ApprovalStatus @default(Approved)
   onboardingCompleted Boolean        @default(false)
   organizationName    String?
+  avatarKey           String?
 
   otpCodes           OtpCode[]
   instructedGroups   Group[]            @relation("GroupInstructor")

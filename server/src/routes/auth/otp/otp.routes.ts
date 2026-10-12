@@ -68,6 +68,7 @@ router.post(
     const result =
       await verifyOtpCode(
         parsed.data,
+        req.ip ?? 'unknown',
       );
 
     if (result.type === 'reset') {

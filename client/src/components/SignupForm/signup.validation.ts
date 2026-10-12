@@ -1,12 +1,11 @@
-import { validateIdentifier } from '../../utils/identifier';
+import {
+  detectIdentifierType,
+  validateIdentifier,
+} from '../../utils/identifier';
 
-import { MIN_NAME_LENGTH, PASSWORD_REGEX } from './signup.types';
+import { PASSWORD_REGEX } from './signup.types';
 
-export type IdentityField =
-  | 'name'
-  | 'identifier'
-  | 'password'
-  | 'confirmPassword';
+export type IdentityField = 'identifier' | 'password' | 'confirmPassword';
 
 export type IdentityValues = Record<IdentityField, string>;
 
@@ -14,11 +13,17 @@ export type IdentityErrors = Partial<Record<IdentityField, string>>;
 
 // ترتیب نمایش فیلدها؛ فوکوس بعد از ارسال روی اولین فیلد خطادار می‌رود
 export const IDENTITY_FIELD_ORDER: IdentityField[] = [
-  'name',
   'identifier',
   'password',
   'confirmPassword',
 ];
+
+// ثبت‌نام با ایمیل رمز می‌خواهد؛ با موبایل فقط کد یکبارمصرف لازم است
+export function identityFieldsFor(identifier: string): IdentityField[] {
+  return detectIdentifierType(identifier) === 'EMAIL'
+    ? IDENTITY_FIELD_ORDER
+    : ['identifier'];
+}
 
 // پیام خطای کوتاه برای یک فیلد؛ null یعنی مقدار درست است
 export function validateIdentityField(
@@ -26,21 +31,6 @@ export function validateIdentityField(
   values: IdentityValues
 ): string | null {
   switch (field) {
-    case 'name': {
-      const name = values.name.trim();
-
-      if (!name) {
-        return 'نام را وارد کنید';
-      }
-
-      if (name.length > 100) return 'نام نباید بیشتر از ۱۰۰ کاراکتر باشد';
-      if (name.length < MIN_NAME_LENGTH) {
-        return `نام باید حداقل ${MIN_NAME_LENGTH} کاراکتر باشد`;
-      }
-
-      return null;
-    }
-
     case 'identifier':
       return validateIdentifier(values.identifier);
 
@@ -66,11 +56,11 @@ export function validateIdentityField(
   }
 }
 
-// همه‌ی فیلدها را هم‌زمان بررسی می‌کند
+// فقط فیلدهایی که برای این نوع شناسه لازم‌اند را هم‌زمان بررسی می‌کند
 export function validateIdentity(values: IdentityValues): IdentityErrors {
   const errors: IdentityErrors = {};
 
-  for (const field of IDENTITY_FIELD_ORDER) {
+  for (const field of identityFieldsFor(values.identifier)) {
     const message = validateIdentityField(field, values);
 
     if (message) {

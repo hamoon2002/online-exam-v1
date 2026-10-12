@@ -1,5 +1,5 @@
-import { apiRequest } from '../../lib/apiClient';
-import type { CompleteOnboardingResult, ConnectedAccountsResult, ConnectedAccountsStatus, MeResponse, UpdateNameResult, UsernameAvailability } from './auth.types';
+import { apiMultipartRequest, apiRequest } from '../../lib/apiClient';
+import type { ChangePasswordResult, CompleteOnboardingResult, ConnectedAccountsResult, ConnectedAccountsStatus, MeResponse, UpdateAvatarResult, UpdateNameResult, UsernameAvailability } from './auth.types';
 import { messageOf, userFromMe } from './auth.utils';
 import { setCurrentUser } from './auth.session';
 export async function checkUsernameAvailability(username: string, signal?: AbortSignal): Promise<UsernameAvailability> { return apiRequest<UsernameAvailability>(`/auth/username-available?username=${encodeURIComponent(username)}`, { signal }); }
@@ -8,3 +8,38 @@ export async function completeOnboarding(organizationName?: string): Promise<Com
 export async function getConnectedAccountsStatus(): Promise<ConnectedAccountsResult> { try { const data = await apiRequest<MeResponse & ConnectedAccountsStatus>('/auth/me'); return { status: 'success', googleLinked: data.googleLinked, hasPassword: data.hasPassword }; } catch (err) { return { status: 'error', message: messageOf(err) }; } }
 export async function linkGoogleAccount(idToken: string): Promise<ConnectedAccountsResult> { try { const data = await apiRequest<MeResponse & ConnectedAccountsStatus>('/auth/google/link', { method: 'POST', body: { idToken } }); return { status: 'success', googleLinked: data.googleLinked, hasPassword: data.hasPassword }; } catch (err) { return { status: 'error', message: messageOf(err) }; } }
 export async function unlinkGoogleAccount(): Promise<ConnectedAccountsResult> { try { const data = await apiRequest<MeResponse & ConnectedAccountsStatus>('/auth/google/unlink', { method: 'POST' }); return { status: 'success', googleLinked: data.googleLinked, hasPassword: data.hasPassword }; } catch (err) { return { status: 'error', message: messageOf(err) }; } }
+
+// تصویر پروفایل: سرور تصویر را اعتبارسنجی می‌کند (نوع واقعی، حجم ≤ ۵MB) و کاربر به‌روزشده را برمی‌گرداند
+export async function uploadAvatar(file: File): Promise<UpdateAvatarResult> {
+  try {
+    const formData = new FormData();
+    formData.append('file', file);
+    const data = await apiMultipartRequest<MeResponse>('/auth/me/avatar', formData);
+    const user = userFromMe(data);
+    setCurrentUser(user);
+    return { status: 'success', user };
+  } catch (err) {
+    return { status: 'error', message: messageOf(err) };
+  }
+}
+
+export async function removeAvatar(): Promise<UpdateAvatarResult> {
+  try {
+    const data = await apiRequest<MeResponse>('/auth/me/avatar', { method: 'DELETE' });
+    const user = userFromMe(data);
+    setCurrentUser(user);
+    return { status: 'success', user };
+  } catch (err) {
+    return { status: 'error', message: messageOf(err) };
+  }
+}
+
+// currentPassword فقط وقتی فرستاده می‌شود که حساب از قبل رمز دارد
+export async function changePassword(currentPassword: string | undefined, newPassword: string): Promise<ChangePasswordResult> {
+  try {
+    await apiRequest<MeResponse>('/auth/me/password', { method: 'POST', body: { currentPassword, newPassword } });
+    return { status: 'success' };
+  } catch (err) {
+    return { status: 'error', message: messageOf(err) };
+  }
+}

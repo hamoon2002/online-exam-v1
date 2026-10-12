@@ -83,3 +83,36 @@ export async function assertOtpSendAllowed(
     throw new AppError(429, TOO_MANY_MESSAGE);
   }
 }
+
+// تأیید «کد ورود» (LOGIN): وقتی ارسال کد برای این IP کپچا می‌خواد، تأیید کد هم
+// باید با کپچای درست همراه باشه. بدون این، کپچای مرحله‌ی ارسال با یه بار
+// حل‌شدن بی‌اثر می‌شد و کد ۶رقمی بدون هیچ کپچایی قابل امتحان بود.
+// شمارنده فقط خونده می‌شه (نه افزایش)، پس خودِ تأیید سهمیه‌ی ارسال رو نمی‌سوزونه.
+export async function assertOtpVerifyCaptcha(input: {
+  ip: string;
+  captchaId?: string;
+  captchaAnswer?: string;
+}): Promise<void> {
+  const raw = await redis.get(ipKey(input.ip));
+  const count = raw === null ? 0 : Number(raw);
+
+  if (!(count > IP_CAPTCHA_AFTER)) return;
+
+  if (!input.captchaId || !input.captchaAnswer) {
+    throw new AppError(
+      400,
+      'برای ادامه لازمه کد تصویر امنیتی رو هم وارد کنی',
+      { captchaRequired: true },
+    );
+  }
+
+  const valid = await verifyCaptcha(input.captchaId, input.captchaAnswer);
+
+  if (!valid) {
+    throw new AppError(
+      400,
+      'کد تصویر امنیتی اشتباهه یا منقضی شده',
+      { captchaRequired: true },
+    );
+  }
+}

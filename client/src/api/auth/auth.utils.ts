@@ -9,6 +9,7 @@ export function userFromMe(data: MeResponse): User {
     username: data.username ?? undefined,
     onboardingCompleted: data.onboardingCompleted,
     organizationName: data.organizationName ?? undefined,
+    avatarUrl: data.avatarUrl ?? undefined,
   };
 }
 

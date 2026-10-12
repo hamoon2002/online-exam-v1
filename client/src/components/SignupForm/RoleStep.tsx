@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Check } from 'lucide-react';
 
 import Button from '../Button/Button';
@@ -7,6 +8,11 @@ type Props = {
   role: AccountRole | null;
   onRoleChange: (role: AccountRole) => void;
   onNext: () => void;
+  nextLabel?: string;
+  loadingLabel?: string;
+  loading?: boolean;
+  /** مثلاً کپچا؛ بالای دکمه نمایش داده می‌شود */
+  children?: ReactNode;
 };
 
 const ROLE_OPTIONS: {
@@ -29,7 +35,15 @@ const ROLE_OPTIONS: {
   },
 ];
 
-function RoleStep({ role, onRoleChange, onNext }: Props) {
+function RoleStep({
+  role,
+  onRoleChange,
+  onNext,
+  nextLabel = 'بعدی',
+  loadingLabel = 'در حال ارسال کد تأیید…',
+  loading = false,
+  children,
+}: Props) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
@@ -79,8 +93,10 @@ function RoleStep({ role, onRoleChange, onNext }: Props) {
         )}
       </div>
 
-      <Button type="button" onClick={onNext}>
-        بعدی
+      {children}
+
+      <Button type="button" onClick={onNext} disabled={loading}>
+        {loading ? loadingLabel : nextLabel}
       </Button>
     </div>
   );

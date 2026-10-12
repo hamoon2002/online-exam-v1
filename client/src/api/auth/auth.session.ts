@@ -9,7 +9,18 @@ export function getCurrentUser(): User | null { return currentUser; }
 export function subscribeToAuth(listener: AuthListener): () => void { authListeners.add(listener); return () => { authListeners.delete(listener); }; }
 function notifyAuthListeners(): void { authListeners.forEach((listener) => listener(currentUser)); }
 export function setCurrentUser(user: User | null): void { currentUser = user; notifyAuthListeners(); }
-export function applySession(user: User, accessToken: string): void { setCurrentUser(user); setAuthToken(accessToken); connectSocket(getAuthToken, () => { clearSession(); window.location.href = '/login?forceLogout=1'; }); }
+// پاسخ ورود فقط فیلدهای پایه را دارد؛ جزئیات پروفایل (مثل تصویر) را یک‌بار از /auth/me می‌گیریم.
+// bootstrapSession خودش همین /me را گرفته و hydrate:false می‌دهد.
+async function hydrateCurrentUser(): Promise<void> {
+  try {
+    const me = await apiRequest<MeResponse>('/auth/me');
+    if (currentUser?.id === me.id) setCurrentUser(userFromMe(me));
+  } catch { /* همان اطلاعات پاسخ ورود می‌ماند */ }
+}
+export function applySession(user: User, accessToken: string, options: { hydrate?: boolean } = {}): void {
+  setCurrentUser(user); setAuthToken(accessToken); connectSocket(getAuthToken, () => { clearSession(); window.location.href = '/login?forceLogout=1'; });
+  if (options.hydrate !== false) void hydrateCurrentUser();
+}
 export function clearSession(): void { setCurrentUser(null); setAuthToken(null); disconnectSocket(); }
 setOnSessionExpired(() => { if (!currentUser) return; clearSession(); window.location.href = '/login?sessionExpired=1'; });
 export type BootstrapResult =
@@ -27,7 +38,7 @@ export async function bootstrapSession(): Promise<BootstrapResult> {
   try {
     const me = await apiRequest<MeResponse>('/auth/me');
     const user = userFromMe(me);
-    applySession(user, outcome.token);
+    applySession(user, outcome.token, { hydrate: false });
     return { status: 'authenticated', user };
   } catch (error) {
     if (error instanceof ApiError && (error.status === 401 || error.status === 403)) { clearSession(); return { status: 'anonymous' }; }

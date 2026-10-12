@@ -39,6 +39,13 @@ export async function registerUser(data: RegisterData, ip: string) {
 
   const { type, value, channel } = resolved;
 
+  // ایمیل: رمز همین‌جا لازمه (کد تأیید ایمیل هم همچنان گرفته می‌شه).
+  // موبایل: فقط کد یکبارمصرف؛ رمز بعداً از تنظیمات پروفایل تعیین می‌شه.
+  // قبل از گارد ارسال چک می‌شه تا درخواست ناقص سهمیه‌ی OTP رو نسوزونه.
+  if (type === 'EMAIL' && !data.password) {
+    throw badRequest('برای ثبت‌نام با ایمیل، رمز عبور را وارد کنید');
+  }
+
   await assertOtpSendAllowed({
     ip,
     identifier: value,
@@ -96,7 +103,8 @@ export async function registerUser(data: RegisterData, ip: string) {
 
   let passwordHash: string | null = null;
 
-  if (data.password) {
+  // رمزِ ارسال‌شده برای ثبت‌نام با موبایل عمداً نادیده گرفته می‌شه
+  if (type === 'EMAIL' && data.password) {
     passwordHash = await hashPassword(data.password);
   }
 

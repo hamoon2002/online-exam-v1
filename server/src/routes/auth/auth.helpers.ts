@@ -16,7 +16,10 @@ type SerializableUser = {
   organizationName: string | null;
 };
 
-export function serializeMe(user: SerializableUser) {
+export function serializeMe(
+  user: SerializableUser,
+  avatarUrl: string | null = null,
+) {
   return {
     id: user.id,
     name: user.name,
@@ -26,6 +29,7 @@ export function serializeMe(user: SerializableUser) {
     hasPassword: Boolean(user.passwordHash),
     onboardingCompleted: user.onboardingCompleted,
     organizationName: user.organizationName,
+    avatarUrl,
   };
 }
 

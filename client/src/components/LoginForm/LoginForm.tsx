@@ -151,6 +151,11 @@ export default function LoginForm() {
           cooldown={code.remaining(identifier)}
           sendError={code.error}
           onResend={() => void code.send(identifier, true)}
+          captchaRequired={code.captcha.required}
+          captcha={code.captcha.captcha}
+          onVerifyFailed={(captchaRequired) =>
+            code.captcha.afterRequest({ status: 'error', captchaRequired })
+          }
           captchaSlot={
             code.captcha.required ? (
               <Captcha

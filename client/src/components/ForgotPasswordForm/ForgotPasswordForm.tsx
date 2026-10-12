@@ -144,7 +144,7 @@ function ForgotPasswordForm() {
   async function handleNewPasswordSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (requesting.current) return;
-    const invalid = validateIdentityField('password', { password: newPassword, confirmPassword, name: '', identifier });
+    const invalid = validateIdentityField('password', { password: newPassword, confirmPassword, identifier });
     if (invalid) {
       setError(invalid);
       return;

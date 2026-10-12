@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent, type ReactNode } from 'react';
-import { verifyOtp } from '../../api/authApi';
+import { verifyOtp, type CaptchaAnswer } from '../../api/authApi';
 import { OTP_CODE_LENGTH } from '../../constants/otp';
 import { formatCountdown } from '../../utils/formatCountdown';
 import Button from '../Button/Button';
@@ -20,6 +20,11 @@ type Props = {
   sendError: string;
   onResend: () => void;
   captchaSlot?: ReactNode;
+  /** true یعنی کپچا نمایش داده می‌شود و برای «تأیید و ورود» الزامی است */
+  captchaRequired?: boolean;
+  captcha?: CaptchaAnswer | null;
+  /** بعد از هر تأیید ناموفق صدا زده می‌شود؛ کپچا یک‌بارمصرف است و باید چالش تازه گرفته شود */
+  onVerifyFailed?: (captchaRequired: boolean) => void;
 };
 export default function OtpVerifyForm({
   identifier,
@@ -34,6 +39,9 @@ export default function OtpVerifyForm({
   sendError,
   onResend,
   captchaSlot,
+  captchaRequired = false,
+  captcha = null,
+  onVerifyFailed,
 }: Props) {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
@@ -44,18 +52,35 @@ export default function OtpVerifyForm({
   async function verify(value: string) {
     if (pending.current || sending || !sent || value.length !== OTP_CODE_LENGTH)
       return;
+    if (captchaRequired && !captcha) {
+      setError('ابتدا کد تصویر امنیتی را وارد کنید');
+      return;
+    }
     pending.current = true;
     setLoading(true);
     setError('');
     try {
-      const result = await verifyOtp(identifier, 'LOGIN', value, rememberMe);
+      const result = await verifyOtp(
+        identifier,
+        'LOGIN',
+        value,
+        rememberMe,
+        captcha ?? undefined,
+      );
       if (result.status === 'success') {
         onSuccess(result.user.onboardingCompleted);
         return;
       }
       setError(result.message);
-      setCode('');
-      setInputKey((current) => current + 1);
+      const captchaProblem =
+        result.status === 'error' && Boolean(result.captchaRequired);
+      onVerifyFailed?.(captchaProblem);
+      // سرور قبل از بررسی کد، کپچا را چک می‌کند؛ پس وقتی مشکل فقط کپچاست
+      // کد هنوز معتبر است و نباید کاربر مجبور شود دوباره تایپش کند
+      if (!captchaProblem) {
+        setCode('');
+        setInputKey((current) => current + 1);
+      }
     } finally {
       pending.current = false;
       setLoading(false);
@@ -110,9 +135,9 @@ export default function OtpVerifyForm({
             disabled={busy}
             error={Boolean(error)}
             onChange={(value) => {
+              // ورود فقط با دکمه‌ی «تأیید و ورود» (یا Enter) انجام می‌شود، نه خودکار
               setCode(value);
               setError('');
-              if (value.length === OTP_CODE_LENGTH) void verify(value);
             }}
           />
         </>
@@ -136,7 +161,11 @@ export default function OtpVerifyForm({
           </button>
           <Button
             type="submit"
-            disabled={busy || code.length !== OTP_CODE_LENGTH}
+            disabled={
+              busy ||
+              code.length !== OTP_CODE_LENGTH ||
+              (captchaRequired && !captcha)
+            }
           >
             {loading ? 'در حال تأیید…' : 'تأیید و ورود'}
           </Button>

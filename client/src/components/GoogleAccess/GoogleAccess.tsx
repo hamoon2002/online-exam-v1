@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 import { googleLogin } from '../../api/authApi';
 import Button from '../Button/Button';
 import GoogleSignInButton from '../GoogleSignInButton/GoogleSignInButton';
-import TextBox from '../TextBox/TextBox';
 
 type Props = {
   onSuccess: (completed: boolean) => void;
@@ -12,7 +11,6 @@ type Props = {
 // Keep the Google credential in memory only; the server verifies it again on account creation.
 export default function GoogleAccess({ onSuccess, onFlowChange }: Props) {
   const [credential, setCredential] = useState('');
-  const [name, setName] = useState('');
   const [role, setRole] = useState<'Student' | 'Instructor'>('Student');
   const [error, setError] = useState('');
   const [pending, setPending] = useState('');
@@ -27,10 +25,7 @@ export default function GoogleAccess({ onSuccess, onFlowChange }: Props) {
     onFlowChange(true);
     let keepOpen = Boolean(credential);
     try {
-      const result = await googleLogin(
-        token,
-        register ? { role, name: name.trim() } : undefined,
-      );
+      const result = await googleLogin(token, register ? { role } : undefined);
       if (result.status === 'success')
         onSuccess(result.user.onboardingCompleted);
       else if (result.status === 'registration_required') {
@@ -52,7 +47,6 @@ export default function GoogleAccess({ onSuccess, onFlowChange }: Props) {
     setCredential('');
     setError('');
     setPending('');
-    setName('');
     onFlowChange(false);
   }
   return (
@@ -83,26 +77,9 @@ export default function GoogleAccess({ onSuccess, onFlowChange }: Props) {
           }}
         >
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            ایمیل شما با گوگل تأیید شد. برای ساخت حساب، اطلاعات زیر را تکمیل
-            کنید.
+            ایمیل شما با گوگل تأیید شد. نوع حساب را انتخاب کنید.
           </p>
           <fieldset disabled={busy} className="flex min-w-0 flex-col gap-4">
-            <label
-              htmlFor="google-name"
-              className="text-sm text-gray-700 dark:text-gray-200"
-            >
-              نام و نام خانوادگی
-            </label>
-            <TextBox
-              type="text"
-              placeholder="مثلاً علی رضایی"
-              maxLength={100}
-              id="google-name"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              autoComplete="name"
-              autoFocus
-            />
             <fieldset className="flex gap-4 text-sm text-gray-700 dark:text-gray-200">
               <legend className="mb-2">نوع حساب</legend>
               <label>
@@ -124,13 +101,8 @@ export default function GoogleAccess({ onSuccess, onFlowChange }: Props) {
                 مدرس
               </label>
             </fieldset>
-            <Button
-              type="submit"
-              disabled={
-                busy || name.trim().length < 2 || name.trim().length > 100
-              }
-            >
-              {busy ? 'در حال ساخت حساب…' : 'ساخت حساب'}
+            <Button type="submit" disabled={busy}>
+              {busy ? 'در حال ساخت حساب…' : 'ادامه'}
             </Button>
             <button
               type="button"

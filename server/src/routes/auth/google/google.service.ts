@@ -81,7 +81,7 @@ export async function linkGoogleAccount(userId: string, idToken: string) {
 
 export async function loginWithGoogle(
   idToken: string,
-  registration?: { role: 'Student' | 'Instructor'; name: string },
+  registration?: { role: 'Student' | 'Instructor'; name?: string },
 ) {
   const payload = await verifyGoogleToken(idToken);
 
@@ -111,7 +111,7 @@ export async function loginWithGoogle(
           email: payload.email,
           googleId: payload.sub,
           emailVerifiedAt: new Date(),
-          name: registration.name,
+          name: registration.name ?? null,
           role: registration.role,
           approvalStatus:
             registration.role === 'Instructor' &&

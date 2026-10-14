@@ -196,6 +196,7 @@ test('Google verification clears a pre-registration password, preserves a verifi
 test('Google registration schema rejects admin role and invalid profile input', () => {
   const { googleAuthSchema } = load('validation/authSchemas.ts', {
     zod: require('zod'),
+    '../lib/identifier': load('lib/identifier.ts'),
     '../lib/password': { PASSWORD_REGEX: /^(?=.*[A-Za-z])(?=.*\d).{6,}$/ },
   });
   for (const registration of [
@@ -209,3 +210,14 @@ test('Google registration schema rejects admin role and invalid profile input', 
       false,
     );
 });
+
+ test('registration accepts phone without profile/password; email requires password; Google name optional', () => {
+ const {registerSchema,googleAuthSchema}=load('validation/authSchemas.ts', {zod:require('zod'),'../lib/identifier':load('lib/identifier.ts'),'../lib/password':{PASSWORD_REGEX:/^(?=.*[A-Za-z])(?=.*\d).{6,}$/}});
+ for(const role of ['Instructor','Student']) {
+ assert.equal(registerSchema.safeParse({identifier:'09123456789',role}).success,true);
+ assert.equal(registerSchema.safeParse({identifier:'new@example.com',role}).success,false);
+ assert.equal(registerSchema.safeParse({identifier:'new@example.com',role,password:'Secure123'}).success,true);
+ assert.equal(googleAuthSchema.safeParse({idToken:'valid-token',registration:{role}}).success,true);
+ }
+ assert.equal(registerSchema.safeParse({identifier:'09123456789',role:'SuperAdmin'}).success,false);
+ });

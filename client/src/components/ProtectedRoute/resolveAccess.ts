@@ -22,12 +22,10 @@ export function resolveAccess({
   isSessionUnavailable,
   user,
   allowedRoles,
-  skipOnboardingGate = false,
 }: AccessInput): AccessDecision {
   if (isSessionUnavailable) return { kind: 'unavailable' };
   if (!isSessionReady) return { kind: 'loading' };
   if (!user) return { kind: 'redirect', to: '/login' };
-  if (!skipOnboardingGate && !user.onboardingCompleted) return { kind: 'redirect', to: '/onboarding' };
   if (allowedRoles && !allowedRoles.includes(user.role)) return { kind: 'redirect', to: '/dashboard' };
   return { kind: 'allow' };
 }

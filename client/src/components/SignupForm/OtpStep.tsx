@@ -13,6 +13,7 @@ type OtpStepProps = {
   loading: boolean;
   resending: boolean;
   resendSignal: number;
+  resendAvailableAt?: number;
   captchaSlot?: ReactNode;
 
   onCodeChange: (value: string) => void;
@@ -28,17 +29,26 @@ function OtpStep({
   loading,
   resending,
   resendSignal,
+  resendAvailableAt,
   captchaSlot,
   onCodeChange,
   onBack,
   onResend,
   onSubmit,
 }: OtpStepProps) {
-  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
+  const [cooldown, setCooldown] = useState(() =>
+    resendAvailableAt
+      ? Math.max(0, Math.ceil((resendAvailableAt - Date.now()) / 1000))
+      : RESEND_COOLDOWN_SECONDS,
+  );
 
   useEffect(() => {
-    setCooldown(RESEND_COOLDOWN_SECONDS);
-  }, [resendSignal]);
+    setCooldown(
+      resendAvailableAt
+        ? Math.max(0, Math.ceil((resendAvailableAt - Date.now()) / 1000))
+        : RESEND_COOLDOWN_SECONDS,
+    );
+  }, [resendSignal, resendAvailableAt]);
 
   useEffect(() => {
     if (cooldown <= 0) {
@@ -98,15 +108,15 @@ function OtpStep({
         {resending
           ? 'در حال ارسال مجدد...'
           : cooldown > 0
-          ? `ارسال مجدد در ${formatCountdown(cooldown)}`
-          : 'ارسال مجدد کد'}
+            ? `ارسال مجدد در ${formatCountdown(cooldown)}`
+            : 'ارسال مجدد کد'}
       </button>
 
       <Button
         type="submit"
         disabled={loading || resending || code.length !== OTP_CODE_LENGTH}
       >
-        {loading ? 'در حال بررسی...' : 'تایید و ساخت حساب'}
+        {loading ? 'در حال بررسی...' : 'تأیید و ورود'}
       </Button>
 
       <button

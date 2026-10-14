@@ -1,32 +1,42 @@
 import { z } from 'zod';
+import { detectIdentifierType } from '../lib/identifier';
 import { PASSWORD_REGEX } from '../lib/password';
 
 // bcrypt فقط ۷۲ بایتِ اول رمز رو می‌خونه؛ سقف بالاتر فقط توهم امنیته
 const PASSWORD_MAX = 72;
 const passwordMaxMessage = 'رمز نباید بیشتر از ۷۲ کاراکتر باشه';
 
-export const registerSchema = z.object({
-  identifier: z.string().min(3).max(254),
-  captchaId: z.string().min(1).max(64).optional(),
-  captchaAnswer: z.string().min(1).max(32).optional(),
+export const registerSchema = z
+  .object({
+    identifier: z.string().min(3).max(254),
+    captchaId: z.string().min(1).max(64).optional(),
+    captchaAnswer: z.string().min(1).max(32).optional(),
 
-  username: z.string().min(1).max(64).optional(),
+    username: z.string().min(1).max(64).optional(),
 
-  password: z
-    .string()
-    .regex(
-      PASSWORD_REGEX,
-      'رمز باید حداقل ۶ کاراکتر و ترکیبی از حرف و عدد باشه'
-    )
-    .max(PASSWORD_MAX, passwordMaxMessage)
-    .optional(),
+    password: z
+      .string()
+      .regex(
+        PASSWORD_REGEX,
+        'رمز باید حداقل ۶ کاراکتر و ترکیبی از حرف و عدد باشه',
+      )
+      .max(PASSWORD_MAX, passwordMaxMessage)
+      .optional(),
 
-  name: z.string().min(2).max(100).optional(),
+    name: z.string().min(2).max(100).optional(),
 
-  role: z.enum(['Student', 'Instructor']),
+    role: z.enum(['Student', 'Instructor']),
 
-  joinCode: z.string().min(1).max(20).optional(),
-});
+    joinCode: z.string().min(1).max(20).optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (detectIdentifierType(data.identifier) === 'EMAIL' && !data.password)
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['password'],
+        message: 'برای ثبت‌نام با ایمیل، رمز عبور وارد کنید',
+      });
+  });
 
 export const otpPurposeSchema = z.enum(['REGISTER', 'LOGIN', 'RESET_PASSWORD']);
 
@@ -61,17 +71,24 @@ export const resetPasswordSchema = z.object({
     .string()
     .regex(
       PASSWORD_REGEX,
-      'رمز باید حداقل ۶ کاراکتر و ترکیبی از حرف و عدد باشه'
+      'رمز باید حداقل ۶ کاراکتر و ترکیبی از حرف و عدد باشه',
     )
     .max(PASSWORD_MAX, passwordMaxMessage),
 });
 
 export const googleAuthSchema = z.object({
   idToken: z.string().min(10).max(4096),
-  registration: z.object({
-    role: z.enum(['Student', 'Instructor']),
-    name: z.string().trim().min(2, 'نام باید حداقل ۲ کاراکتر باشد').max(100),
-  }).optional(),
+  registration: z
+    .object({
+      role: z.enum(['Student', 'Instructor']),
+      name: z
+        .string()
+        .trim()
+        .min(2, 'نام باید حداقل ۲ کاراکتر باشد')
+        .max(100)
+        .optional(),
+    })
+    .optional(),
 });
 
 export const updateMeSchema = z.object({

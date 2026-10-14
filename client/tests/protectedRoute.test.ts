@@ -69,10 +69,10 @@ test('resolveAccess: خطای موقت هرگز redirect به login نیست', (
   assert.deepEqual(resolveAccess({ isSessionReady: false, isSessionUnavailable: false, user: null }), { kind: 'loading' });
 });
 
-test('resolveAccess: نشست تأییدشده، login/onboarding/نقش حفظ می‌شوند', () => {
+test('resolveAccess: پروفایل اختیاری است؛ احراز نشست و نقش همچنان الزامی است', () => {
   const ready = { isSessionReady: true, isSessionUnavailable: false };
   assert.deepEqual(resolveAccess({ ...ready, user: null }), { kind: 'redirect', to: '/login' });
-  assert.deepEqual(resolveAccess({ ...ready, user: fresh }), { kind: 'redirect', to: '/onboarding' });
+  assert.deepEqual(resolveAccess({ ...ready, user: fresh }), { kind: 'allow' });
   assert.deepEqual(resolveAccess({ ...ready, user: fresh, skipOnboardingGate: true }), { kind: 'allow' });
   assert.deepEqual(resolveAccess({ ...ready, user: student, allowedRoles: ['SuperAdmin'] }), { kind: 'redirect', to: '/dashboard' });
   assert.deepEqual(resolveAccess({ ...ready, user: admin, allowedRoles: ['SuperAdmin'] }), { kind: 'allow' });

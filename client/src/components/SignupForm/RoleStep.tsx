@@ -39,7 +39,7 @@ function RoleStep({
   role,
   onRoleChange,
   onNext,
-  nextLabel = 'بعدی',
+  nextLabel = 'ادامه',
   loadingLabel = 'در حال ارسال کد تأیید…',
   loading = false,
   children,
@@ -88,7 +88,7 @@ function RoleStep({
 
         {role === 'Instructor' && (
           <p className="text-xs text-gray-400">
-            حساب مدرس بعد از ثبت‌نام باید توسط مدیر سیستم تأیید شود.
+            در صورت فعال بودن بررسی مدرس، حساب پس از تأیید مدیر فعال می‌شود.
           </p>
         )}
       </div>

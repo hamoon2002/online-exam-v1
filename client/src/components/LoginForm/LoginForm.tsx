@@ -38,8 +38,8 @@ export default function LoginForm() {
     : searchParams.get('sessionExpired')
       ? 'نشست شما منقضی شده است. لطفاً دوباره وارد شوید.'
       : '';
-  function success(completed: boolean) {
-    navigate(completed ? '/dashboard' : '/onboarding');
+  function success() {
+    navigate('/dashboard');
   }
   function go(next: Step) {
     code.clearError();

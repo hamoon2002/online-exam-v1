@@ -103,7 +103,7 @@ export async function register(input: RegisterInput): Promise<RegisterResult> {
   }
 }
 
-export async function googleLogin(idToken: string, registration?: { role: 'Student' | 'Instructor'; name: string }): Promise<GoogleLoginResult> {
+export async function googleLogin(idToken: string, registration?: { role: 'Student' | 'Instructor'; name?: string }): Promise<GoogleLoginResult> {
   try {
     const data = await apiRequest<{
       registrationRequired?: boolean;

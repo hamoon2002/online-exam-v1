@@ -16,7 +16,7 @@ const AVATAR_MAX_BYTES = 5 * 1024 * 1024;
 function ProfileSection({ currentUser }: { currentUser: UserType | null }) {
   // کاربر واکنش‌گرا: بعد از آپلود/حذف تصویر همین‌جا و در سایدبار بلافاصله عوض می‌شود
   const { user } = useAuth();
-  const initialName = currentUser?.name ?? currentUser?.username ?? '';
+  const initialName = currentUser?.name ?? '';
   const [name, setName] = useState<string>(initialName);
   // آخرین نامِ ذخیره‌شده تو سرور - نه prop ـِ currentUser که بعد از ذخیره
   // تا رندر بعدیِ والد قدیمی می‌مونه؛ وگرنه برگردوندنِ نام به مقدار

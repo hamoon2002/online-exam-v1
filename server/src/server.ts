@@ -7,6 +7,8 @@ import { createServer } from 'http';
 import { env } from './config/env';
 import { prisma } from './lib/prisma';
 import { redis } from './lib/redis';
+import { rateLimitRedis } from './lib/rateLimitRedis';
+import { waitForRedis, redisHealth } from './lib/redisConnection';
 import { initSocket } from './realtime/socket';
 import { startAttemptSweeper } from './lib/attemptFinalize';
 import { startPaymentReconciler } from './lib/payments';
@@ -57,7 +59,7 @@ app.get(
   '/health',
   asyncHandler(async (_req, res) => {
     // هر وابستگی جدا چک می‌شه و با تایم‌اوت: Redis/DB که قطع باشه نباید request
-    // رو معلق کنه (ioredis موقع قطعی retry می‌کنه و ping دیر برمی‌گرده). خطا
+    // رو معلق کنه. اتصال اصلی و اتصال محدودکننده جدا بررسی می‌شوند. خطا
     // هم به errorHandler نمی‌ره - health check باید ۵۰۳ + وضعیتِ هر وابستگی بده
     const check = (name: string, run: () => Promise<unknown>) => {
       let timer: NodeJS.Timeout | undefined;
@@ -75,15 +77,16 @@ app.get(
         .finally(() => clearTimeout(timer));
     };
 
-    const [db, cache] = await Promise.all([
+    const [db, cache, limiter] = await Promise.all([
       check('db', () => prisma.$queryRaw`SELECT 1`),
-      check('redis', () => redis.ping()),
+      check('redis', () => redisHealth(redis)),
+      check('rateLimitRedis', () => redisHealth(rateLimitRedis)),
     ]);
 
-    if (db === 'ok' && cache === 'ok') {
+    if (db === 'ok' && cache === 'ok' && limiter === 'ok') {
       return res.json({ status: 'ok' });
     }
-    res.status(503).json({ status: 'error', db, redis: cache });
+    res.status(503).json({ status: 'error', db, redis: cache, rateLimitRedis: limiter });
   })
 );
 
@@ -128,10 +131,21 @@ app.use('/practice', practiceRouter);
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-initSocket(httpServer);
+// Do not advertise a usable API or start workers before both Redis clients work.
+async function start() {
+  await Promise.all([waitForRedis(redis), waitForRedis(rateLimitRedis)]);
+  initSocket(httpServer);
+  httpServer.listen(env.PORT, () => {
+    console.log(`server running on port ${env.PORT}`);
+    startAttemptSweeper();
+    startPaymentReconciler();
+  });
+}
 
-httpServer.listen(env.PORT, () => {
-  console.log(`server running on port ${env.PORT}`);
-  startAttemptSweeper();
-  startPaymentReconciler();
+void start().catch(() => {
+  console.error('Server startup stopped: Redis was not ready within 15 seconds. Run node server/scripts/check-redis.cjs from the project root.');
+  if (redis.isOpen) redis.destroy();
+  if (rateLimitRedis.isOpen) rateLimitRedis.destroy();
+  // ts-node-dev remains available to restart after the configuration is fixed.
+  process.exit(1);
 });

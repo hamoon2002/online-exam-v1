@@ -86,7 +86,7 @@ const AdminInstructorsPage = lazy(() => import('../pages/AdminInstructorsPage/Ad
 const AdminInstructorDetailPage = lazy(() => import('../pages/AdminInstructorsPage/AdminInstructorDetailPage'));
 
 const InstructorStudentsPage = lazy(() =>
-  import('../pages/InstructorStudentsPage/InstructorStudentsPage')
+  import('../pages/AdminStudentsPage/AdminStudentsPage')
 );
 
 const AdminSiteContentPage = lazy(() =>

@@ -92,6 +92,15 @@ if (parsedEnv.NODE_ENV === 'production') {
   ) {
     throw new Error('ZARINPAL_MERCHANT_ID در production باید مرچنت واقعی باشه');
   }
+
+  // پشت nginx/Cloudflare اگه TRUST_PROXY=0 بمونه، req.ip همه‌ی کاربرها یکسان
+  // می‌شه و rate-limit و کپچای مبتنی بر IP برای همه با هم اعمال می‌شه. خطا
+  // نمی‌دیم چون اجرای مستقیم (بدون proxy) هم مجازه؛ فقط هشدار می‌دیم
+  if (parsedEnv.TRUST_PROXY === 0) {
+    console.warn(
+      'هشدار: TRUST_PROXY=0 در production. اگه پشت proxy/load balancer هستی باید ۱ (یا تعداد proxy ها) باشه.'
+    );
+  }
 }
 
 export const env = parsedEnv;

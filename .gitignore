@@ -24,3 +24,5 @@ pg_dump*
 # Local delivery packages and logs
 /*.patch
 *.log
+docker-compose.override.yml
+!.env.test.example

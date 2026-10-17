@@ -50,3 +50,14 @@ npm run lint -w client
 ```
 
 تست Redis واقعی با REQUIRE_SERVICES=1 و REDIS_URL قابل اجراست.
+
+### تست‌های سرور روی دیتابیس جدا
+
+`npm test -w server` قبل از اجرا `server/.env.test` را می‌خواند، تا تست‌ها به Postgres و Redis توسعه دست نزنند. یک‌بار آماده‌سازی:
+
+```bash
+npm run test:setup -w server   # ساخت examdb_test + migrate deploy (و Redis DB شماره 1)
+npm test -w server
+```
+
+اگر `.env.test` نباشد، تست‌ها با هشدار روی همان `.env` توسعه اجرا می‌شوند. در CI متغیرها از خود workflow می‌آیند و این فایل لازم نیست.

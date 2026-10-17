@@ -233,7 +233,7 @@ router.post(
         throw badRequest('رمز عبور فعلی را وارد کنید');
       }
 
-      if (await isAccountLocked(userId)) {
+      if (await isAccountLocked(userId, req.ip ?? 'unknown')) {
         throw new AppError(
           423,
           'به‌خاطر تلاش‌های ناموفق زیاد، تغییر رمز موقتاً قفل شده. چند دقیقه‌ی دیگه دوباره امتحان کن.'
@@ -241,7 +241,7 @@ router.post(
       }
 
       if (!(await verifyPassword(currentPassword, existing.passwordHash))) {
-        await registerFailedAttempt(userId);
+        await registerFailedAttempt(userId, req.ip ?? 'unknown');
 
         throw badRequest('رمز عبور فعلی اشتباهه');
       }

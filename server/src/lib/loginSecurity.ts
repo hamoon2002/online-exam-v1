@@ -9,43 +9,93 @@
 import { redis } from './redis';
 import { durationToSeconds } from './duration';
 
+// قفل دو لایه دارد:
+//  - هر (حساب + IP): بعد از MAX_FAILED_ATTEMPTS تلاش ناموفق فقط همان IP قفل
+//    می‌شود، پس یک مهاجم نمی‌تواند صاحب حساب را از IP خودش بیرون بیندازد.
+//  - هر حساب (از همه‌ی IPها): سقف بالاتر MAX_FAILED_ATTEMPTS_ANY_IP برای
+//    جلوگیری از brute-force پخش‌شده روی چند IP.
 export const MAX_FAILED_ATTEMPTS = 5;
-const FAILED_ATTEMPTS_WINDOW = '15m'; // این مدت از آخرین تلاش ناموفق، شمارنده می‌مونه
+export const MAX_FAILED_ATTEMPTS_ANY_IP = 30;
+const FAILED_ATTEMPTS_WINDOW = '15m'; // این مدت از اولین تلاش ناموفق، شمارنده می‌مونه
 const LOCKOUT_DURATION = '15m'; // بعد از قفل شدن، این مدت اجازه‌ی تلاش با پسورد نداره
+const GENERATION_TTL_SECONDS = 7 * 24 * 60 * 60;
 
 const failKey = (userId: string) => `login:fail:${userId}`;
 const lockKey = (userId: string) => `login:lock:${userId}`;
+// generation: با هر پاک‌سازی (clearFailedAttempts) یکی زیاد می‌شه تا کلیدهای
+// IP-محورِ قبلی بدون نیاز به scan بی‌اثر بشن
+const generationKey = (userId: string) => `login:gen:${userId}`;
+const accountIpFailKey = (userId: string, generation: string, ip: string) =>
+  `login:fail:${userId}:${generation}:${ip}`;
+const accountIpLockKey = (userId: string, generation: string, ip: string) =>
+  `login:lock:${userId}:${generation}:${ip}`;
 
-export async function isAccountLocked(userId: string): Promise<boolean> {
-  const locked = await redis.get(lockKey(userId));
-  return locked !== null;
+// INCR + EXPIRE اتمیک (اگه وسطشون سرور بیفته، کلید بدون TTL نمی‌مونه)
+const INCR_WITH_TTL_SCRIPT = `
+local count = redis.call('INCR', KEYS[1])
+if count == 1 then
+  redis.call('EXPIRE', KEYS[1], tonumber(ARGV[1]))
+end
+return count
+`;
+
+async function incrWithTtl(key: string, ttlSeconds: number): Promise<number> {
+  const count = await redis.eval(INCR_WITH_TTL_SCRIPT, {
+    keys: [key],
+    arguments: [String(ttlSeconds)],
+  });
+  return Number(count);
+}
+
+async function currentGeneration(userId: string): Promise<string> {
+  return (await redis.get(generationKey(userId))) ?? '0';
+}
+
+export async function isAccountLocked(
+  userId: string,
+  ip = 'unknown'
+): Promise<boolean> {
+  const generation = await currentGeneration(userId);
+  const [anyIpLock, thisIpLock] = await Promise.all([
+    redis.get(lockKey(userId)),
+    redis.get(accountIpLockKey(userId, generation, ip)),
+  ]);
+  return anyIpLock !== null || thisIpLock !== null;
 }
 
 // یه تلاش ناموفق رو ثبت می‌کنه؛ اگه به سقف رسید خودش قفل می‌کنه.
-// خروجی: تعداد تلاش‌های ناموفق فعلی تو همین پنجره‌ی زمانی
-export async function registerFailedAttempt(userId: string): Promise<number> {
-  const key = failKey(userId);
-  const count = await redis.incr(key);
-  if (count === 1) {
-    // فقط بار اول TTL می‌ذاریم، وگرنه هر INCR دوباره TTL رو ریست می‌کنه
-    // و عملاً پنجره‌ی زمانی هیچ‌وقت تموم نمی‌شه
-    await redis.expire(key, durationToSeconds(FAILED_ATTEMPTS_WINDOW));
-  }
+// خروجی: تعداد تلاش‌های ناموفق این IP برای این حساب تو همین پنجره‌ی زمانی
+export async function registerFailedAttempt(
+  userId: string,
+  ip = 'unknown'
+): Promise<number> {
+  const generation = await currentGeneration(userId);
+  const windowSeconds = durationToSeconds(FAILED_ATTEMPTS_WINDOW);
+  const lockSeconds = durationToSeconds(LOCKOUT_DURATION);
 
-  if (count >= MAX_FAILED_ATTEMPTS) {
-    await redis.set(lockKey(userId), '1', {
-      EX: durationToSeconds(LOCKOUT_DURATION),
+  const [ipCount, totalCount] = await Promise.all([
+    incrWithTtl(accountIpFailKey(userId, generation, ip), windowSeconds),
+    incrWithTtl(failKey(userId), windowSeconds),
+  ]);
+
+  if (ipCount >= MAX_FAILED_ATTEMPTS) {
+    await redis.set(accountIpLockKey(userId, generation, ip), '1', {
+      EX: lockSeconds,
     });
   }
+  if (totalCount >= MAX_FAILED_ATTEMPTS_ANY_IP) {
+    await redis.set(lockKey(userId), '1', { EX: lockSeconds });
+  }
 
-  return count;
+  return ipCount;
 }
 
-// بعد از لاگین موفق (یا از هر مسیر دیگه‌ای مثل تایید OTP/گوگل) صدا زده
-// می‌شه تا سابقه‌ی تلاش ناموفق پاک بشه
+// بعد از لاگین موفق (یا از هر مسیر دیگه‌ای مثل ریست رمز) صدا زده
+// می‌شه تا سابقه‌ی تلاش ناموفق (همه‌ی IPها) پاک بشه
 export async function clearFailedAttempts(userId: string): Promise<void> {
-  await redis.del(failKey(userId));
-  await redis.del(lockKey(userId));
+  await redis.del([failKey(userId), lockKey(userId)]);
+  await redis.incr(generationKey(userId));
+  await redis.expire(generationKey(userId), GENERATION_TTL_SECONDS);
 }
 
 // --- کپچای تطبیقی (adaptive/step-up) ---
@@ -75,11 +125,10 @@ export async function isCaptchaRequired(ip: string): Promise<boolean> {
 // یه تلاش ناموفق (پسورد غلط، حساب پیدا نشد، کپچای غلط) رو برای این IP ثبت
 // می‌کنه؛ بعد از رسیدن به سقف، کپچا رو براش فعال می‌کنه
 export async function registerIpFailure(ip: string): Promise<void> {
-  const key = ipFailKey(ip);
-  const count = await redis.incr(key);
-  if (count === 1) {
-    await redis.expire(key, durationToSeconds(IP_FAIL_WINDOW));
-  }
+  const count = await incrWithTtl(
+    ipFailKey(ip),
+    durationToSeconds(IP_FAIL_WINDOW)
+  );
   if (count >= IP_FAIL_TRIGGER) {
     await redis.set(ipCaptchaKey(ip), '1', {
       EX: durationToSeconds(IP_CAPTCHA_DURATION),

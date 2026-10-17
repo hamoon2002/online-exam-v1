@@ -113,7 +113,9 @@ function SimpleSignup({ identifier }: { identifier: string }) {
           captchaSlot={captcha}
           onCodeChange={(value) => {
             form.setCode(value);
-            if (value.length === 6) void form.verify(value);
+            if (value.length === 6 && !form.captcha.required) {
+              void form.verify(value);
+            }
           }}
           onBack={form.back}
           onResend={() => void form.resend()}

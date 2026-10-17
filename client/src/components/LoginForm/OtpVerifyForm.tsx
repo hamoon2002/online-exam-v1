@@ -135,9 +135,13 @@ export default function OtpVerifyForm({
             disabled={busy}
             error={Boolean(error)}
             onChange={(value) => {
-              // ورود فقط با دکمه‌ی «تأیید و ورود» (یا Enter) انجام می‌شود، نه خودکار
               setCode(value);
               setError('');
+              // paste یا تایپ کامل کد: بدون کپچا خودکار تأیید می‌شود؛ وقتی کپچا
+              // نمایش داده می‌شود، کاربر باید کپچا را وارد کند و دکمه را بزند
+              if (value.length === OTP_CODE_LENGTH && !captchaRequired) {
+                void verify(value);
+              }
             }}
           />
         </>

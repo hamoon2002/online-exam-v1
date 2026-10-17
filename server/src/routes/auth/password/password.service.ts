@@ -103,7 +103,7 @@ export async function loginWithPassword(data: PasswordLoginData, ip: string) {
     throw await invalidCredentials(ip);
   }
 
-  if (await isAccountLocked(user.id)) {
+  if (await isAccountLocked(user.id, ip)) {
     throw new AppError(
       423,
       'به‌خاطر تلاش‌های ناموفق زیاد، ورود با رمز برای این حساب موقتاً قفل شده. با کد یکبارمصرف وارد شو یا چند دقیقه‌ی دیگه دوباره امتحان کن.'
@@ -113,7 +113,7 @@ export async function loginWithPassword(data: PasswordLoginData, ip: string) {
   const passwordValid = await verifyPassword(data.password, user.passwordHash);
 
   if (!passwordValid) {
-    await registerFailedAttempt(user.id);
+    await registerFailedAttempt(user.id, ip);
 
     notifyUser(
       user.id,

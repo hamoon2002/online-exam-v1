@@ -396,13 +396,13 @@ fc2ebe944aae5125449a258a9e2f1054f408669da4c3d3fe0cf01167d9dccfc5
 `ORIG_191_SQL` همچنان برای نسخهٔ دقیق متعلق به یک محیط دیگر قابل تنظیم است.
 داشتن فایل تاریخی اثبات نمی‌کند همین بایت‌ها روی دیتابیس شما اجرا شده‌اند؛
 پیش از انتخاب مسیر checksum، با خروجی تشخیص فقط‌خواندنی مقایسه کنید.
-گزارش قبلی `migtest-output.txt` متعلق به اجرای شبیه‌سازی‌شده است و اثبات اجرای fixture جدید نیست.
+گزارش قبلی `server/prisma/recovery/reports/migtest-output.txt` متعلق به اجرای شبیه‌سازی‌شده است و اثبات اجرای fixture جدید نیست.
 
 PowerShell (در ریشهٔ پروژه؛ PostgreSQL آزمایشی محلی، psql و Git Bash در PATH):
 
 ```powershell
 $env:PG_BASE_URL = 'postgresql://TEST_USER:TEST_PASSWORD@127.0.0.1:5432'
-bash -o pipefail -c 'bash server/prisma/recovery/test-migration-paths.sh 2>&1 | tee migtest-historical-output.txt'
+bash -o pipefail -c 'bash server/prisma/recovery/test-migration-paths.sh 2>&1 | tee server/prisma/recovery/reports/migtest-historical-output.txt'
 if ($LASTEXITCODE -ne 0) { throw 'Migration tests failed; inspect the report.' }
 ```
 

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { getCurrentUser } from '../api/authApi';
 import {
   getNotificationsForUser,
+  deleteNotification,
   markNotificationRead,
   markAllNotificationsRead,
   type Notification,
@@ -14,6 +15,13 @@ function useNotifications() {
   const currentUser = getCurrentUser();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deletingIds, setDeletingIds] = useState<string[]>([]);
+  const removedIds = useRef(new Set<string>());
+  const pendingDeletes = useRef(new Set<string>());
+  const owner = useRef(currentUser?.id);
+  owner.current = currentUser?.id;
 
   // آخرین درخواستِ در حال اجرا؛ اگه بین‌راه درخواست جدیدی (مثلاً refresh با
   // باز کردن پنل) شروع بشه، جوابِ قدیمی‌تر نادیده گرفته می‌شه
@@ -33,7 +41,7 @@ function useNotifications() {
     // اعلان‌ها حیاتی نیستن، پس موقع خطا همون لیست قبلی می‌مونه.
     getNotificationsForUser(currentUser.id, currentUser.role)
       .then((data) => {
-        if (requestId === requestIdRef.current) setNotifications(data);
+        if (requestId === requestIdRef.current) setNotifications(data.filter(item => !removedIds.current.has(item.id)));
       })
       .catch(() => {})
       .finally(() => {
@@ -43,13 +51,39 @@ function useNotifications() {
   }, [currentUser?.id, currentUser?.role]);
 
   useEffect(() => {
+    owner.current = currentUser?.id;
+    removedIds.current.clear();
+    pendingDeletes.current.clear();
+    setNotifications([]);
+    setDeletingIds([]);
+    setDeleteError(null);
     load();
 
     return () => {
       // جلوگیری از setState بعد از unmount
       requestIdRef.current += 1;
+      owner.current = undefined;
     };
   }, [load]);
+
+  async function removeNotification(id: string) {
+    if (pendingDeletes.current.has(id)) return;
+    const userId = currentUser?.id;
+    pendingDeletes.current.add(id);
+    setDeletingIds([...pendingDeletes.current]);
+    setDeleteError(null);
+    try {
+      await deleteNotification(id);
+      if (owner.current !== userId) return;
+      removedIds.current.add(id);
+      setNotifications(items => items.filter(item => item.id !== id));
+    } catch {
+      if (owner.current === userId) setDeleteError('حذف اعلان انجام نشد؛ دوباره تلاش کنید.');
+    } finally {
+      pendingDeletes.current.delete(id);
+      if (owner.current === userId) setDeletingIds([...pendingDeletes.current]);
+    }
+  }
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -75,6 +109,7 @@ function useNotifications() {
     markOneRead,
     markAllRead,
     refresh: load,
+    removeNotification, deleteError, deletingIds,
   };
 }
 

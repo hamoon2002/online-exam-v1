@@ -30,7 +30,7 @@ function clearRetry(): void {
 // accessToken معتبر رو بفرسته، نه اونی که موقع اولین اتصال گرفته بود
 export function connectSocket(
   getToken: () => string | null,
-  onForceLogout: () => void
+  onForceLogout: (reason?: string) => void
 ): void {
   disconnectSocket();
 
@@ -40,7 +40,10 @@ export function connectSocket(
   });
 
   const current = socket;
-  current.on('force-logout', () => onForceLogout());
+  current.on('force-logout', (payload?: { reason?: unknown }) => {
+    if (socket !== current) return;
+    onForceLogout(typeof payload?.reason === 'string' ? payload.reason : undefined);
+  });
   current.on('connect', () => clearRetry());
   current.on('connect_error', (err) => {
     if (err.message !== 'unavailable') return;
@@ -57,6 +60,7 @@ export function connectSocket(
 
 export function disconnectSocket(): void {
   clearRetry();
+  socket?.removeAllListeners();
   socket?.disconnect();
   socket = null;
 }

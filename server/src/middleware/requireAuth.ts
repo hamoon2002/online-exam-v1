@@ -39,7 +39,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     return next(err);
   }
   if (!valid) {
-    return res.status(401).json({ error: 'این نشست دیگر معتبر نیست (از جای دیگری وارد شدید)' });
+    return res.status(401).json({ error: 'نشست شما پایان یافته است. لطفاً دوباره وارد شوید.' });
   }
 
   // ردشدن حساب باید حتی پس از شکست ابطال نشست Redis اعمال شود.

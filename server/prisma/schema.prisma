@@ -436,6 +436,7 @@ model NotificationRead {
   userId         String
   notificationId String
   readAt         DateTime @default(now())
+  dismissedAt    DateTime?
 
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   notification Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)

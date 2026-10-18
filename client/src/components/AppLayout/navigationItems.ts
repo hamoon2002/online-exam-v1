@@ -33,14 +33,14 @@ export type NavigationItem = {
 export const navigationItems: NavigationItem[] = [
   {
     label: 'داشبورد',
-    adminLabel: 'پیشخوان مدیریتی',
+    adminLabel: 'میزکار',
     to: '/dashboard',
     icon: LayoutDashboard,
     roles: ALL_ROLES,
   },
   {
     label: 'آزمون‌ها',
-    adminLabel: 'نظارت بر آزمون‌ها',
+    adminLabel: 'آزمون‌ها',
     to: '/exams',
     icon: FileText,
     roles: ALL_ROLES,

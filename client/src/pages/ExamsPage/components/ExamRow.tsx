@@ -14,6 +14,8 @@ type ExamRowProps = {
   canManage: boolean;
   isObserver?: boolean;
   canTake?: boolean;
+  selected?: boolean;
+  onSelect?: () => void;
   participantCount: number;
   onTake: (exam: Exam) => void;
   onOpenQuestions: (exam: Exam) => void;
@@ -48,6 +50,8 @@ function ExamRow({
   canManage,
   isObserver = false,
   canTake = false,
+  selected = false,
+  onSelect,
   participantCount,
   onTake,
   onOpenQuestions,
@@ -59,7 +63,25 @@ function ExamRow({
   const badge = STATUS_BADGE[exam.status];
 
   return (
-    <tr className="border-b border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-200 transition duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+    <tr
+      tabIndex={onSelect ? 0 : undefined}
+      aria-selected={onSelect ? selected : undefined}
+      onClick={onSelect ? (event) => {
+        if (!(event.target as HTMLElement).closest('button, a, input, select')) onSelect();
+      } : undefined}
+      onKeyDown={onSelect ? (event) => {
+        if (event.target !== event.currentTarget) return;
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          onSelect();
+        }
+      } : undefined}
+      className={`border-b border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-200 transition-colors duration-150 motion-reduce:transition-none
+        ${onSelect ? 'cursor-pointer focus-visible:outline-2 focus-visible:outline-brand-500 focus-visible:-outline-offset-2' : ''}
+        ${selected && onSelect
+          ? 'bg-brand-50 dark:bg-brand-950/50 hover:bg-brand-100 dark:hover:bg-brand-950/70'
+          : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+    >
       <td className="py-3">{exam.title}</td>
       {isObserver && <td className="py-3">{exam.instructor?.name?.trim() || exam.instructor?.username || 'مدرس بدون نام'}</td>}
       <td className="py-3">{exam.category}</td>
@@ -88,7 +110,7 @@ function ExamRow({
             </button>
           )}
           {isObserver && (
-            <button onClick={() => onOpenQuestions(exam)} className="rounded-lg px-3 py-2 text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-950/40">مشاهده سؤال‌ها</button>
+            <button onClick={() => onOpenQuestions(exam)} className="cursor-pointer rounded-lg px-3 py-2 text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-brand-950/40">مشاهده سؤال‌ها</button>
           )}
           {canManage && (
             <>

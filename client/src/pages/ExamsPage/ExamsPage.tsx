@@ -68,7 +68,8 @@ function ExamsPage() {
   const [statusFilter, setStatusFilter] = useState('');
   const reportExams = isObserver ? filterOversightExams(visibleExams, search, statusFilter) : visibleExams;
   const isFiltered = isObserver && !!(search.trim() || statusFilter);
-  const pageTitle = isObserver ? 'نظارت بر آزمون‌ها' : 'آزمون‌ها';
+  const pageTitle = 'آزمون‌ها';
+  const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
 
   const [availableGroups, setAvailableGroups] = useState<Group[]>([]);
 
@@ -193,7 +194,7 @@ function ExamsPage() {
                   isFiltered ? 'آزمونی با این مشخصات پیدا نشد' : isObserver ? 'هنوز آزمونی ثبت نشده است' : canManage ? 'هنوز آزمونی نساختی' : 'هنوز آزمونی برات ثبت نشده'
                 }
                 description={
-                  isFiltered ? 'عبارت جست‌وجو یا فیلتر وضعیت را تغییر دهید.' : isObserver ? 'پس از ثبت آزمون توسط مدرس‌ها، اطلاعات آن اینجا نمایش داده می‌شود.' : canManage
+                  isFiltered ? 'عبارت جستجو یا فیلتر وضعیت را تغییر دهید.' : isObserver ? 'پس از ثبت آزمون توسط مدرس‌ها، اطلاعات آن اینجا نمایش داده می‌شود.' : canManage
                     ? 'با دکمه‌ی «آزمون جدید» اولین آزمونت رو بساز و به یک یا چند گروه وصلش کن.'
                     : 'وقتی مدرس آزمونی برای گروهت تعریف کنه، اینجا نشون داده می‌شه.'
                 }
@@ -224,6 +225,8 @@ function ExamsPage() {
                         exam={exam}
                         canManage={canManage}
                         isObserver={isObserver}
+                        selected={selectedExamId === exam.id}
+                        onSelect={isObserver ? () => setSelectedExamId(exam.id) : undefined}
                         canTake={currentUser?.role === 'Student'}
                         participantCount={exam.participants}
                         onTake={(e) => navigate(`/exams/${e.id}/take`)}

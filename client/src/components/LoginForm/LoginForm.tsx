@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { resolveAuthEntry, type CaptchaAnswer } from '../../api/authApi';
 import { detectIdentifierType } from '../../utils/identifier';
 import { ApiError } from '../../lib/apiClient';
+import { sessionNotice } from '../../lib/sessionNotice';
 import AuthBack from '../AuthBack/AuthBack';
 import Captcha from '../Captcha/Captcha';
 import IdentifierStep from './IdentifierStep';
@@ -33,11 +34,7 @@ export default function LoginForm() {
   const [captcha, setCaptcha] = useState<CaptchaAnswer | null>(null);
   const [captchaRequired, setCaptchaRequired] = useState(false);
   const code = useLoginCode();
-  const notice = searchParams.get('forceLogout')
-    ? 'این حساب در دستگاه دیگری وارد شده است. لطفاً دوباره وارد شوید.'
-    : searchParams.get('sessionExpired')
-      ? 'نشست شما منقضی شده است. لطفاً دوباره وارد شوید.'
-      : '';
+  const notice = sessionNotice(searchParams);
   function success() {
     navigate('/dashboard');
   }

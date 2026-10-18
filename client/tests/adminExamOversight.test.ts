@@ -36,3 +36,19 @@ test('oversight search combines teacher/title with status and retains unnamed te
   assert.deepEqual(filterOversightExams([exam, other], 'مدرس ب', 'draft').map(item => item.id), ['b']);
   assert.equal(filterOversightExams([exam, other], 'مدرس ب', 'upcoming').length, 0);
 });
+
+test('exam row selection supports click and keyboard without intercepting action buttons', () => {
+  let selected = 0;
+  const row = ExamRow({ ...props, isObserver: true, selected: true, onSelect: () => { selected++; } });
+  assert.equal(row.props['aria-selected'], true);
+  assert.equal(row.props.tabIndex, 0);
+  const target = {};
+  row.props.onClick({ target: { closest: () => null } });
+  row.props.onClick({ target: { closest: () => ({}) } });
+  let prevented = false;
+  row.props.onKeyDown({ key: ' ', target, currentTarget: target, preventDefault: () => { prevented = true; } });
+  row.props.onKeyDown({ key: 'Enter', target: {}, currentTarget: target, preventDefault: () => {} });
+  assert.equal(selected, 2);
+  assert.equal(prevented, true);
+  assert.equal(ExamRow(props).props.tabIndex, undefined);
+});

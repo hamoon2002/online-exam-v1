@@ -1,4 +1,5 @@
 import { ApiError, apiRequest, getAuthToken, refreshSession, setAuthToken, setOnSessionExpired } from '../../lib/apiClient';
+import { sessionLogoutUrl } from '../../lib/sessionNotice';
 import { connectSocket, disconnectSocket } from '../../lib/socket';
 import type { MeResponse, User } from './auth.types';
 import { userFromMe } from './auth.utils';
@@ -18,7 +19,7 @@ async function hydrateCurrentUser(): Promise<void> {
   } catch { /* همان اطلاعات پاسخ ورود می‌ماند */ }
 }
 export function applySession(user: User, accessToken: string, options: { hydrate?: boolean } = {}): void {
-  setCurrentUser(user); setAuthToken(accessToken); connectSocket(getAuthToken, () => { clearSession(); window.location.href = '/login?forceLogout=1'; });
+  setCurrentUser(user); setAuthToken(accessToken); connectSocket(getAuthToken, reason => { clearSession(); window.location.href = sessionLogoutUrl(reason); });
   if (options.hydrate !== false) void hydrateCurrentUser();
 }
 export function clearSession(): void { setCurrentUser(null); setAuthToken(null); disconnectSocket(); }

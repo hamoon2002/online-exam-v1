@@ -83,7 +83,7 @@ function AdminStudentsPage() {
         <EmptyState
           icon={GraduationCap}
           title="دانشجویی پیدا نشد"
-          description="با این فیلتر و جست‌وجو دانشجویی وجود ندارد."
+          description="با این فیلتر و جستجو دانشجویی وجود ندارد."
         />
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">

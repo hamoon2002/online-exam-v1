@@ -28,8 +28,8 @@ export default function ExamQuestionList({
         </h2>
         {questions.length > 0 && (
           <input
-            aria-label="جست‌وجو در سؤال‌های آزمون"
-            placeholder="جست‌وجو در متن سؤال…"
+            aria-label="جستجو در سؤال‌های آزمون"
+            placeholder="جستجو در متن سؤال…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-xl border border-gray-200 bg-transparent px-4 py-2 text-sm dark:border-gray-700 dark:text-white sm:w-64"

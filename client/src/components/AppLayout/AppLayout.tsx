@@ -15,7 +15,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 transition-colors dark:bg-gray-950 dark:text-white">
+    <div className="min-h-screen bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white">
       <div className="flex min-h-screen flex-col md:flex-row">
         <Sidebar
           isOpen={isSidebarOpen}
@@ -36,7 +36,9 @@ function AppLayout({ children, title }: AppLayoutProps) {
             onOpenSidebar={() => setIsSidebarOpen(true)}
           />
 
-          <div className="p-4 md:p-8">{children}</div>
+          <div className="mx-auto w-full max-w-[84rem] px-4 py-6 md:px-10 md:py-10">
+            {children}
+          </div>
         </main>
       </div>
     </div>

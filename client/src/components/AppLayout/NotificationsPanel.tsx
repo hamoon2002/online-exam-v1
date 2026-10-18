@@ -89,7 +89,7 @@ function NotificationsPanel() {
         aria-expanded={isOpen}
         aria-haspopup="true"
         onClick={togglePanel}
-        className="relative flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition duration-200 hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+        className="relative flex h-9 w-9 items-center justify-center rounded-xl text-gray-500 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
       >
         <Bell size={16} />
 

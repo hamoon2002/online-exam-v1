@@ -8,7 +8,12 @@ import { useExamGuard } from '../../context/ExamGuardContext';
 import { logout } from '../../api/authApi';
 import { useAuth } from '../../context/AuthContext';
 import Avatar from '../Avatar/Avatar';
-import { navigationItems, roleLabel } from './navigationItems';
+import {
+  groupNavigationItems,
+  navigationGroupLabel,
+  navigationItems,
+  roleLabel,
+} from './navigationItems';
 
 type SidebarProps = {
   isOpen: boolean;
@@ -34,6 +39,8 @@ function Sidebar({
     ...item,
     label: user?.role === 'SuperAdmin' ? item.adminLabel ?? item.label : item.label,
   }));
+
+  const sections = groupNavigationItems(visibleItems);
 
   function handleNavClick(event: React.MouseEvent, to: string) {
     event.preventDefault();
@@ -72,7 +79,7 @@ function Sidebar({
       </AnimatePresence>
 
       <aside
-        className={`fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-s border-gray-200 bg-white shadow-2xl transition-all duration-300 dark:border-gray-800 dark:bg-gray-900 md:relative md:z-auto md:translate-x-0 md:border-e md:border-s-0 md:shadow-none ${
+        className={`fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-s border-gray-100 bg-white shadow-2xl transition-all duration-300 dark:border-white/5 dark:bg-gray-900 md:relative md:z-auto md:translate-x-0 md:border-e md:border-s-0 md:shadow-none ${
           isCollapsed ? 'md:w-20' : 'md:w-64'
         } ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
@@ -92,7 +99,7 @@ function Sidebar({
         {/* اسکرول فقط همینجا محدود می‌شه، نه کل سایدبار */}
         <div className="flex h-full flex-col justify-between overflow-y-auto">
           <div>
-            <div className="flex items-center justify-between border-b border-gray-100 px-5 py-5 dark:border-gray-800">
+            <div className="flex items-center justify-between px-5 pb-3 pt-6">
               <button
                 onClick={handleLogoClick}
                 className="flex cursor-pointer items-center"
@@ -107,57 +114,48 @@ function Sidebar({
               </button>
             </div>
 
-            <nav className="flex flex-col gap-1.5 p-3">
-              {visibleItems.map(({ label, to, icon: Icon }, index) => (
-                <motion.div
-                  key={to}
-                  initial={{ opacity: 0, x: 12 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{
-                    duration: 0.35,
-                    delay: index * 0.04,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
+            <nav aria-label="منوی اصلی" className="flex flex-col gap-6 px-3 py-4">
+              {sections.map((section, sectionIndex) => (
+                <div
+                  key={section.group ?? 'main'}
+                  role={section.group ? 'group' : undefined}
+                  aria-label={
+                    section.group ? navigationGroupLabel[section.group] : undefined
+                  }
+                  className="flex flex-col gap-0.5"
                 >
-                  <NavLink
-                    to={to}
-                    onClick={(e) => handleNavClick(e, to)}
-                    title={isCollapsed ? label : undefined}
-                    className={({ isActive }) =>
-                      `group relative flex items-center gap-3 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-medium transition-colors duration-200 ${
-                        isActive
-                          ? 'bg-brand-50 text-brand-700 dark:bg-brand-600/15 dark:text-white'
-                          : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white'
-                      } ${isCollapsed ? 'md:justify-center md:px-0' : ''}`
-                    }
-                  >
-                    {({ isActive }) => (
-                      <>
-                        {/* layoutId باعث می‌شه این نوارِ فعال، به‌جای این‌که هر
-                            بار یهو محو/ظاهر بشه، از آیتمِ قبلی به این یکی
-                            «بلغزه» - همون افکتِ معروفِ framer-motion */}
-                        {isActive && (
-                          <motion.span
-                            layoutId="sidebar-active-indicator"
-                            transition={{
-                              type: 'spring',
-                              stiffness: 380,
-                              damping: 30,
-                            }}
-                            className="absolute right-0 top-1/2 h-5 w-1 -translate-y-1/2 rounded-full bg-brand-600"
-                          />
-                        )}
-                        <Icon
-                          size={18}
-                          className="shrink-0 transition-transform duration-200 group-hover:scale-110"
-                        />
-                        <span className={isCollapsed ? 'md:hidden' : ''}>
-                          {label}
-                        </span>
-                      </>
-                    )}
-                  </NavLink>
-                </motion.div>
+                  {section.group && !isCollapsed && (
+                    <p className="px-3 pb-1.5 text-[11px] font-medium text-gray-400 dark:text-gray-500">
+                      {navigationGroupLabel[section.group]}
+                    </p>
+                  )}
+                  {section.group && isCollapsed && sectionIndex > 0 && (
+                    <div
+                      aria-hidden="true"
+                      className="mx-3 mb-2 h-px bg-gray-100 dark:bg-white/5"
+                    />
+                  )}
+                  {section.items.map(({ label, to, icon: Icon }) => (
+                    <NavLink
+                      key={to}
+                      to={to}
+                      onClick={(e) => handleNavClick(e, to)}
+                      title={isCollapsed ? label : undefined}
+                      className={({ isActive }) =>
+                        `flex items-center gap-3 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-brand-500 ${
+                          isActive
+                            ? 'bg-brand-50 text-brand-700 dark:bg-brand-500/15 dark:text-brand-300'
+                            : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-100'
+                        } ${isCollapsed ? 'md:justify-center md:px-0' : ''}`
+                      }
+                    >
+                      <Icon size={18} strokeWidth={1.75} className="shrink-0" />
+                      <span className={isCollapsed ? 'md:hidden' : ''}>
+                        {label}
+                      </span>
+                    </NavLink>
+                  ))}
+                </div>
               ))}
             </nav>
           </div>

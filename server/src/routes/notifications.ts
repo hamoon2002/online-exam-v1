@@ -19,6 +19,7 @@ router.get(
 
     const notifications = await prisma.notification.findMany({
       where: {
+        reads: { none: { userId: sub, dismissedAt: { not: null } } },
         OR: [{ userId: sub }, { userId: null, targetRoles: { has: role } }],
       },
       orderBy: { createdAt: 'desc' },
@@ -50,6 +51,22 @@ router.get(
     );
   })
 );
+
+// Dismiss for this recipient only, including shared role announcements.
+router.delete('/:id', asyncHandler(async (req, res) => {
+  const { sub, role } = req.user!;
+  const notification = await prisma.notification.findFirst({
+    where: { id: req.params.id, OR: [{ userId: sub }, { userId: null, targetRoles: { has: role } }] },
+    select: { id: true },
+  });
+  if (!notification) throw notFound('اعلان یافت نشد');
+  await prisma.notificationRead.upsert({
+    where: { userId_notificationId: { userId: sub, notificationId: notification.id } },
+    create: { userId: sub, notificationId: notification.id, dismissedAt: new Date() },
+    update: { dismissedAt: new Date() },
+  });
+  res.status(204).end();
+}));
 
 // یه اعلان رو خونده‌شده علامت می‌زنه - فقط اگه واقعاً برای این کاربر قابل‌دیدن باشه
 router.post(

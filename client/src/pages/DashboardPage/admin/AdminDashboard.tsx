@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   CalendarDays,
@@ -8,7 +9,6 @@ import {
   XCircle,
 } from 'lucide-react';
 import AppLayout from '../../../components/AppLayout/AppLayout';
-import Spinner from '../../../components/Spinner/Spinner';
 import Toast from '../../../components/Toast/Toast';
 import useAsyncData from '../../../hooks/useAsyncData';
 import { getCurrentUser } from '../../../api/authApi';
@@ -326,9 +326,16 @@ function Content({ data }: { data: AdminDashboardData }) {
 // (و در نتیجه این درخواست) را اجرا نمی‌کنند
 export default function AdminDashboard() {
   const user = getCurrentUser();
+  const reduceMotion = useReducedMotion();
+  const [updatedAt, setUpdatedAt] = useState<Date | null>(null);
+  const fetchDashboard = useCallback(async () => {
+    const result = await getAdminDashboard();
+    setUpdatedAt(new Date());
+    return result;
+  }, []);
   const { data, loading, error, clearError, refetch } =
     useAsyncData<AdminDashboardData | null>(
-      getAdminDashboard,
+      fetchDashboard,
       null,
       'دریافت اطلاعات داشبورد با خطا مواجه شد'
     );
@@ -365,10 +372,34 @@ export default function AdminDashboard() {
         </p>
       </div>
 
-      {loading ? (
-        <Spinner />
+      <nav aria-label="دسترسی سریع مدیریتی" className="mb-6 grid gap-3 sm:grid-cols-3">
+        {[
+          { to: '/instructor-approvals', title: 'بررسی درخواست‌ها', detail: 'تأیید و بررسی وضعیت مدرس‌ها' },
+          { to: '/exams', title: 'آزمون‌ها', detail: 'بررسی مدرس، وضعیت و شرکت‌کنندگان' },
+          { to: '/reports', title: 'گزارش‌ها', detail: 'مرور عملکرد و نتایج' },
+        ].map(item => <Link key={item.to} to={item.to} className={`${panel} group p-4 transition-colors duration-150 hover:border-brand-300 hover:bg-brand-50/50 focus-visible:outline-2 focus-visible:outline-brand-500 dark:hover:border-brand-700 dark:hover:bg-brand-950/30`}>
+          <span className="flex items-center justify-between font-semibold text-gray-900 dark:text-white">{item.title}<ChevronLeft size={16} className="text-gray-400 transition-transform group-hover:-translate-x-1 motion-reduce:transform-none" /></span>
+          <span className="mt-2 block text-xs text-gray-500 dark:text-gray-400">{item.detail}</span>
+        </Link>)}
+      </nav>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-gray-500 dark:text-gray-400" role="status">
+          {loading ? 'در حال به‌روزرسانی اطلاعات…' : updatedAt ? `آخرین به‌روزرسانی: ${updatedAt.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}` : 'نمای کلی سامانه'}
+        </p>
+        <button type="button" onClick={() => refetch()} disabled={loading} className={`${linkBtn} gap-2 disabled:cursor-wait disabled:opacity-50`}>
+          <RotateCw size={14} className={loading ? 'animate-spin motion-reduce:animate-none' : ''} />به‌روزرسانی
+        </button>
+      </div>
+      {error && data && <p role="alert" className="mb-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">به‌روزرسانی انجام نشد؛ اطلاعات قبلی نمایش داده می‌شود.</p>}
+      {loading && !data ? (
+        <div role="status" aria-label="در حال بارگذاری میزکار" className="space-y-5 animate-pulse motion-reduce:animate-none">
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">{[0,1,2,3].map(i => <div key={i} className="h-28 rounded-2xl bg-gray-100 dark:bg-gray-800" />)}</div>
+          <div className="grid gap-4 lg:grid-cols-2">{[0,1].map(i => <div key={i} className="h-64 rounded-2xl bg-gray-100 dark:bg-gray-800" />)}</div>
+        </div>
       ) : data ? (
-        <Content data={data} />
+        <motion.div initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: reduceMotion ? 0 : 0.2 }} aria-busy={loading}>
+          <Content data={data} />
+        </motion.div>
       ) : (
         <div className={`${panel} flex flex-col items-center gap-3 px-5 py-12`}>
           <p className="text-sm text-gray-500 dark:text-gray-400">

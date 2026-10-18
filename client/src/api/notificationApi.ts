@@ -61,3 +61,7 @@ export function markAllNotificationsRead(ids: string[]): void {
     // مثل markNotificationRead - optimistic؛ خطای شبکه با رفرش بعدی جبران می‌شه
   });
 }
+
+export function deleteNotification(id: string): Promise<void> {
+  return apiRequest<void>(`/notifications/${encodeURIComponent(id)}`, { method: 'DELETE' });
+}

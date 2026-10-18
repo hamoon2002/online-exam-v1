@@ -1,3 +1,4 @@
+import { notifyLogin } from '../../../lib/loginNotification';
 import { Router } from 'express';
 
 import {
@@ -45,6 +46,8 @@ router.post(
         parsed.data,
         ip,
       );
+
+    await notifyLogin(result.user.id, req.ip);
 
     setRefreshCookie(
       res,

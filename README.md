@@ -4,6 +4,8 @@ React/Vite + Express/Prisma + PostgreSQL، Redis و MinIO.
 
 ## توسعه در Codespaces
 
+📖 [راهنمای روزمرهٔ راه‌اندازی Docker، Redis، سرور و کلاینت + رفع خطاها](docs/CODESPACE-START.fa.md)
+
 - Node.js 22، Docker Compose و ffprobe (بسته ffmpeg) لازم‌اند.
 - فقط برای راه‌اندازی اولیه، از `server/.env.example` و `client/.env.example` کپی بسازید. فایل‌های `.env` موجود را جایگزین نکنید.
 - برای دو JWT secret، دو مقدار متفاوت با `openssl rand -hex 32` بسازید.

@@ -74,6 +74,18 @@ if (parsedEnv.RESEND_API_KEY || parsedEnv.NODE_ENV === 'production') {
 
 // Production must not accept sandbox payments or default storage credentials.
 if (parsedEnv.NODE_ENV === 'production') {
+  for (const key of ['JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET'] as const) {
+    const value = parsedEnv[key].trim();
+    if (
+      /^(replace[-_ ]with|change[-_ ]?me|placeholder)/i.test(value) ||
+      /^(.)\1+$/.test(value)
+    ) {
+      throw new Error(`${key} must be a random production secret`);
+    }
+  }
+  if (parsedEnv.JWT_ACCESS_SECRET === parsedEnv.JWT_REFRESH_SECRET) {
+    throw new Error('Access and refresh signing secrets must be different');
+  }
   for (const key of ['S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const) {
     if (
       !parsedEnv[key].trim() ||

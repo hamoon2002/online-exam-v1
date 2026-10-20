@@ -7,12 +7,13 @@ React/Vite + Express/Prisma + PostgreSQL، Redis و MinIO.
 📖 [راهنمای روزمرهٔ راه‌اندازی Docker، Redis، سرور و کلاینت + رفع خطاها](docs/CODESPACE-START.fa.md)
 
 - Node.js 22، Docker Compose و ffprobe (بسته ffmpeg) لازم‌اند.
-- فقط برای راه‌اندازی اولیه، از `server/.env.example` و `client/.env.example` کپی بسازید. فایل‌های `.env` موجود را جایگزین نکنید.
-- برای دو JWT secret، دو مقدار متفاوت با `openssl rand -hex 32` بسازید.
+- `node scripts/setup-local.cjs` تنظیمات محلی و رمزهای تصادفی مستقل را می‌سازد؛ تنظیمات موجود دیتابیس و فضای ذخیره حفظ می‌شوند. رمز Redis در تنظیم سرور و Compose هماهنگ می‌شود.
+- پورت‌های دیتابیس، Redis و MinIO فقط روی loopback میزبان منتشر می‌شوند؛ در Codespaces آن‌ها را Public نکنید.
 - در Codespaces آدرس CLIENT_URL را برابر URL پورت 5173، SERVER_URL و VITE_API_BASE_URL و VITE_SOCKET_URL را برابر URL پورت 4000 بگذارید. Redis و PostgreSQL داخلی می‌مانند؛ URL فورواردشده HTTPS برای آن‌ها مناسب نیست.
 - Google OAuth به Client ID واقعی یکسان در کلاینت و سرور و ثبت origin در Google نیاز دارد.
 
 ```bash
+node scripts/setup-local.cjs
 node scripts/prepare-vendor.cjs
 npm ci
 docker compose -p online-exam-v1 up -d postgres redis minio minio-init
@@ -75,3 +76,5 @@ npm test -w server
 - [تمرین و مرور](docs/practice.fa.md)
 
 راهنمای [ایمیل، پایش و استقرار staging](docs/OPERATIONS.fa.md).
+
+راهنمای امنیت، تست نصب و محدودیت‌های ارزیابی موبایل: [اعتبارسنجی امنیت](docs/SECURITY-VALIDATION.fa.md).

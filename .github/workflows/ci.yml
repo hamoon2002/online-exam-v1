@@ -82,6 +82,9 @@ jobs:
       - name: Build client
         run: npm run build -w client
 
+      - name: Check initial client transfer budget
+        run: node scripts/check-client-budget.cjs
+
       - name: Lint client
         run: npm run lint -w client
 
@@ -111,4 +114,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build backend image
-        run: docker build --tag online-exam-api:ci .
+        run: |
+          docker build --tag online-exam-api:ci .
+          docker run --rm --read-only --tmpfs /tmp online-exam-api:ci node -e "const fs=require('fs'); if(process.getuid()===0 || fs.existsSync('/app/server/src') || fs.existsSync('/app/server/.env') || fs.existsSync('/app/vendor')) process.exit(1); require('@prisma/client'); console.log('Non-root minimal runtime verified')"
+          docker run --rm --tmpfs /tmp online-exam-api:ci npx --no-install prisma --version
+
+  local-compose-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generate local credentials and validate Compose
+        run: |
+          node scripts/setup-local.cjs
+          docker compose config --quiet
+      - name: Start fresh local services
+        run: |
+          docker compose up -d postgres redis minio
+          for attempt in $(seq 1 60); do
+            if docker compose exec -T postgres sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' && docker compose exec -T redis sh -c 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping' | grep -qx PONG; then break; fi
+            sleep 2
+          done
+          docker compose exec -T postgres sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"'
+          docker compose exec -T redis sh -c 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping' | grep -qx PONG
+          docker compose exec -T redis redis-cli ping | grep -q NOAUTH
+          docker compose run --rm minio-init
+      - name: Clean isolated smoke environment
+        if: always()
+        run: docker compose down --volumes

@@ -1,7 +1,8 @@
 import AxeBuilder from '@axe-core/playwright';
 import { test, expect } from '@playwright/test';
 
-for (const temporaryFailure of [false, true]) test(`student answers survive reload and submission ${temporaryFailure ? 'retry' : 'success'}`, async ({ page }) => {
+for (const mobile of [false, true]) for (const temporaryFailure of [false, true]) test(`${mobile ? 'mobile' : 'desktop'} student answers survive reload and submission ${temporaryFailure ? 'retry' : 'success'}`, async ({ page }) => {
+  if (mobile) await page.setViewportSize({ width: 390, height: 844 });
   const now = new Date();
   const timing = { startedAt: now.toISOString(), expiresAt: new Date(+now + 600000).toISOString(), serverNow: now.toISOString() };
   let started = false;
@@ -39,6 +40,7 @@ for (const temporaryFailure of [false, true]) test(`student answers survive relo
   await page.getByRole('button', { name: 'شروع آزمون', exact: true }).click();
   await page.getByRole('button', { name: 'بله، شروع کن', exact: true }).click();
   expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole('button', { name: /چهار/ }).click();
   await expect.poll(() => answers).toEqual({ question: 1 });
   page.once('dialog', dialog => dialog.accept());

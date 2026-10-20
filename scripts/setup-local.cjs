@@ -37,7 +37,7 @@ const replacements = {
  REDIS_URL: `redis://:${encode(settings.REDIS_PASSWORD)}@127.0.0.1:${cache?.port || 6379}${cache?.pathname || ''}`,
  S3_ACCESS_KEY_ID: settings.MINIO_ROOT_USER, S3_SECRET_ACCESS_KEY: settings.MINIO_ROOT_PASSWORD,
  S3_BUCKET: settings.S3_BUCKET,
- JWT_ACCESS_SECRET: existing.JWT_ACCESS_SECRET || random(), JWT_REFRESH_SECRET: existing.JWT_REFRESH_SECRET || random(),
+ JWT_ACCESS_SECRET: (existing.JWT_ACCESS_SECRET && !existing.JWT_ACCESS_SECRET.startsWith('replace-with-') ? existing.JWT_ACCESS_SECRET : random()), JWT_REFRESH_SECRET: (existing.JWT_REFRESH_SECRET && !existing.JWT_REFRESH_SECRET.startsWith('replace-with-') ? existing.JWT_REFRESH_SECRET : random()),
 };
 let server = fs.existsSync(serverFile) ? fs.readFileSync(serverFile, 'utf8') : fs.readFileSync(path.join(root, 'server/.env.example'), 'utf8');
 for (const [key,value] of Object.entries(replacements)) {

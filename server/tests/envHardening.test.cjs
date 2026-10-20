@@ -18,6 +18,8 @@ const base = {
 const prod = {
   ...base,
   NODE_ENV: 'production',
+  JWT_ACCESS_SECRET: 'test-access-production-secret-distinct-123456',
+  JWT_REFRESH_SECRET: 'test-refresh-production-secret-distinct-987654',
   OTP_EMAIL_FROM: 'noreply@exam-platform.ir',
   ZARINPAL_SANDBOX: 'false',
   ZARINPAL_MERCHANT_ID: 'real-merchant',
@@ -89,5 +91,19 @@ test('configured email provider uses the explicit sender', () => {
       OTP_EMAIL_FROM: 'otp@exam-platform.ir',
     }).OTP_EMAIL_FROM,
     'otp@exam-platform.ir',
+  );
+});
+
+test('production rejects example, repeated and shared JWT secrets', () => {
+  for (const key of ['JWT_ACCESS_SECRET', 'JWT_REFRESH_SECRET']) {
+    for (const value of [
+      'replace-with-your-own-secret-at-least-32-characters',
+      'a'.repeat(40),
+    ]) {
+      assert.throws(() => parse({ ...prod, [key]: value }));
+    }
+  }
+  assert.throws(() =>
+    parse({ ...prod, JWT_REFRESH_SECRET: prod.JWT_ACCESS_SECRET }),
   );
 });

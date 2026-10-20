@@ -102,9 +102,9 @@ test('isStudentInExamGroups: عضو گروه آزمون true، بعد از تغ�
   try {
     assert.equal(
       await prisma.$transaction((tx) =>
-        isStudentInExamGroups(tx, ctx.exam.id, ctx.student.id)
+        isStudentInExamGroups(tx, ctx.exam.id, ctx.student.id),
       ),
-      true
+      true,
     );
 
     await prisma.exam.update({
@@ -114,9 +114,9 @@ test('isStudentInExamGroups: عضو گروه آزمون true، بعد از تغ�
 
     assert.equal(
       await prisma.$transaction((tx) =>
-        isStudentInExamGroups(tx, ctx.exam.id, ctx.student.id)
+        isStudentInExamGroups(tx, ctx.exam.id, ctx.student.id),
       ),
-      false
+      false,
     );
   } finally {
     await cleanup(ctx);

@@ -16,7 +16,7 @@ export type LockedExamRow = {
 // Use the exam values read under the lock, not a pre-lock snapshot.
 export async function lockExamForShare(
   tx: Tx,
-  examId: string
+  examId: string,
 ): Promise<LockedExamRow> {
   const rows = await tx.$queryRaw<LockedExamRow[]>`
     SELECT "id", "status", "scheduledAt", "durationMinutes"
@@ -26,10 +26,7 @@ export async function lockExamForShare(
   return rows[0];
 }
 
-export async function lockExamForUpdate(
-  tx: Tx,
-  examId: string
-): Promise<void> {
+export async function lockExamForUpdate(tx: Tx, examId: string): Promise<void> {
   const rows = await tx.$queryRaw<{ id: string }[]>`
     SELECT "id" FROM "exams" WHERE "id" = ${examId} FOR UPDATE
   `;
@@ -40,7 +37,7 @@ export async function lockExamForUpdate(
 export async function withExamWriteLock<T>(
   examId: string,
   run: (tx: Tx, ctx: { attemptCount: number }) => Promise<T>,
-  opts: { beforeExamLock?: (tx: Tx) => Promise<void> } = {}
+  opts: { beforeExamLock?: (tx: Tx) => Promise<void> } = {},
 ): Promise<T> {
   return prisma.$transaction(async (tx) => {
     await opts.beforeExamLock?.(tx);

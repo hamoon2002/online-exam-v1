@@ -43,7 +43,11 @@ router.get(
       const isMember =
         role === 'Student' &&
         (await prisma.group.count({
-          where: { id: groupId, approvalStatus: 'Approved' as const, students: { some: { id: sub } } },
+          where: {
+            id: groupId,
+            approvalStatus: 'Approved' as const,
+            students: { some: { id: sub } },
+          },
         })) > 0;
       if (role !== 'SuperAdmin' && !isOwner && !isMember) {
         throw forbidden();
@@ -61,8 +65,15 @@ router.get(
       role === 'SuperAdmin'
         ? {}
         : role === 'Instructor'
-        ? { groups: { some: { instructorId: sub } } }
-        : { groups: { some: { approvalStatus: 'Approved' as const, students: { some: { id: sub } } } } };
+          ? { groups: { some: { instructorId: sub } } }
+          : {
+              groups: {
+                some: {
+                  approvalStatus: 'Approved' as const,
+                  students: { some: { id: sub } },
+                },
+              },
+            };
 
     const sessions = await prisma.lessonSession.findMany({
       where,
@@ -70,7 +81,7 @@ router.get(
       orderBy: sessionOrder,
     });
     res.json(sessions.map(serializeSession));
-  })
+  }),
 );
 
 // Instructor lessons require owned groups; only SuperAdmin may create ungrouped lessons.
@@ -115,7 +126,7 @@ router.post(
     });
 
     res.status(201).json(serializeSession(session));
-  })
+  }),
 );
 
 router.put(
@@ -179,7 +190,7 @@ router.put(
     ]);
 
     res.json(serializeSession(session));
-  })
+  }),
 );
 
 // Authorize access before issuing a fresh signed URL for private uploads.
@@ -190,7 +201,7 @@ router.get(
     const { session, allowed } = await loadAccessibleSession(
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!session) throw notFound('جلسه یافت نشد');
     if (!allowed) throw forbidden();
@@ -201,7 +212,7 @@ router.get(
 
     const url = await getSignedDownloadUrl(session.videoObjectUrl);
     res.json({ url });
-  })
+  }),
 );
 
 // Authorize attachment downloads through their parent lesson.
@@ -218,14 +229,14 @@ router.get(
     const { session, allowed } = await loadAccessibleSession(
       attachment.sessionId,
       sub,
-      role
+      role,
     );
     if (!session) throw notFound('جلسه یافت نشد');
     if (!allowed) throw forbidden();
 
     const url = await getSignedDownloadUrl(attachment.fileUrl);
     res.json({ url });
-  })
+  }),
 );
 
 router.delete(
@@ -252,7 +263,7 @@ router.delete(
     ]);
 
     res.status(204).end();
-  })
+  }),
 );
 
 export default router;

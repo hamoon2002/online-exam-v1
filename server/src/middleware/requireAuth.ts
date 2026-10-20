@@ -12,7 +12,11 @@ declare global {
   }
 }
 
-export async function requireAuth(req: Request, res: Response, next: NextFunction) {
+export async function requireAuth(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) {
   const header = req.headers.authorization;
   if (!header?.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'توکن ارسال نشده' });
@@ -36,7 +40,9 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
     return next(err);
   }
   if (!valid) {
-    return res.status(401).json({ error: 'نشست شما پایان یافته است. لطفاً دوباره وارد شوید.' });
+    return res
+      .status(401)
+      .json({ error: 'نشست شما پایان یافته است. لطفاً دوباره وارد شوید.' });
   }
 
   // Recheck account validity even when session revocation has failed.
@@ -46,7 +52,9 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
       select: { role: true, approvalStatus: true },
     });
     if (!user || user.role !== payload.role) {
-      return res.status(401).json({ error: 'حساب یا نقش کاربر دیگر معتبر نیست' });
+      return res
+        .status(401)
+        .json({ error: 'حساب یا نقش کاربر دیگر معتبر نیست' });
     }
     const message = instructorApprovalBlockMessage(user);
     if (message) return res.status(401).json({ error: message });

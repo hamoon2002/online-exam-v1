@@ -84,9 +84,11 @@ function isBinarySpreadsheet(buffer: Buffer): boolean {
 // Count physical CSV lines conservatively, including line breaks inside quoted fields.
 function countTextLines(buffer: Buffer): number {
   let breaks = 0;
-  for (let i = buffer.indexOf(10); i !== -1; i = buffer.indexOf(10, i + 1)) breaks++;
+  for (let i = buffer.indexOf(10); i !== -1; i = buffer.indexOf(10, i + 1))
+    breaks++;
   if (breaks === 0) {
-    for (let i = buffer.indexOf(13); i !== -1; i = buffer.indexOf(13, i + 1)) breaks++;
+    for (let i = buffer.indexOf(13); i !== -1; i = buffer.indexOf(13, i + 1))
+      breaks++;
   }
   const last = buffer.length ? buffer[buffer.length - 1] : 10;
   return breaks + (last === 10 || last === 13 ? 0 : 1);
@@ -95,8 +97,8 @@ function countTextLines(buffer: Buffer): number {
 function rowLimitError(): ReturnType<typeof badRequest> {
   return badRequest(
     `فایل بیشتر از ${MAX_SHEET_ROWS.toLocaleString(
-      'fa-IR'
-    )} ردیف دارد (ردیف‌های خالی هم شمرده می‌شوند)؛ ردیف‌های خالیِ اضافه را حذف کن یا فایل را تکه‌تکه کن`
+      'fa-IR',
+    )} ردیف دارد (ردیف‌های خالی هم شمرده می‌شوند)؛ ردیف‌های خالیِ اضافه را حذف کن یا فایل را تکه‌تکه کن`,
   );
 }
 
@@ -150,10 +152,10 @@ export function parseQuestionsExcel(buffer: Buffer): QuestionImportResult {
   if (filledRowCount > MAX_IMPORT_ROWS) {
     throw badRequest(
       `حداکثر ${MAX_IMPORT_ROWS.toLocaleString(
-        'fa-IR'
+        'fa-IR',
       )} سوال تو هر فایل قابل‌ایمپورته (فایل ${filledRowCount.toLocaleString(
-        'fa-IR'
-      )} ردیف پُر دارد)؛ فایل رو تکه‌تکه کن`
+        'fa-IR',
+      )} ردیف پُر دارد)؛ فایل رو تکه‌تکه کن`,
     );
   }
 
@@ -177,7 +179,7 @@ export function parseQuestionsExcel(buffer: Buffer): QuestionImportResult {
     const options = rawOptions.slice(0, lastFilledIndex + 1);
 
     const correctText = toLatinDigits(
-      String(row[CORRECT_INDEX_COL] ?? '').trim()
+      String(row[CORRECT_INDEX_COL] ?? '').trim(),
     );
     const correctNumber = Number(correctText);
     const difficulty = normalizeDifficulty(row[DIFFICULTY_COL]);
@@ -237,7 +239,7 @@ export function parseQuestionsExcel(buffer: Buffer): QuestionImportResult {
       errors.push({
         row: excelRowNumber,
         message: `شماره‌ی گزینه‌ی صحیح باید بین ۱ و ${options.length.toLocaleString(
-          'fa-IR'
+          'fa-IR',
         )} باشه (تعداد گزینه‌های پر)`,
       });
       return;

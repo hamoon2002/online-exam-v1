@@ -11,15 +11,22 @@ import { instructorApprovalBlockMessage } from '../lib/accountAccess';
 let io: Server | null = null;
 let stopSweep: (() => Promise<void>) | undefined;
 
-export async function stopSocketSweep() { await stopSweep?.(); }
+export async function stopSocketSweep() {
+  await stopSweep?.();
+}
 
-async function isAccountAllowed(userId: string, role: string): Promise<boolean> {
+async function isAccountAllowed(
+  userId: string,
+  role: string,
+): Promise<boolean> {
   if (role !== 'Instructor') return true;
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: { role: true, approvalStatus: true },
   });
-  return Boolean(user && user.role === role && !instructorApprovalBlockMessage(user));
+  return Boolean(
+    user && user.role === role && !instructorApprovalBlockMessage(user),
+  );
 }
 
 const userRoom = (userId: string) => `user:${userId}`;
@@ -72,24 +79,29 @@ export function initSocket(httpServer: HttpServer): Server {
 const SESSION_SWEEP_INTERVAL_MS = 60_000;
 
 function startSocketSessionSweep(server: Server) {
-  return periodicTask(async () => {
-    try {
-      const users = new Map<string, string>();
-      for (const socket of server.sockets.sockets.values()) {
-        users.set(socket.data.userId as string, socket.data.role as string);
-      }
+  return periodicTask(
+    async () => {
+      try {
+        const users = new Map<string, string>();
+        for (const socket of server.sockets.sockets.values()) {
+          users.set(socket.data.userId as string, socket.data.role as string);
+        }
 
-      for (const [userId, role] of users) {
-        if (
-          (await getActiveSessionId(userId)) !== null &&
-          (await isAccountAllowed(userId, role))
-        ) continue;
-        forceLogoutOtherSessions(userId, undefined, 'session-ended');
+        for (const [userId, role] of users) {
+          if (
+            (await getActiveSessionId(userId)) !== null &&
+            (await isAccountAllowed(userId, role))
+          )
+            continue;
+          forceLogoutOtherSessions(userId, undefined, 'session-ended');
+        }
+      } catch (err) {
+        logEvent('error', 'socket session sweep failed:', err);
       }
-    } catch (err) {
-      logEvent('error', 'socket session sweep failed:', err);
-    }
-  }, SESSION_SWEEP_INTERVAL_MS, err => logEvent('error', 'socket session sweep failed:', err));
+    },
+    SESSION_SWEEP_INTERVAL_MS,
+    (err) => logEvent('error', 'socket session sweep failed:', err),
+  );
 }
 
 export function getIo(): Server {
@@ -100,7 +112,7 @@ export function getIo(): Server {
 export function forceLogoutOtherSessions(
   userId: string,
   exceptSessionId?: string,
-  reason = 'new-session-started'
+  reason = 'new-session-started',
 ) {
   if (!io) return;
   const room = io.sockets.adapter.rooms.get(userRoom(userId));

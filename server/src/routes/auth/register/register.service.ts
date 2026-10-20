@@ -127,14 +127,22 @@ export async function registerUser(data: RegisterData, ip: string) {
 
   const isNewUser = !user;
 
-  user = await prisma.$transaction(async db => {
+  user = await prisma.$transaction(async (db) => {
     const policy = await readCreationPolicy(db);
-    if (user) await db.$queryRaw`SELECT id FROM users WHERE id = ${user.id} FOR UPDATE`;
-    let candidate = user ? await db.user.findUnique({ where: { id: user.id } }) : null;
+    if (user)
+      await db.$queryRaw`SELECT id FROM users WHERE id = ${user.id} FOR UPDATE`;
+    let candidate = user
+      ? await db.user.findUnique({ where: { id: user.id } })
+      : null;
     // Re-registering an unverified account must not override a review decision.
-    const approvalStatus = data.role !== 'Instructor' ? 'Approved'
-      : candidate?.role === 'Instructor' ? candidate.approvalStatus
-      : policy.requireInstructorApproval ? 'Pending' : 'Approved';
+    const approvalStatus =
+      data.role !== 'Instructor'
+        ? 'Approved'
+        : candidate?.role === 'Instructor'
+          ? candidate.approvalStatus
+          : policy.requireInstructorApproval
+            ? 'Pending'
+            : 'Approved';
     if (!candidate) {
       candidate = await db.user.create({
         data: {
@@ -199,14 +207,14 @@ export async function registerUser(data: RegisterData, ip: string) {
     await notifyUser(user.id, 'ثبت‌نام با موفقیت انجام شد', 'info').catch(
       (error) => {
         logEvent('error', 'notifyUser failed:', error);
-      }
+      },
     );
 
     if (data.role === 'Instructor' && user.approvalStatus === 'Pending') {
       await notifyRoles(
         ['SuperAdmin'],
         `مدرس جدید ${user.name || user.username} منتظر تایید حساب است`,
-        'people'
+        'people',
       ).catch((error) => {
         logEvent('error', 'notifyRoles failed:', error);
       });

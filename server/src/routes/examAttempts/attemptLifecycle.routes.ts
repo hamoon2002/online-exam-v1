@@ -36,7 +36,7 @@ router.post(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.examId,
       sub,
-      'Student'
+      'Student',
     );
     if (!exam) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
@@ -95,8 +95,7 @@ router.post(
 
         const now = new Date();
         // Late starters receive only the time remaining in the shared exam window.
-        const fullDurationEnd =
-          now.getTime() + locked.durationMinutes * 60_000;
+        const fullDurationEnd = now.getTime() + locked.durationMinutes * 60_000;
         const expiresAt = new Date(Math.min(fullDurationEnd, windowEnd));
 
         return tx.examAttempt.create({
@@ -138,7 +137,7 @@ router.post(
       }
       throw err;
     }
-  })
+  }),
 );
 
 router.post(
@@ -149,7 +148,7 @@ router.post(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.examId,
       sub,
-      'Student'
+      'Student',
     );
     if (!exam) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
@@ -188,12 +187,12 @@ router.post(
 
     if (won) {
       await notifyInstructorsAboutFinish(attempt).catch((err) =>
-        logEvent('error', 'notifyInstructorsAboutFinish failed:', err)
+        logEvent('error', 'notifyInstructorsAboutFinish failed:', err),
       );
     }
 
     res.json(serializeAttempt(attempt));
-  })
+  }),
 );
 
 router.patch(
@@ -204,7 +203,7 @@ router.patch(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.examId,
       sub,
-      'Student'
+      'Student',
     );
     if (!exam) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
@@ -250,7 +249,7 @@ router.patch(
     }
 
     res.json({ saved: true, revision });
-  })
+  }),
 );
 
 export default router;

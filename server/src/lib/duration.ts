@@ -8,7 +8,9 @@ const UNIT_TO_SECONDS: Record<string, number> = {
 export function durationToSeconds(input: string): number {
   const match = /^(\d+)\s*(s|m|h|d)$/.exec(input.trim());
   if (!match) {
-    throw new Error(`Invalid duration string: "${input}". Use formats like 15m, 2h, 30d.`);
+    throw new Error(
+      `Invalid duration string: "${input}". Use formats like 15m, 2h, 30d.`,
+    );
   }
   const [, amountStr, unit] = match;
   return Number(amountStr) * UNIT_TO_SECONDS[unit];

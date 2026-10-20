@@ -48,14 +48,10 @@ router.post(
         ? await prepareQuotaGuard(sub, 'questions')
         : undefined;
 
-    const question = await createExamQuestion(
-      exam.id,
-      parsed.data,
-      quotaGuard
-    );
+    const question = await createExamQuestion(exam.id, parsed.data, quotaGuard);
 
     return res.status(201).json(serializeExamQuestion(question));
-  })
+  }),
 );
 
 router.post(
@@ -80,11 +76,11 @@ router.post(
     const questions = await createExamQuestionsBulk(
       exam.id,
       parsed.data,
-      quotaGuard
+      quotaGuard,
     );
 
     return res.status(201).json(questions.map(serializeExamQuestion));
-  })
+  }),
 );
 
 router.put(
@@ -104,11 +100,11 @@ router.put(
     const question = await updateExamQuestion(
       exam.id,
       req.params.questionId,
-      parsed.data
+      parsed.data,
     );
 
     return res.json(serializeExamQuestion(question));
-  })
+  }),
 );
 
 router.delete(
@@ -122,7 +118,7 @@ router.delete(
     await deleteExamQuestion(exam.id, req.params.questionId);
 
     return res.status(204).end();
-  })
+  }),
 );
 
 export default router;

@@ -33,7 +33,7 @@ export async function finalizeAttempt(input: {
     select: { id: true, correctIndexSnapshot: true },
   });
   const correctCount = questions.filter(
-    (q) => input.answers[q.id] === q.correctIndexSnapshot
+    (q) => input.answers[q.id] === q.correctIndexSnapshot,
   ).length;
 
   const { count } = await prisma.examAttempt.updateMany({
@@ -78,15 +78,15 @@ export async function notifyInstructorsAboutFinish(attempt: {
       notifyUser(
         instructorId,
         `${studentName} آزمون «${exam.title}» رو با نمره‌ی ${attempt.correctCount} از ${attempt.totalQuestions} تموم کرد`,
-        'award'
-      )
-    )
+        'award',
+      ),
+    ),
   );
 }
 
 // Finalize abandoned attempts using saved answers after the grace period.
 export async function finalizeExpiredAttempts(
-  opts: { examId?: string; studentId?: string; limit?: number } = {}
+  opts: { examId?: string; studentId?: string; limit?: number } = {},
 ): Promise<number> {
   const stale = await prisma.examAttempt.findMany({
     where: {
@@ -110,12 +110,14 @@ export async function finalizeExpiredAttempts(
     if (!won) continue;
     finalized++;
     await notifyInstructorsAboutFinish(attempt).catch((err) =>
-      logEvent('error', 'notifyInstructorsAboutFinish failed:', err)
+      logEvent('error', 'notifyInstructorsAboutFinish failed:', err),
     );
   }
   return finalized;
 }
 
 export function startAttemptSweeper(intervalMs = 60_000) {
-  return periodicTask(finalizeExpiredAttempts, intervalMs, error => logEvent('error', 'attempt_sweep_failed', error));
+  return periodicTask(finalizeExpiredAttempts, intervalMs, (error) =>
+    logEvent('error', 'attempt_sweep_failed', error),
+  );
 }

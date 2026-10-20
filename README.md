@@ -13,6 +13,7 @@ React/Vite + Express/Prisma + PostgreSQL، Redis و MinIO.
 - Google OAuth به Client ID واقعی یکسان در کلاینت و سرور و ثبت origin در Google نیاز دارد.
 
 ```bash
+node scripts/prepare-vendor.cjs
 npm ci
 docker compose -p online-exam-v1 up -d postgres redis minio minio-init
 cd server
@@ -31,7 +32,7 @@ bash scripts/start-codespace.sh
 - خطای startup شامل علت واقعی (از جمله EADDRINUSE) است. لاگ‌های برنامه از logger ساخت‌یافتهٔ مشترک عبور می‌کنند؛ لاگ query خود Prisma و خروجی ابزارهای خط فرمان مستقل‌اند.
 - `/health` اتصال سرویس‌ها را می‌سنجد، نه تطابق تمام ستون‌های دیتابیس. موفق بودن آن جایگزین migration نیست.
 - تغییر دستی schema را پیش از اجرای migration با تاریخچه تطبیق دهید؛ برای نسخه‌های قدیمی از [راهنمای بازیابی](server/prisma/recovery/README.fa.md) استفاده کنید.
-- پیش از فعال‌سازی ایمیل، فرستندهٔ `server/src/services/otpSender.ts` را از مقدار نمونه به دامنهٔ تأییدشده در Resend تغییر دهید.
+- فرستندهٔ ایمیل را با `OTP_EMAIL_FROM` روی دامنهٔ تأییدشدهٔ Resend تنظیم کنید.
 - `TRUST_PROXY` را متناسب با تعداد پروکسی‌های مورداعتماد تنظیم کنید تا IP ورود و محدودیت درخواست درست محاسبه شوند.
 
 ## Docker سرور
@@ -72,3 +73,5 @@ npm test -w server
 - [میزکار کاربر ارشد و اعلان‌ها](docs/admin-workspace.fa.md)
 - [قوانین تأیید مدرس و گروه](docs/approval-policy.fa.md)
 - [تمرین و مرور](docs/practice.fa.md)
+
+راهنمای [ایمیل، پایش و استقرار staging](docs/OPERATIONS.fa.md).

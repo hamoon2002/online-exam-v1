@@ -59,7 +59,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
 
       - name: Install dependencies
-        run: npm ci
+        run: node scripts/prepare-vendor.cjs && npm ci
 
       - name: Generate Prisma client
         run: npx prisma generate
@@ -72,6 +72,9 @@ jobs:
       - name: Verify migrated schema matches Prisma model
         run: npx prisma migrate diff --from-url "$DATABASE_URL" --to-schema-datamodel prisma/schema.prisma --exit-code
         working-directory: server
+
+      - name: Lint and check server formatting
+        run: npm run lint -w server && npm run format:check -w server
 
       - name: Build server
         run: npm run build -w server
@@ -89,13 +92,13 @@ jobs:
         run: npx playwright install --with-deps chromium
         working-directory: client
 
-      - name: Run admin browser checks
+      - name: Run browser and accessibility checks
         run: npm run test:e2e -w client
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: admin-browser-results
+          name: browser-results
           path: client/test-results/
           if-no-files-found: ignore
 

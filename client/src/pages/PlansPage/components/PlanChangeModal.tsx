@@ -15,7 +15,7 @@ function PlanChangeModal({
   onConfirm: () => void;
 }) {
   return (
-    <Modal isOpen={!!plan} onClose={onClose}>
+    <Modal label="تأیید تغییر اشتراک" isOpen={!!plan} onClose={onClose}>
       {plan && (
         <div className="text-center">
           <h3 className="mb-2 text-base font-bold text-gray-900 dark:text-white">

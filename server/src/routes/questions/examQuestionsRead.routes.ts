@@ -57,12 +57,12 @@ router.get(
           ...(canSeeAnswerKey
             ? { correctOptionIndex: question.correctIndexSnapshot }
             : {}),
-        }))
+        })),
       );
     }
 
     return res.json(questions.map(serializeExamQuestion));
-  })
+  }),
 );
 
 router.get(
@@ -81,7 +81,7 @@ router.get(
     });
 
     return res.json({ count });
-  })
+  }),
 );
 
 export default router;

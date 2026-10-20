@@ -54,7 +54,7 @@ async function main() {
     console.log(
       `[${dryRun ? 'dry-run' : 'update'}] ${user.id}: "${
         user.username ?? '—'
-      }" -> "${value}"`
+      }" -> "${value}"`,
     );
 
     if (!dryRun) {
@@ -69,7 +69,7 @@ async function main() {
   console.log(
     `\nتمام شد. ${updated} کاربر ${
       dryRun ? 'نیاز به آپدیت داشتن' : 'آپدیت شدن'
-    }, ${unchanged} از قبل درست بودن, ${skipped} رد شدن.`
+    }, ${unchanged} از قبل درست بودن, ${skipped} رد شدن.`,
   );
   process.exit(0);
 }

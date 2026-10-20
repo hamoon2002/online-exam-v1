@@ -39,9 +39,33 @@ export function detectPdf(header: Buffer): string | null {
 
 // Exclude image and audio-only ISO media brands.
 const MP4_VIDEO_BRANDS = new Set([
-  'isom', 'iso2', 'iso3', 'iso4', 'iso5', 'iso6', 'iso7', 'iso8', 'iso9',
-  'mp41', 'mp42', 'mp71', 'avc1', 'dash', 'msnv', 'mmp4', 'f4v ',
-  'M4V ', 'M4VH', 'M4VP', '3gp4', '3gp5', '3gp6', '3gp7', '3g2a', 'XAVC', 'NDAS',
+  'isom',
+  'iso2',
+  'iso3',
+  'iso4',
+  'iso5',
+  'iso6',
+  'iso7',
+  'iso8',
+  'iso9',
+  'mp41',
+  'mp42',
+  'mp71',
+  'avc1',
+  'dash',
+  'msnv',
+  'mmp4',
+  'f4v ',
+  'M4V ',
+  'M4VH',
+  'M4VP',
+  '3gp4',
+  '3gp5',
+  '3gp6',
+  '3gp7',
+  '3g2a',
+  'XAVC',
+  'NDAS',
 ]);
 
 export function detectVideo(header: Buffer): string | null {
@@ -49,10 +73,11 @@ export function detectVideo(header: Buffer): string | null {
     const declared = header.readUInt32BE(0);
     const boxEnd = Math.min(
       header.length,
-      declared >= 16 ? declared : header.length
+      declared >= 16 ? declared : header.length,
     );
     const brands = [ascii(header, 8, 12)];
-    for (let i = 16; i + 4 <= boxEnd; i += 4) brands.push(ascii(header, i, i + 4));
+    for (let i = 16; i + 4 <= boxEnd; i += 4)
+      brands.push(ascii(header, i, i + 4));
     if (brands[0] === 'qt  ') return 'video/quicktime';
     if (brands.some((b) => MP4_VIDEO_BRANDS.has(b))) return 'video/mp4';
     return null;
@@ -97,6 +122,7 @@ export function checkCsv(buffer: Buffer): SpreadsheetCheck {
     };
   }
 
+  // eslint-disable-next-line no-control-regex -- Reject binary control bytes in CSV.
   if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/.test(text)) {
     return { error: 'محتوای فایل متنی CSV معتبر نیست (کاراکتر باینری دارد)' };
   }
@@ -104,7 +130,9 @@ export function checkCsv(buffer: Buffer): SpreadsheetCheck {
   const firstLine = text.split(/\r\n|\n|\r/).find((l) => l.trim() !== '');
   if (!firstLine) return { error: 'فایل CSV هیچ داده‌ای نداره' };
   if (!/[,;\t|]/.test(firstLine)) {
-    return { error: 'ساختار CSV معتبر نیست؛ ستون‌ها باید با , یا ; جدا شده باشند' };
+    return {
+      error: 'ساختار CSV معتبر نیست؛ ستون‌ها باید با , یا ; جدا شده باشند',
+    };
   }
 
   const quotes = text.split('"').length - 1;
@@ -119,7 +147,10 @@ export function detectSpreadsheet(buffer: Buffer): SpreadsheetCheck {
   if (startsWith(buffer, ZIP_MAGIC)) {
     return isStructuredWorkbook(buffer, 'xlsx')
       ? { mime: MIME_XLSX }
-      : { error: 'ساختار فایل اکسل (xlsx) نامعتبر یا حجم بازشدهٔ آن بیش از حد مجاز است' };
+      : {
+          error:
+            'ساختار فایل اکسل (xlsx) نامعتبر یا حجم بازشدهٔ آن بیش از حد مجاز است',
+        };
   }
   if (startsWith(buffer, OLE_MAGIC)) {
     return isStructuredWorkbook(buffer, 'xls')

@@ -23,7 +23,7 @@ export type AccessibleExam = {
 export async function loadAccessibleExam(
   examId: string,
   userId: string,
-  role: Role
+  role: Role,
 ): Promise<{ exam: AccessibleExam | null; allowed: boolean }> {
   const exam = await prisma.exam.findUnique({
     where: { id: examId },
@@ -42,7 +42,11 @@ export async function loadAccessibleExam(
   if (exam.status !== 'Published') return { exam, allowed: false };
 
   const isMember = await prisma.group.count({
-    where: { id: { in: groupIds }, approvalStatus: 'Approved', students: { some: { id: userId } } },
+    where: {
+      id: { in: groupIds },
+      approvalStatus: 'Approved',
+      students: { some: { id: userId } },
+    },
   });
   if (isMember > 0) return { exam, allowed: true };
 
@@ -56,7 +60,7 @@ export async function loadAccessibleExam(
 export async function isStudentInExamGroups(
   db: Prisma.TransactionClient,
   examId: string,
-  studentId: string
+  studentId: string,
 ): Promise<boolean> {
   const count = await db.group.count({
     where: {

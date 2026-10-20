@@ -135,7 +135,11 @@ test('لاگین جدید هم‌زمان با refresh دستگاه قبلی: si
         createSession(userId),
         rotateSessionWithGrace(userId, s0),
       ]);
-      assert.notEqual(rotated, newLogin, 'دستگاه قبلی نباید sid لاگین جدید رو بگیره');
+      assert.notEqual(
+        rotated,
+        newLogin,
+        'دستگاه قبلی نباید sid لاگین جدید رو بگیره',
+      );
       // بعد از تموم‌شدن هر دو، فقط لاگین جدید معتبره
       assert.equal(await isSessionValid(userId, newLogin), true);
       assert.equal(await isSessionValid(userId, s0), false);
@@ -167,13 +171,13 @@ test('withSessionStore: خطای مخزن نشست ۵۰۳ می‌شه، نه ی�
     withSessionStore(async () => {
       throw new Error('ECONNREFUSED');
     }),
-    (e: unknown) => e instanceof AppError && e.statusCode === 503
+    (e: unknown) => e instanceof AppError && e.statusCode === 503,
   );
 });
 
 test('withSessionStore: درخواست معلق (Redis قطع) بعد از timeout ۵۰۳ می‌شه', async () => {
   await assert.rejects(
     withSessionStore(() => new Promise<never>(() => undefined)),
-    (e: unknown) => e instanceof AppError && e.statusCode === 503
+    (e: unknown) => e instanceof AppError && e.statusCode === 503,
   );
 });

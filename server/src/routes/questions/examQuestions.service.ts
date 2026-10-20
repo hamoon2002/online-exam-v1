@@ -24,7 +24,7 @@ export type ExamQuestionInput = {
 export async function loadExamOrThrow(
   examId: string,
   userId: string,
-  role: Role
+  role: Role,
 ): Promise<AccessibleExam> {
   const { exam, allowed } = await loadAccessibleExam(examId, userId, role);
   if (!exam) throw notFound('آزمون یافت نشد');
@@ -49,7 +49,7 @@ export function assertExamQuestionsEditable(exam: {
 }): void {
   if (exam._count.attempts > 0) {
     throw conflict(
-      'این آزمون قبلاً توسط دانشجو شروع شده - سوال‌هاش قابل تغییر نیستن'
+      'این آزمون قبلاً توسط دانشجو شروع شده - سوال‌هاش قابل تغییر نیستن',
     );
   }
 }
@@ -62,7 +62,7 @@ export type BeforeExamLock = (tx: Prisma.TransactionClient) => Promise<void>;
 export async function withNextOrder<T>(
   examId: string,
   run: (tx: Prisma.TransactionClient, startOrder: number) => Promise<T>,
-  beforeExamLock?: BeforeExamLock
+  beforeExamLock?: BeforeExamLock,
 ): Promise<T> {
   for (let attempt = 1; ; attempt += 1) {
     try {
@@ -78,7 +78,7 @@ export async function withNextOrder<T>(
 
           return run(tx, (_max.order ?? -1) + 1);
         },
-        { beforeExamLock }
+        { beforeExamLock },
       );
     } catch (err) {
       const isOrderConflict =
@@ -95,7 +95,7 @@ export async function withNextOrder<T>(
 }
 
 export async function getExamQuestions(
-  examId: string
+  examId: string,
 ): Promise<ExamQuestionRecord[]> {
   return prisma.examQuestion.findMany({
     where: {
@@ -110,7 +110,7 @@ export async function getExamQuestions(
 export async function createExamQuestion(
   examId: string,
   input: ExamQuestionInput,
-  beforeExamLock?: BeforeExamLock
+  beforeExamLock?: BeforeExamLock,
 ): Promise<ExamQuestionRecord> {
   return withNextOrder(
     examId,
@@ -124,14 +124,14 @@ export async function createExamQuestion(
           correctIndexSnapshot: input.correctOptionIndex,
         },
       }),
-    beforeExamLock
+    beforeExamLock,
   );
 }
 
 export async function createExamQuestionsBulk(
   examId: string,
   questions: ExamQuestionInput[],
-  beforeExamLock?: BeforeExamLock
+  beforeExamLock?: BeforeExamLock,
 ): Promise<ExamQuestionRecord[]> {
   return withNextOrder(
     examId,
@@ -148,20 +148,20 @@ export async function createExamQuestionsBulk(
               optionsSnapshot: question.options,
               correctIndexSnapshot: question.correctOptionIndex,
             },
-          })
+          }),
         );
       }
 
       return created;
     },
-    beforeExamLock
+    beforeExamLock,
   );
 }
 
 export async function updateExamQuestion(
   examId: string,
   questionId: string,
-  input: ExamQuestionInput
+  input: ExamQuestionInput,
 ): Promise<ExamQuestionRecord> {
   return withExamWriteLock(examId, async (tx, { attemptCount }) => {
     assertExamQuestionsEditable({ _count: { attempts: attemptCount } });
@@ -191,7 +191,7 @@ export async function updateExamQuestion(
 
 export async function deleteExamQuestion(
   examId: string,
-  questionId: string
+  questionId: string,
 ): Promise<void> {
   await withExamWriteLock(examId, async (tx, { attemptCount }) => {
     assertExamQuestionsEditable({ _count: { attempts: attemptCount } });

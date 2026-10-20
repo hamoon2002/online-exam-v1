@@ -30,22 +30,34 @@ router.get(
       role === 'SuperAdmin'
         ? {}
         : role === 'Instructor'
-        ? { instructorId: sub }
-        : {
-            status: 'Published' as const,
-            groups: { some: { approvalStatus: 'Approved' as const, students: { some: { id: sub } } } },
-          };
+          ? { instructorId: sub }
+          : {
+              status: 'Published' as const,
+              groups: {
+                some: {
+                  approvalStatus: 'Approved' as const,
+                  students: { some: { id: sub } },
+                },
+              },
+            };
 
     const exams = await prisma.exam.findMany({
       where,
-      include: { ...examInclude, ...(role === 'SuperAdmin' ? { instructor: { select: { id: true, name: true, username: true } } } : {}) },
+      include: {
+        ...examInclude,
+        ...(role === 'SuperAdmin'
+          ? { instructor: { select: { id: true, name: true, username: true } } }
+          : {}),
+      },
       orderBy: { scheduledAt: 'desc' },
     });
-    res.json(exams.map(exam => ({
-      ...serializeExam(exam),
-      ...(role === 'SuperAdmin' ? { instructor: exam.instructor } : {}),
-    })));
-  })
+    res.json(
+      exams.map((exam) => ({
+        ...serializeExam(exam),
+        ...(role === 'SuperAdmin' ? { instructor: exam.instructor } : {}),
+      })),
+    );
+  }),
 );
 
 router.get(
@@ -55,13 +67,13 @@ router.get(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!exam) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
 
     res.json(serializeExam(exam));
-  })
+  }),
 );
 
 router.post(
@@ -89,11 +101,11 @@ router.post(
           groups: { connect: parsed.data.groupIds.map((id) => ({ id })) },
         },
         include: examInclude,
-      })
+      }),
     );
 
     res.status(201).json(serializeExam(exam));
-  })
+  }),
 );
 
 router.put(
@@ -105,7 +117,7 @@ router.put(
     const { exam: existing, allowed } = await loadAccessibleExam(
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!existing) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
@@ -118,11 +130,11 @@ router.put(
       role,
       sub,
       existing,
-      parsed.data
+      parsed.data,
     );
 
     res.json(serializeExam(exam));
-  })
+  }),
 );
 
 router.post(
@@ -133,7 +145,7 @@ router.post(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!exam) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
@@ -155,7 +167,7 @@ router.post(
       include: examInclude,
     });
     res.json(serializeExam(updated));
-  })
+  }),
 );
 
 router.post(
@@ -166,7 +178,7 @@ router.post(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!exam) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
@@ -177,7 +189,7 @@ router.post(
 
     if (exam._count.attempts > 0) {
       throw badRequest(
-        'این آزمون قبلاً حداقل توسطِ یه دانشجو شروع شده - نمی‌شه لغوِ انتشارش کرد'
+        'این آزمون قبلاً حداقل توسطِ یه دانشجو شروع شده - نمی‌شه لغوِ انتشارش کرد',
       );
     }
 
@@ -187,7 +199,7 @@ router.post(
       async (tx, { attemptCount }) => {
         if (attemptCount > 0) {
           throw badRequest(
-            'این آزمون قبلاً حداقل توسطِ یه دانشجو شروع شده - نمی‌شه لغوِ انتشارش کرد'
+            'این آزمون قبلاً حداقل توسطِ یه دانشجو شروع شده - نمی‌شه لغوِ انتشارش کرد',
           );
         }
 
@@ -196,10 +208,10 @@ router.post(
           data: { status: 'Draft' },
           include: examInclude,
         });
-      }
+      },
     );
     res.json(serializeExam(updated));
-  })
+  }),
 );
 
 router.delete(
@@ -210,14 +222,14 @@ router.delete(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!exam) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
 
     await prisma.exam.delete({ where: { id: req.params.id } });
     res.status(204).end();
-  })
+  }),
 );
 
 export default router;

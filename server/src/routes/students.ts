@@ -39,7 +39,7 @@ router.get(
 
     const students = await prisma.user.findMany({ where, distinct: ['id'] });
     res.json(students.map(serializeStudent));
-  })
+  }),
 );
 
 // Instructors remove memberships; only SuperAdmin can delete the account, subject to history constraints.
@@ -67,8 +67,8 @@ router.delete(
           prisma.group.update({
             where: { id: g.id },
             data: { students: { disconnect: { id: student.id } } },
-          })
-        )
+          }),
+        ),
       );
       return res.status(204).end();
     }
@@ -82,12 +82,12 @@ router.delete(
         err.code === 'P2003'
       ) {
         throw conflict(
-          'این دانشجو سابقه‌ی امتحان/داده‌ی مرتبط داره و قابل حذف کامل نیست'
+          'این دانشجو سابقه‌ی امتحان/داده‌ی مرتبط داره و قابل حذف کامل نیست',
         );
       }
       throw err;
     }
-  })
+  }),
 );
 
 export default router;

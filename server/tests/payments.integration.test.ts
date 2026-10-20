@@ -11,10 +11,7 @@ import crypto from 'crypto';
 
 import { prisma } from '../src/lib/prisma';
 import { redis } from '../src/lib/redis';
-import {
-  handlePaymentCallback,
-  refundPayment,
-} from '../src/lib/payments';
+import { handlePaymentCallback, refundPayment } from '../src/lib/payments';
 import { unavailable } from './helpers/serviceGuard';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -43,7 +40,7 @@ before(async () => {
   globalThis.fetch = (async () =>
     new Response(
       JSON.stringify({ data: { code: 100, ref_id: 12345 }, errors: [] }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      { status: 200, headers: { 'Content-Type': 'application/json' } },
     )) as typeof fetch;
 });
 
@@ -60,7 +57,7 @@ async function createInstructorWithPendingGold(paymentCount: number) {
   });
   const authorities = Array.from(
     { length: paymentCount },
-    (_, i) => `TEST-${suffix}-${i}`
+    (_, i) => `TEST-${suffix}-${i}`,
   );
   for (const authority of authorities) {
     await prisma.payment.create({
@@ -79,7 +76,9 @@ async function createInstructorWithPendingGold(paymentCount: number) {
 async function cleanup(instructorId: string) {
   await prisma.payment.deleteMany({ where: { instructorId } });
   await prisma.subscription.deleteMany({ where: { instructorId } });
-  await prisma.user.delete({ where: { id: instructorId } }).catch(() => undefined);
+  await prisma.user
+    .delete({ where: { id: instructorId } })
+    .catch(() => undefined);
 }
 
 test('دو پرداختِ هم‌زمانِ یه مدرس برای یه پلن: هر دو ماه حساب می‌شن (۶۰ روز)', async (t) => {
@@ -89,8 +88,8 @@ test('دو پرداختِ هم‌زمانِ یه مدرس برای یه پلن: 
     const startedAt = Date.now();
     const results = await Promise.all(
       authorities.map((authority) =>
-        handlePaymentCallback({ authority, status: 'OK' })
-      )
+        handlePaymentCallback({ authority, status: 'OK' }),
+      ),
     );
     assert.deepEqual(results, ['success', 'success']);
 
@@ -105,7 +104,7 @@ test('دو پرداختِ هم‌زمانِ یه مدرس برای یه پلن: 
     const expected = startedAt + 2 * GOLD_DAYS * DAY_MS;
     assert.ok(
       Math.abs(latestEnd - expected) < 60_000,
-      `endDate باید ~۶۰ روز بعد باشه، نه ${(latestEnd - startedAt) / DAY_MS} روز`
+      `endDate باید ~۶۰ روز بعد باشه، نه ${(latestEnd - startedAt) / DAY_MS} روز`,
     );
   } finally {
     await cleanup(instructor.id);
@@ -138,7 +137,7 @@ test('استرداد هم‌زمان با تسویه‌ی پرداخت بعدی 
   try {
     assert.equal(
       await handlePaymentCallback({ authority: authorities[0], status: 'OK' }),
-      'success'
+      'success',
     );
     const first = await prisma.payment.findUniqueOrThrow({
       where: { authority: authorities[0] },
@@ -155,19 +154,32 @@ test('استرداد هم‌زمان با تسویه‌ی پرداخت بعدی 
   }
 });
 
-test('manual subscription assignment and its audit record commit together', async t => {
+test('manual subscription assignment and its audit record commit together', async (t) => {
   if (!dbAvailable) return unavailable(t, 'Postgres unavailable');
   const suffix = crypto.randomUUID();
-  const admin = await prisma.user.create({ data: { email: `audit-admin-${suffix}@example.test`, role: 'SuperAdmin' } });
-  const owner = await prisma.user.create({ data: { email: `audit-owner-${suffix}@example.test`, role: 'Instructor' } });
+  const admin = await prisma.user.create({
+    data: { email: `audit-admin-${suffix}@example.test`, role: 'SuperAdmin' },
+  });
+  const owner = await prisma.user.create({
+    data: { email: `audit-owner-${suffix}@example.test`, role: 'Instructor' },
+  });
   try {
     const assigned = await selectPlan(owner.id, 'gold', admin.id);
-    const events = await prisma.adminAuditLog.findMany({ where: { adminId: admin.id, targetId: owner.id } });
+    const events = await prisma.adminAuditLog.findMany({
+      where: { adminId: admin.id, targetId: owner.id },
+    });
     assert.equal(events.length, 1);
     assert.equal(events[0].action, 'instructor.plan_change');
-    assert.equal((events[0].after as { subscriptionId: string }).subscriptionId, assigned.id);
+    assert.equal(
+      (events[0].after as { subscriptionId: string }).subscriptionId,
+      assigned.id,
+    );
     await assert.rejects(selectPlan(owner.id, 'vip', `missing-${suffix}`));
-    assert.equal(await prisma.subscription.count({ where: { instructorId: owner.id } }), 1, 'failed audit rolls back assignment');
+    assert.equal(
+      await prisma.subscription.count({ where: { instructorId: owner.id } }),
+      1,
+      'failed audit rolls back assignment',
+    );
   } finally {
     await prisma.adminAuditLog.deleteMany({ where: { adminId: admin.id } });
     await cleanup(owner.id);

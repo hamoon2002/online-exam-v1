@@ -17,8 +17,14 @@ const router = Router();
 
 function userOrder(value: unknown): Prisma.UserOrderByWithRelationInput[] {
   const order = value === undefined ? 'newest' : optionalString(value);
-  if (order === 'name') return [{ name: { sort: 'asc', nulls: 'last' } }, { username: 'asc' }, { id: 'asc' }];
-  if (order !== 'newest' && order !== 'oldest') throw badRequest('ترتیب نامعتبر است');
+  if (order === 'name')
+    return [
+      { name: { sort: 'asc', nulls: 'last' } },
+      { username: 'asc' },
+      { id: 'asc' },
+    ];
+  if (order !== 'newest' && order !== 'oldest')
+    throw badRequest('ترتیب نامعتبر است');
   return [{ createdAt: order === 'newest' ? 'desc' : 'asc' }, { id: 'desc' }];
 }
 
@@ -87,11 +93,11 @@ router.get(
           stats: stats.get(r.id),
         })),
         total,
-        paging
+        paging,
       ),
       statusCounts,
     });
-  })
+  }),
 );
 
 router.use('/instructors/:instructorId', instructorDetailRoutes);
@@ -184,10 +190,10 @@ router.get(
           instructors: groupByInstructor({ groupsMember }),
         })),
         total,
-        paging
-      )
+        paging,
+      ),
     );
-  })
+  }),
 );
 
 router.get(
@@ -209,7 +215,7 @@ router.get(
       attemptsCount: _count.attempts,
       instructors: groupByInstructor({ groupsMember }),
     });
-  })
+  }),
 );
 
 export default router;

@@ -24,7 +24,10 @@ test('پاسخنامه وسط آزمون منتشر نمی‌شه (حتی برا
 
 test('تا آخرین لحظه‌ی مهلت ارسال هم منتشر نمی‌شه', () => {
   assert.equal(isAnswerKeyReleased(exam, windowEnd), false);
-  assert.equal(isAnswerKeyReleased(exam, windowEnd + FINISH_GRACE_MS - 1), false);
+  assert.equal(
+    isAnswerKeyReleased(exam, windowEnd + FINISH_GRACE_MS - 1),
+    false,
+  );
 });
 
 test('بعد از پایان عمومی + مهلت ارسال منتشر می‌شه', () => {
@@ -34,7 +37,10 @@ test('بعد از پایان عمومی + مهلت ارسال منتشر می‌
 
 test('با allowReview=false هیچ‌وقت منتشر نمی‌شه', () => {
   const noReview = { ...exam, allowReview: false };
-  assert.equal(isAnswerKeyReleased(noReview, windowEnd + 24 * 60 * 60_000), false);
+  assert.equal(
+    isAnswerKeyReleased(noReview, windowEnd + 24 * 60 * 60_000),
+    false,
+  );
 });
 
 test('resolveScheduledAt: تغییر ثانیه تو همون دقیقه، مقدار دقیقِ فعلی رو نگه می‌داره', () => {

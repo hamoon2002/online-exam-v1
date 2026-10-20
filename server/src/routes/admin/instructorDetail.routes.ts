@@ -28,7 +28,7 @@ router.use(
     if (!instructor) throw notFound('مدرس پیدا نشد');
     res.locals.instructorId = instructor.id;
     next();
-  })
+  }),
 );
 
 router.use('/', instructorContentRoutes);
@@ -71,7 +71,7 @@ router.get(
     ]);
 
     res.json({ ...user, plan: plans.get(id), stats: stats.get(id), history });
-  })
+  }),
 );
 
 router.get(
@@ -107,7 +107,7 @@ router.get(
       prisma.group.count({ where }),
     ]);
     res.json(pagedResult(items, total, paging));
-  })
+  }),
 );
 
 router.get(
@@ -150,10 +150,10 @@ router.get(
       pagedResult(
         rows.map(({ groupsMember, ...s }) => ({ ...s, groups: groupsMember })),
         total,
-        paging
-      )
+        paging,
+      ),
     );
-  })
+  }),
 );
 
 router.get(
@@ -194,7 +194,7 @@ router.get(
       prisma.lessonSession.count({ where }),
     ]);
     res.json(pagedResult(items, total, paging));
-  })
+  }),
 );
 
 router.get(
@@ -232,7 +232,7 @@ router.get(
       prisma.handout.count({ where }),
     ]);
     res.json(pagedResult(items, total, paging));
-  })
+  }),
 );
 
 router.get(
@@ -267,7 +267,7 @@ router.get(
       prisma.questionBank.count({ where }),
     ]);
     res.json(pagedResult(items, total, paging));
-  })
+  }),
 );
 
 router.get(
@@ -297,7 +297,10 @@ router.get(
           status: true,
           scheduledAt: true,
           durationMinutes: true,
-          groups: { where: { instructorId: res.locals.instructorId }, select: { id: true, name: true } },
+          groups: {
+            where: { instructorId: res.locals.instructorId },
+            select: { id: true, name: true },
+          },
           _count: { select: { attempts: true, questions: true } },
         },
         orderBy: [{ scheduledAt: 'desc' }, { id: 'desc' }],
@@ -307,7 +310,7 @@ router.get(
       prisma.exam.count({ where }),
     ]);
     res.json(pagedResult(items, total, paging));
-  })
+  }),
 );
 
 router.get(
@@ -345,7 +348,7 @@ router.get(
       prisma.examAttempt.count({ where }),
     ]);
     res.json(pagedResult(items, total, paging));
-  })
+  }),
 );
 
 router.get(
@@ -385,7 +388,7 @@ router.get(
       subscriptions,
       payments: pagedResult(payments, total, paging),
     });
-  })
+  }),
 );
 
 export default router;

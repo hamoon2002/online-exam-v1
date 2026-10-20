@@ -29,3 +29,6 @@ docker-compose.override.yml
 
 client/test-results/
 client/playwright-report/
+
+# Reconstructed from integrity-checked vendor parts
+/vendor/xlsx-0.20.3.tgz

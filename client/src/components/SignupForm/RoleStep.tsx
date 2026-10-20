@@ -58,6 +58,7 @@ function RoleStep({
               <button
                 key={option.value}
                 type="button"
+                aria-pressed={selected}
                 onClick={() => onRoleChange(option.value)}
                 className={`relative flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 px-3 py-4 text-center transition ${
                   selected

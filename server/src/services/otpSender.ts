@@ -23,7 +23,10 @@ async function sendSms(phone: string, code: string) {
     if (env.NODE_ENV === 'production') {
       throw new Error('KAVENEGAR_API_KEY در production تنظیم نشده');
     }
-    logEvent('info', `[DEV] KAVENEGAR_API_KEY خالیه - کد OTP برای ${phone}: ${code}`);
+    logEvent(
+      'info',
+      `[DEV] KAVENEGAR_API_KEY خالیه - کد OTP برای ${phone}: ${code}`,
+    );
     return;
   }
 
@@ -44,7 +47,7 @@ async function sendSms(phone: string, code: string) {
     body = (await res.json()) as KavenegarResponse;
   } catch {
     throw new Error(
-      `ارسال پیامک OTP شکست خورد: پاسخ کاوه‌نگار قابل‌خواندن نبود (HTTP ${res.status})`
+      `ارسال پیامک OTP شکست خورد: پاسخ کاوه‌نگار قابل‌خواندن نبود (HTTP ${res.status})`,
     );
   }
 
@@ -52,7 +55,7 @@ async function sendSms(phone: string, code: string) {
     throw new Error(
       `ارسال پیامک OTP شکست خورد: [${body.return?.status ?? res.status}] ${
         body.return?.message ?? 'پاسخ نامشخص'
-      }`
+      }`,
     );
   }
 
@@ -64,7 +67,10 @@ async function sendEmail(email: string, code: string) {
     if (env.NODE_ENV === 'production') {
       throw new Error('RESEND_API_KEY در production تنظیم نشده');
     }
-    logEvent('info', `[DEV] RESEND_API_KEY خالیه - کد OTP برای ${email}: ${code}`);
+    logEvent(
+      'info',
+      `[DEV] RESEND_API_KEY خالیه - کد OTP برای ${email}: ${code}`,
+    );
     return;
   }
 
@@ -75,7 +81,7 @@ async function sendEmail(email: string, code: string) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'noreply@yourdomain.com', // Use a sender domain verified with Resend.
+      from: env.OTP_EMAIL_FROM,
       to: email,
       subject: 'کد تایید شما',
       html: `<p>کد تایید شما: <b>${code}</b></p><p>این کد تا ۲ دقیقه معتبره.</p>`,
@@ -84,8 +90,7 @@ async function sendEmail(email: string, code: string) {
   });
 
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`ارسال ایمیل OTP شکست خورد: ${res.status} ${body}`);
+    throw new Error(`ارسال ایمیل OTP شکست خورد (HTTP ${res.status})`);
   }
 }
 

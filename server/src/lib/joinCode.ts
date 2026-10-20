@@ -8,7 +8,7 @@ const JOIN_CODE_LENGTH = 6;
 function randomCode(): string {
   return Array.from({ length: JOIN_CODE_LENGTH }, () =>
     // Join codes require cryptographic randomness.
-    JOIN_CODE_CHARS.charAt(randomInt(JOIN_CODE_CHARS.length))
+    JOIN_CODE_CHARS.charAt(randomInt(JOIN_CODE_CHARS.length)),
   ).join('');
 }
 

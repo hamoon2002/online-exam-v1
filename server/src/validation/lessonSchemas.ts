@@ -8,7 +8,7 @@ export const videoLinkSchema = z
   .min(1)
   .max(2048)
   .transform((value) =>
-    /^[a-z][a-z0-9+.-]*:/i.test(value) ? value : `https://${value}`
+    /^[a-z][a-z0-9+.-]*:/i.test(value) ? value : `https://${value}`,
   )
   .refine((value) => {
     try {

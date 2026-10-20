@@ -45,7 +45,7 @@ export type CheckoutResult =
 // Activate paid plans only after successful provider verification.
 export async function startCheckout(
   instructorId: string,
-  planId: PlanId
+  planId: PlanId,
 ): Promise<CheckoutResult> {
   const plan = getPlan(planId);
 
@@ -101,7 +101,7 @@ async function markFailed(authority: string): Promise<void> {
 // Provider verification is authoritative; a locally failed payment may still settle successfully.
 async function applyVerifiedPayment(
   payment: PaymentRow,
-  refId: number
+  refId: number,
 ): Promise<boolean> {
   return prisma.$transaction(async (tx) => {
     // Lock the instructor before reading the current subscription to preserve consecutive purchases.
@@ -135,7 +135,7 @@ async function applyVerifiedPayment(
 }
 
 async function settlePendingPayment(
-  payment: PaymentRow
+  payment: PaymentRow,
 ): Promise<PaymentCallbackResult> {
   const verified = await verifyPayment({
     amount: payment.amount,
@@ -144,7 +144,10 @@ async function settlePendingPayment(
 
   if (!verified.ok) {
     if (verified.retryable) {
-      logEvent('error', `payment verify outcome unknown (authority=${payment.authority})`);
+      logEvent(
+        'error',
+        `payment verify outcome unknown (authority=${payment.authority})`,
+      );
       return 'pending';
     }
     await markFailed(payment.authority);
@@ -212,7 +215,9 @@ export async function reconcilePendingPayments(limit = 50): Promise<number> {
 }
 
 export function startPaymentReconciler(intervalMs = 5 * 60 * 1000) {
-  return periodicTask(reconcilePendingPayments, intervalMs, error => logEvent('error', 'payment_reconcile_failed', error));
+  return periodicTask(reconcilePendingPayments, intervalMs, (error) =>
+    logEvent('error', 'payment_reconcile_failed', error),
+  );
 }
 
 // Record the manual refund and end access atomically; this does not transfer money.
@@ -247,7 +252,7 @@ export async function refundPayment(paymentId: string): Promise<PaymentRow> {
 }
 
 export async function getPaymentHistory(
-  instructorId: string
+  instructorId: string,
 ): Promise<PaymentRow[]> {
   return prisma.payment.findMany({
     where: { instructorId },

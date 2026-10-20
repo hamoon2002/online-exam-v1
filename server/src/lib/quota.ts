@@ -16,7 +16,7 @@ export type UsageSummary = {
 
 export async function getInstructorUsage(
   instructorId: string,
-  db: QuotaDb = prisma
+  db: QuotaDb = prisma,
 ): Promise<UsageSummary> {
   const groups = await db.group.findMany({
     where: { instructorId },
@@ -52,7 +52,7 @@ export async function getInstructorUsage(
 
   const now = Date.now();
   const activeExams = exams.filter(
-    (e) => e.scheduledAt.getTime() + e.durationMinutes * 60_000 > now
+    (e) => e.scheduledAt.getTime() + e.durationMinutes * 60_000 > now,
   ).length;
 
   return {
@@ -80,7 +80,7 @@ export type RemainingQuota =
 async function getRemainingQuota(
   instructorId: string,
   getLimit: (planId: PlanId) => number | null,
-  getUsed: (usage: UsageSummary) => number
+  getUsed: (usage: UsageSummary) => number,
 ): Promise<RemainingQuota> {
   const sub = await getCurrentSubscription(instructorId);
   const limit = getLimit(sub.planId);
@@ -104,7 +104,7 @@ async function getRemainingQuota(
 async function checkLimit(
   instructorId: string,
   getLimit: (planId: PlanId) => number | null,
-  getUsed: (usage: UsageSummary) => number
+  getUsed: (usage: UsageSummary) => number,
 ): Promise<LimitCheck> {
   const quota = await getRemainingQuota(instructorId, getLimit, getUsed);
   if (!quota.limited) return { allowed: true };
@@ -118,7 +118,7 @@ async function checkLimitForCount(
   instructorId: string,
   count: number,
   getLimit: (planId: PlanId) => number | null,
-  getUsed: (usage: UsageSummary) => number
+  getUsed: (usage: UsageSummary) => number,
 ): Promise<LimitCheck> {
   const quota = await getRemainingQuota(instructorId, getLimit, getUsed);
   if (!quota.limited) return { allowed: true };
@@ -148,7 +148,7 @@ export type QuotaPlan = { limit: number | null; expired: boolean };
 
 async function resolveQuotaPlan(
   instructorId: string,
-  kind: QuotaKind
+  kind: QuotaKind,
 ): Promise<QuotaPlan> {
   const sub = await getCurrentSubscription(instructorId);
   return {
@@ -166,7 +166,7 @@ async function enforceQuotaInTx(
   instructorId: string,
   kind: QuotaKind,
   count: number,
-  plan: QuotaPlan
+  plan: QuotaPlan,
 ): Promise<void> {
   if (plan.expired) throw planLimitError('plan_expired');
   if (plan.limit === null) return;
@@ -179,7 +179,7 @@ async function enforceQuotaInTx(
 export async function prepareQuotaGuard(
   instructorId: string,
   kind: QuotaKind,
-  count = 1
+  count = 1,
 ): Promise<(tx: QuotaDb) => Promise<void>> {
   const plan = await resolveQuotaPlan(instructorId, kind);
   return (tx) => enforceQuotaInTx(tx, instructorId, kind, count, plan);
@@ -192,7 +192,7 @@ export async function withQuotaLock<T>(
   kind: QuotaKind,
   count: number,
   run: (db: QuotaDb) => Promise<T>,
-  opts: { timeoutMs?: number; requireTransaction?: boolean } = {}
+  opts: { timeoutMs?: number; requireTransaction?: boolean } = {},
 ): Promise<T> {
   const plan = await resolveQuotaPlan(instructorId, kind);
   if (plan.expired) throw planLimitError('plan_expired');
@@ -203,7 +203,7 @@ export async function withQuotaLock<T>(
       await enforceQuotaInTx(tx, instructorId, kind, count, plan);
       return run(tx);
     },
-    { timeout: opts.timeoutMs ?? QUOTA_TX_TIMEOUT_MS }
+    { timeout: opts.timeoutMs ?? QUOTA_TX_TIMEOUT_MS },
   );
 }
 
@@ -213,7 +213,7 @@ export async function withQuotaForRole<T>(
   kind: QuotaKind,
   count: number,
   run: (db: QuotaDb) => Promise<T>,
-  opts: { timeoutMs?: number; requireTransaction?: boolean } = {}
+  opts: { timeoutMs?: number; requireTransaction?: boolean } = {},
 ): Promise<T> {
   if (role === 'Instructor') {
     return withQuotaLock(instructorId, kind, count, run, opts);
@@ -228,27 +228,27 @@ export const quotaCheckers = {
     checkLimit(
       instructorId,
       (p) => getPlan(p).maxGroups,
-      (u) => u.groups
+      (u) => u.groups,
     ),
   activeExams: (instructorId: string) =>
     checkLimit(
       instructorId,
       (p) => getPlan(p).maxActiveExams,
-      (u) => u.activeExams
+      (u) => u.activeExams,
     ),
   questions: (instructorId: string, count = 1) =>
     checkLimitForCount(
       instructorId,
       count,
       (p) => getPlan(p).maxQuestions,
-      (u) => u.questions
+      (u) => u.questions,
     ),
   handouts: (instructorId: string, count = 1) =>
     checkLimitForCount(
       instructorId,
       count,
       (p) => getPlan(p).maxHandouts,
-      (u) => u.handouts
+      (u) => u.handouts,
     ),
 };
 
@@ -257,24 +257,24 @@ export const remainingQuota = {
     getRemainingQuota(
       instructorId,
       (p) => getPlan(p).maxGroups,
-      (u) => u.groups
+      (u) => u.groups,
     ),
   activeExams: (instructorId: string) =>
     getRemainingQuota(
       instructorId,
       (p) => getPlan(p).maxActiveExams,
-      (u) => u.activeExams
+      (u) => u.activeExams,
     ),
   questions: (instructorId: string) =>
     getRemainingQuota(
       instructorId,
       (p) => getPlan(p).maxQuestions,
-      (u) => u.questions
+      (u) => u.questions,
     ),
   handouts: (instructorId: string) =>
     getRemainingQuota(
       instructorId,
       (p) => getPlan(p).maxHandouts,
-      (u) => u.handouts
+      (u) => u.handouts,
     ),
 };

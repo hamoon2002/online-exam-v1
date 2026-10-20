@@ -22,19 +22,27 @@ router.get(
     const where = role === 'SuperAdmin' ? {} : { instructorId: sub };
 
     const { page, pageSize, skip, search } = parseListQuery(req.query);
-    const filter = { ...where, ...(search ? { name: { contains: search, mode: 'insensitive' as const } } : {}) };
-    const [banks, total] = await prisma.$transaction([
-      prisma.questionBank.findMany({
-        where: filter,
-        include: { _count: { select: { questions: true } } },
-        orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
-        skip,
-        take: pageSize,
-      }),
-      prisma.questionBank.count({ where: filter }),
-    ], { isolationLevel: 'RepeatableRead' });
+    const filter = {
+      ...where,
+      ...(search
+        ? { name: { contains: search, mode: 'insensitive' as const } }
+        : {}),
+    };
+    const [banks, total] = await prisma.$transaction(
+      [
+        prisma.questionBank.findMany({
+          where: filter,
+          include: { _count: { select: { questions: true } } },
+          orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+          skip,
+          take: pageSize,
+        }),
+        prisma.questionBank.count({ where: filter }),
+      ],
+      { isolationLevel: 'RepeatableRead' },
+    );
     res.json({ items: banks.map(serializeBank), total, page, pageSize });
-  })
+  }),
 );
 
 // Register the template route before the dynamic bank-ID matcher.
@@ -44,14 +52,14 @@ router.get(
     const buffer = buildQuestionImportTemplate();
     res.setHeader(
       'Content-Type',
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     );
     res.setHeader(
       'Content-Disposition',
-      'attachment; filename="question-import-template.xlsx"'
+      'attachment; filename="question-import-template.xlsx"',
     );
     res.send(buffer);
-  })
+  }),
 );
 
 router.get(
@@ -67,7 +75,7 @@ router.get(
       include: { _count: { select: { questions: true } } },
     });
     res.json(serializeBank(withCount!));
-  })
+  }),
 );
 
 router.post(
@@ -87,7 +95,7 @@ router.post(
     });
 
     res.status(201).json(serializeBank(bank));
-  })
+  }),
 );
 
 router.put(
@@ -109,7 +117,7 @@ router.put(
     });
 
     res.json(serializeBank(updated));
-  })
+  }),
 );
 
 // Bank deletion removes source questions; imported exam snapshots remain valid.
@@ -124,7 +132,7 @@ router.delete(
 
     await prisma.questionBank.delete({ where: { id: bank.id } });
     res.status(204).end();
-  })
+  }),
 );
 
 export default router;

@@ -28,7 +28,7 @@ export default function StatCard({
         {display}
       </p>
       {hint && (
-        <p className="text-xs text-gray-400 dark:text-gray-500">{hint}</p>
+        <p className="text-xs text-gray-600 dark:text-gray-400">{hint}</p>
       )}
     </Card>
   );

@@ -1,5 +1,11 @@
+import {
+  configureErrorReporting,
+  reportOperationalError,
+  createMetrics,
+  flushErrorReporting,
+} from './lib/monitoring';
 import { listen, createShutdown, httpDrainer } from './lib/serverLifecycle';
-import { logEvent } from './lib/logger';
+import { logEvent, setErrorReporter } from './lib/logger';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -36,14 +42,22 @@ import { asyncHandler } from './lib/asyncHandler';
 
 const HEALTH_TIMEOUT_MS = 3000;
 
+configureErrorReporting(env.SENTRY_DSN, env.NODE_ENV);
+setErrorReporter(reportOperationalError);
 const app = express();
+const metrics = createMetrics(env.METRICS_TOKEN);
+app.use(metrics.observe);
+app.get('/metrics', metrics.serve);
 const httpServer = createServer(app);
 const drainHttp = httpDrainer(httpServer);
 let stopping = false;
 let socket: ReturnType<typeof initSocket> | undefined;
 const stopWorkers: Array<() => Promise<void>> = [];
 app.use((_req, res, next) => {
-  if (stopping) { res.status(503).json({ error: 'سرویس در حال راه‌اندازی مجدد است.' }); return; }
+  if (stopping) {
+    res.status(503).json({ error: 'سرویس در حال راه‌اندازی مجدد است.' });
+    return;
+  }
   next();
 });
 
@@ -69,13 +83,13 @@ app.get(
       const timeout = new Promise<never>((_, reject) => {
         timer = setTimeout(
           () => reject(new Error(`${name} timeout`)),
-          HEALTH_TIMEOUT_MS
+          HEALTH_TIMEOUT_MS,
         );
       });
       return Promise.race([run(), timeout])
         .then(
           () => 'ok' as const,
-          () => 'down' as const
+          () => 'down' as const,
         )
         .finally(() => clearTimeout(timer));
     };
@@ -89,8 +103,10 @@ app.get(
     if (db === 'ok' && cache === 'ok' && limiter === 'ok') {
       return res.json({ status: 'ok' });
     }
-    res.status(503).json({ status: 'error', db, redis: cache, rateLimitRedis: limiter });
-  })
+    res
+      .status(503)
+      .json({ status: 'error', db, redis: cache, rateLimitRedis: limiter });
+  }),
 );
 
 // Private uploads are served through authorized signed URLs, never a static directory.
@@ -124,18 +140,29 @@ const shutdown = createShutdown(async () => {
   // Close listeners before dependencies, allowing accepted requests to finish.
   const drained = drainHttp();
   // Socket.IO also closes its Engine.IO transports and its HTTP server.
-  const socketsClosed = new Promise<void>(resolve => {
-    if (socket) socket.close(() => resolve()); else resolve();
+  const socketsClosed = new Promise<void>((resolve) => {
+    if (socket) socket.close(() => resolve());
+    else resolve();
   });
-  const results = await Promise.allSettled([drained, socketsClosed, stopSocketSweep(), ...stopWorkers.map(stop => stop())]);
+  const results = await Promise.allSettled([
+    drained,
+    socketsClosed,
+    stopSocketSweep(),
+    ...stopWorkers.map((stop) => stop()),
+  ]);
   if (redis.isOpen) redis.destroy();
   if (rateLimitRedis.isOpen) rateLimitRedis.destroy();
   await prisma.$disconnect();
-  const failed = results.find(result => result.status === 'rejected');
+  await flushErrorReporting();
+  const failed = results.find((result) => result.status === 'rejected');
   if (failed?.status === 'rejected') throw failed.reason;
 });
-process.once('SIGTERM', () => { void shutdown('SIGTERM'); });
-process.once('SIGINT', () => { void shutdown('SIGINT'); });
+process.once('SIGTERM', () => {
+  void shutdown('SIGTERM');
+});
+process.once('SIGINT', () => {
+  void shutdown('SIGINT');
+});
 
 async function start() {
   await Promise.all([waitForRedis(redis), waitForRedis(rateLimitRedis)]);
@@ -146,7 +173,7 @@ async function start() {
   stopWorkers.push(startAttemptSweeper(), startPaymentReconciler());
   logEvent('info', `server_listening:${env.PORT}`);
 }
-void start().catch(error => {
+void start().catch((error) => {
   logEvent('error', 'server_start_failed', error);
   void shutdown('startup_failure', 1);
 });

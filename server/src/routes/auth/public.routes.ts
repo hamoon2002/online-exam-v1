@@ -22,40 +22,27 @@ router.get(
   usernameCheckLimiter,
   asyncHandler(async (req, res) => {
     const raw =
-      typeof req.query.username === 'string'
-        ? req.query.username
-        : '';
+      typeof req.query.username === 'string' ? req.query.username : '';
 
-    const formatCheck =
-      validateUsernameFormat(raw);
+    const formatCheck = validateUsernameFormat(raw);
 
     if (!formatCheck.valid) {
       return res.json({
         available: false,
-        reason:
-          formatCheck.error ??
-          'نام کاربری نامعتبره',
+        reason: formatCheck.error ?? 'نام کاربری نامعتبره',
       });
     }
 
-    const username =
-      normalizeUsername(raw);
+    const username = normalizeUsername(raw);
 
-    const taken =
-      await isUsernameTaken(
-        username,
-      );
+    const taken = await isUsernameTaken(username);
 
     if (taken) {
-      const suggestions =
-        await suggestUsernameAlternatives(
-          raw,
-        );
+      const suggestions = await suggestUsernameAlternatives(raw);
 
       return res.json({
         available: false,
-        reason:
-          'این نام کاربری قبلاً گرفته شده',
+        reason: 'این نام کاربری قبلاً گرفته شده',
         suggestions,
       });
     }
@@ -70,10 +57,7 @@ router.get(
   '/captcha',
   captchaLimiter,
   asyncHandler(async (_req, res) => {
-    const {
-      captchaId,
-      svg,
-    } = await createCaptcha();
+    const { captchaId, svg } = await createCaptcha();
 
     return res.json({
       captchaId,

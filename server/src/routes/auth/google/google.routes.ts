@@ -49,7 +49,7 @@ router.post(
     });
 
     res.json(serializeMe(user));
-  })
+  }),
 );
 
 router.post(
@@ -76,7 +76,7 @@ router.post(
         error: 'اتصال حساب گوگل ناموفق بود',
       });
     }
-  })
+  }),
 );
 
 router.post(
@@ -90,9 +90,13 @@ router.post(
     }
 
     try {
-      const result = await loginWithGoogle(parsed.data.idToken, parsed.data.registration);
+      const result = await loginWithGoogle(
+        parsed.data.idToken,
+        parsed.data.registration,
+      );
 
-      if (result.type === 'registration_required') return res.json({ registrationRequired: true });
+      if (result.type === 'registration_required')
+        return res.json({ registrationRequired: true });
 
       if (result.type === 'pending') {
         return res.json({
@@ -116,7 +120,7 @@ router.post(
 
       throw error;
     }
-  })
+  }),
 );
 
 export default router;

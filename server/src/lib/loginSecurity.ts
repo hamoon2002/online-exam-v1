@@ -1,4 +1,3 @@
-
 import { redis } from './redis';
 import { durationToSeconds } from './duration';
 
@@ -41,7 +40,7 @@ async function currentGeneration(userId: string): Promise<string> {
 
 export async function isAccountLocked(
   userId: string,
-  ip = 'unknown'
+  ip = 'unknown',
 ): Promise<boolean> {
   const generation = await currentGeneration(userId);
   const [anyIpLock, thisIpLock] = await Promise.all([
@@ -53,7 +52,7 @@ export async function isAccountLocked(
 
 export async function registerFailedAttempt(
   userId: string,
-  ip = 'unknown'
+  ip = 'unknown',
 ): Promise<number> {
   const generation = await currentGeneration(userId);
   const windowSeconds = durationToSeconds(FAILED_ATTEMPTS_WINDOW);
@@ -98,7 +97,7 @@ export async function isCaptchaRequired(ip: string): Promise<boolean> {
 export async function registerIpFailure(ip: string): Promise<void> {
   const count = await incrWithTtl(
     ipFailKey(ip),
-    durationToSeconds(IP_FAIL_WINDOW)
+    durationToSeconds(IP_FAIL_WINDOW),
   );
   if (count >= IP_FAIL_TRIGGER) {
     await redis.set(ipCaptchaKey(ip), '1', {

@@ -24,7 +24,7 @@ export async function withSessionStore<T>(op: () => Promise<T>): Promise<T> {
       new Promise<never>((_, reject) => {
         timer = setTimeout(
           () => reject(new Error('session store timeout')),
-          SESSION_STORE_TIMEOUT_MS
+          SESSION_STORE_TIMEOUT_MS,
         );
       }),
     ]);
@@ -50,13 +50,13 @@ export async function createSession(userId: string): Promise<string> {
     redis.eval(CREATE_SESSION_SCRIPT, {
       keys: [sessionKey(userId), rotatedKey(userId)],
       arguments: [sessionId, String(REFRESH_TTL_SECONDS)],
-    })
+    }),
   );
   return sessionId;
 }
 
 export async function getActiveSessionId(
-  userId: string
+  userId: string,
 ): Promise<string | null> {
   return withSessionStore(() => redis.get(sessionKey(userId)));
 }
@@ -72,13 +72,13 @@ return 0
 
 export async function isSessionValid(
   userId: string,
-  sessionId: string
+  sessionId: string,
 ): Promise<boolean> {
   const result = await withSessionStore(() =>
     redis.eval(VALIDATE_SESSION_SCRIPT, {
       keys: [sessionKey(userId), rotatedKey(userId)],
       arguments: [sessionId],
-    })
+    }),
   );
   return Number(result) === 1;
 }
@@ -100,7 +100,7 @@ return false
 
 export async function rotateSessionWithGrace(
   userId: string,
-  currentSessionId: string
+  currentSessionId: string,
 ): Promise<string | null> {
   const candidateSessionId = crypto.randomUUID();
 
@@ -113,7 +113,7 @@ export async function rotateSessionWithGrace(
         String(REFRESH_TTL_SECONDS),
         String(GRACE_WINDOW_SECONDS),
       ],
-    })
+    }),
   );
 
   return typeof result === 'string' && result.length > 0 ? result : null;
@@ -122,6 +122,6 @@ export async function rotateSessionWithGrace(
 // Delete the session and its rotation mappings in one atomic command.
 export async function revokeSession(userId: string): Promise<void> {
   await withSessionStore(() =>
-    redis.del([sessionKey(userId), rotatedKey(userId)])
+    redis.del([sessionKey(userId), rotatedKey(userId)]),
   );
 }

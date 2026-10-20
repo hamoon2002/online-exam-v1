@@ -55,6 +55,7 @@ curl -sS --max-time 10 -w '\nHTTP: %{http_code}\n' http://localhost:4000/health
 
 ```bash
 cd /workspaces/online-exam-v1
+node scripts/prepare-vendor.cjs
 npm ci
 ```
 

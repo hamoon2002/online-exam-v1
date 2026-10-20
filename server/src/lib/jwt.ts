@@ -35,11 +35,9 @@ const ROLES: Role[] = ['SuperAdmin', 'Instructor', 'Student'];
 
 // Reject reset-ticket payloads even though they share the access-token signing secret.
 export function verifyAccessToken(token: string): AccessTokenPayload {
-  const payload = jwt.verify(
-    token,
-    env.JWT_ACCESS_SECRET,
-    { algorithms: ['HS256'] }
-  ) as Partial<AccessTokenPayload> & { purpose?: unknown };
+  const payload = jwt.verify(token, env.JWT_ACCESS_SECRET, {
+    algorithms: ['HS256'],
+  }) as Partial<AccessTokenPayload> & { purpose?: unknown };
 
   if (
     typeof payload.sub !== 'string' ||
@@ -53,5 +51,7 @@ export function verifyAccessToken(token: string): AccessTokenPayload {
 }
 
 export function verifyRefreshToken(token: string): RefreshTokenPayload {
-  return jwt.verify(token, env.JWT_REFRESH_SECRET, { algorithms: ['HS256'] }) as RefreshTokenPayload;
+  return jwt.verify(token, env.JWT_REFRESH_SECRET, {
+    algorithms: ['HS256'],
+  }) as RefreshTokenPayload;
 }

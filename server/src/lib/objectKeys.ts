@@ -8,7 +8,7 @@ export type ObjectKeyKind = 'lesson-videos' | 'lesson-attachments';
 export function buildObjectKey(
   kind: ObjectKeyKind,
   userId: string,
-  originalName: string
+  originalName: string,
 ): string {
   const rawExt = path.extname(originalName).toLowerCase();
   const ext = /^\.[a-z0-9]{1,10}$/.test(rawExt) ? rawExt : '';
@@ -24,6 +24,7 @@ function hasValidKeyShape(kind: ObjectKeyKind, key: string): boolean {
     !key.includes('..') &&
     !key.includes('\\') &&
     !key.includes('//') &&
+    // eslint-disable-next-line no-control-regex -- Reject control bytes in storage keys.
     !/[\u0000-\u001f]/.test(key)
   );
 }
@@ -37,7 +38,7 @@ export function objectKeySchema(kind: ObjectKeyKind) {
 function isOwnedObjectKey(
   kind: ObjectKeyKind,
   userId: string,
-  key: string
+  key: string,
 ): boolean {
   return hasValidKeyShape(kind, key) && key.startsWith(`${kind}/${userId}/`);
 }
@@ -47,10 +48,10 @@ export function canUseObjectKeys(
   kind: ObjectKeyKind,
   userId: string,
   keys: string[],
-  existingKeys: Iterable<string> = []
+  existingKeys: Iterable<string> = [],
 ): boolean {
   const existing = new Set(existingKeys);
   return keys.every(
-    (key) => existing.has(key) || isOwnedObjectKey(kind, userId, key)
+    (key) => existing.has(key) || isOwnedObjectKey(kind, userId, key),
   );
 }

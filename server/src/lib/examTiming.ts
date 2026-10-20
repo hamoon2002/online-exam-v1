@@ -21,7 +21,7 @@ export function getExamWindowEndMs(exam: ExamWindow): number {
 // Release answers only after the shared exam window and grace period, with review enabled.
 export function isAnswerKeyReleased(
   exam: ExamWindow & { allowReview: boolean },
-  nowMs: number = Date.now()
+  nowMs: number = Date.now(),
 ): boolean {
   if (!exam.allowReview) return false;
   return nowMs >= getExamWindowEndMs(exam) + FINISH_GRACE_MS;

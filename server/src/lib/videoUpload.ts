@@ -27,7 +27,9 @@ export const videoUpload = multer({
   limits: { fileSize: MAX_FILE_SIZE_BYTES },
   fileFilter: (_req, file, cb) => {
     if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
-      cb(badRequest('فرمت فایل مجاز نیست؛ فقط ویدیو (mp4, webm, ogg, mov, mkv)'));
+      cb(
+        badRequest('فرمت فایل مجاز نیست؛ فقط ویدیو (mp4, webm, ogg, mov, mkv)'),
+      );
       return;
     }
     cb(null, true);

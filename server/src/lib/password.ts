@@ -14,7 +14,7 @@ export async function hashPassword(plain: string): Promise<string> {
 
 export async function verifyPassword(
   plain: string,
-  hash: string
+  hash: string,
 ): Promise<boolean> {
   return bcrypt.compare(plain, hash);
 }
@@ -25,7 +25,7 @@ let dummyHash: Promise<string> | null = null;
 export async function verifyAgainstDummy(plain: string): Promise<void> {
   dummyHash ??= bcrypt.hash(
     'timing-equalizer-not-a-real-password',
-    SALT_ROUNDS
+    SALT_ROUNDS,
   );
   await bcrypt.compare(plain, await dummyHash);
 }

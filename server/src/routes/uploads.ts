@@ -15,6 +15,7 @@ router.use(requireAuth);
 
 // Recover UTF-8 multipart filenames decoded as Latin-1 only when the byte sequence is valid.
 function decodeUploadedFileName(name: string): string {
+  // eslint-disable-next-line no-control-regex -- Detect Latin-1 bytes before repairing multipart filenames.
   if (!/[\u0080-\u00ff]/.test(name) || /[^\u0000-\u00ff]/.test(name))
     return name;
   const decoded = Buffer.from(name, 'latin1').toString('utf8');
@@ -30,7 +31,7 @@ router.post(
       if (err instanceof multer.MulterError) {
         if (err.code === 'LIMIT_FILE_SIZE') {
           return next(
-            badRequest('حجم فایل بیشتر از حد مجاز (۵۰۰ مگابایت) است')
+            badRequest('حجم فایل بیشتر از حد مجاز (۵۰۰ مگابایت) است'),
           );
         }
         return next(badRequest('آپلود فایل با خطا مواجه شد'));
@@ -49,7 +50,7 @@ router.post(
     const objectKey = buildObjectKey(
       'lesson-videos',
       req.user!.sub,
-      file.originalname
+      file.originalname,
     );
 
     try {
@@ -57,7 +58,7 @@ router.post(
         objectKey,
         file.path,
         file.size,
-        file.mimetype
+        file.mimetype,
       );
     } finally {
       // Remove temporary files on both upload success and failure.
@@ -68,7 +69,7 @@ router.post(
       fileName: decodeUploadedFileName(file.originalname),
       objectKey,
     });
-  })
+  }),
 );
 
 router.post(
@@ -95,7 +96,7 @@ router.post(
     const objectKey = buildObjectKey(
       'lesson-attachments',
       req.user!.sub,
-      req.file.originalname
+      req.file.originalname,
     );
     await uploadObject(objectKey, req.file.buffer, req.file.mimetype);
 
@@ -104,7 +105,7 @@ router.post(
       objectKey,
       fileSize: req.file.size,
     });
-  })
+  }),
 );
 
 export default router;

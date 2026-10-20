@@ -20,7 +20,7 @@ export type AdminAuditEntry = {
 // Use the mutation transaction so the change and audit record commit together.
 export async function recordAdminAction(
   db: Prisma.TransactionClient,
-  entry: AdminAuditEntry
+  entry: AdminAuditEntry,
 ): Promise<void> {
   await db.adminAuditLog.create({
     data: {

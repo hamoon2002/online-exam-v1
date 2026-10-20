@@ -12,8 +12,28 @@ import { AppError } from '../src/lib/errors';
 // Unit tests (no DB/Redis): فایل‌های واقعی xlsx/csv با خود SheetJS ساخته و
 // از parseQuestionsExcel رد می‌شن.
 
-const HEADER = ['text', 'o1', 'o2', 'o3', 'o4', 'o5', 'o6', 'correct', 'difficulty'];
-const q = (text: string, correct: number | string = 1) => [text, 'A', 'B', '', '', '', '', correct, 'Easy'];
+const HEADER = [
+  'text',
+  'o1',
+  'o2',
+  'o3',
+  'o4',
+  'o5',
+  'o6',
+  'correct',
+  'difficulty',
+];
+const q = (text: string, correct: number | string = 1) => [
+  text,
+  'A',
+  'B',
+  '',
+  '',
+  '',
+  '',
+  correct,
+  'Easy',
+];
 const blanks = (n: number): unknown[][] => Array.from({ length: n }, () => []);
 
 function xlsxBuffer(rows: unknown[][]): Buffer {
@@ -27,17 +47,25 @@ function csvBuffer(lines: string[]): Buffer {
   return Buffer.from(lines.join('\n'), 'utf8');
 }
 
-const isBadRequest = (e: unknown) => e instanceof AppError && e.statusCode === 400;
+const isBadRequest = (e: unknown) =>
+  e instanceof AppError && e.statusCode === 400;
 
 test('فایل ساده: سوال‌های معتبر خوانده می‌شن', () => {
-  const result = parseQuestionsExcel(xlsxBuffer([HEADER, q('Question one'), q('Question two', 2)]));
+  const result = parseQuestionsExcel(
+    xlsxBuffer([HEADER, q('Question one'), q('Question two', 2)]),
+  );
   assert.equal(result.questions.length, 2);
   assert.equal(result.errors.length, 0);
 });
 
 test('ردیف‌های خالی زیاد (زیر سقف): سوال انتهای فایل خوانده می‌شه و شماره‌ی ردیف خطا درسته', () => {
   // ردیف ۱ هدر، ردیف ۲ سوال سالم، ردیف‌های ۳..۳۰۰۲ خالی، ردیف ۳۰۰۳ سوال با شماره‌ی گزینه‌ی غلط
-  const rows = [HEADER, q('Question one'), ...blanks(3000), q('Question bad', 9)];
+  const rows = [
+    HEADER,
+    q('Question one'),
+    ...blanks(3000),
+    q('Question bad', 9),
+  ];
   const result = parseQuestionsExcel(xlsxBuffer(rows));
   assert.equal(result.questions.length, 1);
   assert.equal(result.errors.length, 1);
@@ -46,14 +74,21 @@ test('ردیف‌های خالی زیاد (زیر سقف): سوال انتهای
 
 test('ردیف اول خالی: شماره‌ی ردیف خطا همچنان با اکسل یکی است', () => {
   // ردیف ۱ خالی (هدر)، ردیف ۲ سالم، ردیف ۳ نامعتبر
-  const result = parseQuestionsExcel(xlsxBuffer([[], q('Question one'), q('Question bad', 9)]));
+  const result = parseQuestionsExcel(
+    xlsxBuffer([[], q('Question one'), q('Question bad', 9)]),
+  );
   assert.equal(result.questions.length, 1);
   assert.equal(result.errors.length, 1);
   assert.equal(result.errors[0].row, 3);
 });
 
 test('سوال بعد از سقف ردیف فیزیکی (بعد از کلی ردیف خالی) بی‌صدا نادیده گرفته نمی‌شه: فایل رد می‌شه', () => {
-  const rows = [HEADER, q('Question one'), ...blanks(MAX_SHEET_ROWS + 100), q('Question hidden')];
+  const rows = [
+    HEADER,
+    q('Question one'),
+    ...blanks(MAX_SHEET_ROWS + 100),
+    q('Question hidden'),
+  ];
   assert.throws(() => parseQuestionsExcel(xlsxBuffer(rows)), isBadRequest);
 });
 
@@ -68,7 +103,10 @@ test('مرز سقف ردیف فیزیکی: دقیقاً سقف قبول، یک �
 });
 
 test('سقف تعداد سوال: دقیقاً سقف قبول، یکی بیشتر رد با پیام مشخص', () => {
-  const make = (n: number) => [HEADER, ...Array.from({ length: n }, (_, i) => q(`Question ${i}`))];
+  const make = (n: number) => [
+    HEADER,
+    ...Array.from({ length: n }, (_, i) => q(`Question ${i}`)),
+  ];
   const ok = parseQuestionsExcel(xlsxBuffer(make(MAX_IMPORT_ROWS)));
   assert.equal(ok.questions.length, MAX_IMPORT_ROWS);
 
@@ -79,14 +117,22 @@ test('سقف تعداد سوال: دقیقاً سقف قبول، یکی بیشت
 });
 
 test('CSV: سوال انتهای فایل بعد از ردیف‌های خالیِ زیر سقف خوانده می‌شه', () => {
-  const lines = [HEADER.join(','), ...Array(4000).fill(''), 'Question end,A,B,,,,,1,Easy'];
+  const lines = [
+    HEADER.join(','),
+    ...Array(4000).fill(''),
+    'Question end,A,B,,,,,1,Easy',
+  ];
   const result = parseQuestionsExcel(csvBuffer(lines));
   assert.equal(result.questions.length, 1);
   assert.equal(result.errors.length, 0);
 });
 
 test('CSV: سوال بعد از سقف ردیف فیزیکی بی‌صدا نادیده گرفته نمی‌شه: فایل رد می‌شه', () => {
-  const lines = [HEADER.join(','), ...Array(MAX_SHEET_ROWS + 500).fill(''), 'Question hidden,A,B,,,,,1,Easy'];
+  const lines = [
+    HEADER.join(','),
+    ...Array(MAX_SHEET_ROWS + 500).fill(''),
+    'Question hidden,A,B,,,,,1,Easy',
+  ];
   assert.throws(() => parseQuestionsExcel(csvBuffer(lines)), isBadRequest);
 });
 

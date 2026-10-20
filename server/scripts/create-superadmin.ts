@@ -19,7 +19,7 @@ async function main() {
 
   if (!email || !password) {
     console.error(
-      'استفاده: npx ts-node --transpile-only scripts/create-superadmin.ts <email> <password> [name]'
+      'استفاده: npx ts-node --transpile-only scripts/create-superadmin.ts <email> <password> [name]',
     );
     process.exit(1);
   }

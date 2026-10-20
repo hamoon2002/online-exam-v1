@@ -23,7 +23,7 @@ export type ImportedExamQuestion = {
 export async function importBankQuestionsToExam(
   examId: string,
   questionIds: string[],
-  ownerId?: string
+  ownerId?: string,
 ): Promise<ImportedExamQuestion[]> {
   const questions = (await prisma.question.findMany({
     where: {
@@ -39,7 +39,7 @@ export async function importBankQuestionsToExam(
   }
 
   const questionMap = new Map<string, BankQuestionRecord>(
-    questions.map((question) => [question.id, question])
+    questions.map((question) => [question.id, question]),
   );
 
   const orderedQuestions: BankQuestionRecord[] = questionIds.map((id) => {
@@ -66,7 +66,7 @@ export async function importBankQuestionsToExam(
             optionsSnapshot: question.options,
             correctIndexSnapshot: question.correctOptionIndex,
           },
-        })
+        }),
       );
     }
 

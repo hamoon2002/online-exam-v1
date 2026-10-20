@@ -49,28 +49,23 @@ export function errorHandler(
   }
 
   if (err instanceof AppError) {
-    return res
-      .status(err.statusCode)
-      .json({
-        ...err.details,
-        error: /[\u0600-\u06ff]/.test(err.message)
-          ? err.message
-          : err.statusCode >= 500
-            ? 'سرویس موقتاً در دسترس نیست؛ دوباره تلاش کنید.'
-            : 'انجام درخواست ممکن نشد؛ اطلاعات واردشده را بررسی کنید.',
-      });
+    return res.status(err.statusCode).json({
+      ...err.details,
+      error: /[\u0600-\u06ff]/.test(err.message)
+        ? err.message
+        : err.statusCode >= 500
+          ? 'سرویس موقتاً در دسترس نیست؛ دوباره تلاش کنید.'
+          : 'انجام درخواست ممکن نشد؛ اطلاعات واردشده را بررسی کنید.',
+    });
   }
 
   if (err instanceof ZodError) {
-    return res
-      .status(400)
-      .json({
-        error:
-          err.issues[0]?.message &&
-          /[\u0600-\u06ff]/.test(err.issues[0].message)
-            ? err.issues[0].message
-            : 'اطلاعات واردشده نامعتبر است.',
-      });
+    return res.status(400).json({
+      error:
+        err.issues[0]?.message && /[\u0600-\u06ff]/.test(err.issues[0].message)
+          ? err.issues[0].message
+          : 'اطلاعات واردشده نامعتبر است.',
+    });
   }
 
   if (err instanceof Prisma.PrismaClientKnownRequestError) {

@@ -82,7 +82,7 @@ export default function ReportOverview({
             <h2 className="font-semibold text-gray-900 dark:text-white">
               روند فعالیت
             </h2>
-            <p className="mt-1 mb-6 text-xs text-gray-500">
+            <p className="mt-1 mb-6 text-xs text-gray-500 dark:text-gray-400">
               روزهای بدون فعالیت هم نمایش داده می‌شوند · زمان تهران
             </p>
             <div className="h-64" dir="ltr">
@@ -141,7 +141,7 @@ export default function ReportOverview({
                 </AreaChart>
               </ResponsiveContainer>
             </div>
-            <details className="mt-4 text-xs text-gray-500">
+            <details className="mt-4 text-xs text-gray-500 dark:text-gray-400">
               <summary className="cursor-pointer">
                 مشاهدهٔ داده‌های نمودار
               </summary>

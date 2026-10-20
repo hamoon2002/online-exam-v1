@@ -30,7 +30,7 @@ router.get(
       orderBy: { createdAt: 'desc' },
     });
     res.json(instructors.map(serializeInstructor));
-  })
+  }),
 );
 
 router.post(
@@ -67,11 +67,11 @@ router.post(
     notifyUser(
       updated.id,
       'حساب مدرسی‌ت تایید شد - می‌تونی وارد بشی',
-      'award'
+      'award',
     ).catch((err) => logEvent('error', 'notifyUser failed:', err));
 
     res.json(serializeInstructor(updated));
-  })
+  }),
 );
 
 router.post(
@@ -107,12 +107,12 @@ router.post(
 
     if (!alreadyRejected) {
       notifyUser(updated.id, 'درخواست ثبت‌نام مدرسی‌ت رد شد', 'info').catch(
-        (err) => logEvent('error', 'notifyUser failed:', err)
+        (err) => logEvent('error', 'notifyUser failed:', err),
       );
     }
 
     res.json(serializeInstructor(updated));
-  })
+  }),
 );
 
 export default router;

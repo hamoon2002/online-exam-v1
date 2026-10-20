@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { test, expect } from '@playwright/test';
 
 for (const temporaryFailure of [false, true]) test(`student answers survive reload and submission ${temporaryFailure ? 'retry' : 'success'}`, async ({ page }) => {
@@ -37,6 +38,7 @@ for (const temporaryFailure of [false, true]) test(`student answers survive relo
   await page.goto('/exams/exam/take');
   await page.getByRole('button', { name: 'شروع آزمون', exact: true }).click();
   await page.getByRole('button', { name: 'بله، شروع کن', exact: true }).click();
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
   await page.getByRole('button', { name: /چهار/ }).click();
   await expect.poll(() => answers).toEqual({ question: 1 });
   page.once('dialog', dialog => dialog.accept());

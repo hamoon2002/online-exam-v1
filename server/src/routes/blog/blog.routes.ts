@@ -8,10 +8,7 @@ import { asyncHandler } from '../../lib/asyncHandler';
 import { badRequest, notFound, conflict } from '../../lib/errors';
 import { extensionForImageMimeType, imageUpload } from '../../lib/imageUpload';
 import { validateUploadedFile } from '../../lib/uploadValidation';
-import {
-  uploadPublicObject,
-  deletePublicObject,
-} from '../../lib/storage';
+import { uploadPublicObject, deletePublicObject } from '../../lib/storage';
 import {
   createBlogPostSchema,
   updateBlogPostSchema,
@@ -35,7 +32,7 @@ router.get(
       include: authorSelect,
     });
     res.json(posts.map(serializeSummary));
-  })
+  }),
 );
 
 router.use('/admin', requireAuth, requireRole('SuperAdmin'));
@@ -48,7 +45,7 @@ router.get(
       include: authorSelect,
     });
     res.json(posts.map(serializeAdmin));
-  })
+  }),
 );
 
 router.get(
@@ -60,7 +57,7 @@ router.get(
     });
     if (!post) throw notFound('پست بلاگ یافت نشد');
     res.json(serializeAdmin(post));
-  })
+  }),
 );
 
 router.post(
@@ -89,7 +86,7 @@ router.post(
       include: authorSelect,
     });
     res.status(201).json(serializeAdmin(post));
-  })
+  }),
 );
 
 router.put(
@@ -127,7 +124,7 @@ router.put(
       include: authorSelect,
     });
     res.json(serializeAdmin(post));
-  })
+  }),
 );
 
 router.delete(
@@ -140,13 +137,13 @@ router.delete(
 
     if (existing.coverImageKey) {
       await deletePublicObject(existing.coverImageKey).catch((err) =>
-        logEvent('error', 'deletePublicObject failed:', err)
+        logEvent('error', 'deletePublicObject failed:', err),
       );
     }
 
     await prisma.blogPost.delete({ where: { id: req.params.id } });
     res.status(204).end();
-  })
+  }),
 );
 
 router.post(
@@ -167,7 +164,7 @@ router.post(
     // Delete the previous cover only after the new upload succeeds.
     if (existing.coverImageKey) {
       await deletePublicObject(existing.coverImageKey).catch((err) =>
-        logEvent('error', 'deletePublicObject failed:', err)
+        logEvent('error', 'deletePublicObject failed:', err),
       );
     }
 
@@ -177,7 +174,7 @@ router.post(
       include: authorSelect,
     });
     res.json(serializeAdmin(post));
-  })
+  }),
 );
 
 // Keep the public slug matcher after the protected admin routes.
@@ -190,7 +187,7 @@ router.get(
     });
     if (!post || !post.published) throw notFound('پست بلاگ یافت نشد');
     res.json(serializeDetail(post));
-  })
+  }),
 );
 
 export default router;

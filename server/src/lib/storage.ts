@@ -22,7 +22,7 @@ const s3 = new S3Client({
 export async function uploadObject(
   key: string,
   body: Buffer,
-  contentType: string
+  contentType: string,
 ): Promise<void> {
   await s3.send(
     new PutObjectCommand({
@@ -30,7 +30,7 @@ export async function uploadObject(
       Key: key,
       Body: body,
       ContentType: contentType,
-    })
+    }),
   );
 }
 
@@ -39,7 +39,7 @@ export async function uploadObjectFromFile(
   key: string,
   filePath: string,
   sizeBytes: number,
-  contentType: string
+  contentType: string,
 ): Promise<void> {
   await s3.send(
     new PutObjectCommand({
@@ -48,14 +48,14 @@ export async function uploadObjectFromFile(
       Body: createReadStream(filePath),
       ContentLength: sizeBytes,
       ContentType: contentType,
-    })
+    }),
   );
 }
 
 // Signed URLs expire and must be fetched when the file is opened.
 export async function getSignedDownloadUrl(
   key: string,
-  expiresInSeconds: number = env.SIGNED_URL_EXPIRES_IN
+  expiresInSeconds: number = env.SIGNED_URL_EXPIRES_IN,
 ): Promise<string> {
   const command = new GetObjectCommand({ Bucket: env.S3_BUCKET, Key: key });
   return getSignedUrl(s3, command, { expiresIn: expiresInSeconds });
@@ -69,11 +69,11 @@ export async function deleteObject(key: string): Promise<void> {
 export async function uploadPublicObject(
   key: string,
   body: Buffer,
-  contentType: string
+  contentType: string,
 ): Promise<void> {
   if (!env.S3_PUBLIC_BASE_URL) {
     throw new Error(
-      'S3_PUBLIC_BASE_URL تنظیم نشده - قبل از آپلود تصویر بلاگ/CMS باید یه bucket/CDN عمومی کانفیگ بشه'
+      'S3_PUBLIC_BASE_URL تنظیم نشده - قبل از آپلود تصویر بلاگ/CMS باید یه bucket/CDN عمومی کانفیگ بشه',
     );
   }
 
@@ -83,7 +83,7 @@ export async function uploadPublicObject(
       Key: `public/${key}`,
       Body: body,
       ContentType: contentType,
-    })
+    }),
   );
 }
 
@@ -93,6 +93,6 @@ export function getPublicObjectUrl(key: string): string {
 
 export async function deletePublicObject(key: string): Promise<void> {
   await s3.send(
-    new DeleteObjectCommand({ Bucket: env.S3_BUCKET, Key: `public/${key}` })
+    new DeleteObjectCommand({ Bucket: env.S3_BUCKET, Key: `public/${key}` }),
   );
 }

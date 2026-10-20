@@ -17,7 +17,8 @@ function examState(exam: {
   durationMinutes: number;
 }): ExamState {
   if (exam.status === 'Draft') return 'draft';
-  return exam.scheduledAt.getTime() + exam.durationMinutes * 60_000 <= Date.now()
+  return exam.scheduledAt.getTime() + exam.durationMinutes * 60_000 <=
+    Date.now()
     ? 'completed'
     : 'upcoming';
 }
@@ -103,7 +104,7 @@ router.get(
             _count: { _all: true },
           });
     const participants = new Map(
-      attemptRows.map((r) => [r.examId, r._count._all])
+      attemptRows.map((r) => [r.examId, r._count._all]),
     );
 
     res.json({
@@ -130,8 +131,7 @@ router.get(
             id: g.id,
             name: g.name,
             category: g.category,
-            instructorName:
-              g.instructor.name || g.instructor.username || null,
+            instructorName: g.instructor.name || g.instructor.username || null,
             createdAt: g.createdAt.toISOString(),
           })),
         },
@@ -141,13 +141,16 @@ router.get(
         title: e.title,
         instructorId: e.instructorId,
         instructorName:
-          e.instructor.name || e.instructor.username || e.instructor.email || null,
+          e.instructor.name ||
+          e.instructor.username ||
+          e.instructor.email ||
+          null,
         scheduledAt: e.scheduledAt.toISOString(),
         status: examState(e),
         participants: participants.get(e.id) ?? 0,
       })),
     });
-  })
+  }),
 );
 
 export default router;

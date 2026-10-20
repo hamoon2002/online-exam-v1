@@ -20,9 +20,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 
   const token = header.slice('Bearer '.length);
 
-  // فقط شکست در «تأیید امضا/انقضای توکن» یعنی ۴۰۱. قبلاً کل بلوک (از جمله
-  // خوندن نشست از Redis) تو یه catch بود، پس قطعیِ Redis هم ۴۰۱ می‌شد و
-  // کلاینت با فرض «نشست تموم شده» کاربر رو از سیستم خارج می‌کرد
+  // Token failures are 401; infrastructure failures are forwarded separately.
   let payload: AccessTokenPayload;
   try {
     payload = verifyAccessToken(token);
@@ -43,20 +41,18 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
   }
 
   // ردشدن حساب باید حتی پس از شکست ابطال نشست Redis اعمال شود.
-  if (payload.role === 'Instructor') {
-    try {
-      const user = await prisma.user.findUnique({
-        where: { id: payload.sub },
-        select: { role: true, approvalStatus: true },
-      });
-      if (!user || user.role !== payload.role) {
-        return res.status(401).json({ error: 'حساب یا نقش کاربر دیگر معتبر نیست' });
-      }
-      const message = instructorApprovalBlockMessage(user);
-      if (message) return res.status(401).json({ error: message });
-    } catch (err) {
-      return next(err);
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: payload.sub },
+      select: { role: true, approvalStatus: true },
+    });
+    if (!user || user.role !== payload.role) {
+      return res.status(401).json({ error: 'حساب یا نقش کاربر دیگر معتبر نیست' });
     }
+    const message = instructorApprovalBlockMessage(user);
+    if (message) return res.status(401).json({ error: message });
+  } catch (err) {
+    return next(err);
   }
 
   req.user = payload;

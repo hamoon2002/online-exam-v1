@@ -20,6 +20,7 @@ WORKDIR /app
 COPY --from=build /app/package.json /app/package-lock.json ./
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/server/package.json ./server/package.json
+COPY --from=build /app/client/package.json ./client/package.json
 COPY --from=build /app/server/dist ./server/dist
 COPY --from=build /app/server/prisma ./server/prisma
 USER node

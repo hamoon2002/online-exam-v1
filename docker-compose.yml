@@ -22,10 +22,15 @@ services:
     volumes:
       - redis-data:/data
 
-  # نکته: MinIO ایمیج‌هاش رو از Docker Hub برداشته، باید از quay.io گرفته بشه
+  # Build fixed official source releases; prebuilt upstream images may be unavailable.
   # ذخیره‌ی فایل‌های آپلودی (ویدیو/پیوست درس) - مقادیر با server/.env هماهنگه
   minio:
-    image: quay.io/minio/minio:RELEASE.2024-04-18T19-09-19Z
+    build:
+      context: .
+      dockerfile: deploy/Minio.Dockerfile
+      target: minio
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
@@ -39,7 +44,12 @@ services:
 
   # سرور خودش bucket نمی‌سازه، این سرویس یک‌بار bucket رو می‌سازه و تموم می‌شه
   minio-init:
-    image: quay.io/minio/mc:RELEASE.2024-04-18T16-45-29Z
+    build:
+      context: .
+      dockerfile: deploy/Minio.Dockerfile
+      target: mc
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
     depends_on:
       - minio
     # اگه کانتینر وسط کار کشته شد (مثلاً توقف Codespace) چند بار دوباره تلاش کنه؛ با موفقیت (exit 0) دیگه ری‌استارت نمی‌شه

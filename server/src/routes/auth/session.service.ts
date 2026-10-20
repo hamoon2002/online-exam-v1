@@ -2,7 +2,10 @@ import { logEvent } from '../../lib/logger';
 import type { Request } from 'express';
 import { prisma } from '../../lib/prisma';
 import { verifyAccessToken, verifyRefreshToken } from '../../lib/jwt';
-import { getRefreshCookieName, issueRefreshedTokenPair } from '../../lib/authTokens';
+import {
+  getRefreshCookieName,
+  issueRefreshedTokenPair,
+} from '../../lib/authTokens';
 import { isSessionValid, revokeSession } from '../../lib/session';
 import { instructorApprovalBlockMessage } from '../../lib/accountAccess';
 import { AppError } from '../../lib/errors';
@@ -34,20 +37,24 @@ export async function refreshUserSession(token: string | undefined) {
   }
 
   const tokens = await issueRefreshedTokenPair(
-    user.id, user.role, payload.sid, payload.rememberMe
+    user.id,
+    user.role,
+    payload.sid,
+    payload.rememberMe,
   );
   if (!tokens) throw new AppError(401, 'نشست دیگر معتبر نیست');
   return { ...tokens, rememberMe: payload.rememberMe };
 }
 
-export async function resolveLogoutSubject(req: Request): Promise<string | null> {
+export async function resolveLogoutSubject(
+  req: Request,
+): Promise<string | null> {
   const header = req.headers.authorization;
   if (header?.startsWith('Bearer ')) {
     let payload: ReturnType<typeof verifyAccessToken> | null = null;
     try {
       payload = verifyAccessToken(header.slice('Bearer '.length));
-    } catch {
-    }
+    } catch {}
     if (payload && (await isSessionValid(payload.sub, payload.sid))) {
       return payload.sub;
     }
@@ -58,8 +65,7 @@ export async function resolveLogoutSubject(req: Request): Promise<string | null>
     let payload: ReturnType<typeof verifyRefreshToken> | null = null;
     try {
       payload = verifyRefreshToken(cookie);
-    } catch {
-    }
+    } catch {}
     if (payload && (await isSessionValid(payload.sub, payload.sid))) {
       return payload.sub;
     }

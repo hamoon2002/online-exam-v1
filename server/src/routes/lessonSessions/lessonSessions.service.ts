@@ -63,7 +63,7 @@ export const sessionOrder = { createdAt: 'asc' } as const;
 export function videoToDbFields(
   video:
     | { type: 'link'; url: string }
-    | { type: 'upload'; fileName: string; objectKey: string }
+    | { type: 'upload'; fileName: string; objectKey: string },
 ) {
   return video.type === 'link'
     ? {
@@ -87,7 +87,7 @@ export function assertFileKeysAllowed(
     video: { type: 'link' } | { type: 'upload'; objectKey: string };
     attachments: { objectKey: string }[];
   },
-  existing?: DbSession
+  existing?: DbSession,
 ) {
   if (user.role === 'SuperAdmin') return;
 
@@ -97,13 +97,13 @@ export function assertFileKeysAllowed(
       'lesson-videos',
       user.sub,
       [data.video.objectKey],
-      existing?.videoObjectUrl ? [existing.videoObjectUrl] : []
+      existing?.videoObjectUrl ? [existing.videoObjectUrl] : [],
     );
   const attachmentsOk = canUseObjectKeys(
     'lesson-attachments',
     user.sub,
     data.attachments.map((a) => a.objectKey),
-    existing?.attachments.map((a) => a.fileUrl) ?? []
+    existing?.attachments.map((a) => a.fileUrl) ?? [],
   );
 
   if (!videoOk || !attachmentsOk) {
@@ -133,7 +133,7 @@ export async function ownedGroupIds(userId: string): Promise<Set<string>> {
 export async function loadAccessibleSession(
   sessionId: string,
   userId: string,
-  role: Role
+  role: Role,
 ): Promise<{ session: DbSession | null; allowed: boolean }> {
   const session = await prisma.lessonSession.findUnique({
     where: { id: sessionId },
@@ -153,7 +153,11 @@ export async function loadAccessibleSession(
   }
 
   const isMember = await prisma.group.count({
-    where: { id: { in: groupIds }, approvalStatus: 'Approved', students: { some: { id: userId } } },
+    where: {
+      id: { in: groupIds },
+      approvalStatus: 'Approved',
+      students: { some: { id: userId } },
+    },
   });
   return { session, allowed: isMember > 0 };
 }

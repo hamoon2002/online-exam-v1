@@ -29,7 +29,7 @@ router.get(
       sections[section] = bySection.get(section) ?? {};
     }
     res.json({ sections });
-  })
+  }),
 );
 
 router.use('/admin', requireAuth, requireRole('SuperAdmin'));
@@ -54,7 +54,7 @@ router.put(
       update: { data, updatedById: sub },
     });
     res.json({ section: row.section, data: row.data });
-  })
+  }),
 );
 
 router.post(
@@ -73,7 +73,7 @@ router.post(
     await uploadPublicObject(key, req.file.buffer, req.file.mimetype);
 
     res.json({ imageUrl: getPublicObjectUrl(key) });
-  })
+  }),
 );
 
 export default router;

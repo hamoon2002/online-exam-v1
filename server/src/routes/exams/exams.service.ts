@@ -15,8 +15,8 @@ export function serializeExam(exam: AccessibleExam) {
     exam.status === 'Draft'
       ? 'draft'
       : exam.scheduledAt.getTime() + exam.durationMinutes * 60_000 <= now
-      ? 'completed'
-      : 'upcoming';
+        ? 'completed'
+        : 'upcoming';
 
   return {
     id: exam.id,
@@ -34,12 +34,16 @@ export function serializeExam(exam: AccessibleExam) {
 export async function assertOwnsAllGroups(
   groupIds: string[],
   role: Role,
-  userId: string
+  userId: string,
 ): Promise<void> {
   if (groupIds.length === 0) return;
 
   const owned = await prisma.group.count({
-    where: { id: { in: groupIds }, approvalStatus: 'Approved', ...(role === 'SuperAdmin' ? {} : { instructorId: userId }) },
+    where: {
+      id: { in: groupIds },
+      approvalStatus: 'Approved',
+      ...(role === 'SuperAdmin' ? {} : { instructorId: userId }),
+    },
   });
   if (owned !== groupIds.length) {
     throw forbidden('نمی‌تونی آزمون رو به گروهی که مال تو نیست وصل کنی');
@@ -57,10 +61,14 @@ export function assertNotInPast(scheduledAt: Date) {
 type UpdateExamData = z.infer<typeof updateExamSchema>;
 
 function computeChangesLockedFields(
-  current: { scheduledAt: Date; durationMinutes: number; groups: { id: string }[] },
+  current: {
+    scheduledAt: Date;
+    durationMinutes: number;
+    groups: { id: string }[];
+  },
   newScheduledAt: Date,
   newDurationMinutes: number,
-  newGroupIds: Set<string>
+  newGroupIds: Set<string>,
 ): boolean {
   const currentGroupIds = new Set(current.groups.map((g) => g.id));
   const sameGroups =
@@ -76,11 +84,11 @@ function computeChangesLockedFields(
 // Once started, timing and groups are immutable to preserve deadlines and access.
 function assertScheduleEditable(
   attemptCount: number,
-  changesLockedFields: boolean
+  changesLockedFields: boolean,
 ): void {
   if (attemptCount > 0 && changesLockedFields) {
     throw badRequest(
-      'این آزمون قبلاً توسط دانشجو شروع شده - زمان، مدت و گروه‌هاش قابل تغییر نیستن'
+      'این آزمون قبلاً توسط دانشجو شروع شده - زمان، مدت و گروه‌هاش قابل تغییر نیستن',
     );
   }
 }
@@ -90,7 +98,7 @@ export async function updateExam(
   role: Role,
   sub: string,
   existing: AccessibleExam,
-  data: UpdateExamData
+  data: UpdateExamData,
 ): Promise<AccessibleExam> {
   await assertOwnsAllGroups(data.groupIds, role, sub);
 
@@ -98,7 +106,7 @@ export async function updateExam(
   const requestedScheduledAt = new Date(data.scheduledAt);
   const newScheduledAt = resolveScheduledAt(
     existing.scheduledAt,
-    requestedScheduledAt
+    requestedScheduledAt,
   );
   const newGroupIds = new Set(data.groupIds);
 
@@ -113,8 +121,8 @@ export async function updateExam(
       existing,
       newScheduledAt,
       data.durationMinutes,
-      newGroupIds
-    )
+      newGroupIds,
+    ),
   );
 
   // Reactivating an expired exam must also satisfy the active-exam quota.
@@ -122,8 +130,7 @@ export async function updateExam(
   if (role === 'Instructor') {
     const now = Date.now();
     const wasActive =
-      existing.scheduledAt.getTime() + existing.durationMinutes * 60_000 >
-      now;
+      existing.scheduledAt.getTime() + existing.durationMinutes * 60_000 > now;
     const willBeActive =
       newScheduledAt.getTime() + data.durationMinutes * 60_000 > now;
     if (!wasActive && willBeActive) {
@@ -146,7 +153,7 @@ export async function updateExam(
       });
       const scheduledAt = resolveScheduledAt(
         current.scheduledAt,
-        requestedScheduledAt
+        requestedScheduledAt,
       );
       assertScheduleEditable(
         attemptCount,
@@ -154,8 +161,8 @@ export async function updateExam(
           current,
           scheduledAt,
           data.durationMinutes,
-          newGroupIds
-        )
+          newGroupIds,
+        ),
       );
 
       return tx.exam.update({
@@ -171,6 +178,6 @@ export async function updateExam(
         include: examInclude,
       });
     },
-    { beforeExamLock: quotaGuard }
+    { beforeExamLock: quotaGuard },
   );
 }

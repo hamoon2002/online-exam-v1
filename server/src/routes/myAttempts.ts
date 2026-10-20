@@ -42,9 +42,9 @@ router.get(
           title: a.exam.title,
           allowReview: a.exam.allowReview,
         },
-      }))
+      })),
     );
-  })
+  }),
 );
 
 export default router;

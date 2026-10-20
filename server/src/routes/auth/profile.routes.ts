@@ -1,5 +1,10 @@
 import { logEvent } from '../../lib/logger';
-import { Router, type NextFunction, type Request, type Response } from 'express';
+import {
+  Router,
+  type NextFunction,
+  type Request,
+  type Response,
+} from 'express';
 import multer from 'multer';
 import { randomUUID } from 'node:crypto';
 
@@ -58,8 +63,8 @@ function avatarUpload(req: Request, res: Response, next: NextFunction) {
         badRequest(
           err.code === 'LIMIT_FILE_SIZE'
             ? 'حجم تصویر نباید بیشتر از ۵ مگابایت باشد'
-            : 'آپلود تصویر با خطا مواجه شد'
-        )
+            : 'آپلود تصویر با خطا مواجه شد',
+        ),
       );
     }
 
@@ -84,7 +89,7 @@ router.get(
     }
 
     res.json(meResponse(user));
-  })
+  }),
 );
 
 router.patch(
@@ -107,7 +112,7 @@ router.patch(
     });
 
     res.json(meResponse(user));
-  })
+  }),
 );
 
 router.post(
@@ -153,12 +158,12 @@ router.post(
     // Delete the old image only after the replacement is uploaded and saved.
     if (existing.avatarKey) {
       await deletePublicObject(existing.avatarKey).catch((error) =>
-        logEvent('error', 'deletePublicObject failed:', error)
+        logEvent('error', 'deletePublicObject failed:', error),
       );
     }
 
     res.json(meResponse(user));
-  })
+  }),
 );
 
 router.delete(
@@ -191,11 +196,11 @@ router.delete(
     });
 
     await deletePublicObject(existing.avatarKey).catch((error) =>
-      logEvent('error', 'deletePublicObject failed:', error)
+      logEvent('error', 'deletePublicObject failed:', error),
     );
 
     res.json(meResponse(user));
-  })
+  }),
 );
 
 // An incorrect current password is 400, not a session-expiring 401.
@@ -231,7 +236,7 @@ router.post(
       if (await isAccountLocked(userId, req.ip ?? 'unknown')) {
         throw new AppError(
           423,
-          'به‌خاطر تلاش‌های ناموفق زیاد، تغییر رمز موقتاً قفل شده. چند دقیقه‌ی دیگه دوباره امتحان کن.'
+          'به‌خاطر تلاش‌های ناموفق زیاد، تغییر رمز موقتاً قفل شده. چند دقیقه‌ی دیگه دوباره امتحان کن.',
         );
       }
 
@@ -262,13 +267,13 @@ router.post(
       existing.passwordHash
         ? 'رمز عبور حساب شما تغییر کرد'
         : 'رمز عبور برای حساب شما تعیین شد',
-      'info'
+      'info',
     ).catch((error) => {
       logEvent('error', 'notifyUser failed:', error);
     });
 
     res.json(meResponse(user));
-  })
+  }),
 );
 
 router.post(
@@ -307,7 +312,7 @@ router.post(
     });
 
     res.json(meResponse(user));
-  })
+  }),
 );
 
 export default router;

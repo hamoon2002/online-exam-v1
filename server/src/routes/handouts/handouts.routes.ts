@@ -46,7 +46,7 @@ router.get(
       orderBy: { createdAt: 'desc' },
     });
     res.json(handouts.map(serializeHandout));
-  })
+  }),
 );
 
 router.get(
@@ -68,7 +68,7 @@ router.get(
       throw forbidden();
     }
     res.json(serializeHandout(handout));
-  })
+  }),
 );
 
 router.post(
@@ -103,16 +103,16 @@ router.post(
           fileUrl: parsed.data.objectKey,
           fileSize: parsed.data.fileSize,
         },
-      })
+      }),
     );
 
     // Notification delivery must not roll back a successful handout creation.
     notifyAudienceAboutHandout(handout).catch((err) =>
-      logEvent('error', 'notifyAudienceAboutHandout failed:', err)
+      logEvent('error', 'notifyAudienceAboutHandout failed:', err),
     );
 
     res.status(201).json(serializeHandout(handout));
-  })
+  }),
 );
 
 router.put(
@@ -123,7 +123,7 @@ router.put(
     const { handout, allowed } = await loadOwnedHandout(
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!handout) throw notFound('جزوه یافت نشد');
     if (!allowed) throw forbidden();
@@ -140,7 +140,7 @@ router.put(
         'lesson-attachments',
         sub,
         [parsed.data.objectKey],
-        [handout.fileUrl]
+        [handout.fileUrl],
       )
     ) {
       throw forbidden('فایل انتخاب‌شده متعلق به تو نیست');
@@ -182,7 +182,7 @@ router.put(
     }
 
     res.json(serializeHandout(updated));
-  })
+  }),
 );
 
 router.delete(
@@ -193,7 +193,7 @@ router.delete(
     const { handout, allowed } = await loadOwnedHandout(
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!handout) throw notFound('جزوه یافت نشد');
     if (!allowed) throw forbidden();
@@ -202,7 +202,7 @@ router.delete(
     await deleteUnreferencedObjects([handout.fileUrl]);
 
     res.status(204).end();
-  })
+  }),
 );
 
 router.get(
@@ -223,7 +223,7 @@ router.get(
 
     const url = await getSignedDownloadUrl(handout.fileUrl);
     res.json({ url });
-  })
+  }),
 );
 
 export default router;

@@ -29,7 +29,7 @@ const resetTicketKey = (jti: string) => `reset-ticket:${jti}`;
 export function setRefreshCookie(
   res: Response,
   token: string,
-  persistent = true
+  persistent = true,
 ) {
   res.cookie(REFRESH_COOKIE_NAME, token, {
     httpOnly: true,
@@ -53,7 +53,7 @@ export function getRefreshCookieName() {
 export async function issueTokenPair(
   userId: string,
   role: Role,
-  rememberMe = true
+  rememberMe = true,
 ) {
   const sid = await createSession(userId);
 
@@ -82,7 +82,7 @@ export async function issueRefreshedTokenPair(
   userId: string,
   role: Role,
   currentSid: string,
-  rememberMe: boolean
+  rememberMe: boolean,
 ) {
   const sid = await rotateSessionWithGrace(userId, currentSid);
   if (sid === null) return null;
@@ -126,13 +126,11 @@ export async function signResetTicket(userId: string): Promise<string> {
 }
 
 export async function verifyResetTicket(
-  token: string
+  token: string,
 ): Promise<ResetTicketPayload> {
-  const payload = jwt.verify(
-    token,
-    env.JWT_ACCESS_SECRET,
-    { algorithms: ['HS256'] }
-  ) as ResetTicketPayload;
+  const payload = jwt.verify(token, env.JWT_ACCESS_SECRET, {
+    algorithms: ['HS256'],
+  }) as ResetTicketPayload;
 
   if (payload.purpose !== 'RESET_PASSWORD' || !payload.jti) {
     throw new Error('invalid reset ticket');

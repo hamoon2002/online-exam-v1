@@ -38,9 +38,16 @@ export async function createOtp({
 
   const codeHash = await bcrypt.hash(code, SALT_ROUNDS);
 
-  const expiresAt = await replaceActiveOtp({
-    identifier, channel, purpose, codeHash, userId,
-  }, OTP_TTL_MINUTES * 60 * 1000);
+  const expiresAt = await replaceActiveOtp(
+    {
+      identifier,
+      channel,
+      purpose,
+      codeHash,
+      userId,
+    },
+    OTP_TTL_MINUTES * 60 * 1000,
+  );
 
   return {
     code,

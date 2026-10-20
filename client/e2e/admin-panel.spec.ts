@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright';
 import { test, expect } from '@playwright/test';
 
 const instructor = { id: 'teacher', name: 'مریم احمدی', username: 'teacher', email: 'teacher@example.test', approvalStatus: 'Approved', stats: { students: 40, groups: 3, exams: 6 } };
@@ -28,6 +29,7 @@ for (const mobile of [false, true]) test(`admin dashboard: ${mobile ? 'mobile da
   await expect(page.getByRole('heading', { name: 'روند فعالیت' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'شروع آزمون' })).toHaveCount(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect((await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21aa']).analyze()).violations).toEqual([]);
   await page.screenshot({ path: test.info().outputPath('dashboard.png'), fullPage: true });
   expect(errors).toEqual([]);
 });

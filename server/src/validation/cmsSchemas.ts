@@ -13,7 +13,7 @@ export const SITE_CONTENT_SECTIONS = [
 export type SiteContentSection = (typeof SITE_CONTENT_SECTIONS)[number];
 
 export function isSiteContentSection(
-  value: string
+  value: string,
 ): value is SiteContentSection {
   return (SITE_CONTENT_SECTIONS as readonly string[]).includes(value);
 }

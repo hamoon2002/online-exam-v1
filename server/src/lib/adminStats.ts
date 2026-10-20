@@ -24,7 +24,7 @@ type CountRow = { instructorId: string; count: number };
 // Lesson ownership follows Group.instructorId; implicit join columns are A=group, B=related record.
 async function distinctViaGroups(
   joinTable: '_GroupMembers' | '_GroupSessions',
-  ids: string[]
+  ids: string[],
 ): Promise<CountRow[]> {
   return prisma.$queryRaw<CountRow[]>(Prisma.sql`
     SELECT g."instructorId" AS "instructorId", COUNT(DISTINCT j."B")::int AS "count"
@@ -36,14 +36,14 @@ async function distinctViaGroups(
 }
 
 export async function loadInstructorStats(
-  ids: string[]
+  ids: string[],
 ): Promise<Map<string, InstructorStats>> {
   const result = new Map<string, InstructorStats>();
   if (ids.length === 0) return result;
   for (const id of ids) result.set(id, { ...EMPTY });
 
-  const [groups, exams, banks, handouts, students, lessons] =
-    await Promise.all([
+  const [groups, exams, banks, handouts, students, lessons] = await Promise.all(
+    [
       prisma.group.groupBy({
         by: ['instructorId'],
         where: { instructorId: { in: ids } },
@@ -66,11 +66,12 @@ export async function loadInstructorStats(
       }),
       distinctViaGroups('_GroupMembers', ids),
       distinctViaGroups('_GroupSessions', ids),
-    ]);
+    ],
+  );
 
   const apply = (
     rows: { instructorId: string; _count: { _all: number } }[],
-    key: keyof InstructorStats
+    key: keyof InstructorStats,
   ) => {
     for (const r of rows) {
       const stats = result.get(r.instructorId);

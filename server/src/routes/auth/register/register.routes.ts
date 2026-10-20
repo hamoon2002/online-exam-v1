@@ -13,40 +13,26 @@ router.post(
   '/register',
   otpSendLimiter,
   asyncHandler(async (req, res) => {
-    const parsed = registerSchema.safeParse(
-      req.body,
-    );
+    const parsed = registerSchema.safeParse(req.body);
 
     if (!parsed.success) {
       throw badRequest(
-        parsed.error.issues[0]
-          ?.message ??
-          'اطلاعات ثبت‌نام نامعتبره',
+        parsed.error.issues[0]?.message ?? 'اطلاعات ثبت‌نام نامعتبره',
       );
     }
 
-    const result =
-      await registerUser(
-        parsed.data,
-        req.ip ?? 'unknown',
-      );
+    const result = await registerUser(parsed.data, req.ip ?? 'unknown');
 
-    if (
-      result.status ===
-      'username_taken'
-    ) {
+    if (result.status === 'username_taken') {
       return res.status(409).json({
         error: result.message,
-        suggestions:
-          result.usernameSuggestions,
+        suggestions: result.usernameSuggestions,
       });
     }
 
     return res.status(201).json({
-      message:
-        'کد تایید ارسال شد',
-      identifier:
-        result.identifier,
+      message: 'کد تایید ارسال شد',
+      identifier: result.identifier,
     });
   }),
 );

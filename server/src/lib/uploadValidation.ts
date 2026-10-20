@@ -20,7 +20,10 @@ export type UploadedFileLike = {
   path?: string;
 };
 
-const INVALID_CONTENT_MESSAGE: Record<Exclude<UploadKind, 'spreadsheet'>, string> = {
+const INVALID_CONTENT_MESSAGE: Record<
+  Exclude<UploadKind, 'spreadsheet'>,
+  string
+> = {
   image: 'محتوای فایل یک تصویر معتبر (JPEG/PNG/WEBP) نیست',
   pdf: 'محتوای فایل یک PDF معتبر نیست',
   video: 'محتوای فایل یک ویدیوی معتبر (mp4, webm, ogg, mov, mkv) نیست',
@@ -42,7 +45,7 @@ async function readHeader(file: UploadedFileLike): Promise<Buffer> {
 
 export async function detectUploadedMime(
   kind: UploadKind,
-  file: UploadedFileLike
+  file: UploadedFileLike,
 ): Promise<string> {
   if (file.size === 0) throw badRequest('فایل خالیه');
 
@@ -54,7 +57,9 @@ export async function detectUploadedMime(
   }
 
   const header = await readHeader(file);
-  const detect = { image: detectImage, pdf: detectPdf, video: detectVideo }[kind];
+  const detect = { image: detectImage, pdf: detectPdf, video: detectVideo }[
+    kind
+  ];
   const mime = detect(header);
   if (!mime) throw badRequest(INVALID_CONTENT_MESSAGE[kind]);
   if (kind === 'image') {
@@ -78,7 +83,11 @@ async function removeTempFile(file: UploadedFileLike): Promise<void> {
 
 // Validate before storage or parsing, then replace the claimed MIME type with the detected type.
 export function validateUploadedFile(kind: UploadKind) {
-  return async (req: Request, _res: Response, next: NextFunction): Promise<void> => {
+  return async (
+    req: Request,
+    _res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     const file = req.file;
     if (!file) return next();
     try {

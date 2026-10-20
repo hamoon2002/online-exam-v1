@@ -4,7 +4,7 @@ import { deleteObject } from './storage';
 
 // Delete an object only after confirming that no database reference remains.
 export async function deleteUnreferencedObjects(
-  keys: Array<string | null | undefined>
+  keys: Array<string | null | undefined>,
 ): Promise<void> {
   const unique = [...new Set(keys.filter((k): k is string => Boolean(k)))];
 

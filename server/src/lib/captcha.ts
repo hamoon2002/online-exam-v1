@@ -69,10 +69,9 @@ export async function createCaptcha(): Promise<{
 // Consume the challenge on every verification, including incorrect answers.
 export async function verifyCaptcha(
   captchaId: unknown,
-  answer: unknown
+  answer: unknown,
 ): Promise<boolean> {
-  if (typeof captchaId !== 'string' || typeof answer !== 'string')
-    return false;
+  if (typeof captchaId !== 'string' || typeof answer !== 'string') return false;
 
   const key = captchaKey(captchaId);
   const codeHash = await redis.get(key);

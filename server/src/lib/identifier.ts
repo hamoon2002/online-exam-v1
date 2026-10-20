@@ -1,4 +1,3 @@
-
 export type IdentifierType = 'EMAIL' | 'PHONE';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -7,10 +6,10 @@ const IRAN_PHONE_REGEX = /^(?:0|98|\+98)?9\d{9}$/;
 export function toLatinDigits(raw: string): string {
   return raw
     .replace(/[\u06F0-\u06F9]/g, (digit) =>
-      String(digit.charCodeAt(0) - 0x06f0)
+      String(digit.charCodeAt(0) - 0x06f0),
     )
     .replace(/[\u0660-\u0669]/g, (digit) =>
-      String(digit.charCodeAt(0) - 0x0660)
+      String(digit.charCodeAt(0) - 0x0660),
     );
 }
 

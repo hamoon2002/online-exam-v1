@@ -3,7 +3,9 @@ type ApprovalUser = {
   approvalStatus: string;
 };
 
-export function instructorApprovalBlockMessage(user: ApprovalUser): string | null {
+export function instructorApprovalBlockMessage(
+  user: ApprovalUser,
+): string | null {
   if (user.role !== 'Instructor' || user.approvalStatus === 'Approved') {
     return null;
   }

@@ -85,7 +85,7 @@ export async function proposeCategory(instructorId: string, rawName: string) {
   notifyRoles(
     ['SuperAdmin'],
     `${proposer?.name || 'یه مدرس'} دسته‌بندیِ جدیدِ «${name}» رو پیشنهاد داد`,
-    'info'
+    'info',
   ).catch((err) => logEvent('error', 'notifyRoles failed:', err));
 
   return { category: serializeCategory(created), created: true };
@@ -128,7 +128,7 @@ export async function approveCategory(id: string) {
     notifyUser(
       updated.proposedById,
       `دسته‌بندیِ پیشنهادیت «${updated.name}» تایید شد`,
-      'award'
+      'award',
     ).catch((err) => logEvent('error', 'notifyUser failed:', err));
   }
 
@@ -158,7 +158,7 @@ export async function deleteOrRejectCategory(id: string) {
     throw conflict(
       category.status === 'Approved'
         ? `این دسته‌بندی تو ${count} مورد استفاده شده - اول باید تغییرشون بدی یا از تغییرِ نام استفاده کنی`
-        : `این پیشنهاد همین حالا تو ${count} مورد استفاده شده - به‌جای رد کردن، تاییدش کن یا نامش رو تغییر بده`
+        : `این پیشنهاد همین حالا تو ${count} مورد استفاده شده - به‌جای رد کردن، تاییدش کن یا نامش رو تغییر بده`,
     );
   }
 
@@ -168,7 +168,7 @@ export async function deleteOrRejectCategory(id: string) {
     notifyUser(
       category.proposedById,
       `دسته‌بندیِ پیشنهادیت «${category.name}» رد شد`,
-      'info'
+      'info',
     ).catch((err) => logEvent('error', 'notifyUser failed:', err));
   }
 }

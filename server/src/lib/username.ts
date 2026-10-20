@@ -1,4 +1,3 @@
-
 import { detectIdentifierType } from './identifier';
 import { prisma } from './prisma';
 
@@ -72,8 +71,7 @@ const INAPPROPRIATE_SUBSTRINGS = [
 ];
 
 export type UsernameValidationResult =
-  | { valid: true }
-  | { valid: false; error: string };
+  { valid: true } | { valid: false; error: string };
 
 export function normalizeUsername(raw: string): string {
   return raw.trim().toLowerCase();
@@ -126,7 +124,7 @@ export function validateUsernameFormat(raw: string): UsernameValidationResult {
 
 export async function isUsernameTaken(
   usernameNormalized: string,
-  excludeUserId?: string
+  excludeUserId?: string,
 ): Promise<boolean> {
   const existing = await prisma.user.findUnique({
     where: { usernameNormalized },
@@ -137,7 +135,7 @@ export async function isUsernameTaken(
 
 export async function suggestUsernameAlternatives(
   rawBase: string,
-  count = 3
+  count = 3,
 ): Promise<string[]> {
   const cleanedBase = normalizeUsername(rawBase).replace(/[^a-z0-9_.]/g, '');
   const base = cleanedBase.slice(0, Math.max(1, USERNAME_MAX_LENGTH - 4));

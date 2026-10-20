@@ -107,6 +107,8 @@ function Sidebar({
               </button>
               <button
                 onClick={onClose}
+                type="button"
+                aria-label="بستن منو"
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 md:hidden"
               >
                 <X size={20} />
@@ -124,7 +126,7 @@ function Sidebar({
                   className="flex flex-col gap-0.5"
                 >
                   {section.group && !isCollapsed && (
-                    <p className="px-3 pb-1.5 text-[11px] font-medium text-gray-400 dark:text-gray-500">
+                    <p className="px-3 pb-1.5 text-[11px] font-medium text-gray-600 dark:text-gray-400">
                       {navigationGroupLabel[section.group]}
                     </p>
                   )}
@@ -178,7 +180,7 @@ function Sidebar({
                 <p className="truncate text-xs font-medium text-gray-800 dark:text-gray-200">
                   {user?.name || user?.username}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-gray-600 dark:text-gray-400">
                   {user ? roleLabel[user.role] : ''}
                 </p>
               </div>

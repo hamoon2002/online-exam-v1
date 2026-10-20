@@ -93,12 +93,17 @@ export async function requestOtp(data: RequestOtpData, ip: string) {
         userId: user.id,
       });
 
-      if (env.NODE_ENV === 'development') logEvent('info', `[OTP] ${data.purpose}: code_created`);
+      if (env.NODE_ENV === 'development')
+        logEvent('info', `[OTP] ${data.purpose}: code_created`);
       sendOtp({ identifier: value, channel, code }).catch((error) => {
         logEvent('error', 'sendOtp failed:', error);
       });
     } else {
-      if (env.NODE_ENV === 'development') logEvent('info', `[OTP] ${data.purpose}: account_not_found; no code created`);
+      if (env.NODE_ENV === 'development')
+        logEvent(
+          'info',
+          `[OTP] ${data.purpose}: account_not_found; no code created`,
+        );
       await simulateOtpCreationCost();
     }
 
@@ -224,7 +229,7 @@ export async function verifyOtpCode(data: VerifyOtpData, ip: string) {
   const { accessToken, refreshToken, sid } = await issueTokenPair(
     user.id,
     user.role,
-    rememberMe
+    rememberMe,
   );
 
   forceLogoutOtherSessions(user.id, sid);
@@ -252,7 +257,7 @@ export async function verifyOtpCode(data: VerifyOtpData, ip: string) {
 async function deliverOtp(
   identifier: string,
   channel: 'EMAIL' | 'SMS',
-  code: string
+  code: string,
 ) {
   try {
     await sendOtp({

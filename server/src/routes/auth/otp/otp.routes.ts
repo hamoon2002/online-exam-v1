@@ -15,10 +15,7 @@ import { asyncHandler } from '../../../lib/asyncHandler';
 import { badRequest } from '../../../lib/errors';
 import { setRefreshCookie } from '../../../lib/authTokens';
 
-import {
-  requestOtp,
-  verifyOtpCode,
-} from './otp.service';
+import { requestOtp, verifyOtpCode } from './otp.service';
 
 const router = Router();
 
@@ -26,24 +23,15 @@ router.post(
   '/otp/request',
   otpSendLimiter,
   asyncHandler(async (req, res) => {
-    const parsed =
-      otpRequestSchema.safeParse(
-        req.body,
-      );
+    const parsed = otpRequestSchema.safeParse(req.body);
 
     if (!parsed.success) {
       throw badRequest(
-        parsed.error.issues[0]
-          ?.message ??
-          'اطلاعات درخواست کد نامعتبره',
+        parsed.error.issues[0]?.message ?? 'اطلاعات درخواست کد نامعتبره',
       );
     }
 
-    const result =
-      await requestOtp(
-        parsed.data,
-        req.ip ?? 'unknown',
-      );
+    const result = await requestOtp(parsed.data, req.ip ?? 'unknown');
 
     return res.json(result);
   }),
@@ -53,35 +41,23 @@ router.post(
   '/otp/verify',
   otpVerifyLimiter,
   asyncHandler(async (req, res) => {
-    const parsed =
-      otpVerifySchema.safeParse(
-        req.body,
-      );
+    const parsed = otpVerifySchema.safeParse(req.body);
 
     if (!parsed.success) {
       throw badRequest(
-        parsed.error.issues[0]
-          ?.message ??
-          'اطلاعات کد تایید نامعتبره',
+        parsed.error.issues[0]?.message ?? 'اطلاعات کد تایید نامعتبره',
       );
     }
 
-    const result =
-      await verifyOtpCode(
-        parsed.data,
-        req.ip ?? 'unknown',
-      );
+    const result = await verifyOtpCode(parsed.data, req.ip ?? 'unknown');
 
     if (result.type === 'reset') {
       return res.json({
-        resetTicket:
-          result.resetTicket,
+        resetTicket: result.resetTicket,
       });
     }
 
-    if (
-      result.type === 'pending'
-    ) {
+    if (result.type === 'pending') {
       return res.json({
         pendingApproval: true,
         message: result.message,
@@ -90,15 +66,10 @@ router.post(
 
     await notifyLogin(result.user.id, req.ip);
 
-    setRefreshCookie(
-      res,
-      result.refreshToken,
-      result.rememberMe,
-    );
+    setRefreshCookie(res, result.refreshToken, result.rememberMe);
 
     return res.json({
-      accessToken:
-        result.accessToken,
+      accessToken: result.accessToken,
 
       user: result.user,
     });

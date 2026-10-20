@@ -33,19 +33,40 @@ router.get(
     if (!allowed) throw forbidden();
 
     const { page, pageSize, skip, search } = parseListQuery(req.query);
-    const filter = { ...{ bankId: bank.id }, ...(search ? { text: { contains: search, mode: 'insensitive' as const } } : {}) };
-    const [questions, total] = await prisma.$transaction([
-      prisma.question.findMany({
-        where: filter,
-        include: { _count: { select: { practiceQuestions: { where: { practice: { publishedAt: { not: null } } } } } } },
-        orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
-        skip,
-        take: pageSize,
-      }),
-      prisma.question.count({ where: filter }),
-    ], { isolationLevel: 'RepeatableRead' });
-    res.json({ items: questions.map(serializeQuestion), total, page, pageSize });
-  })
+    const filter = {
+      ...{ bankId: bank.id },
+      ...(search
+        ? { text: { contains: search, mode: 'insensitive' as const } }
+        : {}),
+    };
+    const [questions, total] = await prisma.$transaction(
+      [
+        prisma.question.findMany({
+          where: filter,
+          include: {
+            _count: {
+              select: {
+                practiceQuestions: {
+                  where: { practice: { publishedAt: { not: null } } },
+                },
+              },
+            },
+          },
+          orderBy: [{ createdAt: 'asc' }, { id: 'asc' }],
+          skip,
+          take: pageSize,
+        }),
+        prisma.question.count({ where: filter }),
+      ],
+      { isolationLevel: 'RepeatableRead' },
+    );
+    res.json({
+      items: questions.map(serializeQuestion),
+      total,
+      page,
+      pageSize,
+    });
+  }),
 );
 
 router.post(
@@ -61,11 +82,11 @@ router.post(
     if (!parsed.success) throw badRequest(parsed.error.issues[0].message);
 
     const question = await withQuotaForRole(role, sub, 'questions', 1, (db) =>
-      db.question.create({ data: { ...parsed.data, bankId: bank.id } })
+      db.question.create({ data: { ...parsed.data, bankId: bank.id } }),
     );
 
     res.status(201).json(serializeQuestion(question));
-  })
+  }),
 );
 
 router.post(
@@ -89,14 +110,14 @@ router.post(
       (db) =>
         Promise.all(
           parsed.data.map((q) =>
-            db.question.create({ data: { ...q, bankId: bank.id } })
-          )
+            db.question.create({ data: { ...q, bankId: bank.id } }),
+          ),
         ),
-      { timeoutMs: 60_000 }
+      { timeoutMs: 60_000 },
     );
 
     res.status(201).json(created.map(serializeQuestion));
-  })
+  }),
 );
 
 router.post(
@@ -143,17 +164,17 @@ router.post(
       (db) =>
         Promise.all(
           questions.map((q) =>
-            db.question.create({ data: { ...q, bankId: bank.id } })
-          )
+            db.question.create({ data: { ...q, bankId: bank.id } }),
+          ),
         ),
-      { timeoutMs: 60_000 }
+      { timeoutMs: 60_000 },
     );
 
     res.status(201).json({
       created: created.map(serializeQuestion),
       errors,
     });
-  })
+  }),
 );
 
 router.put(
@@ -165,7 +186,7 @@ router.put(
       req.params.bankId,
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!bank) throw notFound('بانک سوال یافت نشد');
     if (!allowed) throw forbidden();
@@ -180,7 +201,7 @@ router.put(
     });
 
     res.json(serializeQuestion(updated));
-  })
+  }),
 );
 
 router.delete(
@@ -192,7 +213,7 @@ router.delete(
       req.params.bankId,
       req.params.id,
       sub,
-      role
+      role,
     );
     if (!bank) throw notFound('بانک سوال یافت نشد');
     if (!allowed) throw forbidden();
@@ -200,7 +221,7 @@ router.delete(
 
     await prisma.question.delete({ where: { id: question.id } });
     res.status(204).end();
-  })
+  }),
 );
 
 export default router;

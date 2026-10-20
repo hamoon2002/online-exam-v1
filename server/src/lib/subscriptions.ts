@@ -31,7 +31,7 @@ export function computeEndDate(planId: PlanId, from: Date): Date | null {
 export function computePurchaseEndDate(
   planId: PlanId,
   current: { planId: PlanId; endDate: Date | null } | null,
-  now: Date
+  now: Date,
 ): Date | null {
   const canExtend =
     current !== null &&
@@ -64,13 +64,13 @@ async function notifyIfNewlyExpired(sub: SubscriptionRow): Promise<void> {
   await notifyUser(
     sub.instructorId,
     `پلن «${sub.planId}» شما منقضی شد - برای ادامه‌ی استفاده تمدید کنید`,
-    'info'
+    'info',
   );
 }
 
 // The newest subscription is current; changes append history rather than overwriting it.
 export async function getCurrentSubscription(
-  instructorId: string
+  instructorId: string,
 ): Promise<SubscriptionRow> {
   const existing = await prisma.subscription.findFirst({
     where: { instructorId },
@@ -105,7 +105,7 @@ export async function getCurrentSubscription(
 // Reject downgrades while a paid plan remains active.
 export async function assertPlanChangeAllowed(
   instructorId: string,
-  targetPlanId: PlanId
+  targetPlanId: PlanId,
 ): Promise<void> {
   const current = await getCurrentSubscription(instructorId);
   if (getPlan(current.planId).price === 0 || isSubscriptionExpired(current)) {
@@ -114,7 +114,7 @@ export async function assertPlanChangeAllowed(
 
   if (PLAN_ORDER.indexOf(targetPlanId) < PLAN_ORDER.indexOf(current.planId)) {
     throw badRequest(
-      'تا پایان دوره‌ی پلن فعلی نمی‌تونی به پلن پایین‌تر بری. بعد از پایان دوره می‌تونی تغییر بدی'
+      'تا پایان دوره‌ی پلن فعلی نمی‌تونی به پلن پایین‌تر بری. بعد از پایان دوره می‌تونی تغییر بدی',
     );
   }
 }
@@ -143,7 +143,7 @@ export async function listCurrentSubscriptions(): Promise<
         planId: 'free' as const,
         startDate: new Date(),
         endDate: null,
-      }
+      },
   );
 }
 
@@ -151,15 +151,32 @@ export async function listCurrentSubscriptions(): Promise<
 export async function selectPlan(
   instructorId: string,
   planId: PlanId,
-  adminId?: string
+  adminId?: string,
 ): Promise<SubscriptionRow> {
   const now = new Date();
   if (adminId) {
-    return prisma.$transaction(async tx => {
+    return prisma.$transaction(async (tx) => {
       await lockInstructorForUpdate(tx, instructorId);
-      const previous = await tx.subscription.findFirst({ where: { instructorId }, orderBy: [{ startDate: 'desc' }, { id: 'desc' }] });
-      const subscription = await tx.subscription.create({ data: { instructorId, planId, startDate: now, endDate: computeEndDate(planId, now) } });
-      await recordAdminAction(tx, { adminId, action: 'instructor.plan_change', targetType: 'User', targetId: instructorId, before: { planId: previous?.planId ?? 'free' }, after: { planId, subscriptionId: subscription.id } });
+      const previous = await tx.subscription.findFirst({
+        where: { instructorId },
+        orderBy: [{ startDate: 'desc' }, { id: 'desc' }],
+      });
+      const subscription = await tx.subscription.create({
+        data: {
+          instructorId,
+          planId,
+          startDate: now,
+          endDate: computeEndDate(planId, now),
+        },
+      });
+      await recordAdminAction(tx, {
+        adminId,
+        action: 'instructor.plan_change',
+        targetType: 'User',
+        targetId: instructorId,
+        before: { planId: previous?.planId ?? 'free' },
+        after: { planId, subscriptionId: subscription.id },
+      });
       return subscription;
     });
   }
@@ -174,14 +191,14 @@ export async function selectPlan(
 }
 
 export async function renewSubscription(
-  instructorId: string
+  instructorId: string,
 ): Promise<SubscriptionRow> {
   const current = await getCurrentSubscription(instructorId);
   return selectPlan(instructorId, current.planId);
 }
 
 export async function getSubscriptionHistory(
-  instructorId: string
+  instructorId: string,
 ): Promise<SubscriptionRow[]> {
   return prisma.subscription.findMany({
     where: { instructorId },

@@ -48,7 +48,7 @@ async function invalidCredentials(ip: string) {
   return new AppError(
     401,
     'شناسه یا رمز اشتباهه',
-    captchaRequired ? { captchaRequired: true } : undefined
+    captchaRequired ? { captchaRequired: true } : undefined,
   );
 }
 
@@ -62,13 +62,13 @@ export async function loginWithPassword(data: PasswordLoginData, ip: string) {
         'برای ادامه لازمه کد تصویر امنیتی رو هم وارد کنی',
         {
           captchaRequired: true,
-        }
+        },
       );
     }
 
     const captchaValid = await verifyCaptcha(
       data.captchaId,
-      data.captchaAnswer
+      data.captchaAnswer,
     );
 
     if (!captchaValid) {
@@ -107,7 +107,7 @@ export async function loginWithPassword(data: PasswordLoginData, ip: string) {
   if (await isAccountLocked(user.id, ip)) {
     throw new AppError(
       423,
-      'به‌خاطر تلاش‌های ناموفق زیاد، ورود با رمز برای این حساب موقتاً قفل شده. با کد یکبارمصرف وارد شو یا چند دقیقه‌ی دیگه دوباره امتحان کن.'
+      'به‌خاطر تلاش‌های ناموفق زیاد، ورود با رمز برای این حساب موقتاً قفل شده. با کد یکبارمصرف وارد شو یا چند دقیقه‌ی دیگه دوباره امتحان کن.',
     );
   }
 
@@ -119,7 +119,7 @@ export async function loginWithPassword(data: PasswordLoginData, ip: string) {
     notifyUser(
       user.id,
       'یک نفر برای حساب شما رمز عبور اشتباه وارد کرد',
-      'info'
+      'info',
     ).catch((error) => {
       logEvent('error', 'notifyUser failed:', error);
     });
@@ -139,7 +139,7 @@ export async function loginWithPassword(data: PasswordLoginData, ip: string) {
       403,
       user.email
         ? 'ایمیلت هنوز تایید نشده. اول با کد تایید (OTP) وارد شو'
-        : 'موبایلت هنوز تایید نشده. اول با کد تایید (OTP) وارد شو'
+        : 'موبایلت هنوز تایید نشده. اول با کد تایید (OTP) وارد شو',
     );
   }
 
@@ -152,7 +152,7 @@ export async function loginWithPassword(data: PasswordLoginData, ip: string) {
   const { accessToken, refreshToken, sid } = await issueTokenPair(
     user.id,
     user.role,
-    data.rememberMe
+    data.rememberMe,
   );
 
   forceLogoutOtherSessions(user.id, sid);

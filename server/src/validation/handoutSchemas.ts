@@ -33,5 +33,5 @@ export const updateHandoutSchema = z
       message:
         'برای جایگزینی فایل باید هر سه‌ی fileName/objectKey/fileSize با هم ارسال بشن',
       path: ['objectKey'],
-    }
+    },
   );

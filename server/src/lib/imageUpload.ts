@@ -1,11 +1,7 @@
 import multer from 'multer';
 import { badRequest } from './errors';
 
-const ALLOWED_MIME_TYPES = new Set([
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-]);
+const ALLOWED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;
 

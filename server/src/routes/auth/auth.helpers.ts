@@ -43,9 +43,6 @@ export function resolveIdentifier(raw: string) {
   return {
     type,
     value: normalizeIdentifier(raw, type),
-    channel:
-      type === 'EMAIL'
-        ? ('EMAIL' as const)
-        : ('SMS' as const),
+    channel: type === 'EMAIL' ? ('EMAIL' as const) : ('SMS' as const),
   };
 }

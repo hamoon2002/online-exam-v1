@@ -38,28 +38,40 @@ router.get(
       notifications.map((n) =>
         serializeNotification(
           n,
-          n.userId === sub ? n.read : readBroadcastIds.has(n.id)
-        )
-      )
+          n.userId === sub ? n.read : readBroadcastIds.has(n.id),
+        ),
+      ),
     );
-  })
+  }),
 );
 
 // Dismiss for this recipient only, including shared role announcements.
-router.delete('/:id', asyncHandler(async (req, res) => {
-  const { sub, role } = req.user!;
-  const notification = await prisma.notification.findFirst({
-    where: { id: req.params.id, OR: [{ userId: sub }, { userId: null, targetRoles: { has: role } }] },
-    select: { id: true },
-  });
-  if (!notification) throw notFound('اعلان یافت نشد');
-  await prisma.notificationRead.upsert({
-    where: { userId_notificationId: { userId: sub, notificationId: notification.id } },
-    create: { userId: sub, notificationId: notification.id, dismissedAt: new Date() },
-    update: { dismissedAt: new Date() },
-  });
-  res.status(204).end();
-}));
+router.delete(
+  '/:id',
+  asyncHandler(async (req, res) => {
+    const { sub, role } = req.user!;
+    const notification = await prisma.notification.findFirst({
+      where: {
+        id: req.params.id,
+        OR: [{ userId: sub }, { userId: null, targetRoles: { has: role } }],
+      },
+      select: { id: true },
+    });
+    if (!notification) throw notFound('اعلان یافت نشد');
+    await prisma.notificationRead.upsert({
+      where: {
+        userId_notificationId: { userId: sub, notificationId: notification.id },
+      },
+      create: {
+        userId: sub,
+        notificationId: notification.id,
+        dismissedAt: new Date(),
+      },
+      update: { dismissedAt: new Date() },
+    });
+    res.status(204).end();
+  }),
+);
 
 router.post(
   '/:id/read',
@@ -93,7 +105,7 @@ router.post(
       update: {},
     });
     res.json(serializeNotification(existing, true));
-  })
+  }),
 );
 
 router.post(
@@ -143,7 +155,7 @@ router.post(
     ]);
 
     res.status(204).end();
-  })
+  }),
 );
 
 export default router;

@@ -13,12 +13,15 @@ const envSchema = z.object({
   JWT_REFRESH_EXPIRES_IN: z.string().default('30d'),
   GOOGLE_CLIENT_ID: z.string().default(''),
   PORT: z.string().default('4000'),
+  SENTRY_DSN: z.union([z.literal(''), z.string().url()]).default(''),
+  METRICS_TOKEN: z.union([z.literal(''), z.string().min(32)]).default(''),
   NODE_ENV: z
     .enum(['development', 'production', 'test'])
     .default('development'),
 
   KAVENEGAR_API_KEY: z.string().default(''),
   RESEND_API_KEY: z.string().default(''),
+  OTP_EMAIL_FROM: z.union([z.literal(''), z.string().email()]).default(''),
   CLIENT_URL: z.string().default('http://localhost:5173'),
 
   // Set the trusted proxy count to match the deployment topology.
@@ -55,24 +58,54 @@ const envSchema = z.object({
 
 const parsedEnv = envSchema.parse(process.env);
 
+if (parsedEnv.RESEND_API_KEY || parsedEnv.NODE_ENV === 'production') {
+  const domain = parsedEnv.OTP_EMAIL_FROM.split('@')[1]?.toLowerCase();
+  if (
+    !domain ||
+    ['yourdomain.com', 'example.com', 'example.org', 'example.net'].includes(
+      domain,
+    ) ||
+    domain.endsWith('.test') ||
+    domain.endsWith('.invalid')
+  ) {
+    throw new Error('OTP_EMAIL_FROM must use your verified sender domain');
+  }
+}
+
 // Production must not accept sandbox payments or default storage credentials.
 if (parsedEnv.NODE_ENV === 'production') {
   for (const key of ['S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY'] as const) {
-    if (!parsedEnv[key].trim() || parsedEnv[key].trim().toLowerCase() === 'minioadmin') {
-      throw new Error(`${key} must be configured with non-default credentials in production`);
+    if (
+      !parsedEnv[key].trim() ||
+      parsedEnv[key].trim().toLowerCase() === 'minioadmin'
+    ) {
+      throw new Error(
+        `${key} must be configured with non-default credentials in production`,
+      );
     }
   }
   const origin = new URL(parsedEnv.CLIENT_URL);
   const host = origin.hostname.toLowerCase().replace(/\.$/, '');
-  if (origin.protocol !== 'https:' || origin.username || origin.password ||
-      host === 'localhost' || host.endsWith('.localhost') || host === '[::1]' ||
-      host === '[::]' || /^\[::ffff:7f[0-9a-f]{2}:/.test(host) ||
-      host === '0.0.0.0' || /^127\./.test(host) || origin.pathname !== '/' || origin.search || origin.hash) {
+  if (
+    origin.protocol !== 'https:' ||
+    origin.username ||
+    origin.password ||
+    host === 'localhost' ||
+    host.endsWith('.localhost') ||
+    host === '[::1]' ||
+    host === '[::]' ||
+    /^\[::ffff:7f[0-9a-f]{2}:/.test(host) ||
+    host === '0.0.0.0' ||
+    /^127\./.test(host) ||
+    origin.pathname !== '/' ||
+    origin.search ||
+    origin.hash
+  ) {
     throw new Error('CLIENT_URL must be a public HTTPS origin in production');
   }
   if (parsedEnv.ZARINPAL_SANDBOX) {
     throw new Error(
-      'ZARINPAL_SANDBOX در production باید false باشه (sandbox=true یعنی پرداخت واقعی انجام نمی‌شه)'
+      'ZARINPAL_SANDBOX در production باید false باشه (sandbox=true یعنی پرداخت واقعی انجام نمی‌شه)',
     );
   }
   if (
@@ -82,7 +115,10 @@ if (parsedEnv.NODE_ENV === 'production') {
   }
 
   if (parsedEnv.TRUST_PROXY === 0) {
-    logEvent('warn', 'هشدار: TRUST_PROXY=0 در production. اگه پشت proxy/load balancer هستی باید ۱ (یا تعداد proxy ها) باشه.');
+    logEvent(
+      'warn',
+      'هشدار: TRUST_PROXY=0 در production. اگه پشت proxy/load balancer هستی باید ۱ (یا تعداد proxy ها) باشه.',
+    );
   }
 }
 

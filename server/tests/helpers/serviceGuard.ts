@@ -3,7 +3,7 @@
 // (بدون این متغیر) رفتار قبلی می‌مونه: تست skip می‌شه.
 export function unavailable(
   t: { skip: (message?: string) => void },
-  message: string
+  message: string,
 ): void {
   if (process.env.REQUIRE_SERVICES === '1') {
     throw new Error(`${message} (REQUIRE_SERVICES=1: skip مجاز نیست)`);

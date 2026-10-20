@@ -18,7 +18,9 @@ export function createManagedRedis(url: string, label: string) {
     disableOfflineQueue: true,
     socket: {
       connectTimeout: 5_000,
-      reconnectStrategy: retries => Math.min(250 * 2 ** Math.min(retries, 5), 5_000) + Math.floor(Math.random() * 200),
+      reconnectStrategy: (retries) =>
+        Math.min(250 * 2 ** Math.min(retries, 5), 5_000) +
+        Math.floor(Math.random() * 200),
     },
   });
   let unavailable = false;
@@ -28,7 +30,10 @@ export function createManagedRedis(url: string, label: string) {
   };
   client.on('error', report);
   client.on('ready', () => {
-    logEvent('info', `redis:${label}:${unavailable ? 'reconnected' : 'ready'}:${target}`);
+    logEvent(
+      'info',
+      `redis:${label}:${unavailable ? 'reconnected' : 'ready'}:${target}`,
+    );
     unavailable = false;
   });
   // Handle rejection even if the caller shuts the connection down during startup.
@@ -43,23 +48,37 @@ interface ReadyClient {
   ping(): Promise<string>;
 }
 
-export function waitForRedis(client: ReadyClient, timeoutMs = 15_000): Promise<void> {
+export function waitForRedis(
+  client: ReadyClient,
+  timeoutMs = 15_000,
+): Promise<void> {
   return new Promise((resolve, reject) => {
     let started = false;
     const finish = (error?: Error) => {
       clearTimeout(timer);
       client.removeListener('ready', ready);
-      if (error) reject(error); else resolve();
+      if (error) reject(error);
+      else resolve();
     };
     const ready = () => {
       if (started) return;
       started = true;
-      Promise.resolve().then(() => client.ping()).then(
-        reply => finish(reply === 'PONG' ? undefined : new Error('Invalid Redis PING response')),
-        () => finish(new Error('Redis PING failed')),
-      );
+      Promise.resolve()
+        .then(() => client.ping())
+        .then(
+          (reply) =>
+            finish(
+              reply === 'PONG'
+                ? undefined
+                : new Error('Invalid Redis PING response'),
+            ),
+          () => finish(new Error('Redis PING failed')),
+        );
     };
-    const timer = setTimeout(() => finish(new Error('Redis readiness timeout')), timeoutMs);
+    const timer = setTimeout(
+      () => finish(new Error('Redis readiness timeout')),
+      timeoutMs,
+    );
     client.on('ready', ready);
     if (client.isReady) ready();
   });

@@ -18,11 +18,7 @@ import {
   startCheckout,
 } from '../lib/payments';
 import { checkoutLimiter } from '../middleware/rateLimiters';
-import {
-  getInstructorUsage,
-  quotaCheckers,
-  remainingQuota,
-} from '../lib/quota';
+import { getInstructorUsage, remainingQuota } from '../lib/quota';
 import { getPlan } from '../lib/plans';
 import {
   assignPlanSchema,
@@ -47,7 +43,7 @@ router.get(
       : 'failed';
 
     res.redirect(`${env.CLIENT_URL}/plans?payment=${result}`);
-  })
+  }),
 );
 
 router.use(requireAuth);
@@ -58,7 +54,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const sub = await getCurrentSubscription(req.user!.sub);
     res.json(serializeSubscription(sub));
-  })
+  }),
 );
 
 router.get(
@@ -67,7 +63,7 @@ router.get(
   asyncHandler(async (_req, res) => {
     const subs = await listCurrentSubscriptions();
     res.json(subs.map(serializeSubscription));
-  })
+  }),
 );
 
 router.get(
@@ -76,7 +72,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const usage = await getInstructorUsage(req.user!.sub);
     res.json(usage);
-  })
+  }),
 );
 
 router.get(
@@ -94,7 +90,7 @@ router.get(
     }
     const quota = await remainingQuota[type](req.user!.sub);
     res.json(quota);
-  })
+  }),
 );
 
 // Direct plan selection is free-only; paid plans require verified checkout.
@@ -107,7 +103,7 @@ router.post(
 
     if (getPlan(parsed.data.planId).price > 0) {
       throw badRequest(
-        'برای پلن‌های پولی باید از فرآیند پرداخت (/subscriptions/checkout) استفاده کنی'
+        'برای پلن‌های پولی باید از فرآیند پرداخت (/subscriptions/checkout) استفاده کنی',
       );
     }
 
@@ -115,7 +111,7 @@ router.post(
 
     const sub = await selectPlan(req.user!.sub, parsed.data.planId);
     res.status(201).json(serializeSubscription(sub));
-  })
+  }),
 );
 
 router.post(
@@ -137,7 +133,7 @@ router.post(
     }
 
     res.status(201).json({ free: false, paymentUrl: result.paymentUrl });
-  })
+  }),
 );
 
 // Paid renewals must use checkout rather than extending access directly.
@@ -148,13 +144,13 @@ router.post(
     const current = await getCurrentSubscription(req.user!.sub);
     if (getPlan(current.planId).price > 0) {
       throw badRequest(
-        'تمدید پلن‌های پولی باید از فرآیند پرداخت (/subscriptions/checkout) انجام بشه'
+        'تمدید پلن‌های پولی باید از فرآیند پرداخت (/subscriptions/checkout) انجام بشه',
       );
     }
 
     const sub = await renewSubscription(req.user!.sub);
     res.status(201).json(serializeSubscription(sub));
-  })
+  }),
 );
 
 router.get(
@@ -163,7 +159,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const subs = await getSubscriptionHistory(req.user!.sub);
     res.json(subs.map(serializeSubscription));
-  })
+  }),
 );
 
 router.get(
@@ -172,7 +168,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const payments = await getPaymentHistory(req.user!.sub);
     res.json(payments.map(serializePayment));
-  })
+  }),
 );
 
 // Record a manual refund and revoke associated access; the actual money transfer is external.
@@ -182,7 +178,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const payment = await refundPayment(req.params.paymentId);
     res.json(serializePayment(payment));
-  })
+  }),
 );
 
 router.post(
@@ -199,9 +195,13 @@ router.post(
       throw notFound('مدرس یافت نشد');
     }
 
-    const sub = await selectPlan(parsed.data.instructorId, parsed.data.planId, req.user!.sub);
+    const sub = await selectPlan(
+      parsed.data.instructorId,
+      parsed.data.planId,
+      req.user!.sub,
+    );
     res.status(201).json(serializeSubscription(sub));
-  })
+  }),
 );
 
 export default router;

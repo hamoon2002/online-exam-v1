@@ -124,7 +124,7 @@ function QuestionScreen({
           {isLastQuestion ? (
             <button
               onClick={onLastQuestionAction}
-              className="flex items-center gap-2 rounded-xl bg-success-600 px-5 py-2.5 text-sm font-medium text-white transition hover:brightness-95"
+              className="flex items-center gap-2 rounded-xl bg-emerald-700 px-5 py-2.5 text-sm font-medium text-white transition hover:brightness-95"
             >
               <CheckCircle2 size={16} />
               {exam.allowReview ? 'مرور و پایان آزمون' : 'پایان آزمون'}

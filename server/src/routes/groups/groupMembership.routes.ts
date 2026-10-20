@@ -27,7 +27,8 @@ router.post(
     });
     if (!group) return res.status(404).json({ error: 'کد عضویت نامعتبره' });
 
-    if (group.approvalStatus !== 'Approved') return res.status(403).json({ error: 'این گروه هنوز تأیید نشده است.' });
+    if (group.approvalStatus !== 'Approved')
+      return res.status(403).json({ error: 'این گروه هنوز تأیید نشده است.' });
 
     const alreadyMember = group.students.some((s) => s.id === req.user!.sub);
     if (!alreadyMember) {
@@ -40,12 +41,12 @@ router.post(
         notifyUser(
           req.user!.sub,
           `به گروه «${group.name}» اضافه شدی`,
-          'people'
+          'people',
         ),
         notifyUser(
           group.instructorId,
           `یه دانشجوی جدید به گروه «${group.name}» پیوست`,
-          'people'
+          'people',
         ),
       ];
       const results = await Promise.allSettled(notifyAll);
@@ -61,7 +62,7 @@ router.post(
       include: withStudents,
     });
     res.json(serializeGroup(updated!));
-  })
+  }),
 );
 
 router.post(
@@ -87,7 +88,7 @@ router.post(
     });
 
     res.json(serializeGroup(group));
-  })
+  }),
 );
 
 export default router;

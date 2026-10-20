@@ -33,12 +33,14 @@ export class RedisRateLimitStore implements Store {
   constructor(
     private readonly client: RateLimitRedisClient,
     scope: string,
-    private readonly timeoutMs = 2_000
+    private readonly timeoutMs = 2_000,
   ) {
     this.prefix = `ratelimit:${scope}:`;
   }
 
-  init(options: Options) { this.windowMs = options.windowMs; }
+  init(options: Options) {
+    this.windowMs = options.windowMs;
+  }
 
   private key(identifier: string) {
     // Avoid storing email, phone and unbounded request bodies as Redis keys.
@@ -52,11 +54,17 @@ export class RedisRateLimitStore implements Store {
       return await Promise.race([
         this.client.sendCommand(args),
         new Promise<never>((_, reject) => {
-          timer = setTimeout(() => reject(new Error('Redis timeout')), this.timeoutMs);
+          timer = setTimeout(
+            () => reject(new Error('Redis timeout')),
+            this.timeoutMs,
+          );
         }),
       ]);
     } catch {
-      throw new AppError(503, 'سرویس کنترل درخواست‌ها موقتاً در دسترس نیست؛ دوباره تلاش کنید');
+      throw new AppError(
+        503,
+        'سرویس کنترل درخواست‌ها موقتاً در دسترس نیست؛ دوباره تلاش کنید',
+      );
     } finally {
       clearTimeout(timer);
     }
@@ -64,13 +72,22 @@ export class RedisRateLimitStore implements Store {
 
   async increment(identifier: string) {
     const result = await this.command([
-      'EVAL', INCREMENT, '1', this.key(identifier), String(this.windowMs),
+      'EVAL',
+      INCREMENT,
+      '1',
+      this.key(identifier),
+      String(this.windowMs),
     ]);
     if (!Array.isArray(result) || result.length !== 2) {
       throw new AppError(503, 'پاسخ سرویس کنترل درخواست‌ها نامعتبر است');
     }
     const [totalHits, ttl] = result.map(Number);
-    if (!Number.isSafeInteger(totalHits) || totalHits < 1 || !Number.isFinite(ttl) || ttl < 0) {
+    if (
+      !Number.isSafeInteger(totalHits) ||
+      totalHits < 1 ||
+      !Number.isFinite(ttl) ||
+      ttl < 0
+    ) {
       throw new AppError(503, 'پاسخ سرویس کنترل درخواست‌ها نامعتبر است');
     }
     return { totalHits, resetTime: new Date(Date.now() + ttl) };

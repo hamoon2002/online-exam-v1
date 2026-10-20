@@ -16,7 +16,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { sub } = req.user!;
     res.json(await listCategoriesForInstructor(sub));
-  })
+  }),
 );
 
 router.post(
@@ -31,7 +31,7 @@ router.post(
     const { sub } = req.user!;
     const { category, created } = await proposeCategory(sub, parsed.data.name);
     res.status(created ? 201 : 200).json(category);
-  })
+  }),
 );
 
 export default router;

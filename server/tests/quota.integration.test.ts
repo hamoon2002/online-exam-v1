@@ -65,7 +65,7 @@ async function createInstructor(
   plan: { planId: 'free' | 'gold' | 'platinum'; endDate: Date | null } = {
     planId: 'free',
     endDate: null,
-  }
+  },
 ) {
   const suffix = crypto.randomUUID();
   const user = await prisma.user.create({
@@ -100,7 +100,9 @@ async function cleanup(instructorId: string) {
   });
   await prisma.group.deleteMany({ where: { instructorId } });
   await prisma.subscription.deleteMany({ where: { instructorId } });
-  await prisma.user.delete({ where: { id: instructorId } }).catch(() => undefined);
+  await prisma.user
+    .delete({ where: { id: instructorId } })
+    .catch(() => undefined);
 }
 
 const createGroup = (instructorId: string) =>
@@ -112,7 +114,7 @@ const createGroup = (instructorId: string) =>
         instructorId,
         joinCode: `T${crypto.randomUUID().slice(0, 8)}`,
       },
-    })
+    }),
   );
 
 const createHandout = (instructorId: string) =>
@@ -126,7 +128,7 @@ const createHandout = (instructorId: string) =>
         fileUrl: `k-${crypto.randomUUID()}`,
         fileSize: 1,
       },
-    })
+    }),
   );
 
 test('پلن رایگان (سقف ۱ گروه): ۸ ساخت هم‌زمان → دقیقاً ۱ موفق', async (t) => {
@@ -134,13 +136,18 @@ test('پلن رایگان (سقف ۱ گروه): ۸ ساخت هم‌زمان → 
   const user = await createInstructor();
   try {
     const outcomes = await settle(
-      Array.from({ length: 8 }, () => createGroup(user.id))
+      Array.from({ length: 8 }, () => createGroup(user.id)),
     );
     assert.equal(count(outcomes, true), 1);
     assert.ok(
-      outcomes.filter((o) => !o.ok).every((o) => !o.ok && o.reason === 'limit_reached')
+      outcomes
+        .filter((o) => !o.ok)
+        .every((o) => !o.ok && o.reason === 'limit_reached'),
     );
-    assert.equal(await prisma.group.count({ where: { instructorId: user.id } }), 1);
+    assert.equal(
+      await prisma.group.count({ where: { instructorId: user.id } }),
+      1,
+    );
   } finally {
     await cleanup(user.id);
   }
@@ -151,10 +158,13 @@ test('پلن رایگان (سقف ۵ جزوه): ۱۵ ساخت هم‌زمان �
   const user = await createInstructor();
   try {
     const outcomes = await settle(
-      Array.from({ length: 15 }, () => createHandout(user.id))
+      Array.from({ length: 15 }, () => createHandout(user.id)),
     );
     assert.equal(count(outcomes, true), 5);
-    assert.equal(await prisma.handout.count({ where: { instructorId: user.id } }), 5);
+    assert.equal(
+      await prisma.handout.count({ where: { instructorId: user.id } }),
+      5,
+    );
   } finally {
     await cleanup(user.id);
   }
@@ -162,10 +172,13 @@ test('پلن رایگان (سقف ۵ جزوه): ۱۵ ساخت هم‌زمان �
 
 test('پلن نامحدود: قفل و سقفی نیست، همه‌ی ساخت‌ها موفق', async (t) => {
   if (!dbAvailable) return unavailable(t, 'Postgres در دسترس نیست');
-  const user = await createInstructor({ planId: 'platinum', endDate: new Date(Date.now() + 86_400_000) });
+  const user = await createInstructor({
+    planId: 'platinum',
+    endDate: new Date(Date.now() + 86_400_000),
+  });
   try {
     const outcomes = await settle(
-      Array.from({ length: 6 }, () => createGroup(user.id))
+      Array.from({ length: 6 }, () => createGroup(user.id)),
     );
     assert.equal(count(outcomes, true), 6);
   } finally {
@@ -175,10 +188,13 @@ test('پلن نامحدود: قفل و سقفی نیست، همه‌ی ساخت�
 
 test('پلن منقضی: همه رد می‌شن با reason=plan_expired', async (t) => {
   if (!dbAvailable) return unavailable(t, 'Postgres در دسترس نیست');
-  const user = await createInstructor({ planId: 'gold', endDate: new Date(Date.now() - 1000) });
+  const user = await createInstructor({
+    planId: 'gold',
+    endDate: new Date(Date.now() - 1000),
+  });
   try {
     const outcomes = await settle(
-      Array.from({ length: 3 }, () => createGroup(user.id))
+      Array.from({ length: 3 }, () => createGroup(user.id)),
     );
     assert.equal(count(outcomes, true), 0);
     assert.ok(outcomes.every((o) => !o.ok && o.reason === 'plan_expired'));
@@ -212,8 +228,8 @@ test('سوال آزمون (سقف ۵۰): ۳ ایمپورتِ ۳۰تایی هم�
             instructorId: user.id,
             groups: { connect: [{ id: group.id }] },
           },
-        })
-      )
+        }),
+      ),
     );
     const batch = Array.from({ length: 30 }, (_, i) => ({
       text: `q${i}`,
@@ -227,16 +243,16 @@ test('سوال آزمون (سقف ۵۰): ۳ ایمپورتِ ۳۰تایی هم�
         createExamQuestionsBulk(
           exam.id,
           batch,
-          await prepareQuotaGuard(user.id, kind, batch.length)
-        )
-      )
+          await prepareQuotaGuard(user.id, kind, batch.length),
+        ),
+      ),
     );
     assert.equal(count(outcomes, true), 1);
     assert.equal(
       await prisma.examQuestion.count({
         where: { examId: { in: exams.map((e) => e.id) } },
       }),
-      30
+      30,
     );
   } finally {
     await cleanup(user.id);

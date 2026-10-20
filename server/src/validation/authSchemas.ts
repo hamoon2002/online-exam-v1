@@ -111,7 +111,7 @@ export const changePasswordSchema = z.object({
     .string()
     .regex(
       PASSWORD_REGEX,
-      'رمز باید حداقل ۶ کاراکتر و ترکیبی از حرف و عدد باشه'
+      'رمز باید حداقل ۶ کاراکتر و ترکیبی از حرف و عدد باشه',
     )
     .max(PASSWORD_MAX, passwordMaxMessage),
 });

@@ -7,7 +7,7 @@ export class AppError extends Error {
   constructor(
     statusCode: number,
     message: string,
-    details?: Record<string, unknown>
+    details?: Record<string, unknown>,
   ) {
     super(message);
     this.statusCode = statusCode;

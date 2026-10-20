@@ -28,7 +28,7 @@ const UPLOAD_ROOT = path.join(process.cwd(), 'uploads');
 // (lesson-videos/abc.mp4) رو دربیار. اگه شکلش این نبود (یعنی قبلاً
 // migrate شده یا اصلاً URL نیست)، null برمی‌گردونه.
 function parseLegacyUploadUrl(
-  value: string | null
+  value: string | null,
 ): { diskPath: string; objectKey: string } | null {
   if (!value) return null;
   const marker = '/uploads/';
@@ -56,13 +56,15 @@ function guessContentType(objectKey: string): string {
 async function migrateOne(
   label: string,
   legacyUrl: string | null,
-  dryRun: boolean
+  dryRun: boolean,
 ): Promise<string | null> {
   const parsed = parseLegacyUploadUrl(legacyUrl);
   if (!parsed) return null; // چیزی برای migrate کردن نیست
 
   if (!fs.existsSync(parsed.diskPath)) {
-    console.warn(`⚠️  ${label}: فایل رو دیسک پیدا نشد (${parsed.diskPath}) - رد شد`);
+    console.warn(
+      `⚠️  ${label}: فایل رو دیسک پیدا نشد (${parsed.diskPath}) - رد شد`,
+    );
     return null;
   }
 
@@ -70,7 +72,11 @@ async function migrateOne(
   if (dryRun) return parsed.objectKey;
 
   const buffer = fs.readFileSync(parsed.diskPath);
-  await uploadObject(parsed.objectKey, buffer, guessContentType(parsed.objectKey));
+  await uploadObject(
+    parsed.objectKey,
+    buffer,
+    guessContentType(parsed.objectKey),
+  );
   return parsed.objectKey;
 }
 
@@ -87,7 +93,7 @@ async function main() {
     const newKey = await migrateOne(
       `session ${session.id}`,
       session.videoObjectUrl,
-      dryRun
+      dryRun,
     );
     if (newKey && !dryRun) {
       await prisma.lessonSession.update({
@@ -107,7 +113,7 @@ async function main() {
     const newKey = await migrateOne(
       `attachment ${attachment.id}`,
       attachment.fileUrl,
-      dryRun
+      dryRun,
     );
     if (newKey && !dryRun) {
       await prisma.lessonAttachment.update({
@@ -119,7 +125,7 @@ async function main() {
   }
 
   console.log(
-    `${dryRun ? '[dry-run] چیزی نوشته نشد. ' : ''}تمام: ${migratedSessions} ویدیوی جلسه، ${migratedAttachments} پیوست.`
+    `${dryRun ? '[dry-run] چیزی نوشته نشد. ' : ''}تمام: ${migratedSessions} ویدیوی جلسه، ${migratedAttachments} پیوست.`,
   );
 }
 

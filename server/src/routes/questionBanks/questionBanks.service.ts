@@ -39,7 +39,7 @@ export function serializeQuestion(q: {
 export async function loadOwnedBank(
   bankId: string,
   userId: string,
-  role: string
+  role: string,
 ) {
   const bank = await prisma.questionBank.findUnique({ where: { id: bankId } });
   if (!bank) return { bank: null, allowed: false };
@@ -52,7 +52,7 @@ export async function loadOwnedQuestion(
   bankId: string,
   questionId: string,
   userId: string,
-  role: string
+  role: string,
 ) {
   const { bank, allowed } = await loadOwnedBank(bankId, userId, role);
   if (!bank || !allowed) return { bank, allowed, question: null };

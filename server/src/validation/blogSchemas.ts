@@ -10,7 +10,7 @@ export const createBlogPostSchema = z.object({
     .max(200)
     .regex(
       slugPattern,
-      'اسلاگ فقط می‌تونه شامل حروف/عدد انگلیسی کوچک و خط تیره باشه'
+      'اسلاگ فقط می‌تونه شامل حروف/عدد انگلیسی کوچک و خط تیره باشه',
     ),
   title: z.string().trim().min(1, 'عنوان الزامیه').max(200),
   excerpt: z.string().trim().min(1, 'خلاصه الزامیه').max(500),

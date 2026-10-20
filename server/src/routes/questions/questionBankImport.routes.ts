@@ -48,7 +48,7 @@ router.post(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.examId,
       sub,
-      role
+      role,
     );
 
     if (!exam) {
@@ -72,11 +72,11 @@ router.post(
     const questions = (await importBankQuestionsToExam(
       exam.id,
       parsed.data.questionIds,
-      role === 'Instructor' ? sub : undefined
+      role === 'Instructor' ? sub : undefined,
     )) as ImportedExamQuestion[];
 
     return res.status(201).json(questions.map(serializeQuestion));
-  })
+  }),
 );
 
 export default router;

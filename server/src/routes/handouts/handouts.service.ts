@@ -45,10 +45,9 @@ export async function loadStudentGroupContext(studentId: string) {
 }
 
 export function studentVisibilityWhere(
-  groups: { id: string; category: string; instructorId: string }[]
+  groups: { id: string; category: string; instructorId: string }[],
 ) {
   if (groups.length === 0) {
-
     return { id: 'never-matches' };
   }
   const groupIds = groups.map((g) => g.id);
@@ -68,14 +67,15 @@ export function studentVisibilityWhere(
 
 export function studentCanSeeHandout(
   handout: DbHandout,
-  groups: { id: string; category: string; instructorId: string }[]
+  groups: { id: string; category: string; instructorId: string }[],
 ): boolean {
   if (handout.groupId) {
     return groups.some((g) => g.id === handout.groupId);
   }
   return groups.some(
     (g) =>
-      g.category === handout.category && g.instructorId === handout.instructorId
+      g.category === handout.category &&
+      g.instructorId === handout.instructorId,
   );
 }
 
@@ -96,8 +96,8 @@ export async function notifyAudienceAboutHandout(handout: DbHandout) {
     if (!group) return;
     await Promise.all(
       group.students.map((s) =>
-        notifyUser(s.id, `جزوه‌ی جدید «${handout.title}» اضافه شد`, 'info')
-      )
+        notifyUser(s.id, `جزوه‌ی جدید «${handout.title}» اضافه شد`, 'info'),
+      ),
     );
     return;
   }
@@ -112,7 +112,7 @@ export async function notifyAudienceAboutHandout(handout: DbHandout) {
   }
   await Promise.all(
     [...studentIds].map((id) =>
-      notifyUser(id, `جزوه‌ی جدید «${handout.title}» اضافه شد`, 'info')
-    )
+      notifyUser(id, `جزوه‌ی جدید «${handout.title}» اضافه شد`, 'info'),
+    ),
   );
 }

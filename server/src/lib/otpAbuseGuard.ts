@@ -12,8 +12,7 @@ const TOO_MANY_MESSAGE =
   'تعداد درخواست کد بیش از حد مجازه. بعداً دوباره تلاش کن.';
 
 const ipKey = (ip: string) => `otp:send:ip:${ip}`;
-const identifierKey = (identifier: string) =>
-  `otp:send:id:${identifier}`;
+const identifierKey = (identifier: string) => `otp:send:id:${identifier}`;
 
 async function bump(key: string): Promise<number> {
   const count = await redis.incr(key);
@@ -48,24 +47,17 @@ export async function assertOtpSendAllowed(
       );
     }
 
-    const valid = await verifyCaptcha(
-      input.captchaId,
-      input.captchaAnswer,
-    );
+    const valid = await verifyCaptcha(input.captchaId, input.captchaAnswer);
 
     if (!valid) {
-      throw new AppError(
-        400,
-        'کد تصویر امنیتی اشتباهه یا منقضی شده',
-        { captchaRequired: true },
-      );
+      throw new AppError(400, 'کد تصویر امنیتی اشتباهه یا منقضی شده', {
+        captchaRequired: true,
+      });
     }
   }
 
   // Validate captcha before spending the target identifier's OTP allowance.
-  const identifierCount = await bump(
-    identifierKey(input.identifier),
-  );
+  const identifierCount = await bump(identifierKey(input.identifier));
 
   if (identifierCount > IDENTIFIER_HARD_LIMIT) {
     throw new AppError(429, TOO_MANY_MESSAGE);
@@ -84,20 +76,16 @@ export async function assertOtpVerifyCaptcha(input: {
   if (!(count > IP_CAPTCHA_AFTER)) return;
 
   if (!input.captchaId || !input.captchaAnswer) {
-    throw new AppError(
-      400,
-      'برای ادامه لازمه کد تصویر امنیتی رو هم وارد کنی',
-      { captchaRequired: true },
-    );
+    throw new AppError(400, 'برای ادامه لازمه کد تصویر امنیتی رو هم وارد کنی', {
+      captchaRequired: true,
+    });
   }
 
   const valid = await verifyCaptcha(input.captchaId, input.captchaAnswer);
 
   if (!valid) {
-    throw new AppError(
-      400,
-      'کد تصویر امنیتی اشتباهه یا منقضی شده',
-      { captchaRequired: true },
-    );
+    throw new AppError(400, 'کد تصویر امنیتی اشتباهه یا منقضی شده', {
+      captchaRequired: true,
+    });
   }
 }

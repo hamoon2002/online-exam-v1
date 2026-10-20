@@ -19,7 +19,7 @@ router.get(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.examId,
       sub,
-      role
+      role,
     );
     if (!exam) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
@@ -30,7 +30,7 @@ router.get(
       where: { examId: exam.id, finishedAt: { not: null } },
     });
     res.json(attempts.map(serializeAttempt));
-  })
+  }),
 );
 
 router.get(
@@ -41,7 +41,7 @@ router.get(
     const { exam, allowed } = await loadAccessibleExam(
       req.params.examId,
       sub,
-      'Student'
+      'Student',
     );
     if (!exam) throw notFound('آزمون یافت نشد');
     if (!allowed) throw forbidden();
@@ -58,7 +58,7 @@ router.get(
       return res.json({ ...serializeAttempt(attempt), answers: undefined });
     }
     res.json(serializeAttempt(attempt));
-  })
+  }),
 );
 
 export default router;

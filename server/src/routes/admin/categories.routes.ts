@@ -25,9 +25,9 @@ router.get(
       throw badRequest('status نامعتبره');
     }
     res.json(
-      await listCategoriesForAdmin(status as CategoryStatus | undefined)
+      await listCategoriesForAdmin(status as CategoryStatus | undefined),
     );
-  })
+  }),
 );
 
 router.post(
@@ -38,14 +38,14 @@ router.post(
       throw badRequest(parsed.error.issues[0]?.message ?? 'ورودی نامعتبره');
     }
     res.status(201).json(await adminCreateCategory(parsed.data.name));
-  })
+  }),
 );
 
 router.post(
   '/:id/approve',
   asyncHandler(async (req, res) => {
     res.json(await approveCategory(req.params.id));
-  })
+  }),
 );
 
 router.patch(
@@ -56,7 +56,7 @@ router.patch(
       throw badRequest(parsed.error.issues[0]?.message ?? 'ورودی نامعتبره');
     }
     res.json(await renameCategory(req.params.id, parsed.data.name));
-  })
+  }),
 );
 
 router.delete(
@@ -64,7 +64,7 @@ router.delete(
   asyncHandler(async (req, res) => {
     await deleteOrRejectCategory(req.params.id);
     res.status(204).send();
-  })
+  }),
 );
 
 export default router;

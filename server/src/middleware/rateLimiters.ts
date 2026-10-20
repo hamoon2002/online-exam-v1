@@ -30,7 +30,10 @@ export const otpSendLimiter = rateLimit({
   // Hourly IP/identifier abuse limits remain enforced by otpAbuseGuard.
   skipFailedRequests: true,
   handler: (_req, res) => {
-    const retryAfterSeconds = Math.max(1, Math.ceil(Number(res.getHeader('Retry-After')) || 90));
+    const retryAfterSeconds = Math.max(
+      1,
+      Math.ceil(Number(res.getHeader('Retry-After')) || 90),
+    );
     res.status(429).json({
       error: `برای درخواست دوبارهٔ کد، ${retryAfterSeconds.toLocaleString('fa-IR')} ثانیه صبر کنید.`,
       retryAfterSeconds,

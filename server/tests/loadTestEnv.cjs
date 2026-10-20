@@ -15,6 +15,6 @@ if (fs.existsSync(file)) {
 } else if (!process.env.REQUIRE_SERVICES) {
   console.warn(
     '[tests] server/.env.test not found: tests will use the dev DATABASE_URL/REDIS_URL from server/.env.\n' +
-      '        Run `npm run test:setup -w server` once to create an isolated test database.'
+      '        Run `npm run test:setup -w server` once to create an isolated test database.',
   );
 }

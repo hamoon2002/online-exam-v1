@@ -12,7 +12,8 @@ function positiveInt(value: unknown, fallback: number): number {
     throw badRequest('پارامتر صفحه‌بندی نامعتبره');
   }
   const n = Number(value);
-  if (!Number.isSafeInteger(n) || n < 1 || n > 1_000_000) throw badRequest('پارامتر صفحه‌بندی نامعتبره');
+  if (!Number.isSafeInteger(n) || n < 1 || n > 1_000_000)
+    throw badRequest('پارامتر صفحه‌بندی نامعتبره');
   return n;
 }
 
@@ -36,7 +37,13 @@ export function parsePaging(query: Request['query']): Paging {
     if (q.length > MAX_QUERY_LENGTH) throw badRequest('q بیش از حد طولانیه');
   }
 
-  return { page, pageSize, skip: (page - 1) * pageSize, take: pageSize, q: q || undefined };
+  return {
+    page,
+    pageSize,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+    q: q || undefined,
+  };
 }
 
 export function optionalString(value: unknown): string | undefined {

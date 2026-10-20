@@ -28,7 +28,7 @@ export const withStudents = { students: { select: { id: true } } } as const;
 export async function resolveStudentIds(
   rawIds: string[],
   role: Role,
-  instructorId: string
+  instructorId: string,
 ): Promise<{ id: string }[]> {
   const ids = [...new Set(rawIds)];
   if (ids.length === 0) return [];

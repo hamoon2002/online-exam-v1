@@ -14,7 +14,7 @@ export function serializeNotification(
     icon: NotificationIcon;
     createdAt: Date;
   },
-  isRead: boolean
+  isRead: boolean,
 ) {
   return {
     id: n.id,
@@ -34,21 +34,20 @@ function pushLive(notification: ReturnType<typeof serializeNotification>) {
     if (notification.userId) {
       io.to(`user:${notification.userId}`).emit(
         'notification:new',
-        notification
+        notification,
       );
     } else {
       for (const role of notification.targetRoles ?? []) {
         io.to(`role:${role}`).emit('notification:new', notification);
       }
     }
-  } catch {
-  }
+  } catch {}
 }
 
 export async function notifyUser(
   userId: string,
   title: string,
-  icon: NotificationIcon
+  icon: NotificationIcon,
 ) {
   const notification = await prisma.notification.create({
     data: { userId, title, icon },
@@ -61,7 +60,7 @@ export async function notifyUser(
 export async function notifyRoles(
   roles: Role[],
   title: string,
-  icon: NotificationIcon
+  icon: NotificationIcon,
 ) {
   const notification = await prisma.notification.create({
     data: { targetRoles: roles, title, icon },

@@ -8,3 +8,10 @@
 **/*.dump
 **/*.zip
 **/*.log
+
+**/*.bak
+**/*.backup
+**/*.key
+**/*.pem
+**/test-results
+**/playwright-report

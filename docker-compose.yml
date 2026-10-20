@@ -3,19 +3,22 @@ services:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: examdb
-      POSTGRES_USER: examuser
-      POSTGRES_PASSWORD: exampass
+      POSTGRES_DB: ${POSTGRES_DB:-examdb}
+      POSTGRES_USER: ${POSTGRES_USER:-examuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run node scripts/setup-local.cjs}
     ports:
-      - '5432:5432'
+      - '127.0.0.1:5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Run node scripts/setup-local.cjs}
+    command: ["/bin/sh", "-c", 'exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"']
     ports:
-      - '6379:6379'
+      - '127.0.0.1:6379:6379'
     volumes:
       - redis-data:/data
 
@@ -26,11 +29,11 @@ services:
     restart: unless-stopped
     command: server /data --console-address ":9001"
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Run node scripts/setup-local.cjs}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Run node scripts/setup-local.cjs}
     ports:
-      - '9000:9000'
-      - '9001:9001'
+      - '127.0.0.1:9000:9000'
+      - '127.0.0.1:9001:9001'
     volumes:
       - minio-data:/data
 
@@ -41,12 +44,22 @@ services:
       - minio
     # اگه کانتینر وسط کار کشته شد (مثلاً توقف Codespace) چند بار دوباره تلاش کنه؛ با موفقیت (exit 0) دیگه ری‌استارت نمی‌شه
     restart: on-failure:5
-    entrypoint: >
-      /bin/sh -c "
-      until mc alias set local http://minio:9000 minioadmin minioadmin; do sleep 1; done;
-      mc mb --ignore-existing local/exam-platform-uploads;
-      exit 0;
-      "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Run node scripts/setup-local.cjs}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Run node scripts/setup-local.cjs}
+      S3_BUCKET: ${S3_BUCKET:-exam-platform-uploads}
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+        for attempt in $$(seq 1 30); do
+          if mc alias set local http://minio:9000 "$$MINIO_ROOT_USER" "$$MINIO_ROOT_PASSWORD"; then
+            mc mb --ignore-existing "local/$$S3_BUCKET"
+            exit $$?
+          fi
+          sleep 1
+        done
+        exit 1
 
 volumes:
   postgres-data:

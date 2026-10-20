@@ -32,7 +32,7 @@ npm run dev -w client
 cd /workspaces/online-exam-v1
 
 docker compose -p online-exam-v1 ps
-docker compose -p online-exam-v1 exec -T redis redis-cli ping
+docker compose -p online-exam-v1 exec -T redis sh -c 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping'
 docker compose -p online-exam-v1 exec -T postgres pg_isready -U examuser -d examdb
 node server/scripts/check-redis.cjs
 curl -sS --max-time 10 -w '\nHTTP: %{http_code}\n' http://localhost:4000/health
@@ -55,6 +55,7 @@ curl -sS --max-time 10 -w '\nHTTP: %{http_code}\n' http://localhost:4000/health
 
 ```bash
 cd /workspaces/online-exam-v1
+node scripts/setup-local.cjs
 node scripts/prepare-vendor.cjs
 npm ci
 ```

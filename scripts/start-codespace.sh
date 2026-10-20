@@ -12,8 +12,8 @@ if ! docker compose -p online-exam-v1 up -d postgres redis minio; then
 fi
 ready=false
 for ((i=0; i<30; i++)); do
-  if docker compose -p online-exam-v1 exec -T redis redis-cli ping 2>/dev/null | grep -qx PONG &&
-     docker compose -p online-exam-v1 exec -T postgres pg_isready -U examuser -d examdb >/dev/null 2>&1; then
+  if docker compose -p online-exam-v1 exec -T redis sh -c 'REDISCLI_AUTH="$REDIS_PASSWORD" redis-cli ping' 2>/dev/null | grep -qx PONG &&
+     docker compose -p online-exam-v1 exec -T postgres sh -c 'pg_isready -U "$POSTGRES_USER" -d "$POSTGRES_DB"' >/dev/null 2>&1; then
     ready=true
     break
   fi

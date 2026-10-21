@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "node --watch --require ts-node/register/transpile-only src/server.ts",
     "build": "tsc",
     "test": "node scripts/run-tests.cjs",
     "start": "node dist/server.js",
@@ -25,7 +25,7 @@
     "@aws-sdk/s3-request-presigner": "^3.658.1",
     "@prisma/client": "^5.22.0",
     "@prometheus-io/client": "^0.16.1",
-    "@sentry/node": "^10.53.1",
+    "@sentry/node": "10.76.2",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
@@ -39,7 +39,7 @@
     "pdf-lib": "1.17.1",
     "prisma": "^5.22.0",
     "redis": "^6.2.1",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "socket.io": "^4.8.0",
     "xlsx": "file:../vendor/xlsx-0.20.3.tgz",
     "zod": "^3.25.76"
@@ -54,7 +54,7 @@
     "@types/node": "^22.7.0",
     "oxlint": "^0.15.0",
     "prettier": "^3.9.10",
-    "ts-node-dev": "^2.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "5.6.2"
   }
 }

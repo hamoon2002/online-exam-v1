@@ -1,0 +1,17 @@
+[Unit]
+Description=Encrypted online exam database backup
+After=docker.service network-online.target
+Wants=network-online.target
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/online-exam/ops.env
+ExecStart=/usr/bin/python3 /opt/online-exam/deploy/ops.py backup
+UMask=0077
+StateDirectory=online-exam
+StateDirectoryMode=0700
+TimeoutStartSec=2h
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/online-exam

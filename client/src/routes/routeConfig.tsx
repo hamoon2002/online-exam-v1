@@ -1,4 +1,3 @@
-const SupportPage = lazy(() => import('../pages/SupportPage/SupportPage'));
 import { lazy, type ComponentType } from 'react';
 
 import type { Role } from '../api/authApi';
@@ -11,6 +10,8 @@ export type RouteConfig = {
   allowedRoles?: Role[];
   skipOnboardingGate?: boolean;
 };
+
+const SupportPage = lazy(() => import('../pages/SupportPage/SupportPage'));
 
 const LandingPage = lazy(() => import('../pages/LandingPage/LandingPage'));
 

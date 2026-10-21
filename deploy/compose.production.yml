@@ -1,0 +1,85 @@
+name: online-exam
+x-logging: &logging
+  driver: json-file
+  options: {max-size: "10m", max-file: "3"}
+x-app: &app
+  image: ${API_IMAGE:?Set an immutable backend image tag}
+  env_file: ${SERVER_ENV_FILE:?Set absolute path to production server.env}
+  environment:
+    NODE_ENV: production
+    PORT: "4000"
+    TRUST_PROXY: "1"
+  read_only: true
+  tmpfs: ["/tmp:uid=1000,gid=1000,mode=1770,size=1g"]
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  logging: *logging
+  networks: [backend]
+services:
+  api:
+    <<: *app
+    restart: unless-stopped
+    init: true
+    mem_limit: 2g
+    pids_limit: 256
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis: {condition: service_healthy}
+  migrate:
+    <<: *app
+    profiles: [maintenance]
+    command: ["npx", "--no-install", "prisma", "migrate", "deploy"]
+    depends_on:
+      postgres: {condition: service_healthy}
+  web:
+    image: ${WEB_IMAGE:?Set matching immutable frontend image tag}
+    restart: unless-stopped
+    read_only: true
+    tmpfs: ["/tmp:uid=101,gid=101,mode=1770,size=64m"]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    mem_limit: 256m
+    pids_limit: 128
+    logging: *logging
+    ports: ["80:8080", "443:8443"]
+    volumes:
+      - ${TLS_DIR:?Set directory containing readable TLS certificate and key}:/etc/nginx/tls:ro
+    networks: [backend]
+    depends_on:
+      api: {condition: service_healthy}
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: examuser
+      POSTGRES_DB: examdb
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set production database password}
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    networks: [backend]
+    logging: *logging
+    security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U examuser -d examdb"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?Set production Redis password}
+    command: ["sh", "-ec", 'exec redis-server --appendonly yes --requirepass "$$REDIS_PASSWORD"']
+    volumes: ["redis-data:/data"]
+    networks: [backend]
+    logging: *logging
+    security_opt: ["no-new-privileges:true"]
+    healthcheck:
+      test: ["CMD-SHELL", 'REDISCLI_AUTH="$$REDIS_PASSWORD" redis-cli ping | grep -qx PONG']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+networks:
+  backend:
+volumes:
+  postgres-data:
+  redis-data:

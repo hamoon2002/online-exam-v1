@@ -1,0 +1,16 @@
+[Unit]
+Description=Online exam health, disk and backup freshness checks
+After=network-online.target
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/online-exam/ops.env
+ExecStart=/usr/bin/python3 /opt/online-exam/deploy/ops.py monitor
+UMask=0077
+StateDirectory=online-exam
+StateDirectoryMode=0700
+TimeoutStartSec=90s
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/online-exam

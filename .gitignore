@@ -32,3 +32,8 @@ client/playwright-report/
 
 # Reconstructed from integrity-checked vendor parts
 /vendor/xlsx-0.20.3.tgz
+
+__pycache__/
+*.age
+*.pem
+*.key

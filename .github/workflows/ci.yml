@@ -65,6 +65,12 @@ jobs:
         run: npx prisma generate
         working-directory: server
 
+      - name: Audit dependencies
+        run: npm audit --audit-level=moderate
+
+      - name: Test backup and alert failure handling
+        run: python3 -m unittest discover -s deploy/tests -p 'test_*.py'
+
       - name: Run migrations
         run: npx prisma migrate deploy
         working-directory: server
@@ -144,3 +150,16 @@ jobs:
       - name: Clean isolated smoke environment
         if: always()
         run: docker compose down --volumes
+
+  production-compose-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install encryption tool
+        run: sudo apt-get update && sudo apt-get install -y age
+      - name: Build production application images
+        run: |
+          docker build -t online-exam-api:ci .
+          docker build -f deploy/Web.Dockerfile -t online-exam-web:ci .
+      - name: Verify TLS proxy and encrypted database restore
+        run: bash deploy/tests/smoke.sh

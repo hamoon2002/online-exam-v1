@@ -1,3 +1,4 @@
+import SupportWidget from '../../components/Support/SupportWidget';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
@@ -29,6 +30,7 @@ function LandingPage() {
       <About data={sections?.about} />
       <Pricing data={sections?.pricing} />
       <Footer data={sections?.footer} />
+      <SupportWidget />
     </div>
   );
 }

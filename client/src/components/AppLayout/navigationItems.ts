@@ -41,6 +41,7 @@ export type NavigationItem = {
 };
 
 export const navigationItems: NavigationItem[] = [
+  { label: 'پشتیبانی', to: '/support', icon: Users, roles: ['Instructor', 'Student'] },
   {
     label: 'داشبورد',
     adminLabel: 'میزکار',
@@ -164,6 +165,7 @@ export const navigationItems: NavigationItem[] = [
     roles: ['SuperAdmin'],
     group: 'system',
   },
+  { label: 'پشتیبانی', to: '/support', icon: Users, roles: ['SuperAdmin'], group: 'system' },
 ];
 
 export const roleLabel: Record<Role, string> = {

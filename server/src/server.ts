@@ -1,3 +1,4 @@
+import supportRouter from './routes/support';
 import {
   configureErrorReporting,
   reportOperationalError,
@@ -111,6 +112,7 @@ app.get(
 
 // Private uploads are served through authorized signed URLs, never a static directory.
 
+app.use('/support', supportRouter);
 app.use('/auth', authRouter);
 app.use('/groups', groupsRouter);
 app.use('/students', studentsRouter);

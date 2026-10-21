@@ -90,6 +90,7 @@ model User {
   organizationName    String?
   avatarKey           String?
 
+  supportThread      SupportThread?
   otpCodes           OtpCode[]
   instructedGroups   Group[]            @relation("GroupInstructor")
   groupsMember       Group[]            @relation("GroupMembers")
@@ -515,4 +516,26 @@ model ApprovalPolicy {
   revision Int @default(0)
   updatedAt DateTime @default(now()) @updatedAt
   @@map("approval_policy")
+}
+
+model SupportThread {
+  id String @id @default(cuid())
+  userId String @unique
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status String @default("waiting")
+  updatedAt DateTime @default(now()) @updatedAt
+  messages SupportMessage[]
+  @@index([status, updatedAt])
+}
+
+model SupportMessage {
+  id String @id @default(cuid())
+  threadId String
+  thread SupportThread @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  clientId String
+  fromStaff Boolean @default(false)
+  body String
+  createdAt DateTime @default(now())
+  @@unique([threadId, clientId])
+  @@index([threadId, createdAt])
 }

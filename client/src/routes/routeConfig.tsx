@@ -11,6 +11,8 @@ export type RouteConfig = {
   skipOnboardingGate?: boolean;
 };
 
+const SupportPage = lazy(() => import('../pages/SupportPage/SupportPage'));
+
 const LandingPage = lazy(() => import('../pages/LandingPage/LandingPage'));
 
 const LoginPage = lazy(() => import('../pages/LoginPage/LoginPage'));
@@ -111,6 +113,7 @@ const EventsPage = lazy(() => import('../pages/AdminManagementPage/EventsPage'))
 const GroupApprovalsPage = lazy(() => import('../pages/AdminManagementPage/GroupApprovalsPage'));
 
 export const routes: RouteConfig[] = [
+  { path: '/support', Component: SupportPage, protected: true },
   { path: '/subscriptions', Component: SubscriptionsPage, protected: true, allowedRoles: ['SuperAdmin'] },
   { path: '/payments', Component: PaymentsPage, protected: true, allowedRoles: ['SuperAdmin'] },
   { path: '/admin-events', Component: EventsPage, protected: true, allowedRoles: ['SuperAdmin'] },

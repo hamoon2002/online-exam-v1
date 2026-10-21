@@ -29,7 +29,7 @@ test('SuperAdmin menu is split into ordered groups under small headings', () => 
       ['/instructors', '/instructor-students', '/instructor-approvals', '/group-approvals'],
       ['/categories', '/site-content', '/blog-posts'],
       ['/subscriptions', '/payments', '/reports'],
-      ['/admin-events', '/settings'],
+      ['/admin-events', '/settings', '/support'],
     ]
   );
   assert.deepEqual(navigationGroupLabel, {

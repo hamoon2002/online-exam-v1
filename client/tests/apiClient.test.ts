@@ -251,23 +251,33 @@ test('uploadLessonVideo / uploadLessonAttachment: مسیر و نام فیلد د
 // ---------------------------------------------------------------------------
 // Codespaces forwarded-port URL resolution
 // ---------------------------------------------------------------------------
-test('service URL maps a localhost default to the matching Codespaces API port', () => {
+test('service URL maps a localhost default to the same-origin proxy', () => {
   assert.equal(
     resolveServiceBaseUrl('http://localhost:4000', {
       hostname: 'quiet-river-5173.app.github.dev',
       protocol: 'https:',
     }),
-    'https://quiet-river-4000.app.github.dev',
+    '',
   );
 });
 
-test('service URL maps an unset value to the matching Codespaces API port', () => {
+test('service URL maps an unset value to the same-origin Vite proxy', () => {
   assert.equal(
     resolveServiceBaseUrl(undefined, {
       hostname: 'quiet-river-5173.app.github.dev',
       protocol: 'https:',
     }),
-    'https://quiet-river-4000.app.github.dev',
+    '',
+  );
+});
+
+test('service URL maps the paired forwarded API URL to the same-origin proxy', () => {
+  assert.equal(
+    resolveServiceBaseUrl('https://quiet-river-4000.app.github.dev', {
+      hostname: 'quiet-river-5173.app.github.dev',
+      protocol: 'https:',
+    }),
+    '',
   );
 });
 

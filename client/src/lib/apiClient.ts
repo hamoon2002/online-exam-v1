@@ -5,8 +5,9 @@ const LOCAL_SERVICE_URL = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\/?$/i
 const CODESPACES_FRONTEND_HOST = /-5173\.app\.github\.dev$/i;
 
 /**
- * In Codespaces the browser must call the forwarded API port, not its own
- * localhost. Keep explicit non-local URLs intact; rewrite only localhost defaults.
+ * In Codespaces, use the same-origin Vite proxy for API and Socket.IO requests.
+ * This avoids browser CORS and forwarded-private-port authentication issues.
+ * Keep explicitly configured external API URLs intact.
  */
 export function resolveServiceBaseUrl(
   configured: string | undefined,
@@ -23,17 +24,26 @@ export function resolveServiceBaseUrl(
       : undefined);
   const hostname = location?.hostname.toLowerCase();
 
-  if (
-    location &&
-    hostname &&
-    CODESPACES_FRONTEND_HOST.test(hostname) &&
-    (!value || LOCAL_SERVICE_URL.test(value))
-  ) {
+  if (location && hostname && CODESPACES_FRONTEND_HOST.test(hostname)) {
     const apiHostname = hostname.replace(
       /-5173(?=\.app\.github\.dev$)/i,
       '-4000',
     );
-    return `${location.protocol}//${apiHostname}`;
+    const isLocalUrl = !value || LOCAL_SERVICE_URL.test(value);
+    let isPairedForwardedApiUrl = false;
+
+    if (value) {
+      try {
+        const configuredUrl = new URL(value);
+        isPairedForwardedApiUrl =
+          configuredUrl.protocol === location.protocol &&
+          configuredUrl.hostname.toLowerCase() === apiHostname;
+      } catch {
+        // Preserve invalid/custom values so configuration issues remain visible.
+      }
+    }
+
+    if (isLocalUrl || isPairedForwardedApiUrl) return '';
   }
 
   return value || 'http://localhost:4000';

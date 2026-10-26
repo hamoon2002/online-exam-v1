@@ -64,7 +64,14 @@ jobs:
           git diff -- server/src/lib/codespacesOrigin.ts server/src/realtime/socket.ts server/src/server.ts
 
       - name: Install video inspection tools
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        run: |
+          if command -v ffmpeg >/dev/null 2>&1 && command -v ffprobe >/dev/null 2>&1; then
+            ffmpeg -version | head -n 1
+            ffprobe -version | head -n 1
+          else
+            sudo apt-get update
+            sudo apt-get install -y ffmpeg
+          fi
 
       - name: Generate Prisma client
         run: npx prisma generate

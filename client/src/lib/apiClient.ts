@@ -55,6 +55,11 @@ const API_BASE_URL = resolveServiceBaseUrl(
 
 export { API_BASE_URL };
 
+export function buildApiUrl(path: string, baseUrl = API_BASE_URL): string {
+  const proxyPrefix = baseUrl === '' ? '/__api' : '';
+  return `${baseUrl}${proxyPrefix}${path}`;
+}
+
 let accessToken: string | null = null;
 
 export function setAuthToken(token: string | null): void {
@@ -93,7 +98,7 @@ let refreshPromise: Promise<RefreshOutcome> | null = null;
 
 export async function refreshSession(): Promise<RefreshOutcome> {
   if (!refreshPromise) {
-    refreshPromise = fetch(`${API_BASE_URL}/auth/refresh`, {
+    refreshPromise = fetch(buildApiUrl('/auth/refresh'), {
       method: 'POST',
       credentials: 'include',
     })
@@ -167,7 +172,7 @@ export async function apiRequest<T>(
 
   let response: Response;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
+    response = await fetch(buildApiUrl(path), {
       method,
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
@@ -228,7 +233,7 @@ export async function apiMultipartRequest<T>(
 
   let response: Response;
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
+    response = await fetch(buildApiUrl(path), {
       method,
       headers,
       body: formData,

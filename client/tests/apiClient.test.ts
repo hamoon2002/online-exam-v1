@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {
   ApiError,
   apiMultipartRequest,
+  buildApiUrl,
   apiRequest,
   refreshSession,
   resolveServiceBaseUrl,
@@ -298,5 +299,22 @@ test('service URL keeps localhost for local browser development', () => {
       protocol: 'http:',
     }),
     'http://localhost:4000',
+  );
+});
+
+
+test('API paths use the isolated Vite proxy prefix in Codespaces', () => {
+  assert.equal(buildApiUrl('/auth/refresh', ''), '/__api/auth/refresh');
+  assert.equal(buildApiUrl('/exams', ''), '/__api/exams');
+});
+
+test('API paths keep explicitly configured local or external origins', () => {
+  assert.equal(
+    buildApiUrl('/auth/refresh', 'http://localhost:4000'),
+    'http://localhost:4000/auth/refresh',
+  );
+  assert.equal(
+    buildApiUrl('/auth/refresh', 'https://api.example.com'),
+    'https://api.example.com/auth/refresh',
   );
 });

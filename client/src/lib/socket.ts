@@ -6,6 +6,7 @@ const SOCKET_URL = resolveServiceBaseUrl(
   (import.meta.env.VITE_SOCKET_URL ??
     import.meta.env.VITE_API_BASE_URL) as string | undefined,
 );
+const SOCKET_PATH = SOCKET_URL === '' ? '/__api/socket.io' : '/socket.io';
 
 let socket: Socket | null = null;
 
@@ -28,7 +29,8 @@ export function connectSocket(
 ): void {
   disconnectSocket();
 
-  socket = io(SOCKET_URL, {
+  socket = io(SOCKET_URL || undefined, {
+    path: SOCKET_PATH,
     auth: (cb) => cb({ token: getToken() }),
     withCredentials: true,
   });

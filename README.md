@@ -9,7 +9,7 @@ React/Vite + Express/Prisma + PostgreSQL، Redis و MinIO.
 - Node.js 22، Docker Compose و ffprobe (بسته ffmpeg) لازم‌اند.
 - `node scripts/setup-local.cjs` تنظیمات محلی و رمزهای تصادفی مستقل را می‌سازد؛ تنظیمات موجود دیتابیس و فضای ذخیره حفظ می‌شوند. رمز Redis در تنظیم سرور و Compose هماهنگ می‌شود.
 - پورت‌های دیتابیس، Redis و MinIO فقط روی loopback میزبان منتشر می‌شوند؛ در Codespaces آن‌ها را Public نکنید.
-- در Codespaces آدرس CLIENT_URL را برابر URL پورت 5173، SERVER_URL و VITE_API_BASE_URL و VITE_SOCKET_URL را برابر URL پورت 4000 بگذارید. Redis و PostgreSQL داخلی می‌مانند؛ URL فورواردشده HTTPS برای آن‌ها مناسب نیست.
+- در Codespaces کلاینت وقتی از URL فورواردشدهٔ پورت 5173 باز شود، مقدار محلی API/Socket را خودکار به پورت 4000 همان Codespace تبدیل می‌کند. CORS و endpointهای نشست نیز در حالت development فقط origin پورت 5173 همان Codespace را می‌پذیرند. برای URL سفارشی، CLIENT_URL را برابر URL پورت 5173 و SERVER_URL و VITE_API_BASE_URL و VITE_SOCKET_URL را برابر URL پورت 4000 بگذارید. Redis و PostgreSQL داخلی می‌مانند؛ URL فورواردشدهٔ HTTPS برای آن‌ها مناسب نیست.
 - Google OAuth به Client ID واقعی یکسان در کلاینت و سرور و ثبت origin در Google نیاز دارد.
 
 ```bash

@@ -55,8 +55,7 @@ export function initSocket(httpServer: HttpServer): Server {
       const allowed =
         !origin ||
         origin === configuredClientOrigin ||
-        (env.NODE_ENV === 'development' &&
-          isCodespacesClientOrigin(origin));
+        (env.NODE_ENV === 'development' && isCodespacesClientOrigin(origin));
       callback(null, allowed);
     },
   });

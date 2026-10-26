@@ -56,7 +56,9 @@ export function initSocket(httpServer: HttpServer): Server {
     },
     allowRequest: (req, callback) => {
       const origin =
-        typeof req.headers.origin === 'string' ? req.headers.origin : undefined;
+        typeof req.headers.origin === 'string'
+          ? req.headers.origin
+          : undefined;
       const host =
         typeof req.headers.host === 'string'
           ? req.headers.host.split(':')[0]

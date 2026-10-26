@@ -1,7 +1,47 @@
 // Access tokens stay in memory; the refresh token is an HttpOnly cookie.
-const API_BASE_URL: string =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined) ??
-  'http://localhost:4000';
+export type ServiceLocation = { hostname: string; protocol: string };
+
+const LOCAL_SERVICE_URL = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\/?$/i;
+const CODESPACES_FRONTEND_HOST = /-5173\.app\.github\.dev$/i;
+
+/**
+ * In Codespaces the browser must call the forwarded API port, not its own
+ * localhost. Keep explicit non-local URLs intact; rewrite only localhost defaults.
+ */
+export function resolveServiceBaseUrl(
+  configured: string | undefined,
+  currentLocation?: ServiceLocation,
+): string {
+  const value = configured?.trim();
+  const location =
+    currentLocation ??
+    (typeof window !== 'undefined'
+      ? {
+          hostname: window.location.hostname,
+          protocol: window.location.protocol,
+        }
+      : undefined);
+  const hostname = location?.hostname.toLowerCase();
+
+  if (
+    location &&
+    hostname &&
+    CODESPACES_FRONTEND_HOST.test(hostname) &&
+    (!value || LOCAL_SERVICE_URL.test(value))
+  ) {
+    const apiHostname = hostname.replace(
+      /-5173(?=\.app\.github\.dev$)/i,
+      '-4000',
+    );
+    return `${location.protocol}//${apiHostname}`;
+  }
+
+  return value || 'http://localhost:4000';
+}
+
+const API_BASE_URL = resolveServiceBaseUrl(
+  import.meta.env.VITE_API_BASE_URL as string | undefined,
+);
 
 export { API_BASE_URL };
 
@@ -160,7 +200,6 @@ export async function apiRequest<T>(
 export type MultipartOptions = {
   method?: 'POST' | 'PUT' | 'PATCH';
   signal?: AbortSignal;
-
   fallbackMessage?: (status: number) => string;
 };
 

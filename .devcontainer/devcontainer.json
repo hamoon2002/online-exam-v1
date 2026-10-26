@@ -8,7 +8,10 @@
       "moby": "true"
     }
   },
-  "forwardPorts": [4000, 5173],
+  "forwardPorts": [
+    4000,
+    5173
+  ],
   "portsAttributes": {
     "4000": {
       "label": "Exam API",
@@ -34,6 +37,6 @@
       }
     }
   },
-  "postCreateCommand": "node scripts/setup-local.cjs && node scripts/prepare-vendor.cjs && npm ci && npm run prisma:generate -w server",
+  "postCreateCommand": "echo 'Codespace is ready. Open a terminal and follow the Codespaces setup steps in README.md.'",
   "remoteUser": "node"
 }

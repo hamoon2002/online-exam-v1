@@ -1,5 +1,5 @@
 import type { RequestHandler } from 'express';
-import { isCodespacesFrontendRequest } from '../lib/codespacesOrigin';
+import { isCodespacesClientOrigin } from '../lib/codespacesOrigin';
 
 // Cookie mutations require the configured frontend origin, even on same-site subdomains.
 export function sessionOrigin(
@@ -10,8 +10,7 @@ export function sessionOrigin(
   return (req, res, next) => {
     const origin = req.get('Origin');
     const allowedCodespacesOrigin =
-      allowCodespacesDevelopment &&
-      isCodespacesFrontendRequest(origin, req.hostname);
+      allowCodespacesDevelopment && isCodespacesClientOrigin(origin);
     if (origin !== allowed && !allowedCodespacesOrigin) {
       res
         .status(403)

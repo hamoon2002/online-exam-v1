@@ -40,7 +40,7 @@ import blogRouter from './routes/blog';
 import cmsRouter from './routes/cms';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { asyncHandler } from './lib/asyncHandler';
-import { isCodespacesFrontendRequest } from './lib/codespacesOrigin';
+import { isCodespacesClientOrigin } from './lib/codespacesOrigin';
 
 const HEALTH_TIMEOUT_MS = 3000;
 
@@ -74,7 +74,7 @@ app.use((req, res, next) => {
   const allowedOrigin =
     origin === configuredClientOrigin ||
     (env.NODE_ENV === 'development' &&
-      isCodespacesFrontendRequest(origin, req.hostname));
+      isCodespacesClientOrigin(origin));
   cors({
     origin: allowedOrigin ? origin : false,
     credentials: true,

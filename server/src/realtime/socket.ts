@@ -7,10 +7,7 @@ import { env } from '../config/env';
 import { getActiveSessionId, isSessionValid } from '../lib/session';
 import { prisma } from '../lib/prisma';
 import { instructorApprovalBlockMessage } from '../lib/accountAccess';
-import {
-  isCodespacesClientOrigin,
-  isCodespacesFrontendRequest,
-} from '../lib/codespacesOrigin';
+import { isCodespacesClientOrigin } from '../lib/codespacesOrigin';
 
 let io: Server | null = null;
 let stopSweep: (() => Promise<void>) | undefined;
@@ -59,15 +56,11 @@ export function initSocket(httpServer: HttpServer): Server {
         typeof req.headers.origin === 'string'
           ? req.headers.origin
           : undefined;
-      const host =
-        typeof req.headers.host === 'string'
-          ? req.headers.host.split(':')[0]
-          : undefined;
       const allowed =
         !origin ||
         origin === configuredClientOrigin ||
         (env.NODE_ENV === 'development' &&
-          isCodespacesFrontendRequest(origin, host));
+          isCodespacesClientOrigin(origin));
       callback(null, allowed);
     },
   });

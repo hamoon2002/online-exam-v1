@@ -16,7 +16,7 @@ const router = Router();
 
 router.post(
   '/refresh',
-  sessionOrigin(env.CLIENT_URL),
+  sessionOrigin(env.CLIENT_URL, env.NODE_ENV === 'development'),
   asyncHandler(async (req, res) => {
     try {
       const tokens = await refreshUserSession(
@@ -35,7 +35,7 @@ router.post(
 
 router.post(
   '/logout',
-  sessionOrigin(env.CLIENT_URL),
+  sessionOrigin(env.CLIENT_URL, env.NODE_ENV === 'development'),
   asyncHandler(async (req, res) => {
     try {
       const userId = await resolveLogoutSubject(req);

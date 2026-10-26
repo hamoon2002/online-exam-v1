@@ -6,6 +6,7 @@ import {
   apiMultipartRequest,
   apiRequest,
   refreshSession,
+  resolveServiceBaseUrl,
   setAuthToken,
   setOnSessionExpired,
 } from '../src/lib/apiClient';
@@ -245,4 +246,47 @@ test('uploadLessonVideo / uploadLessonAttachment: مسیر و نام فیلد د
   const attachmentCall = uploads.find((c) => c.url.endsWith('/uploads/attachment'))!;
   assert.ok((videoCall.init.body as FormData).has('video'));
   assert.ok((attachmentCall.init.body as FormData).has('attachment'));
+});
+
+// ---------------------------------------------------------------------------
+// Codespaces forwarded-port URL resolution
+// ---------------------------------------------------------------------------
+test('service URL maps a localhost default to the matching Codespaces API port', () => {
+  assert.equal(
+    resolveServiceBaseUrl('http://localhost:4000', {
+      hostname: 'quiet-river-5173.app.github.dev',
+      protocol: 'https:',
+    }),
+    'https://quiet-river-4000.app.github.dev',
+  );
+});
+
+test('service URL maps an unset value to the matching Codespaces API port', () => {
+  assert.equal(
+    resolveServiceBaseUrl(undefined, {
+      hostname: 'quiet-river-5173.app.github.dev',
+      protocol: 'https:',
+    }),
+    'https://quiet-river-4000.app.github.dev',
+  );
+});
+
+test('service URL preserves an explicit non-local API URL', () => {
+  assert.equal(
+    resolveServiceBaseUrl('https://api.example.com', {
+      hostname: 'quiet-river-5173.app.github.dev',
+      protocol: 'https:',
+    }),
+    'https://api.example.com',
+  );
+});
+
+test('service URL keeps localhost for local browser development', () => {
+  assert.equal(
+    resolveServiceBaseUrl('http://localhost:4000', {
+      hostname: 'localhost',
+      protocol: 'http:',
+    }),
+    'http://localhost:4000',
+  );
 });

@@ -48,9 +48,9 @@ jobs:
       GOOGLE_CLIENT_ID: ci-placeholder-google-client-id
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           cache: npm
@@ -104,7 +104,7 @@ jobs:
       - name: Run browser and accessibility checks
         run: npm run test:e2e -w client
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: browser-results
@@ -118,7 +118,7 @@ jobs:
   container-build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Build backend image
         run: |
           docker build --tag online-exam-api:ci .
@@ -128,8 +128,8 @@ jobs:
   local-compose-smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
       - name: Generate local credentials and validate Compose
@@ -154,7 +154,7 @@ jobs:
   production-compose-smoke:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install encryption tool
         run: sudo apt-get update && sudo apt-get install -y age
       - name: Build production application images

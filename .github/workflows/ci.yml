@@ -112,7 +112,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Run server tests
-        if: ${{ !cancelled() }}
+        if: ${{ success() }}
         run: npm test -w server
 
   container-build:

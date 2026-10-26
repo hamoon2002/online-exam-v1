@@ -1,9 +1,11 @@
 
 import { io, type Socket } from 'socket.io-client';
+import { resolveServiceBaseUrl } from './apiClient';
 
-const SOCKET_URL: string =
-  (import.meta.env.VITE_SOCKET_URL as string | undefined) ??
-  'http://localhost:4000';
+const SOCKET_URL = resolveServiceBaseUrl(
+  (import.meta.env.VITE_SOCKET_URL ??
+    import.meta.env.VITE_API_BASE_URL) as string | undefined,
+);
 
 let socket: Socket | null = null;
 

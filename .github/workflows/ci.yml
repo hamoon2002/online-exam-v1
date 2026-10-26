@@ -62,6 +62,8 @@ jobs:
         run: |
           npx prettier --write server/src/lib/codespacesOrigin.ts server/src/realtime/socket.ts server/src/server.ts
           git diff -- server/src/lib/codespacesOrigin.ts server/src/realtime/socket.ts server/src/server.ts
+          echo "Temporary diagnostic run: retrieve formatted source diff."
+          exit 1
 
       - name: Generate Prisma client
         run: npx prisma generate

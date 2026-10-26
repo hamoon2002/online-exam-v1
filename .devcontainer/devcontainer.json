@@ -1,0 +1,39 @@
+{
+  "name": "Online Exam (Node 22 + Docker)",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "enableNonRootDocker": "true",
+      "moby": "true"
+    }
+  },
+  "forwardPorts": [4000, 5173],
+  "portsAttributes": {
+    "4000": {
+      "label": "Exam API",
+      "onAutoForward": "notify",
+      "visibility": "private"
+    },
+    "5173": {
+      "label": "Exam Web Client",
+      "onAutoForward": "openBrowser",
+      "visibility": "private"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "Prisma.prisma"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "files.eol": "\n"
+      }
+    }
+  },
+  "postCreateCommand": "node scripts/setup-local.cjs && node scripts/prepare-vendor.cjs && npm ci && npm run prisma:generate -w server",
+  "remoteUser": "node"
+}

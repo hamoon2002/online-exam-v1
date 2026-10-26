@@ -40,6 +40,7 @@ import blogRouter from './routes/blog';
 import cmsRouter from './routes/cms';
 import { errorHandler, notFoundHandler } from './middleware/errorHandler';
 import { asyncHandler } from './lib/asyncHandler';
+import { isCodespacesFrontendRequest } from './lib/codespacesOrigin';
 
 const HEALTH_TIMEOUT_MS = 3000;
 
@@ -67,7 +68,18 @@ if (env.TRUST_PROXY > 0) {
 }
 
 app.use(helmet());
-app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+const configuredClientOrigin = new URL(env.CLIENT_URL).origin;
+app.use((req, res, next) => {
+  const origin = req.get('Origin');
+  const allowedOrigin =
+    origin === configuredClientOrigin ||
+    (env.NODE_ENV === 'development' &&
+      isCodespacesFrontendRequest(origin, req.hostname));
+  cors({
+    origin: allowedOrigin ? origin : false,
+    credentials: true,
+  })(req, res, next);
+});
 app.use(express.json());
 app.use(cookieParser());
 

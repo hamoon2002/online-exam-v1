@@ -282,6 +282,9 @@ function setupSocket() {
         },
       },
       '../lib/accountAccess': policy,
+      '../lib/codespacesOrigin': {
+        isCodespacesClientOrigin: () => false,
+      },
     },
     {
       setInterval(fn) {

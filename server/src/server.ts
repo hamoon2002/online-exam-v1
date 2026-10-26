@@ -69,17 +69,18 @@ if (env.TRUST_PROXY > 0) {
 
 app.use(helmet());
 const configuredClientOrigin = new URL(env.CLIENT_URL).origin;
-app.use((req, res, next) => {
-  const origin = req.get('Origin');
-  const allowedOrigin =
-    origin === configuredClientOrigin ||
-    (env.NODE_ENV === 'development' &&
-      isCodespacesClientOrigin(origin));
+app.use(
   cors({
-    origin: allowedOrigin ? origin : false,
+    origin: (origin, callback) => {
+      const allowed =
+        origin === configuredClientOrigin ||
+        (env.NODE_ENV === 'development' &&
+          isCodespacesClientOrigin(origin));
+      callback(null, allowed && origin ? origin : false);
+    },
     credentials: true,
-  })(req, res, next);
-});
+  }),
+);
 app.use(express.json());
 app.use(cookieParser());
 

@@ -52,10 +52,7 @@ export function initSocket(httpServer: HttpServer): Server {
       credentials: true,
     },
     allowRequest: (req, callback) => {
-      const origin =
-        typeof req.headers.origin === 'string'
-          ? req.headers.origin
-          : undefined;
+      const origin = req.headers.origin;
       const allowed =
         !origin ||
         origin === configuredClientOrigin ||

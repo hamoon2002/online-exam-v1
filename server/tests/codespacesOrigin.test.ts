@@ -25,7 +25,9 @@ test('accepts only HTTPS Codespaces frontend origins on port 5173', () => {
   assert.equal(isCodespacesClientOrigin('null'), false);
 });
 
-test('only accepts the frontend origin paired with the same Codespace API host', () => {
+test(
+  'only accepts the frontend origin paired with the same Codespace API host',
+  () => {
   assert.equal(
     isCodespacesFrontendRequest(
       'https://quiet-river-5173.app.github.dev',
@@ -47,4 +49,5 @@ test('only accepts the frontend origin paired with the same Codespace API host',
     ),
     false,
   );
-});
+  },
+);

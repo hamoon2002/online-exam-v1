@@ -41,8 +41,7 @@ export function initSocket(httpServer: HttpServer): Server {
         if (
           !origin ||
           origin === configuredClientOrigin ||
-          (env.NODE_ENV === 'development' &&
-            isCodespacesClientOrigin(origin))
+          (env.NODE_ENV === 'development' && isCodespacesClientOrigin(origin))
         ) {
           callback(null, true);
           return;

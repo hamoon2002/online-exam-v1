@@ -6,8 +6,7 @@
 export function isCodespacesClientOrigin(
   origin: string | undefined,
   codespaceName = process.env.CODESPACE_NAME,
-  forwardingDomain =
-    process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN ||
+  forwardingDomain = process.env.GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN ||
     'app.github.dev',
 ): boolean {
   if (!origin || !codespaceName || !forwardingDomain) return false;

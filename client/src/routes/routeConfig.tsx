@@ -1,4 +1,4 @@
-import { lazy, type ComponentType } from 'react';
+import React, { type ComponentType } from 'react';
 
 import type { Role } from '../api/authApi';
 import { MANAGEMENT_ROLES } from '../constants/roles';
@@ -11,106 +11,106 @@ export type RouteConfig = {
   skipOnboardingGate?: boolean;
 };
 
-const SupportPage = lazy(() => import('../pages/SupportPage/SupportPage'));
+const SupportPage = React.lazy(() => import('../pages/SupportPage/SupportPage'));
 
-const LandingPage = lazy(() => import('../pages/LandingPage/LandingPage'));
+const LandingPage = React.lazy(() => import('../pages/LandingPage/LandingPage'));
 
-const LoginPage = lazy(() => import('../pages/LoginPage/LoginPage'));
+const LoginPage = React.lazy(() => import('../pages/LoginPage/LoginPage'));
 
-const SignupPage = lazy(() => import('../pages/SignupPage/SignupPage'));
+const SignupPage = React.lazy(() => import('../pages/SignupPage/SignupPage'));
 
-const ForgotPasswordPage = lazy(() =>
+const ForgotPasswordPage = React.lazy(() =>
   import('../pages/ForgotPasswordPage/ForgotPasswordPage')
 );
 
-const DashboardPage = lazy(() =>
+const DashboardPage = React.lazy(() =>
   import('../pages/DashboardPage/DashboardPage')
 );
 
-const OnboardingPage = lazy(() =>
+const OnboardingPage = React.lazy(() =>
   import('../pages/OnboardingPage/OnboardingPage')
 );
 
-const ExamsPage = lazy(() => import('../pages/ExamsPage/ExamsPage'));
+const ExamsPage = React.lazy(() => import('../pages/ExamsPage/ExamsPage'));
 
-const ExamRunnerPage = lazy(() =>
+const ExamRunnerPage = React.lazy(() =>
   import('../pages/ExamRunnerPage/ExamRunnerPage')
 );
 
-const ExamReviewPage = lazy(() =>
+const ExamReviewPage = React.lazy(() =>
   import('../pages/ExamReviewPage/ExamReviewPage')
 );
 
-const PracticePage = lazy(() => import('../pages/PracticePage/PracticePage'));
-const PracticeEditorPage = lazy(() => import('../pages/PracticePage/PracticeEditorPage'));
-const PracticeDetailPage = lazy(() => import('../pages/PracticePage/PracticeDetailPage'));
-const QuestionsPage = lazy(() =>
+const PracticePage = React.lazy(() => import('../pages/PracticePage/PracticePage'));
+const PracticeEditorPage = React.lazy(() => import('../pages/PracticePage/PracticeEditorPage'));
+const PracticeDetailPage = React.lazy(() => import('../pages/PracticePage/PracticeDetailPage'));
+const QuestionsPage = React.lazy(() =>
   import('../pages/QuestionsPage/QuestionsPage')
 );
 
-const QuestionBanksPage = lazy(() =>
+const QuestionBanksPage = React.lazy(() =>
   import('../pages/QuestionBanksPage/QuestionBanksPage')
 );
 
-const QuestionBankDetailsPage = lazy(() =>
+const QuestionBankDetailsPage = React.lazy(() =>
   import('../pages/QuestionBanksPage/QuestionBankDetailsPage')
 );
 
-const StudentsPage = lazy(() => import('../pages/StudentsPage/StudentsPage'));
+const StudentsPage = React.lazy(() => import('../pages/StudentsPage/StudentsPage'));
 
-const LessonsPage = lazy(() => import('../pages/LessonsPage/LessonsPage'));
+const LessonsPage = React.lazy(() => import('../pages/LessonsPage/LessonsPage'));
 
-const GroupLessonsPage = lazy(() =>
+const GroupLessonsPage = React.lazy(() =>
   import('../pages/GroupLessonsPage/GroupLessonsPage')
 );
 
-const ReportsPage = lazy(() => import('../pages/ReportsPage/ReportsPage'));
+const ReportsPage = React.lazy(() => import('../pages/ReportsPage/ReportsPage'));
 
-const MyResultsPage = lazy(() =>
+const MyResultsPage = React.lazy(() =>
   import('../pages/MyResultsPage/MyResultsPage')
 );
 
-const SettingsPage = lazy(() => import('../pages/SettingsPage/SettingsPage'));
+const SettingsPage = React.lazy(() => import('../pages/SettingsPage/SettingsPage'));
 
-const GroupsPage = lazy(() => import('../pages/GroupsPage/GroupsPage'));
+const GroupsPage = React.lazy(() => import('../pages/GroupsPage/GroupsPage'));
 
-const PlansPage = lazy(() => import('../pages/PlansPage/PlansPage'));
+const PlansPage = React.lazy(() => import('../pages/PlansPage/PlansPage'));
 
-const InstructorApprovalsPage = lazy(() =>
+const InstructorApprovalsPage = React.lazy(() =>
   import('../pages/InstructorApprovalsPage/InstructorApprovalsPage')
 );
 
-const AdminCategoriesPage = lazy(() =>
+const AdminCategoriesPage = React.lazy(() =>
   import('../pages/AdminCategoriesPage/AdminCategoriesPage')
 );
 
-const AdminInstructorsPage = lazy(() => import('../pages/AdminInstructorsPage/AdminInstructorsPage'));
-const AdminInstructorDetailPage = lazy(() => import('../pages/AdminInstructorsPage/AdminInstructorDetailPage'));
+const AdminInstructorsPage = React.lazy(() => import('../pages/AdminInstructorsPage/AdminInstructorsPage'));
+const AdminInstructorDetailPage = React.lazy(() => import('../pages/AdminInstructorsPage/AdminInstructorDetailPage'));
 
-const InstructorStudentsPage = lazy(() =>
+const InstructorStudentsPage = React.lazy(() =>
   import('../pages/AdminStudentsPage/AdminStudentsPage')
 );
 
-const AdminSiteContentPage = lazy(() =>
+const AdminSiteContentPage = React.lazy(() =>
   import('../pages/AdminSiteContentPage/AdminSiteContentPage')
 );
 
-const AdminBlogPostsPage = lazy(() =>
+const AdminBlogPostsPage = React.lazy(() =>
   import('../pages/AdminBlogPostsPage/AdminBlogPostsPage')
 );
 
-const AdminBlogPostEditorPage = lazy(() =>
+const AdminBlogPostEditorPage = React.lazy(() =>
   import('../pages/AdminBlogPostEditorPage/AdminBlogPostEditorPage')
 );
 
-const BlogPage = lazy(() => import('../pages/BlogPage/BlogPage'));
+const BlogPage = React.lazy(() => import('../pages/BlogPage/BlogPage'));
 
-const BlogPostPage = lazy(() => import('../pages/BlogPage/BlogPostPage'));
+const BlogPostPage = React.lazy(() => import('../pages/BlogPage/BlogPostPage'));
 
-const SubscriptionsPage = lazy(() => import('../pages/AdminManagementPage/SubscriptionsPage'));
-const PaymentsPage = lazy(() => import('../pages/AdminManagementPage/PaymentsPage'));
-const EventsPage = lazy(() => import('../pages/AdminManagementPage/EventsPage'));
-const GroupApprovalsPage = lazy(() => import('../pages/AdminManagementPage/GroupApprovalsPage'));
+const SubscriptionsPage = React.lazy(() => import('../pages/AdminManagementPage/SubscriptionsPage'));
+const PaymentsPage = React.lazy(() => import('../pages/AdminManagementPage/PaymentsPage'));
+const EventsPage = React.lazy(() => import('../pages/AdminManagementPage/EventsPage'));
+const GroupApprovalsPage = React.lazy(() => import('../pages/AdminManagementPage/GroupApprovalsPage'));
 
 export const routes: RouteConfig[] = [
   { path: '/support', Component: SupportPage, protected: true },

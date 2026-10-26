@@ -7,6 +7,10 @@ import { env } from '../config/env';
 import { getActiveSessionId, isSessionValid } from '../lib/session';
 import { prisma } from '../lib/prisma';
 import { instructorApprovalBlockMessage } from '../lib/accountAccess';
+import {
+  isCodespacesClientOrigin,
+  isCodespacesFrontendRequest,
+} from '../lib/codespacesOrigin';
 
 let io: Server | null = null;
 let stopSweep: (() => Promise<void>) | undefined;
@@ -33,8 +37,37 @@ const userRoom = (userId: string) => `user:${userId}`;
 const roleRoom = (role: string) => `role:${role}`;
 
 export function initSocket(httpServer: HttpServer): Server {
+  const configuredClientOrigin = new URL(env.CLIENT_URL).origin;
   io = new Server(httpServer, {
-    cors: { origin: env.CLIENT_URL, credentials: true },
+    cors: {
+      origin: (origin, callback) => {
+        if (
+          !origin ||
+          origin === configuredClientOrigin ||
+          (env.NODE_ENV === 'development' &&
+            isCodespacesClientOrigin(origin))
+        ) {
+          callback(null, true);
+          return;
+        }
+        callback(null, false);
+      },
+      credentials: true,
+    },
+    allowRequest: (req, callback) => {
+      const origin =
+        typeof req.headers.origin === 'string' ? req.headers.origin : undefined;
+      const host =
+        typeof req.headers.host === 'string'
+          ? req.headers.host.split(':')[0]
+          : undefined;
+      const allowed =
+        !origin ||
+        origin === configuredClientOrigin ||
+        (env.NODE_ENV === 'development' &&
+          isCodespacesFrontendRequest(origin, host));
+      callback(null, allowed);
+    },
   });
 
   io.use(async (socket: Socket, next) => {

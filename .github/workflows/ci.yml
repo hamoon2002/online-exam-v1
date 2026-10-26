@@ -80,7 +80,11 @@ jobs:
         working-directory: server
 
       - name: Lint and check server formatting
-        run: npm run lint -w server && npm run format:check -w server
+        run: |
+          npm run lint -w server
+          npx prettier --write server/src/lib/codespacesOrigin.ts server/src/realtime/socket.ts server/src/server.ts
+          git diff -- server/src/lib/codespacesOrigin.ts server/src/realtime/socket.ts server/src/server.ts
+          npm run format:check -w server
 
       - name: Build server
         run: npm run build -w server

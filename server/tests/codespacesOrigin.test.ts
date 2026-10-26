@@ -4,7 +4,7 @@ import { isCodespacesClientOrigin } from '../src/lib/codespacesOrigin';
 
 const codespaceName = 'quiet-river-example';
 
-test('accepts only the active Codespace HTTPS frontend origin on port 5173', () => {
+test('accepts the active Codespace HTTPS frontend origin', () => {
   assert.equal(
     isCodespacesClientOrigin(
       'https://quiet-river-example-5173.app.github.dev',

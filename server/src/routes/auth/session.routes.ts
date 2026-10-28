@@ -9,7 +9,7 @@ import {
   getRefreshCookieName,
 } from '../../lib/authTokens';
 import { revokeSession } from '../../lib/session';
-import { forceLogoutOtherSessions } from '../../realtime/socket';
+import { forceLogoutSession } from '../../realtime/socket';
 import { refreshUserSession, resolveLogoutSubject } from './session.service';
 
 const router = Router();
@@ -38,10 +38,19 @@ router.post(
   sessionOrigin(env.CLIENT_URL, env.NODE_ENV === 'development'),
   asyncHandler(async (req, res) => {
     try {
-      const userId = await resolveLogoutSubject(req);
-      if (userId) {
-        await revokeSession(userId);
-        forceLogoutOtherSessions(userId, undefined, 'logged-out');
+      const session = await resolveLogoutSubject(req);
+      if (session) {
+        const revokedSessionId = await revokeSession(
+          session.userId,
+          session.sessionId,
+        );
+        if (revokedSessionId) {
+          await forceLogoutSession(
+            session.userId,
+            revokedSessionId,
+            'logged-out',
+          );
+        }
       }
     } finally {
       clearRefreshCookie(res);

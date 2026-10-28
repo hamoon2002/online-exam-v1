@@ -48,6 +48,8 @@ export async function getUserAuthSnapshot(
 
     if (cached !== null) {
       const parsed = parseSnapshot(cached);
+      const currentGeneration = (await redis.get(versionKey)) ?? '0';
+      if (currentGeneration !== generation) continue;
       if (parsed !== undefined) return parsed;
       await redis.del(key);
     }

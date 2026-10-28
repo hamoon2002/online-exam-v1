@@ -4,8 +4,8 @@ import type { Server as HttpServer } from 'http';
 import { Server, type Socket } from 'socket.io';
 import { verifyAccessToken } from '../lib/jwt';
 import { env } from '../config/env';
-import { getActiveSessionId, isSessionValid } from '../lib/session';
-import { prisma } from '../lib/prisma';
+import { isSessionValid } from '../lib/session';
+import { getUserAuthSnapshot } from '../lib/userAuthCache';
 import { instructorApprovalBlockMessage } from '../lib/accountAccess';
 import { isCodespacesClientOrigin } from '../lib/codespacesOrigin';
 
@@ -20,11 +20,7 @@ async function isAccountAllowed(
   userId: string,
   role: string,
 ): Promise<boolean> {
-  if (role !== 'Instructor') return true;
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { role: true, approvalStatus: true },
-  });
+  const user = await getUserAuthSnapshot(userId);
   return Boolean(
     user && user.role === role && !instructorApprovalBlockMessage(user),
   );
@@ -105,18 +101,17 @@ function startSocketSessionSweep(server: Server) {
   return periodicTask(
     async () => {
       try {
-        const users = new Map<string, string>();
         for (const socket of server.sockets.sockets.values()) {
-          users.set(socket.data.userId as string, socket.data.role as string);
-        }
-
-        for (const [userId, role] of users) {
-          if (
-            (await getActiveSessionId(userId)) !== null &&
-            (await isAccountAllowed(userId, role))
-          )
-            continue;
-          forceLogoutOtherSessions(userId, undefined, 'session-ended');
+          const userId = socket.data.userId as string;
+          const sessionId = socket.data.sessionId as string;
+          const role = socket.data.role as string;
+          const validSession = await isSessionValid(userId, sessionId);
+          const allowedAccount = validSession
+            ? await isAccountAllowed(userId, role)
+            : false;
+          if (validSession && allowedAccount) continue;
+          socket.emit('force-logout', { reason: 'session-ended' });
+          socket.disconnect(true);
         }
       } catch (err) {
         logEvent('error', 'socket session sweep failed:', err);
@@ -147,5 +142,35 @@ export function forceLogoutOtherSessions(
     if (exceptSessionId && socket.data.sessionId === exceptSessionId) continue;
     socket.emit('force-logout', { reason });
     socket.disconnect(true);
+  }
+}
+
+export async function forceLogoutSession(
+  userId: string,
+  sessionId: string,
+  reason = 'logged-out',
+) {
+  if (!io) return;
+  const room = io.sockets.adapter.rooms.get(userRoom(userId));
+  if (!room) return;
+
+  for (const socketId of room) {
+    const socket = io.sockets.sockets.get(socketId);
+    if (!socket) continue;
+    const socketSessionId = socket.data.sessionId as string | undefined;
+    if (socketSessionId === sessionId) {
+      socket.emit('force-logout', { reason });
+      socket.disconnect(true);
+      continue;
+    }
+    if (!socketSessionId) continue;
+    try {
+      if (!(await isSessionValid(userId, socketSessionId))) {
+        socket.emit('force-logout', { reason });
+        socket.disconnect(true);
+      }
+    } catch (error) {
+      logEvent('error', 'targeted socket logout check failed:', error);
+    }
   }
 }

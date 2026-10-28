@@ -86,7 +86,10 @@ function setup({ status = 'Approved', dbError, redisError, revokeError } = {}) {
     },
   });
   const middleware = load('middleware/requireAuth.ts', {
-    '../lib/prisma': { prisma },
+    '../lib/userAuthCache': {
+      getUserAuthSnapshot: async (userId) =>
+        prisma.user.findUnique({ where: { id: userId }, select: { role: true, approvalStatus: true } }),
+    },
     '../lib/session': session,
     '../lib/jwt': jwt,
     '../lib/accountAccess': policy,
@@ -216,6 +219,7 @@ test('Reject retry retries revocation after partial failure', async () => {
       },
     },
     '../../lib/notifications': { notifyUser: async () => {} },
+    '../../lib/userAuthCache': { invalidateUserAuthCache: async () => {} },
     '../../lib/session': {
       revokeSession: async () => {
         revocations++;
@@ -271,6 +275,9 @@ function setupSocket() {
         isSessionValid: async () => true,
         getActiveSessionId: async () => 'sid',
       },
+      '../lib/userAuthCache': {
+        getUserAuthSnapshot: async () => ({ role: 'Instructor', approvalStatus: 'Rejected' }),
+      },
       '../lib/prisma': {
         prisma: {
           user: {
@@ -314,7 +321,7 @@ test('Socket sweep disconnects rejected instructor even if Redis session remains
   const { server, sweep } = setupSocket();
   let disconnected = false;
   server.sockets.sockets.set('socket', {
-    data: { userId: 'teacher', role: 'Instructor' },
+    data: { userId: 'teacher', sessionId: 'sid', role: 'Instructor' },
     emit() {},
     disconnect() {
       disconnected = true;
@@ -335,19 +342,15 @@ for (const role of ['Student', 'Instructor', 'SuperAdmin']) {
         },
         '../lib/session': { isSessionValid: async () => true },
         '../lib/accountAccess': policy,
-        '../lib/prisma': {
-          prisma: {
-            user: {
-              findUnique: async () => {
-                if (state === 'outage') throw failure;
-                return state === 'deleted'
-                  ? null
-                  : {
-                      role: state === 'changed' ? 'Other' : role,
-                      approvalStatus: 'Approved',
-                    };
-              },
-            },
+        '../lib/userAuthCache': {
+          getUserAuthSnapshot: async () => {
+            if (state === 'outage') throw failure;
+            return state === 'deleted'
+              ? null
+              : {
+                  role: state === 'changed' ? 'Other' : role,
+                  approvalStatus: 'Approved',
+                };
           },
         },
       });

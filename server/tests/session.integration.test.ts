@@ -71,21 +71,35 @@ test('sid ناشناخته/باطل rotate نمی‌شه', async (t) => {
   }
 });
 
-test('لاگین واقعی از دستگاه دیگه، sid قدیمی و sid های rotate شده رو فوری باطل می‌کنه', async (t) => {
+test('ورود از دستگاه دوم، نشست اول را حفظ می‌کند', async (t) => {
   if (!redisAvailable) return unavailable(t, 'Redis در دسترس نیست');
   const userId = newUserId();
   try {
-    const s0 = await createSession(userId);
-    const s1 = await rotateSessionWithGrace(userId, s0);
-    assert.ok(s1);
+    const first = await createSession(userId);
+    const rotated = await rotateSessionWithGrace(userId, first);
+    assert.ok(rotated);
+    const secondDevice = await createSession(userId);
 
-    const other = await createSession(userId); // دستگاه دیگه
+    assert.equal(await isSessionValid(userId, first), true);
+    assert.equal(await isSessionValid(userId, rotated!), true);
+    assert.equal(await isSessionValid(userId, secondDevice), true);
+    assert.equal(await rotateSessionWithGrace(userId, first), rotated);
+  } finally {
+    await revokeSession(userId);
+  }
+});
 
-    assert.equal(await isSessionValid(userId, s0), false);
-    assert.equal(await isSessionValid(userId, s1!), false);
-    assert.equal(await rotateSessionWithGrace(userId, s0), null);
-    assert.equal(await rotateSessionWithGrace(userId, s1!), null);
-    assert.equal(await isSessionValid(userId, other), true);
+test('حداکثر پنج نشست فعال برای هر کاربر نگه داشته می‌شود', async (t) => {
+  if (!redisAvailable) return unavailable(t, 'Redis در دسترس نیست');
+  const userId = newUserId();
+  try {
+    const sessions: string[] = [];
+    for (let i = 0; i < 6; i++) sessions.push(await createSession(userId));
+
+    assert.equal(await isSessionValid(userId, sessions[0]), false);
+    for (const sid of sessions.slice(1)) {
+      assert.equal(await isSessionValid(userId, sid), true);
+    }
   } finally {
     await revokeSession(userId);
   }
@@ -125,25 +139,20 @@ test('rotate زنجیره‌ای A→B→C: sid قدیمی A همون sid *فع�
   }
 });
 
-test('لاگین جدید هم‌زمان با refresh دستگاه قبلی: sid لاگین جدید هرگز به دستگاه قبلی نمی‌رسه', async (t) => {
+test('ورود جدید و refresh هم‌زمان، دو نشست مستقل را حفظ می‌کنند', async (t) => {
   if (!redisAvailable) return unavailable(t, 'Redis در دسترس نیست');
   for (let i = 0; i < 50; i++) {
     const userId = newUserId();
     try {
-      const s0 = await createSession(userId);
+      const oldSession = await createSession(userId);
       const [newLogin, rotated] = await Promise.all([
         createSession(userId),
-        rotateSessionWithGrace(userId, s0),
+        rotateSessionWithGrace(userId, oldSession),
       ]);
-      assert.notEqual(
-        rotated,
-        newLogin,
-        'دستگاه قبلی نباید sid لاگین جدید رو بگیره',
-      );
-      // بعد از تموم‌شدن هر دو، فقط لاگین جدید معتبره
+      assert.ok(rotated);
       assert.equal(await isSessionValid(userId, newLogin), true);
-      assert.equal(await isSessionValid(userId, s0), false);
-      if (rotated) assert.equal(await isSessionValid(userId, rotated), false);
+      assert.equal(await isSessionValid(userId, rotated!), true);
+      assert.equal(await isSessionValid(userId, oldSession), true);
     } finally {
       await revokeSession(userId);
     }

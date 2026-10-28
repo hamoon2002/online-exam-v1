@@ -48,7 +48,7 @@ export async function refreshUserSession(token: string | undefined) {
 
 export async function resolveLogoutSubject(
   req: Request,
-): Promise<string | null> {
+): Promise<{ userId: string; sessionId: string } | null> {
   const header = req.headers.authorization;
   if (header?.startsWith('Bearer ')) {
     let payload: ReturnType<typeof verifyAccessToken> | null = null;
@@ -56,7 +56,7 @@ export async function resolveLogoutSubject(
       payload = verifyAccessToken(header.slice('Bearer '.length));
     } catch {}
     if (payload && (await isSessionValid(payload.sub, payload.sid))) {
-      return payload.sub;
+      return { userId: payload.sub, sessionId: payload.sid };
     }
   }
 
@@ -67,7 +67,7 @@ export async function resolveLogoutSubject(
       payload = verifyRefreshToken(cookie);
     } catch {}
     if (payload && (await isSessionValid(payload.sub, payload.sid))) {
-      return payload.sub;
+      return { userId: payload.sub, sessionId: payload.sid };
     }
   }
 

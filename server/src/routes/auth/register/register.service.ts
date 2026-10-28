@@ -1,6 +1,7 @@
 import { logEvent } from '../../../lib/logger';
 import { readCreationPolicy } from '../../../lib/approvalPolicy';
 import { prisma } from '../../../lib/prisma';
+import { invalidateUserAuthCache } from '../../../lib/userAuthCache';
 
 import {
   normalizeUsername,
@@ -202,6 +203,7 @@ export async function registerUser(data: RegisterData, ip: string) {
     }
     return candidate;
   });
+  await invalidateUserAuthCache(user.id);
 
   if (isNewUser) {
     await notifyUser(user.id, 'ثبت‌نام با موفقیت انجام شد', 'info').catch(

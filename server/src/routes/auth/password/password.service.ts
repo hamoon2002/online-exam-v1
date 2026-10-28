@@ -149,13 +149,11 @@ export async function loginWithPassword(data: PasswordLoginData, ip: string) {
     throw new AppError(403, approvalMessage);
   }
 
-  const { accessToken, refreshToken, sid } = await issueTokenPair(
+  const { accessToken, refreshToken } = await issueTokenPair(
     user.id,
     user.role,
     data.rememberMe,
   );
-
-  forceLogoutOtherSessions(user.id, sid);
 
   return {
     accessToken,

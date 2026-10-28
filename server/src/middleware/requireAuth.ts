@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from 'express';
 import { verifyAccessToken, type AccessTokenPayload } from '../lib/jwt';
 import { isSessionValid } from '../lib/session';
+import { getUserAuthSnapshot } from '../lib/userAuthCache';
 import { prisma } from '../lib/prisma';
 import { instructorApprovalBlockMessage } from '../lib/accountAccess';
 
@@ -47,10 +48,12 @@ export async function requireAuth(
 
   // Recheck account validity even when session revocation has failed.
   try {
-    const user = await prisma.user.findUnique({
-      where: { id: payload.sub },
-      select: { role: true, approvalStatus: true },
-    });
+    const user = await getUserAuthSnapshot(payload.sub, () =>
+      prisma.user.findUnique({
+        where: { id: payload.sub },
+        select: { role: true, approvalStatus: true },
+      }),
+    );
     if (!user || user.role !== payload.role) {
       return res
         .status(401)

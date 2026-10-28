@@ -17,8 +17,6 @@ import { sendOtp } from '../../../services/otpSender';
 
 import { issueTokenPair, signResetTicket } from '../../../lib/authTokens';
 
-import { forceLogoutOtherSessions } from '../../../realtime/socket';
-
 import { AppError, badRequest, notFound } from '../../../lib/errors';
 
 import {
@@ -226,13 +224,11 @@ export async function verifyOtpCode(data: VerifyOtpData, ip: string) {
   const rememberMe =
     data.purpose === 'REGISTER' ? true : Boolean(data.rememberMe);
 
-  const { accessToken, refreshToken, sid } = await issueTokenPair(
+  const { accessToken, refreshToken } = await issueTokenPair(
     user.id,
     user.role,
     rememberMe,
   );
-
-  forceLogoutOtherSessions(user.id, sid);
 
   return {
     type: 'authenticated' as const,

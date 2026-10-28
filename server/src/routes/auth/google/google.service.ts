@@ -5,7 +5,6 @@ import { prisma } from '../../../lib/prisma';
 import { env } from '../../../config/env';
 
 import { issueTokenPair } from '../../../lib/authTokens';
-import { forceLogoutOtherSessions } from '../../../realtime/socket';
 
 import { AppError, badRequest } from '../../../lib/errors';
 
@@ -171,12 +170,10 @@ export async function loginWithGoogle(
     };
   }
 
-  const { accessToken, refreshToken, sid } = await issueTokenPair(
+  const { accessToken, refreshToken } = await issueTokenPair(
     user.id,
     user.role,
   );
-
-  forceLogoutOtherSessions(user.id, sid);
 
   return {
     type: 'authenticated' as const,

@@ -14,6 +14,10 @@ export type ExamAttempt = {
   finishedAt: string | null;
   expiresAt: string; // The server deadline is authoritative.
   endedByTimeout: boolean;
+  tabSwitchCount?: number;
+  tabSwitches?: string[];
+  fullscreenExitCount?: number;
+  fullscreenExits?: string[];
 };
 
 // Narrow completed attempts for reports and averages.
@@ -63,8 +67,30 @@ export function finishAttempt(
   });
 }
 
+export function recordAttemptEvent(
+  examId: string,
+  type: 'TAB_HIDDEN' | 'FULLSCREEN_EXIT',
+): Promise<{ recorded: boolean }> {
+  return apiRequest<{ recorded: boolean }>(`/exams/${examId}/attempts/events`, {
+    method: 'POST',
+    body: { type },
+  });
+}
+
 export function getAttemptsByExam(examId: string): Promise<ExamAttempt[]> {
   return apiRequest<ExamAttempt[]>(`/exams/${examId}/attempts`);
+}
+
+export type ExamAttemptAudit = ExamAttempt & {
+  student: { id: string; name: string | null; username: string | null };
+  tabSwitchCount: number;
+  tabSwitches: string[];
+  fullscreenExitCount: number;
+  fullscreenExits: string[];
+};
+
+export function getExamAttemptAudit(examId: string): Promise<ExamAttemptAudit[]> {
+  return apiRequest<ExamAttemptAudit[]>(`/exams/${examId}/attempts/audit`);
 }
 
 // Ignore inaccessible exams, but propagate infrastructure errors.

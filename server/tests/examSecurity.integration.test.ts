@@ -25,7 +25,7 @@ const groupIds: string[] = [];
 before(async () => {
   try {
     await prisma.$queryRaw`SELECT 1`;
-    await waitForRedis(redis);
+    await Promise.all([waitForRedis(redis), waitForRedis(rateLimitRedis)]);
     ready = true;
   } catch {
     return;
@@ -183,7 +183,36 @@ test('HTTP permissions and answer key: guest, unrelated users, owner, admin, act
     ).status,
     403,
   );
-  const answers = { [f.question.id]: 1 };
+  const displayedQuestion = (
+    await request(f.exam.id, 'questions', f.student.accessToken)
+  ).body[0];
+  const answers = {
+    [f.question.id]: displayedQuestion.options.indexOf('B'),
+  };
+  assert.equal(
+    (
+      await request(
+        f.exam.id,
+        'attempts/events',
+        f.student.accessToken,
+        'POST',
+        { type: 'TAB_HIDDEN' },
+      )
+    ).status,
+    201,
+  );
+  assert.equal(
+    (
+      await request(
+        f.exam.id,
+        'attempts/events',
+        f.student.accessToken,
+        'POST',
+        { type: 'FULLSCREEN_EXIT' },
+      )
+    ).status,
+    201,
+  );
   assert.equal(
     (
       await request(
@@ -196,16 +225,24 @@ test('HTTP permissions and answer key: guest, unrelated users, owner, admin, act
     ).status,
     200,
   );
+  const instructorAttempts = await request(
+    f.exam.id,
+    'attempts',
+    f.teacher.accessToken,
+  );
+  assert.equal(instructorAttempts.body[0].tabSwitchCount, 1);
+  assert.equal(instructorAttempts.body[0].tabSwitches.length, 1);
+  assert.equal(instructorAttempts.body[0].fullscreenExitCount, 1);
+  assert.equal(instructorAttempts.body[0].fullscreenExits.length, 1);
   await hidden(); // Finishing early must not reveal answers to other candidates.
   await prisma.exam.update({
     where: { id: f.exam.id },
     data: { scheduledAt: new Date(Date.now() - 3600000) },
   });
-  assert.equal(
-    (await request(f.exam.id, 'questions', f.student.accessToken)).body[0]
-      .correctOptionIndex,
-    1,
-  );
+  const released = (
+    await request(f.exam.id, 'questions', f.student.accessToken)
+  ).body[0];
+  assert.equal(released.options[released.correctOptionIndex], 'B');
   await prisma.exam.update({
     where: { id: f.exam.id },
     data: { allowReview: false },
@@ -224,8 +261,13 @@ test('HTTP autosave/submit races preserve final answers, ignore stale revisions 
     const f = await fixture(),
       token = f.student.accessToken;
     await request(f.exam.id, 'attempts/start', token, 'POST', {});
-    const finalAnswers = { [f.question.id]: 1 },
-      staleAnswers = { [f.question.id]: 0 };
+    const displayedQuestion = (await request(f.exam.id, 'questions', token))
+      .body[0];
+    const correctDisplayedIndex = displayedQuestion.options.indexOf('B');
+    const finalAnswers = { [f.question.id]: correctDisplayedIndex };
+    const staleAnswers = {
+      [f.question.id]: correctDisplayedIndex === 0 ? 1 : 0,
+    };
     assert.equal(
       (
         await request(f.exam.id, 'attempts/answers', token, 'PATCH', {
@@ -286,6 +328,25 @@ test('HTTP autosave/submit races preserve final answers, ignore stale revisions 
     assert.equal(repeated.body.correctCount, 1);
     assert.deepEqual(repeated.body.answers, finalAnswers);
   }
+});
+
+test('HTTP attempt start rate limit caps repeated starts per student and exam', async (t) => {
+  if (!ready) return unavailable(t, 'PostgreSQL/Redis unavailable');
+
+  const f = await fixture();
+  const statuses: number[] = [];
+  for (let index = 0; index < 6; index++) {
+    const result = await request(
+      f.exam.id,
+      'attempts/start',
+      f.student.accessToken,
+      'POST',
+      {},
+    );
+    statuses.push(result.status);
+  }
+
+  assert.deepEqual(statuses, [201, 200, 200, 200, 200, 429]);
 });
 
 test('Password reset ticket is single-use under concurrency and revokes the existing session', async (t) => {

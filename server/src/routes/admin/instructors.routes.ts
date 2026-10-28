@@ -9,6 +9,7 @@ import { asyncHandler } from '../../lib/asyncHandler';
 import { notFound, badRequest } from '../../lib/errors';
 import type { Prisma } from '@prisma/client';
 import { recordAdminAction } from '../../lib/adminAudit';
+import { invalidateUserAuthCache } from '../../lib/userAuthCache';
 
 import { serializeInstructor } from './instructors.service';
 
@@ -63,6 +64,7 @@ router.post(
       });
       return result;
     });
+    await invalidateUserAuthCache(updated.id);
 
     notifyUser(
       updated.id,
@@ -102,6 +104,7 @@ router.post(
           return result;
         });
 
+    await invalidateUserAuthCache(updated.id);
     await revokeSession(updated.id);
     forceLogoutOtherSessions(updated.id, undefined, 'account-rejected');
 

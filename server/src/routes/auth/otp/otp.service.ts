@@ -17,7 +17,6 @@ import { sendOtp } from '../../../services/otpSender';
 
 import { issueTokenPair, signResetTicket } from '../../../lib/authTokens';
 
-
 import { AppError, badRequest, notFound } from '../../../lib/errors';
 
 import {
@@ -230,7 +229,6 @@ export async function verifyOtpCode(data: VerifyOtpData, ip: string) {
     user.role,
     rememberMe,
   );
-
 
   return {
     type: 'authenticated' as const,

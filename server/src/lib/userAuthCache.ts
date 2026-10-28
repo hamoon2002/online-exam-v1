@@ -8,7 +8,8 @@ export type UserAuthSnapshot = {
 
 const AUTH_CACHE_TTL_SECONDS = 30;
 const GENERATION_TTL_SECONDS = 30 * 24 * 60 * 60;
-const generationKey = (userId: string) => 'authz:user:' + userId + ':generation';
+const generationKey = (userId: string) =>
+  'authz:user:' + userId + ':generation';
 const snapshotKey = (userId: string, generation: string) =>
   'authz:user:' + userId + ':snapshot:' + generation;
 
@@ -36,7 +37,10 @@ function parseSnapshot(value: string): UserAuthSnapshot | null | undefined {
   }
 }
 
-/** Cache only authorization fields; generation changes make stale cache fills unreachable. */
+/**
+ * Cache only authorization fields; generation changes make stale cache fills
+ * unreachable.
+ */
 export async function getUserAuthSnapshot(
   userId: string,
 ): Promise<UserAuthSnapshot | null> {
@@ -65,14 +69,20 @@ export async function getUserAuthSnapshot(
     const snapshot: UserAuthSnapshot | null = user
       ? { role: user.role, approvalStatus: user.approvalStatus }
       : null;
-    await redis.set(key, JSON.stringify(snapshot), { EX: AUTH_CACHE_TTL_SECONDS });
+    await redis.set(key, JSON.stringify(snapshot), {
+      EX: AUTH_CACHE_TTL_SECONDS,
+    });
     return snapshot;
   }
 
   throw new Error('account authorization changed during lookup');
 }
 
-const INVALIDATE_AUTH_CACHE_SCRIPT = "local generation = redis.call('INCR', KEYS[1]); redis.call('EXPIRE', KEYS[1], tonumber(ARGV[1])); return generation";
+const INVALIDATE_AUTH_CACHE_SCRIPT = [
+  "local generation = redis.call('INCR', KEYS[1])",
+  "redis.call('EXPIRE', KEYS[1], tonumber(ARGV[1]))",
+  'return generation',
+].join('; ');
 
 export async function invalidateUserAuthCache(userId: string): Promise<void> {
   await redis.eval(INVALIDATE_AUTH_CACHE_SCRIPT, {

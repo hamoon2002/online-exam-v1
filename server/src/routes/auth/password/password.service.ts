@@ -155,7 +155,6 @@ export async function loginWithPassword(data: PasswordLoginData, ip: string) {
     data.rememberMe,
   );
 
-
   return {
     accessToken,
     refreshToken,

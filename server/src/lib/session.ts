@@ -89,7 +89,9 @@ export async function createSession(userId: string): Promise<string> {
   return sessionId;
 }
 
-export async function getActiveSessionId(userId: string): Promise<string | null> {
+export async function getActiveSessionId(
+  userId: string,
+): Promise<string | null> {
   const now = Date.now() / 1000;
   return withSessionStore(async () => {
     const key = sessionsKey(userId);
@@ -114,7 +116,10 @@ export const VALIDATE_SESSION_SCRIPT = [
   'return 0',
 ].join('\n');
 
-export async function isSessionValid(userId: string, sessionId: string): Promise<boolean> {
+export async function isSessionValid(
+  userId: string,
+  sessionId: string,
+): Promise<boolean> {
   const now = Date.now() / 1000;
   const result = await withSessionStore(() =>
     redis.eval(VALIDATE_SESSION_SCRIPT, {

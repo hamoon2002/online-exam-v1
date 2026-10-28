@@ -88,7 +88,10 @@ function setup({ status = 'Approved', dbError, redisError, revokeError } = {}) {
   const middleware = load('middleware/requireAuth.ts', {
     '../lib/userAuthCache': {
       getUserAuthSnapshot: async (userId) =>
-        prisma.user.findUnique({ where: { id: userId }, select: { role: true, approvalStatus: true } }),
+        prisma.user.findUnique({
+          where: { id: userId },
+          select: { role: true, approvalStatus: true },
+        }),
     },
     '../lib/session': session,
     '../lib/jwt': jwt,
@@ -276,7 +279,10 @@ function setupSocket() {
         getActiveSessionId: async () => 'sid',
       },
       '../lib/userAuthCache': {
-        getUserAuthSnapshot: async () => ({ role: 'Instructor', approvalStatus: 'Rejected' }),
+        getUserAuthSnapshot: async () => ({
+          role: 'Instructor',
+          approvalStatus: 'Rejected',
+        }),
       },
       '../lib/prisma': {
         prisma: {

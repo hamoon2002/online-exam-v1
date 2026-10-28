@@ -175,7 +175,6 @@ export async function loginWithGoogle(
     user.role,
   );
 
-
   return {
     type: 'authenticated' as const,
 

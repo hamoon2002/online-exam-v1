@@ -6,6 +6,7 @@ import { verifyAccessToken } from '../lib/jwt';
 import { env } from '../config/env';
 import { isSessionValid } from '../lib/session';
 import { getUserAuthSnapshot } from '../lib/userAuthCache';
+import { prisma } from '../lib/prisma';
 import { instructorApprovalBlockMessage } from '../lib/accountAccess';
 import { isCodespacesClientOrigin } from '../lib/codespacesOrigin';
 
@@ -20,7 +21,12 @@ async function isAccountAllowed(
   userId: string,
   role: string,
 ): Promise<boolean> {
-  const user = await getUserAuthSnapshot(userId);
+  const user = await getUserAuthSnapshot(userId, () =>
+    prisma.user.findUnique({
+      where: { id: userId },
+      select: { role: true, approvalStatus: true },
+    }),
+  );
   return Boolean(
     user && user.role === role && !instructorApprovalBlockMessage(user),
   );

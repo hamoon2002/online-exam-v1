@@ -350,6 +350,9 @@ for (const role of ['Student', 'Instructor', 'SuperAdmin']) {
           verifyAccessToken: () => ({ sub: 'user', role, sid: 'session' }),
         },
         '../lib/session': { isSessionValid: async () => true },
+        '../lib/prisma': {
+          prisma: { user: { findUnique: async () => null } },
+        },
         '../lib/accountAccess': policy,
         '../lib/userAuthCache': {
           getUserAuthSnapshot: async () => {

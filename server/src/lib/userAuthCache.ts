@@ -1,9 +1,6 @@
-async function loadDependencies() {
-  const [prismaModule, redisModule] = await Promise.all([
-    import('./prisma'),
-    import('./redis'),
-  ]);
-  return { prisma: prismaModule.prisma, redis: redisModule.redis };
+async function loadRedis() {
+  const redisModule = await import('./redis');
+  return redisModule.redis;
 }
 
 export type UserAuthSnapshot = {
@@ -48,40 +45,46 @@ function parseSnapshot(value: string): UserAuthSnapshot | null | undefined {
  */
 export async function getUserAuthSnapshot(
   userId: string,
+  loadUser: () => Promise<UserAuthSnapshot | null>,
 ): Promise<UserAuthSnapshot | null> {
-  const { prisma, redis } = await loadDependencies();
-  for (let attempt = 0; attempt < 3; attempt++) {
-    const versionKey = generationKey(userId);
-    const generation = (await redis.get(versionKey)) ?? '0';
-    const key = snapshotKey(userId, generation);
-    const cached = await redis.get(key);
-
-    if (cached !== null) {
-      const parsed = parseSnapshot(cached);
-      const currentGeneration = (await redis.get(versionKey)) ?? '0';
-      if (currentGeneration !== generation) continue;
-      if (parsed !== undefined) return parsed;
-      await redis.del(key);
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      select: { role: true, approvalStatus: true },
-    });
-
-    const currentGeneration = (await redis.get(versionKey)) ?? '0';
-    if (currentGeneration !== generation) continue;
-
-    const snapshot: UserAuthSnapshot | null = user
-      ? { role: user.role, approvalStatus: user.approvalStatus }
-      : null;
-    await redis.set(key, JSON.stringify(snapshot), {
-      EX: AUTH_CACHE_TTL_SECONDS,
-    });
-    return snapshot;
+  let redis: Awaited<ReturnType<typeof loadRedis>>;
+  try {
+    redis = await loadRedis();
+  } catch {
+    // Authorization remains correct if cache infrastructure is unavailable.
+    return loadUser();
   }
 
-  throw new Error('account authorization changed during lookup');
+  try {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const versionKey = generationKey(userId);
+      const generation = (await redis.get(versionKey)) ?? '0';
+      const key = snapshotKey(userId, generation);
+      const cached = await redis.get(key);
+
+      if (cached !== null) {
+        const parsed = parseSnapshot(cached);
+        const currentGeneration = (await redis.get(versionKey)) ?? '0';
+        if (currentGeneration !== generation) continue;
+        if (parsed !== undefined) return parsed;
+        await redis.del(key);
+      }
+
+      const snapshot = await loadUser();
+      const currentGeneration = (await redis.get(versionKey)) ?? '0';
+      if (currentGeneration !== generation) continue;
+
+      await redis.set(key, JSON.stringify(snapshot), {
+        EX: AUTH_CACHE_TTL_SECONDS,
+      });
+      return snapshot;
+    }
+
+    return loadUser();
+  } catch {
+    // Redis is a performance layer; Prisma remains the authoritative source.
+    return loadUser();
+  }
 }
 
 const INVALIDATE_AUTH_CACHE_SCRIPT = [
@@ -91,9 +94,14 @@ const INVALIDATE_AUTH_CACHE_SCRIPT = [
 ].join('; ');
 
 export async function invalidateUserAuthCache(userId: string): Promise<void> {
-  const { redis } = await loadDependencies();
-  await redis.eval(INVALIDATE_AUTH_CACHE_SCRIPT, {
-    keys: [generationKey(userId)],
-    arguments: [String(GENERATION_TTL_SECONDS)],
-  });
+  try {
+    const redis = await loadRedis();
+    await redis.eval(INVALIDATE_AUTH_CACHE_SCRIPT, {
+      keys: [generationKey(userId)],
+      arguments: [String(GENERATION_TTL_SECONDS)],
+    });
+  } catch {
+    // Snapshots expire after 30 seconds even if explicit invalidation is unavailable.
+    console.error('Failed to invalidate account authorization cache', userId);
+  }
 }

@@ -56,7 +56,7 @@ export const CREATE_SESSION_SCRIPT = [
   LEGACY_MIGRATION_LUA,
   "redis.call('ZREMRANGEBYSCORE', KEYS[1], '-inf', tonumber(ARGV[1]))",
   "redis.call('ZADD', KEYS[1], tonumber(ARGV[1]) + tonumber(ARGV[2]), ARGV[5])",
-  'while redis.call(\'ZCARD\', KEYS[1]) > tonumber(ARGV[6]) do',
+  "while redis.call('ZCARD', KEYS[1]) > tonumber(ARGV[6]) do",
   "  local oldest = redis.call('ZRANGE', KEYS[1], 0, 0)",
   '  if #oldest == 0 then break end',
   "  redis.call('ZREM', KEYS[1], oldest[1])",

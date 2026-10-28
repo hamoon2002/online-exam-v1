@@ -87,12 +87,15 @@ function setup({ status = 'Approved', dbError, redisError, revokeError } = {}) {
   });
   const middleware = load('middleware/requireAuth.ts', {
     '../lib/userAuthCache': {
-      getUserAuthSnapshot: async (userId) =>
-        prisma.user.findUnique({
-          where: { id: userId },
-          select: { role: true, approvalStatus: true },
-        }),
+      getUserAuthSnapshot: async (userId, loadUser) =>
+        loadUser
+          ? loadUser()
+          : prisma.user.findUnique({
+              where: { id: userId },
+              select: { role: true, approvalStatus: true },
+            }),
     },
+    '../lib/prisma': { prisma },
     '../lib/session': session,
     '../lib/jwt': jwt,
     '../lib/accountAccess': policy,

@@ -1,5 +1,10 @@
-import { prisma } from './prisma';
-import { redis } from './redis';
+async function loadDependencies() {
+  const [prismaModule, redisModule] = await Promise.all([
+    import('./prisma'),
+    import('./redis'),
+  ]);
+  return { prisma: prismaModule.prisma, redis: redisModule.redis };
+}
 
 export type UserAuthSnapshot = {
   role: 'SuperAdmin' | 'Instructor' | 'Student';
@@ -44,6 +49,7 @@ function parseSnapshot(value: string): UserAuthSnapshot | null | undefined {
 export async function getUserAuthSnapshot(
   userId: string,
 ): Promise<UserAuthSnapshot | null> {
+  const { prisma, redis } = await loadDependencies();
   for (let attempt = 0; attempt < 3; attempt++) {
     const versionKey = generationKey(userId);
     const generation = (await redis.get(versionKey)) ?? '0';
@@ -85,6 +91,7 @@ const INVALIDATE_AUTH_CACHE_SCRIPT = [
 ].join('; ');
 
 export async function invalidateUserAuthCache(userId: string): Promise<void> {
+  const { redis } = await loadDependencies();
   await redis.eval(INVALIDATE_AUTH_CACHE_SCRIPT, {
     keys: [generationKey(userId)],
     arguments: [String(GENERATION_TTL_SECONDS)],

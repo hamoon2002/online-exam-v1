@@ -39,17 +39,17 @@ const LEGACY_MIGRATION_LUA = [
   'if legacy then',
   "  if not redis.call('ZSCORE', KEYS[1], legacy) then",
   "    local ttl = redis.call('TTL', KEYS[3])",
-  "    if ttl < 1 then ttl = tonumber(ARGV[2]) end",
+  '    if ttl < 1 then ttl = tonumber(ARGV[2]) end',
   "    redis.call('ZADD', KEYS[1], tonumber(ARGV[1]) + ttl, legacy)",
   '  end',
   "  local mappings = redis.call('HGETALL', KEYS[4])",
   '  for i = 1, #mappings, 2 do',
   "    local ttl = redis.call('TTL', KEYS[4])",
-  "    if ttl < 1 then ttl = tonumber(ARGV[3]) end",
+  '    if ttl < 1 then ttl = tonumber(ARGV[3]) end',
   "    redis.call('SET', ARGV[4] .. mappings[i], mappings[i + 1], 'EX', ttl)",
   '  end',
   "  redis.call('DEL', KEYS[3], KEYS[4])",
-'end',
+  'end',
 ].join('\n');
 
 export const CREATE_SESSION_SCRIPT = [
@@ -60,7 +60,7 @@ export const CREATE_SESSION_SCRIPT = [
   "  local oldest = redis.call('ZRANGE', KEYS[1], 0, 0)",
   '  if #oldest == 0 then break end',
   "  redis.call('ZREM', KEYS[1], oldest[1])",
-'end',
+  'end',
   "redis.call('EXPIRE', KEYS[1], tonumber(ARGV[2]))",
   'return ARGV[5]',
 ].join('\n');
@@ -112,7 +112,7 @@ export const VALIDATE_SESSION_SCRIPT = [
   "  local nextSid = redis.call('GET', ARGV[4] .. current)",
   '  if not nextSid then return 0 end',
   '  current = nextSid',
-'end',
+  'end',
   'return 0',
 ].join('\n');
 
@@ -161,7 +161,7 @@ export const ROTATE_SESSION_SCRIPT = [
   '  if not nextSid then return false end',
   '  current = nextSid',
   '  followedAlias = true',
-'end',
+  'end',
   'return false',
 ].join('\n');
 
@@ -207,7 +207,7 @@ export const REVOKE_ONE_SESSION_SCRIPT = [
   "  local nextSid = redis.call('GET', ARGV[4] .. current)",
   '  if not nextSid then return false end',
   '  current = nextSid',
-'end',
+  'end',
   'return false',
 ].join('\n');
 

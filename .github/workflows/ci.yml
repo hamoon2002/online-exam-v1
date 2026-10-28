@@ -76,13 +76,6 @@ jobs:
         run: npx prisma migrate diff --from-url "$DATABASE_URL" --to-schema-datamodel prisma/schema.prisma --exit-code
         working-directory: server
 
-      - name: Diagnose and normalize session formatting
-        working-directory: server
-        run: |
-          cp src/lib/session.ts /tmp/session.ts
-          npx prettier --write src/lib/session.ts
-          diff -u /tmp/session.ts src/lib/session.ts || true
-
       - name: Lint and check server formatting
         run: npm run lint -w server && npm run format:check -w server
 

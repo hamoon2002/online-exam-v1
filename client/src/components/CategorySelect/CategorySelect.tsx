@@ -95,7 +95,7 @@ function CategorySelect({ value, onChange, label }: CategorySelectProps) {
             }
             onChange(e.target.value);
           }}
-          className={`${inputClassName} w-full`}
+          className="w-full"
         >
           <option value="">
             {loading ? 'در حال بارگذاری...' : 'انتخاب کنید'}

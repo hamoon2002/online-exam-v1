@@ -8,6 +8,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import useTheme from '../../hooks/useTheme';
+import { toPersianDigits } from '../../utils/persianDigits';
 
 export type TodayExamPoint = {
   label: string;
@@ -68,7 +69,7 @@ function TodayExamsChart({ data }: TodayExamsChartProps) {
       ) : (
         <ResponsiveContainer width="100%" height={220}>
           <BarChart
-            data={data}
+            data={data.map(point => ({ ...point, label: toPersianDigits(point.label) }))}
             layout="vertical"
             margin={{
               top: 0,

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import UiSelect from '../../components/UiSelect';
 import { Link } from 'react-router-dom';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -33,11 +33,11 @@ export default function AdminInstructorsPage() {
       />
       <FilterBar>
         <div className="relative min-w-48 flex-1 sm:flex-none">
-        <select
+        <UiSelect
           aria-label="وضعیت مدرس"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className={`${controlClass} ui-has-chevron w-full min-h-11 appearance-none !pr-4 !pl-11`}
+          className={`${controlClass} w-full min-h-11`}
         >
           <option value="">وضعیت: بدون فیلتر</option>
           {Object.entries(statuses).map(([value, label]) => (
@@ -45,21 +45,19 @@ export default function AdminInstructorsPage() {
               {label}
             </option>
           ))}
-        </select>
-        <ChevronDown size={16} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-violet-600 dark:text-violet-300"/>
+        </UiSelect>
         </div>
         <div className="relative min-w-40 flex-1 sm:flex-none">
-        <select
+        <UiSelect
           aria-label="ترتیب مدرس‌ها"
           value={order}
           onChange={(e) => setOrder(e.target.value)}
-          className={`${controlClass} ui-has-chevron w-full min-h-11 appearance-none !pr-4 !pl-11`}
+          className={`${controlClass} w-full min-h-11`}
         >
           <option value="newest">جدیدترین</option>
           <option value="oldest">قدیمی‌ترین</option>
           <option value="name">نام مدرس</option>
-        </select>
-        <ChevronDown size={16} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-violet-600 dark:text-violet-300"/>
+        </UiSelect>
         </div>
       </FilterBar>
       <ListPagination {...list} maxSearchLength={100} />

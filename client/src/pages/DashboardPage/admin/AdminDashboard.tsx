@@ -9,6 +9,11 @@ import {
   ChevronLeft,
   RotateCw,
   XCircle,
+  GraduationCap,
+  UsersRound,
+  ClipboardCheck,
+  ClockAlert,
+  type LucideIcon,
 } from 'lucide-react';
 import AppLayout from '../../../components/AppLayout/AppLayout';
 import Toast from '../../../components/Toast/Toast';
@@ -62,30 +67,30 @@ function StatusChip({ state }: { state: AdminExamState }) {
 function StatCell({
   label,
   value,
+  icon: Icon,
+  tone,
   alert = false,
 }: {
   label: string;
   value: number;
+  icon: LucideIcon;
+  tone: 'violet' | 'cyan' | 'green' | 'amber';
   alert?: boolean;
 }) {
   return (
-    <div
-      className={`px-5 py-5 ${
-        alert
-          ? 'bg-amber-50 dark:bg-amber-500/10'
-          : 'bg-white dark:bg-gray-900'
-      }`}
-    >
-      <p
-        className={`text-3xl font-bold tabular-nums ${
-          alert
-            ? 'text-amber-700 dark:text-amber-400'
-            : 'text-gray-900 dark:text-white'
-        }`}
-      >
-        {fa(value)}
-      </p>
-      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{label}</p>
+    <div className={`glass-admin-stat glass-admin-stat--${tone} relative flex min-h-36 flex-col justify-between gap-4 overflow-hidden rounded-3xl border p-5`}>
+      <div className="flex items-start justify-between gap-3">
+        <span className="glass-admin-stat-icon grid h-12 w-12 shrink-0 place-items-center rounded-2xl" aria-hidden="true">
+          <Icon size={23} strokeWidth={1.8} />
+        </span>
+        <span className="glass-admin-stat-indicator rounded-full px-2.5 py-1 text-[11px] font-semibold">
+          {alert ? 'نیازمند بررسی' : 'نمای کلی'}
+        </span>
+      </div>
+      <div>
+        <p className="text-3xl font-extrabold tabular-nums text-gray-900 dark:text-white">{fa(value)}</p>
+        <p className="mt-2 text-sm font-medium text-gray-500 dark:text-gray-300">{label}</p>
+      </div>
     </div>
   );
 }
@@ -269,12 +274,14 @@ function Content({ data }: { data: AdminDashboardData }) {
   const { stats, attention, recentExams } = data;
   return (
     <div className="space-y-6">
-      <div className="glass-admin-stats grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-gray-200 bg-gray-200 lg:grid-cols-4 dark:border-gray-800 dark:bg-gray-800">
-        <StatCell label="مدرسان تأییدشده" value={stats.approvedInstructors} />
-        <StatCell label="دانشجویان" value={stats.students} />
-        <StatCell label="آزمون‌های فعال" value={stats.activeExams} />
+      <div className="glass-admin-stats grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StatCell label="مدرسان تأییدشده" value={stats.approvedInstructors} icon={GraduationCap} tone="violet" />
+        <StatCell label="دانشجویان" value={stats.students} icon={UsersRound} tone="cyan" />
+        <StatCell label="آزمون‌های فعال" value={stats.activeExams} icon={ClipboardCheck} tone="green" />
         <StatCell
           label="درخواست‌های منتظر بررسی"
+          icon={ClockAlert}
+          tone="amber"
           value={stats.pendingRequests}
           alert={stats.pendingRequests > 0}
         />

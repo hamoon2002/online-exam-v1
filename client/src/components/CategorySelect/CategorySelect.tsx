@@ -94,7 +94,7 @@ function CategorySelect({ value, onChange, label }: CategorySelectProps) {
             }
             onChange(e.target.value);
           }}
-          className={`${inputClassName} w-full min-h-11 appearance-none !pl-12 !pr-4 bg-none`}
+          className={`${inputClassName} w-full ui-has-chevron min-h-11 appearance-none !pl-12 !pr-4 bg-none`}
         >
           <option value="">
             {loading ? 'در حال بارگذاری...' : 'انتخاب کنید'}

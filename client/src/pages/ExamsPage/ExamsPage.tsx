@@ -252,6 +252,7 @@ function ExamsPage() {
         onAllowReviewChange={() => form.setAllowReview((prev) => !prev)}
         availableGroups={availableGroups}
         groupIds={form.groupIds}
+        validationError={form.validationError}
         onToggleGroup={form.toggleGroup}
         onSubmit={form.handleSubmit}
         onClose={form.close}

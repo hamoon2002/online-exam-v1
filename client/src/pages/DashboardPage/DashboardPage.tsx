@@ -51,7 +51,7 @@ function MemberDashboard() {
         hasAttempts={attempts.length > 0}
       />
 
-      <section className="mb-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <section className="glass-chart-grid mb-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
         <TodayExamsChart data={topExamsData} />
         <ProgressChart data={progressData} />
       </section>

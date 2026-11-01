@@ -4,7 +4,7 @@ import { Check, ChevronDown } from 'lucide-react';
 type Props = Omit<ComponentPropsWithoutRef<'select'>, 'multiple' | 'size' | 'children'> & { children: ReactNode };
 type Choice = { value: string; label: ReactNode; disabled: boolean };
 
-export default function UiSelect({ className = '', children, value, defaultValue, onChange, disabled, name, id, 'aria-label': ariaLabel, ...rest }: Props) {
+export default function UiSelect({ className = '', children, value, defaultValue, onChange, disabled, name, id, 'aria-label': ariaLabel }: Props) {
   const [open, setOpen] = useState(false);
   const [internal, setInternal] = useState(String(defaultValue ?? ''));
   const [active, setActive] = useState(0);
@@ -38,13 +38,13 @@ export default function UiSelect({ className = '', children, value, defaultValue
     if (!['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(event.key)) return;
     event.preventDefault();
     if (!open) {
-      setActive(Math.max(0, choices.findIndex(c => c.value === selected)));
+      setActive(-1);
       setOpen(true);
       return;
     }
     if (event.key === 'Enter' || event.key === ' ') { const choice = choices[active]; if (choice) choose(choice); return; }
     const delta = event.key === 'ArrowDown' ? 1 : -1;
-    let i = active;
+    let i = active < 0 ? (delta === 1 ? -1 : 0) : active;
     for (let n = 0; n < choices.length; n++) {
       i = (i + delta + choices.length) % choices.length;
       if (!choices[i].disabled) { setActive(i); break; }
@@ -54,7 +54,7 @@ export default function UiSelect({ className = '', children, value, defaultValue
     <div ref={ref} className={`ui-select-custom relative min-w-0 ${className}`} dir="rtl">
       {name && <input type="hidden" name={name} value={selected} />}
       <button type="button" id={id} role="combobox" aria-label={ariaLabel} aria-haspopup="listbox" aria-expanded={open} aria-controls={menuId} disabled={disabled}
-        onClick={() => { setActive(Math.max(0, choices.findIndex(c => c.value === selected))); setOpen(x => !x); }}
+        onClick={() => { setActive(-1); setOpen(x => !x); }}
         onKeyDown={keyboard} className="ui-select-trigger flex min-h-11 w-full items-center justify-between gap-3 rounded-xl border border-violet-200/70 bg-white/90 px-4 py-2.5 text-right text-sm text-slate-800 transition-colors hover:border-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400/20 disabled:cursor-not-allowed disabled:opacity-50 dark:border-violet-400/25 dark:bg-slate-800/85 dark:text-white">
         <span className="min-w-0 truncate">{current?.label ?? 'انتخاب کنید'}</span>
         <ChevronDown size={17} aria-hidden="true" className={`shrink-0 text-violet-600 transition-transform dark:text-violet-300 ${open ? 'rotate-180' : ''}`} />

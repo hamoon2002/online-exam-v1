@@ -5,7 +5,7 @@ import { getPractices } from "../../api/practiceApi";
 import usePagedList from "../../hooks/usePagedList";
 import AppLayout from "../../components/AppLayout/AppLayout";
 import ListPagination from "../../components/ListPagination/ListPagination";
-import { panel, primary, secondary, statusLabels } from "./practiceUi";
+import { panel, secondary, statusLabels } from "./practiceUi";
 export default function PracticePage() {
   const role = getCurrentUser()?.role;
   const learner = role === "Student";

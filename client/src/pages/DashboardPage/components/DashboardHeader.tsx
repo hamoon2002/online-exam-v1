@@ -16,13 +16,13 @@ function DashboardHeader({ user }: DashboardHeaderProps) {
         </div>
       </div>
 
-      <div className="glass-welcome mb-6 flex items-center justify-between rounded-2xl bg-linear-to-l from-brand-600 to-brand-700 px-6 py-4 text-white shadow-md shadow-brand-600/20 dark:shadow-none">
+      <div className="glass-welcome mb-8 flex items-center justify-between rounded-3xl bg-linear-to-l from-brand-600 to-brand-700 px-8 py-8 text-white shadow-md shadow-brand-600/20 dark:shadow-none">
         <div>
           <p className="flex items-center gap-1.5 text-sm text-white/80">
             <Sparkles size={14} />
             خوش آمدی
           </p>
-          <h1 className="text-lg font-bold mt-0.5">
+          <h1 className="text-2xl font-extrabold mt-2">
             {user?.name || user?.username || 'کاربر'}
           </h1>
         </div>

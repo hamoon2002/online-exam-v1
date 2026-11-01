@@ -224,3 +224,17 @@
 .auth-glass-card button[type=submit],.auth-glass-card form button[type=button]:not(:disabled){border-radius:13px}
 .auth-glass-card input:focus-visible{outline:2px solid rgba(123,95,237,.4);outline-offset:2px}
 @media(max-width:640px){.auth-form-panel{padding-block:75px 34px}.auth-glass-card{padding-inline:22px}}
+
+
+/* Settings and results: align proportions and surfaces across dashboard pages. */
+.settings-layout{grid-template-columns:minmax(0,1fr)!important;max-width:1220px;margin-inline:auto}
+@media(min-width:1024px){.settings-layout{grid-template-columns:210px minmax(0,1fr)!important}}
+.settings-content{width:100%;max-width:none;align-content:start}
+.settings-content>section>div{width:100%;max-width:none!important}
+.settings-content>section{width:100%}
+.settings-hero{max-width:1220px;margin-inline:auto}
+.settings-content :is(input:not([type=checkbox]),textarea,select){max-width:100%}
+.results-dashboard .results-kpi{background:linear-gradient(145deg,rgba(255,255,255,.88),rgba(239,239,255,.55))!important;border:1px solid rgba(133,111,221,.2)!important;box-shadow:0 12px 32px rgba(62,58,131,.065)!important}
+.dark .results-dashboard .results-kpi{background:linear-gradient(145deg,rgba(41,47,82,.8),rgba(21,30,56,.66))!important;border-color:rgba(191,172,255,.17)!important}
+.results-dashboard .results-kpi>div:first-child{box-shadow:inset 0 1px rgba(255,255,255,.5)}
+.results-dashboard .glass-panel{min-height:250px}

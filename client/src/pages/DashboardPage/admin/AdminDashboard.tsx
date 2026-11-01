@@ -24,7 +24,7 @@ import { getTodayJalali } from '../Dashboard.utils';
 
 const fa = (n: number) => n.toLocaleString('fa-IR');
 const panel =
-  'overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900';
+  'glass-admin-panel overflow-hidden rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900';
 const linkBtn =
   'inline-flex items-center rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 focus-visible:outline-2 focus-visible:outline-brand-500 dark:border-gray-700 dark:text-gray-200 dark:hover:border-brand-500/50 dark:hover:bg-brand-500/10 dark:hover:text-brand-300';
 
@@ -268,7 +268,7 @@ function Content({ data }: { data: AdminDashboardData }) {
   const { stats, attention, recentExams } = data;
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-gray-200 bg-gray-200 lg:grid-cols-4 dark:border-gray-800 dark:bg-gray-800">
+      <div className="glass-admin-stats grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-gray-200 bg-gray-200 lg:grid-cols-4 dark:border-gray-800 dark:bg-gray-800">
         <StatCell label="مدرسان تأییدشده" value={stats.approvedInstructors} />
         <StatCell label="دانشجویان" value={stats.students} />
         <StatCell label="آزمون‌های فعال" value={stats.activeExams} />
@@ -343,6 +343,7 @@ export default function AdminDashboard() {
 
   return (
     <AppLayout title="میزکار">
+      <div className="glass-dashboard">
       {error && (
         <Toast
           message={error}
@@ -405,6 +406,7 @@ export default function AdminDashboard() {
           </button>
         </div>
       )}
+      </div>
     </AppLayout>
   );
 }

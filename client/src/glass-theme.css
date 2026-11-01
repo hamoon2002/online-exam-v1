@@ -351,3 +351,22 @@ select option{background-color:#f6f3ff;color:#493881}
 select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:#fff}
 .dark select option{background-color:#252044;color:#ebe4ff}
 .dark select option:checked{background:#7657ce linear-gradient(#7657ce,#7657ce);color:#fff}
+
+
+/* Settings v2: full-width section navigation and balanced content cards. */
+.settings-layout-refined{display:block!important;width:100%;max-width:1180px!important;margin-inline:auto}
+.settings-nav-refined{position:static!important;display:flex!important;flex-wrap:wrap;align-items:center;gap:8px!important;margin-bottom:22px;padding:12px!important;border:1px solid rgba(133,113,204,.17);background:rgba(255,255,255,.72)}
+.dark .settings-nav-refined{background:rgba(29,36,66,.75);border-color:rgba(192,180,255,.15)}
+.settings-nav-refined>p{width:100%;margin:0 0 4px!important;padding:0 8px!important}
+.settings-nav-refined>a{display:inline-flex!important;align-items:center;gap:8px!important;min-height:40px;padding:9px 14px!important;border:1px solid rgba(135,115,206,.13);border-radius:12px!important;background:rgba(250,249,255,.8);white-space:nowrap}
+.dark .settings-nav-refined>a{background:rgba(45,51,85,.6);border-color:rgba(180,161,250,.13)}
+.settings-content-refined{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;gap:20px!important}
+.settings-content-refined>section{min-width:0;max-width:none!important}
+.settings-content-refined>section>div{width:100%;height:100%;max-width:none!important;border-radius:22px!important;padding:24px!important}
+.settings-content-refined #settings-profile,.settings-content-refined #settings-approvals,.settings-content-refined #settings-groups{grid-column:1/-1}
+.settings-content-refined :is(input,select,textarea){max-width:100%}
+@media(max-width:900px){.settings-content-refined{grid-template-columns:minmax(0,1fr)}.settings-content-refined>section{grid-column:1/-1}}
+@media(max-width:520px){.settings-content-refined>section>div{padding:17px!important}.settings-nav-refined>a{flex:1;justify-content:center}}
+/* Reports use the exact shared dashboard statistic component. */
+.reports-overview{background:transparent!important;overflow:visible!important}
+.reports-overview .glass-unified-stat{min-width:0}

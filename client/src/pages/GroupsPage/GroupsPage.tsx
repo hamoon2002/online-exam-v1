@@ -151,14 +151,7 @@ function GroupsPage() {
                 می‌کنی، نه مستقیم به تک‌تک دانشجوها
               </p>
             </div>
-            <button
-              onClick={openAddModal}
-              disabled={planLimit.checkingLimit}
-              className={`${!loading && visibleGroups.length === 0 ? "hidden " : ""}flex shrink-0 items-center gap-1.5 bg-brand-600 text-white px-4 py-2 rounded-lg hover:bg-brand-700 transition text-sm disabled:opacity-60`}
-            >
-              <Plus size={16} />
-              گروه جدید
-            </button>
+
           </div>
 
           {visibleGroups.length === 0 ? (
@@ -184,6 +177,7 @@ function GroupsPage() {
               ))}
             </div>
           )}
+          {visibleGroups.length > 0 && <div className="mt-6 flex justify-center"><button type="button" onClick={openAddModal} disabled={planLimit.checkingLimit} className="ui-create-cta"><Plus size={17}/> گروه جدید</button></div>}
         </>
       )}
 

@@ -277,3 +277,12 @@
 @media(prefers-reduced-motion:reduce){
   :where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input,textarea,select){transition:none!important}
 }
+
+
+/* Modern luminous field focus: subtle glow, no harsh default ring. */
+:where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea){transition:border-color .25s ease,box-shadow .25s ease}
+:where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea):focus,
+:where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea):focus-visible{outline:none!important;border-color:rgba(135,115,240,.65)!important;--tw-ring-shadow:0 0 #0000!important;box-shadow:0 0 0 3px rgba(135,115,240,.08),0 0 24px rgba(115,120,250,.14)!important}
+.dark :where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea):focus,
+.dark :where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea):focus-visible{border-color:rgba(177,159,255,.7)!important;box-shadow:0 0 0 3px rgba(155,130,255,.1),0 0 26px rgba(105,135,255,.18)!important}
+@media(prefers-reduced-motion:reduce){:where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input,textarea){transition:none!important}}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -31,11 +32,12 @@ export default function AdminInstructorsPage() {
         description="مشخصات، وضعیت و محتوای هر مدرس در یک نمای مستقل"
       />
       <FilterBar>
+        <div className="relative min-w-48 flex-1 sm:flex-none">
         <select
           aria-label="وضعیت مدرس"
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          className={controlClass}
+          className={`${controlClass} ui-has-chevron w-full min-h-11 appearance-none !pr-4 !pl-11`}
         >
           <option value="">وضعیت: بدون فیلتر</option>
           {Object.entries(statuses).map(([value, label]) => (
@@ -44,6 +46,9 @@ export default function AdminInstructorsPage() {
             </option>
           ))}
         </select>
+        <ChevronDown size={16} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-violet-600 dark:text-violet-300"/>
+        </div>
+        <div className="relative min-w-40 flex-1 sm:flex-none">
         <select
           aria-label="ترتیب مدرس‌ها"
           value={order}
@@ -54,6 +59,8 @@ export default function AdminInstructorsPage() {
           <option value="oldest">قدیمی‌ترین</option>
           <option value="name">نام مدرس</option>
         </select>
+        <ChevronDown size={16} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-violet-600 dark:text-violet-300"/>
+        </div>
       </FilterBar>
       <ListPagination {...list} maxSearchLength={100} />
       <LoadError message={list.error} retry={list.reload} />

@@ -140,3 +140,18 @@
 .glass-dashboard .glass-panel table tbody tr{transition:background-color .18s ease}
 @media(max-width:640px){.glass-dashboard{padding:12px}.glass-dashboard .glass-kpi{min-height:105px;padding:17px}.glass-dashboard .glass-admin-heading{padding:17px}.glass-app-shell main>.mx-auto{padding-left:12px;padding-right:12px}}
 @media(prefers-reduced-motion:reduce){.glass-app-shell aside nav a,.glass-dashboard .glass-panel table tbody tr{transition:none}}
+
+
+/* Shared polish: consistent form geometry, select chevrons and empty states. */
+:where(.glass-app-shell, .glass-landing) select:not([multiple]), :where(.glass-app-shell, .glass-landing) select[multiple] {min-height:44px;border-radius:13px}
+:where(.glass-app-shell, .glass-landing) select:not([multiple]){appearance:none;-webkit-appearance:none;padding-inline-start:16px!important;padding-inline-end:42px!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238575bc' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-position:left 14px center;background-repeat:no-repeat;background-size:16px}
+:where(.glass-app-shell, .glass-landing) :is(input:not([type=checkbox]):not([type=radio]), textarea){min-height:42px;border-radius:12px}
+:where(.glass-app-shell, .glass-landing) :is(input,select,textarea):focus-visible{outline:2px solid rgba(119,98,225,.5);outline-offset:2px}
+:where(.glass-app-shell, .glass-landing) :is(button,a,input,select,textarea):focus-visible{scroll-margin:110px}
+:where(.glass-app-shell, .glass-landing) table{border-collapse:separate;border-spacing:0;width:100%}
+:where(.glass-app-shell, .glass-landing) table th{font-weight:650;white-space:nowrap}
+:where(.glass-app-shell, .glass-landing) table th,:where(.glass-app-shell, .glass-landing) table td{padding:13px 15px}
+:where(.glass-app-shell, .glass-landing) table tbody tr:hover{background-color:rgba(128,106,230,.045)}
+.dark :where(.glass-app-shell, .glass-landing) table tbody tr:hover{background-color:rgba(164,142,255,.055)}
+:where(.glass-app-shell, .glass-landing) button:not(:disabled){-webkit-tap-highlight-color:transparent}
+@media(prefers-reduced-motion:reduce){:where(.glass-app-shell, .glass-landing) *{scroll-behavior:auto}}

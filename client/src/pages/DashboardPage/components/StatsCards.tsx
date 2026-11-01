@@ -17,7 +17,7 @@ type StatCardProps = {
 
 function StatCard({ icon: Icon, label, value, iconClassName }: StatCardProps) {
   return (
-    <div className="glass-stat flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <div className="glass-stat glass-kpi flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div
         className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${iconClassName}`}
       >
@@ -25,7 +25,7 @@ function StatCard({ icon: Icon, label, value, iconClassName }: StatCardProps) {
       </div>
       <div className="min-w-0">
         <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
-        <p className="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+        <p className="mt-1 text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
           {value}
         </p>
       </div>

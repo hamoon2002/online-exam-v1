@@ -48,7 +48,7 @@ function Assistant() {
     }
   }
   return (
-    <section className="space-y-3">
+    <section className="support-assistant space-y-4">
       <p className="text-sm text-gray-600 dark:text-gray-300">
         {remote
           ? 'دستیار هوش مصنوعی؛ پاسخ ممکن است اشتباه باشد. فقط متن سؤال شما و راهنمای عمومی سایت ارسال می‌شود.'
@@ -65,13 +65,13 @@ function Assistant() {
           با ارسال متن سؤال به سرویس هوش مصنوعی موافقم.
         </label>
       )}
-      <div className="flex flex-wrap gap-2">
+      <div className="support-suggestions flex flex-wrap gap-2">
         {['ثبت‌نام', 'کد تأیید', 'پرداخت', 'آزمون'].map((text) => (
           <button
             key={text}
             disabled={busy || remote === null || (remote && !consent)}
             onClick={() => void ask(text)}
-            className="rounded-full border border-gray-400 px-3 py-1 text-sm"
+            className="rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 text-xs font-medium text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-200 dark:hover:bg-violet-500/15"
           >
             {text}
           </button>
@@ -111,13 +111,13 @@ function Assistant() {
           onChange={(e) => setInput(e.target.value)}
           maxLength={2000}
           disabled={busy}
-          className="w-full rounded-xl border border-gray-400 bg-transparent p-3"
+          className="w-full resize-y rounded-2xl border border-slate-200 bg-slate-50/70 p-3.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/10 dark:border-slate-700 dark:bg-slate-800/70"
         />
         <button
           disabled={
             busy || !input.trim() || remote === null || (remote && !consent)
           }
-          className="rounded-xl bg-blue-700 px-4 py-2 text-white disabled:opacity-60"
+          className="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-violet-300 disabled:text-white dark:disabled:bg-slate-700"
         >
           {busy ? 'در حال پاسخ…' : 'پرسیدن سؤال'}
         </button>
@@ -133,7 +133,7 @@ export default function SupportWidget() {
     <div dir="rtl">
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 left-4 z-40 rounded-full bg-blue-700 px-5 py-3 font-bold text-white shadow-lg"
+        className="fixed bottom-5 left-4 z-40 rounded-full bg-violet-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-600/20 transition-colors hover:bg-violet-700"
         aria-haspopup="dialog"
       >
         راهنما و پشتیبانی
@@ -150,7 +150,7 @@ export default function SupportWidget() {
               key={t}
               aria-pressed={tab === t}
               onClick={() => setTab(t)}
-              className={`rounded-xl border px-3 py-2 text-sm ${tab === t ? 'bg-blue-700 text-white' : 'border-gray-400'}`}
+              className={`rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors ${tab === t ? 'border-violet-600 bg-violet-600 text-white shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}
             >
               {t === 'assistant' ? 'دستیار راهنما' : 'گفت‌وگو با پشتیبان'}
             </button>

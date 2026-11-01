@@ -353,9 +353,9 @@ export default function AdminDashboard() {
         />
       )}
 
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+      <div className="glass-admin-heading mb-7 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+          <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">
             میزکار{displayName ? ` · ${displayName}` : ''}
           </h1>
           {data && (

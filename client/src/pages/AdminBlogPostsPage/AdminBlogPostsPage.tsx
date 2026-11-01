@@ -35,7 +35,7 @@ function AdminBlogPostsPage() {
         </button>
       </div>
 
-      <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-900">
+      <div className={`${!loading && posts.length === 0 ? "mx-auto max-w-2xl bg-transparent p-0" : "rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-900"}`}>
         {loading ? (
           <Spinner />
         ) : posts.length === 0 ? (

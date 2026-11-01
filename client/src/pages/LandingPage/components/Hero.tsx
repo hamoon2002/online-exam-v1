@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, ArrowLeft, Sparkles, ShieldCheck, BarChart3, Users } from 'lucide-react';
-import LiveExamCard from './LiveExamCard';
+import ExamHeroIllustration from './ExamHeroIllustration';
 
 const DEFAULT_TRUST_POINTS = [
   'بدون نیاز به کارت بانکی',
@@ -90,7 +90,7 @@ function Hero({ data }: HeroProps) {
         </div>
 
         <div className="glass-hero-art glass-delay-2 glass-enter flex justify-center md:justify-end">
-          <LiveExamCard />
+          <ExamHeroIllustration />
         </div>
       </div>
       <div className="glass-hero-benefits relative mx-auto grid max-w-7xl grid-cols-1 gap-3 px-4 pb-12 sm:grid-cols-3 sm:px-6"><div className="glass-benefit"><ShieldCheck size={22} /><span>امنیت و کنترل آزمون‌ها</span></div><div className="glass-benefit"><BarChart3 size={22} /><span>گزارش‌های تحلیلی دقیق</span></div><div className="glass-benefit"><Users size={22} /><span>مدیریت کاربران و گروه‌ها</span></div></div>

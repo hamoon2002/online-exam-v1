@@ -328,3 +328,26 @@ select.ui-has-chevron:not(.ui-select){background-image:none!important}
 .glass-dashboard .glass-unified-stat:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(68,57,142,.09)!important}
 .dark .glass-dashboard .glass-unified-stat{background:rgba(31,40,70,.78)!important;border-color:rgba(192,180,255,.16)!important;box-shadow:0 12px 29px rgba(0,0,0,.14)!important}
 @media(prefers-reduced-motion:reduce){.glass-dashboard .glass-unified-stat:hover{transform:none}}
+
+
+/* Unified support design. */
+.support-hero{background:radial-gradient(circle at 12% 5%,rgba(63,205,240,.25),transparent 38%),linear-gradient(125deg,#5137b7,#7659d4 55%,#476eb2);box-shadow:0 18px 36px rgba(75,68,151,.14)}
+.support-surface{border:1px solid rgba(145,128,208,.2);background:rgba(255,255,255,.8);box-shadow:0 12px 35px rgba(65,58,128,.06);backdrop-filter:blur(16px)}
+.dark .support-surface{background:rgba(30,38,69,.75);border-color:rgba(191,174,255,.17);box-shadow:0 12px 35px rgba(0,0,0,.14)}
+.support-pagination-button{display:inline-flex;min-height:40px;align-items:center;justify-content:center;gap:5px;padding:0 14px;border-radius:12px;border:1px solid rgba(138,125,197,.24);background:rgba(255,255,255,.65);font-size:12px;font-weight:650;color:#6555a3;transition:background .2s,border-color .2s}
+.support-pagination-button:hover:not(:disabled){background:rgba(133,98,237,.09);border-color:rgba(133,98,237,.4)}
+.support-pagination-button:disabled{opacity:.35;cursor:not-allowed}
+.dark .support-pagination-button{background:rgba(38,45,80,.8);color:#c5b3ff}
+.support-page textarea{border-radius:16px;border-color:rgba(140,125,200,.26);background:rgba(249,249,255,.7)}
+.dark .support-page textarea{background:rgba(18,25,47,.55)}
+.support-page form button[type=submit]{background:#7355d2!important;color:white!important;padding:10px 20px;border-radius:13px;box-shadow:0 7px 18px rgba(110,80,208,.16);font-weight:650}
+.support-page form button[type=submit]:hover:not(:disabled){background:#6243c3!important}
+.support-page form button[type=submit]:disabled{opacity:.42}
+.support-page [role=log]{border:1px solid rgba(144,130,197,.16);background:rgba(249,250,255,.64)}
+.dark .support-page [role=log]{background:rgba(19,26,48,.5);border-color:rgba(180,160,255,.12)}
+/* Native option menus: use brand palette where the OS/browser supports styling.
+   Platform-native hover highlight is controlled by the operating system. */
+select option{background-color:#f6f3ff;color:#493881}
+select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:#fff}
+.dark select option{background-color:#252044;color:#ebe4ff}
+.dark select option:checked{background:#7657ce linear-gradient(#7657ce,#7657ce);color:#fff}

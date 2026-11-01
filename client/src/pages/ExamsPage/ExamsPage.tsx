@@ -171,13 +171,7 @@ function ExamsPage() {
             <div><h1 className="text-2xl font-bold dark:text-white">{pageTitle}</h1>
             {isObserver && <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">آزمون‌های ثبت‌شده توسط مدرس‌ها و میزان مشارکت دانشجویان؛ دسترسی فقط برای مشاهده است.</p>}</div>
             {canManage && (
-              <button
-                onClick={openAddModal}
-                disabled={planLimit.checkingLimit}
-                className={`${reportExams.length === 0 ? "hidden " : ""}bg-brand-600 text-white px-4 py-2 rounded-xl hover:bg-brand-700 transition disabled:opacity-60`}
-              >
-                + آزمون جدید
-              </button>
+
             )}
           </div>
 

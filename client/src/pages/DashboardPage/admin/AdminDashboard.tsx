@@ -4,7 +4,6 @@ import { useCallback, useState, type ReactNode } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  CalendarDays,
   CheckCircle2,
   ChevronLeft,
   RotateCw,
@@ -13,8 +12,6 @@ import {
   UsersRound,
   ClipboardCheck,
   ClockAlert,
-  Minus,
-  type LucideIcon,
 } from 'lucide-react';
 import AppLayout from '../../../components/AppLayout/AppLayout';
 import Toast from '../../../components/Toast/Toast';
@@ -26,7 +23,7 @@ import {
   type AdminExamState,
 } from '../../../api/adminDashboardApi';
 import { formatDateOnly, formatExamDateTime } from '../../../utils/formatDate';
-import { getTodayJalali } from '../Dashboard.utils';
+import { DashboardWelcome, DashboardStatCard } from '../components/DashboardVisuals';
 import { toPersianDigits } from '../../../utils/persianDigits';
 
 const fa = (n: number) => n.toLocaleString('fa-IR');
@@ -65,36 +62,6 @@ function StatusChip({ state }: { state: AdminExamState }) {
   );
 }
 
-function StatCell({
-  label,
-  value,
-  icon: Icon,
-  tone,
-  alert = false,
-}: {
-  label: string;
-  value: number;
-  icon: LucideIcon;
-  tone: 'violet' | 'cyan' | 'green' | 'amber';
-  alert?: boolean;
-}) {
-  return (
-    <div className={`glass-admin-stat glass-admin-stat--${tone} relative flex min-h-36 flex-col justify-between gap-4 overflow-hidden rounded-3xl border p-5`}>
-      <div className="flex items-start justify-between gap-3">
-        <span className="glass-admin-stat-icon grid h-12 w-12 shrink-0 place-items-center rounded-2xl" aria-hidden="true">
-          <Icon size={23} strokeWidth={1.8} />
-        </span>
-        <span className="glass-admin-stat-indicator inline-flex h-8 w-8 items-center justify-center rounded-full" title={alert ? 'درخواست‌های نیازمند بررسی' : 'اطلاعات مقایسه‌ای برای تعیین روند موجود نیست'} aria-label={alert ? 'نیازمند بررسی' : 'روند خنثی؛ داده مقایسه‌ای موجود نیست'}>
-          {alert ? <ClockAlert size={17} /> : <Minus size={17} />}
-        </span>
-      </div>
-      <div>
-        <p className="text-3xl font-extrabold tabular-nums text-gray-900 dark:text-white">{fa(value)}</p>
-        <p className="mt-2 text-sm font-medium text-gray-500 dark:text-gray-300">{label}</p>
-      </div>
-    </div>
-  );
-}
 
 function QueueRow({
   title,
@@ -275,16 +242,15 @@ function Content({ data }: { data: AdminDashboardData }) {
   const { stats, attention, recentExams } = data;
   return (
     <div className="space-y-6">
-      <div className="glass-admin-stats grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatCell label="مدرسان تأییدشده" value={stats.approvedInstructors} icon={GraduationCap} tone="violet" />
-        <StatCell label="دانشجویان" value={stats.students} icon={UsersRound} tone="cyan" />
-        <StatCell label="آزمون‌های فعال" value={stats.activeExams} icon={ClipboardCheck} tone="green" />
+      <div className="glass-unified-stats glass-admin-stats grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <DashboardStatCard label="مدرسان تأییدشده" value={fa(stats.approvedInstructors)} icon={GraduationCap} tone="violet" />
+        <DashboardStatCard label="دانشجویان" value={fa(stats.students)} icon={UsersRound} tone="cyan" />
+        <DashboardStatCard label="آزمون‌های فعال" value={fa(stats.activeExams)} icon={ClipboardCheck} tone="green" />
         <StatCell
           label="درخواست‌های منتظر بررسی"
           icon={ClockAlert}
           tone="amber"
-          value={stats.pendingRequests}
-          alert={stats.pendingRequests > 0}
+          value={fa(stats.pendingRequests)}
         />
       </div>
 
@@ -362,24 +328,7 @@ export default function AdminDashboard() {
         />
       )}
 
-      <div className="glass-admin-heading mb-7 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-extrabold text-gray-900 dark:text-white">
-            میزکار{displayName ? ` · ${displayName}` : ''}
-          </h1>
-          {data && (
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {pending > 0
-                ? `${fa(pending)} درخواست در انتظار بررسی است`
-                : 'درخواستی در انتظار بررسی نیست'}
-            </p>
-          )}
-        </div>
-        <p className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
-          <CalendarDays size={14} />
-          {getTodayJalali()}
-        </p>
-      </div>
+      <DashboardWelcome name={displayName || 'مدیر سامانه'} description={data && pending > 0 ? `${fa(pending)} درخواست در انتظار بررسی است` : 'نمای کلی فعالیت‌ها و عملکرد سامانه'} />
 
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-gray-500 dark:text-gray-400" role="status">

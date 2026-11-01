@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 import { fadeUp, staggerContainer, staggerItem } from './variants';
 
 type RevealProps = {
@@ -9,12 +10,14 @@ type RevealProps = {
 };
 
 function Reveal({ children, className, delay = 0 }: RevealProps) {
+  const isLanding = useLocation().pathname === '/';
   return (
     <motion.div
       className={className}
       variants={fadeUp}
-      initial="hidden"
-      whileInView="visible"
+      initial={isLanding ? false : "hidden"}
+      animate={isLanding ? "visible" : undefined}
+      whileInView={isLanding ? undefined : "visible"}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ delay }}
     >
@@ -31,6 +34,7 @@ type RevealGroupProps = {
 };
 
 export function RevealGroup({ children, className }: RevealGroupProps) {
+  const isLanding = useLocation().pathname === '/';
   return (
     <motion.div
       className={className}

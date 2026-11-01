@@ -1,3 +1,4 @@
+import { toPersianDigits } from '../../../utils/persianDigits';
 import { ChevronDown, Search, ClipboardList } from 'lucide-react';
 import type { Exam } from '../../../api/examApi';
 export function filterOversightExams(exams: Exam[], query: string, status: string) {
@@ -18,6 +19,6 @@ export default function ExamOversightFilters({ query, status, count, onQuery, on
         <option value="">بدون فیلتر وضعیت</option><option value="draft">پیش‌نویس</option><option value="upcoming">زمان‌بندی‌شده</option><option value="completed">پایان‌یافته</option>
       </select><ChevronDown size={17} className="pointer-events-none absolute left-4 top-[25px] text-violet-500" /></div>
     </label>
-    <p className="inline-flex h-11 items-center gap-2 rounded-xl border border-violet-200/60 bg-violet-50/70 px-4 text-sm font-semibold text-violet-700 dark:border-violet-400/20 dark:bg-violet-500/10 dark:text-violet-200" role="status"><ClipboardList size={16}/>{count.toLocaleString('fa-IR')} آزمون</p>
+    <p className="inline-flex h-11 items-center gap-2 rounded-xl border border-violet-200/60 bg-violet-50/70 px-4 text-sm font-semibold text-violet-700 dark:border-violet-400/20 dark:bg-violet-500/10 dark:text-violet-200" role="status"><ClipboardList size={16}/>{toPersianDigits(count.toLocaleString('fa-IR'))} آزمون</p>
   </div>;
 }

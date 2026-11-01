@@ -192,3 +192,22 @@
 .dark .glass-app-shell::before{opacity:.085;filter:blur(1.7px)}
 .glass-app-shell>:not(style){position:relative;z-index:1}
 @media(max-width:640px){.glass-app-shell::before{background-size:310px 310px;background-position:left -100px top 125px;opacity:.035}.dark .glass-app-shell::before{opacity:.055}}
+
+
+/* Cleanup: flat, elegant KPI surfaces with no mysterious coloured spill. */
+.glass-dashboard .glass-admin-stats>.glass-admin-stat:after{content:none!important}
+.glass-dashboard .glass-admin-stats>.glass-admin-stat{background:rgba(255,255,255,.76)!important;box-shadow:0 9px 24px rgba(62,60,113,.045)!important;border-color:rgba(121,113,168,.17)!important}
+.dark .glass-dashboard .glass-admin-stats>.glass-admin-stat{background:rgba(31,39,69,.76)!important;border-color:rgba(187,180,226,.17)!important;box-shadow:0 10px 30px rgba(0,0,0,.12)!important}
+.glass-dashboard .glass-admin-stat-icon{border-radius:15px}
+.glass-dashboard .glass-admin-stat-indicator{background:transparent!important}
+.glass-dashboard .glass-admin-stats>.glass-admin-stat:hover{box-shadow:0 14px 34px rgba(75,68,131,.09)!important}
+
+/* Watermark within the dashboard itself, where it is not hidden by page layers. */
+.glass-dashboard{position:relative;isolation:isolate;overflow:hidden;background:rgba(248,249,255,.42)!important}
+.dark .glass-dashboard{background:rgba(17,25,47,.3)!important}
+.glass-dashboard::before{content:"";position:absolute;inset:10px;pointer-events:none;z-index:-1;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='620' height='580' viewBox='0 0 620 580'%3E%3Cg fill='none' stroke='%237a70cb' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M103 207l204-92 210 92-210 91z'/%3E%3Cpath d='M167 238v83c80 61 200 61 280 0v-83'/%3E%3Cpath d='M517 208v117m-19 20c9-30 29-30 39 0'/%3E%3Cpath d='M197 415h222M224 451h168'/%3E%3C/g%3E%3C/svg%3E");background-position:center 130px;background-size:min(62vw,570px) auto;background-repeat:no-repeat;opacity:.16;filter:none}
+.dark .glass-dashboard::before{opacity:.21}
+.glass-dashboard>*{position:relative}
+@media(max-width:640px){.glass-dashboard::before{background-size:300px auto;background-position:center 200px;opacity:.09}.dark .glass-dashboard::before{opacity:.12}}
+/* Support modal: no purple paint under the suggestion chips. */
+.support-assistant .support-suggestions button{box-shadow:none!important;transform:none!important;background-image:none!important}

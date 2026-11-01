@@ -9,6 +9,7 @@ import {
   Legend,
 } from 'recharts';
 import useAsyncData from '../../hooks/useAsyncData';
+import { toPersianDigits } from '../../utils/persianDigits';
 import {
   getReportSummary,
   type ReportSummary,
@@ -107,10 +108,12 @@ export default function ReportOverview({
                   <YAxis
                     allowDecimals={false}
                     tick={{ fontSize: 11 }}
+                    tickFormatter={(v: number) => v.toLocaleString("fa-IR")}
                     width={36}
                   />
                   <Tooltip
-                    labelFormatter={(v) => dayLabel(String(v))}
+                    labelFormatter={(v) => toPersianDigits(dayLabel(String(v)))}
+                    formatter={(value, name) => [toPersianDigits(Number(value).toLocaleString("fa-IR")), name]}
                     contentStyle={{
                       background: 'var(--report-tooltip)',
                       color: 'var(--report-text)',

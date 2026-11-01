@@ -33,6 +33,7 @@ export default function LoginForm() {
   const [rememberMe, setRememberMe] = useState(false);
   const [captcha, setCaptcha] = useState<CaptchaAnswer | null>(null);
   const [captchaRequired, setCaptchaRequired] = useState(false);
+  const [verifyCaptchaRequired, setVerifyCaptchaRequired] = useState(false);
   const code = useLoginCode();
   const notice = sessionNotice(searchParams);
   function success() {
@@ -45,6 +46,7 @@ export default function LoginForm() {
     setStep(next);
   }
   function showCode(value = identifier) {
+    setVerifyCaptchaRequired(false);
     go('otp');
     void code.send(value);
   }
@@ -147,14 +149,17 @@ export default function LoginForm() {
           sending={code.sending}
           cooldown={code.remaining(identifier)}
           sendError={code.error}
-          onResend={() => void code.send(identifier, true)}
-          captchaRequired={code.captcha.required}
+          onResend={() => { setVerifyCaptchaRequired(false); void code.send(identifier, true); }}
+          captchaRequired={verifyCaptchaRequired}
           captcha={code.captcha.captcha}
-          onVerifyFailed={(captchaRequired) =>
-            code.captcha.afterRequest({ status: 'error', captchaRequired })
-          }
+          onVerifyFailed={(required) => {
+            if (required) {
+              setVerifyCaptchaRequired(true);
+              code.captcha.afterRequest({ status: 'error', captchaRequired: true });
+            }
+          }}
           captchaSlot={
-            code.captcha.required ? (
+            verifyCaptchaRequired ? (
               <Captcha
                 onChange={code.captcha.setCaptcha}
                 resetSignal={code.captcha.resetSignal}

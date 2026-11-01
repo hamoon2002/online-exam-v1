@@ -172,3 +172,15 @@
 .settings-content>section>div{border-radius:23px!important;border:1px solid rgba(141,124,218,.2)!important;background:linear-gradient(145deg,rgba(255,255,255,.87),rgba(245,244,255,.64))!important;box-shadow:0 10px 35px rgba(72,63,142,.06)!important;padding:26px!important}
 .dark .settings-content>section>div{background:linear-gradient(145deg,rgba(41,47,79,.82),rgba(22,29,55,.68))!important;border-color:rgba(191,174,255,.14)!important}
 @media(max-width:640px){.settings-hero{padding:23px}.settings-content>section>div{padding:18px!important}}
+
+
+/* Admin dashboard KPI redesign: icon-led glass surfaces and restrained accent tones. */
+.glass-dashboard .glass-admin-stats{background:transparent!important;border:none!important;box-shadow:none!important;overflow:visible!important;gap:16px!important}
+.glass-dashboard .glass-admin-stats>.glass-admin-stat{--kpi:113,81,221;--kpi-rgb:113,81,221;position:relative;min-height:158px;background:linear-gradient(145deg,rgba(255,255,255,.92),rgba(243,240,255,.66))!important;border:1px solid rgba(var(--kpi-rgb),.22)!important;box-shadow:0 12px 35px rgba(66,58,138,.07),inset 0 1px rgba(255,255,255,.8)!important;transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.dark .glass-dashboard .glass-admin-stats>.glass-admin-stat{background:linear-gradient(145deg,rgba(41,47,82,.88),rgba(22,30,57,.76))!important;border-color:rgba(var(--kpi-rgb),.27)!important;box-shadow:0 14px 36px rgba(0,0,0,.16),inset 0 1px rgba(255,255,255,.05)!important}
+.glass-dashboard .glass-admin-stat--cyan{--kpi-rgb:16,167,198!important}.glass-dashboard .glass-admin-stat--green{--kpi-rgb:16,168,118!important}.glass-dashboard .glass-admin-stat--amber{--kpi-rgb:217,143,42!important}
+.glass-dashboard .glass-admin-stat:after{content:"";position:absolute;left:-38px;bottom:-58px;width:145px;height:145px;background:radial-gradient(circle,rgba(var(--kpi-rgb),.13),transparent 68%);border-radius:50%;pointer-events:none}
+.glass-dashboard .glass-admin-stat-icon{color:rgb(var(--kpi-rgb));background:rgba(var(--kpi-rgb),.12);border:1px solid rgba(var(--kpi-rgb),.12)}
+.glass-dashboard .glass-admin-stat-indicator{color:rgb(var(--kpi-rgb));background:rgba(var(--kpi-rgb),.09)}
+.glass-dashboard .glass-admin-stats>.glass-admin-stat:hover{transform:translateY(-3px);border-color:rgba(var(--kpi-rgb),.45)!important;box-shadow:0 18px 42px rgba(66,58,138,.12)!important}
+@media(prefers-reduced-motion:reduce){.glass-dashboard .glass-admin-stats>.glass-admin-stat{transition:none}.glass-dashboard .glass-admin-stats>.glass-admin-stat:hover{transform:none}}

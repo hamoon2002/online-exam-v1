@@ -28,7 +28,7 @@ function AdminBlogPostsPage() {
         <h1 className="text-2xl font-bold dark:text-white">پست‌های بلاگ</h1>
         <button
           onClick={() => navigate('/blog-posts/new')}
-          className={`${!loading && posts.length === 0 ? "hidden " : ""}inline-flex items-center gap-1 rounded-xl bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700`}
+          className="inline-flex items-center gap-1 rounded-xl bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700"
         >
           <Plus size={16} />
           پستِ جدید
@@ -43,7 +43,6 @@ function AdminBlogPostsPage() {
             icon={Newspaper}
             title="هنوز پستی نیست"
             description="اولین پستِ بلاگ رو بساز تا این‌جا لیست بشه."
-            action={{ label: 'پستِ جدید', onClick: () => navigate('/blog-posts/new') }}
           />
         ) : (
           <div className="overflow-x-auto">

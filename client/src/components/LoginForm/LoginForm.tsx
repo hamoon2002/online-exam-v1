@@ -159,7 +159,7 @@ export default function LoginForm() {
             }
           }}
           captchaSlot={
-            verifyCaptchaRequired ? (
+            (verifyCaptchaRequired || code.captcha.required) ? (
               <Captcha
                 onChange={code.captcha.setCaptcha}
                 resetSignal={code.captcha.resetSignal}

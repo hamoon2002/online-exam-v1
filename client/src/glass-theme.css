@@ -317,3 +317,14 @@ select:not([multiple]):disabled{cursor:not-allowed;opacity:.6}
 
 /* Legacy selects with an explicit SVG chevron retain that single icon. */
 select.ui-has-chevron:not(.ui-select){background-image:none!important}
+
+
+/* Single shared dashboard KPI language across all roles. */
+.glass-dashboard .glass-unified-stats{background:transparent!important;border:0!important;box-shadow:none!important;overflow:visible!important;gap:16px!important}
+.glass-dashboard .glass-unified-stat{--stat-rgb:122,92,217;min-height:160px!important;padding:20px!important;border-radius:22px!important;background:rgba(255,255,255,.79)!important;border:1px solid rgba(136,130,188,.19)!important;box-shadow:0 10px 28px rgba(54,57,124,.055)!important;transition:transform .2s ease,box-shadow .2s ease!important}
+.glass-dashboard .glass-unified-stat--cyan{--stat-rgb:22,159,196}.glass-dashboard .glass-unified-stat--green{--stat-rgb:17,160,117}.glass-dashboard .glass-unified-stat--amber{--stat-rgb:213,146,48}
+.glass-dashboard .glass-unified-stat-icon{background:rgba(var(--stat-rgb),.11)!important;color:rgb(var(--stat-rgb))!important}
+.glass-dashboard .glass-unified-stat::after{content:none!important;display:none!important}
+.glass-dashboard .glass-unified-stat:hover{transform:translateY(-2px);box-shadow:0 14px 32px rgba(68,57,142,.09)!important}
+.dark .glass-dashboard .glass-unified-stat{background:rgba(31,40,70,.78)!important;border-color:rgba(192,180,255,.16)!important;box-shadow:0 12px 29px rgba(0,0,0,.14)!important}
+@media(prefers-reduced-motion:reduce){.glass-dashboard .glass-unified-stat:hover{transform:none}}

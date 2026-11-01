@@ -21,6 +21,7 @@ import {
 } from '../../../api/adminDashboardApi';
 import { formatDateOnly, formatExamDateTime } from '../../../utils/formatDate';
 import { getTodayJalali } from '../Dashboard.utils';
+import { toPersianDigits } from '../../../utils/persianDigits';
 
 const fa = (n: number) => n.toLocaleString('fa-IR');
 const panel =
@@ -204,12 +205,12 @@ function RecentExams({ exams }: { exams: AdminDashboardData['recentExams'] }) {
               <li key={e.id} className="space-y-3 px-5 py-4">
                 <div className="flex items-start justify-between gap-3">
                   <p className="font-medium text-gray-900 dark:text-gray-100">
-                    {e.title}
+                    {toPersianDigits(e.title)}
                   </p>
                   <StatusChip state={e.status} />
                 </div>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {e.instructorName || '—'} — {formatExamDateTime(e.scheduledAt)} —{' '}
+                  {e.instructorName || '—'} — {toPersianDigits(formatExamDateTime(e.scheduledAt))} —{' '}
                   {fa(e.participants)} شرکت‌کننده
                 </p>
                 <ExamActions instructorId={e.instructorId} />
@@ -297,7 +298,7 @@ function Content({ data }: { data: AdminDashboardData }) {
                 key={i.id}
                 title={i.name || 'بدون نام'}
                 sub={i.email || i.phone || '—'}
-                date={formatDateOnly(i.createdAt)}
+                date={toPersianDigits(formatDateOnly(i.createdAt))}
               />
             ))}
           </Queue>
@@ -311,7 +312,7 @@ function Content({ data }: { data: AdminDashboardData }) {
                 key={g.id}
                 title={g.name}
                 sub={`${g.category} — ${g.instructorName || 'بدون نام'}`}
-                date={formatDateOnly(g.createdAt)}
+                date={toPersianDigits(formatDateOnly(g.createdAt))}
               />
             ))}
           </Queue>

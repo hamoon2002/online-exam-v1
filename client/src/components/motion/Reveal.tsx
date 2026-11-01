@@ -9,18 +9,19 @@ type RevealProps = {
   delay?: number;
 };
 
+function useIsLanding() {
+  return useLocation().pathname === '/';
+}
+
+// The public landing page is intentionally static during scroll.
+// Other pages retain their existing reveal animations.
 function Reveal({ children, className, delay = 0 }: RevealProps) {
-  const isLanding = useLocation().pathname === '/';
+  const isLanding = useIsLanding();
+  if (isLanding) return <div className={className}>{children}</div>;
   return (
-    <motion.div
-      className={className}
-      variants={fadeUp}
-      initial={isLanding ? false : "hidden"}
-      animate={isLanding ? "visible" : undefined}
-      whileInView={isLanding ? undefined : "visible"}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ delay }}
-    >
+    <motion.div className={className} variants={fadeUp}
+      initial="hidden" whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }} transition={{ delay }}>
       {children}
     </motion.div>
   );
@@ -34,30 +35,24 @@ type RevealGroupProps = {
 };
 
 export function RevealGroup({ children, className }: RevealGroupProps) {
-  const isLanding = useLocation().pathname === '/';
+  const isLanding = useIsLanding();
+  if (isLanding) return <div className={className}>{children}</div>;
   return (
-    <motion.div
-      className={className}
-      variants={staggerContainer}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.15 }}
-    >
+    <motion.div className={className} variants={staggerContainer}
+      initial="hidden" whileInView="visible"
+      viewport={{ once: true, amount: 0.15 }}>
       {children}
     </motion.div>
   );
 }
 
 export function RevealItem({
-  children,
-  className,
+  children, className,
 }: {
   children: ReactNode;
   className?: string;
 }) {
-  return (
-    <motion.div className={className} variants={staggerItem}>
-      {children}
-    </motion.div>
-  );
+  const isLanding = useIsLanding();
+  if (isLanding) return <div className={className}>{children}</div>;
+  return <motion.div className={className} variants={staggerItem}>{children}</motion.div>;
 }

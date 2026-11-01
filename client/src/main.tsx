@@ -4,6 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import '@fontsource-variable/vazirmatn';
 import './index.css';
+import './glass-theme.css';
 import App from './App.tsx';
 import { ExamGuardProvider } from './context/ExamGuardContext.tsx';
 

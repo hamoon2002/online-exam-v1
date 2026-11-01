@@ -233,6 +233,7 @@ function ExamsPage() {
                 </table>
               </div>
             )}
+            {canManage && reportExams.length > 0 && <div className="mt-6 flex justify-center border-t border-violet-200/40 pt-5 dark:border-violet-400/15"><button type="button" onClick={openAddModal} disabled={planLimit.checkingLimit} className="ui-create-cta">+ آزمون جدید</button></div>}
           </div>
         </>
       )}

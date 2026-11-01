@@ -87,3 +87,26 @@
 .glass-dashboard .glass-chart-grid .glass-panel{height:100%}
 @media(max-width:767px){.glass-hero-copy h1{font-size:2.4rem}.glass-dashboard{padding:14px}.glass-hero-benefits .glass-benefit{padding:15px;font-size:12px}}
 @media(prefers-reduced-motion:reduce){.glass-hero-benefits .glass-benefit{transition:none}.glass-hero-benefits .glass-benefit:hover{transform:none}}
+
+
+/* Illustrated hero: glass layered laptop inspired by approved reference. */
+.exam-art{width:min(100%,520px);aspect-ratio:1.08;position:relative;isolation:isolate;display:grid;place-items:center;perspective:1000px}
+.exam-art-halo{position:absolute;inset:13% 3% 9%;border-radius:50%;background:radial-gradient(ellipse,rgba(147,91,246,.27),rgba(65,172,247,.12) 44%,transparent 74%);filter:blur(23px)}
+.exam-art-back{position:absolute;inset:18% 14% 18% 17%;border-radius:36px;transform:rotate(-9deg);background:linear-gradient(130deg,rgba(99,192,255,.27),rgba(176,104,255,.23));border:1px solid rgba(151,148,249,.35);box-shadow:inset 0 2px 4px rgba(255,255,255,.35),0 25px 65px rgba(79,70,196,.2);backdrop-filter:blur(18px)}
+.exam-art-laptop{position:relative;width:68%;transform:rotate(-5deg) translateY(7%);filter:drop-shadow(0 22px 22px rgba(63,61,154,.25))}
+.exam-art-screen{position:relative;height:274px;border:8px solid #b8c5ff;border-radius:24px 24px 15px 15px;overflow:hidden;background:linear-gradient(142deg,rgba(135,121,249,.9),rgba(48,80,170,.96));box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),inset 0 12px 35px rgba(255,255,255,.18),0 0 36px rgba(111,100,255,.42);padding:17px 20px;color:white}
+.exam-art-screen:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,rgba(255,255,255,.22),transparent 45%)}
+.exam-art-screen-top{display:flex;gap:5px;margin-bottom:16px}.exam-art-dot{height:5px;width:5px;border-radius:50%;background:rgba(255,255,255,.55)}
+.exam-art-screen-title{font-size:15px;font-weight:850;margin-bottom:14px;display:flex;align-items:center;gap:8px}.exam-art-spark{width:8px;height:8px;background:#97e2ff;border-radius:50%;box-shadow:0 0 14px #8eeaff}
+.exam-art-question{display:flex;align-items:center;gap:11px;margin:10px 0;padding:9px 12px;border:1px solid rgba(255,255,255,.24);border-radius:12px;background:rgba(255,255,255,.13);backdrop-filter:blur(7px)}
+.exam-art-question svg{color:#d3f5ff;flex-shrink:0}.exam-art-question div{flex:1;display:grid;gap:6px}.exam-art-question i{height:5px;border-radius:8px;background:rgba(234,239,255,.61);width:76%}.exam-art-question i+ i{width:44%;opacity:.56}
+.exam-art-base{height:23px;width:119%;margin-right:-9.5%;border-radius:4px 4px 28px 28px;background:linear-gradient(180deg,#f2f3ff,#8b9cdd 43%,#515db2 95%);transform:perspective(140px) rotateX(43deg);box-shadow:0 12px 24px rgba(61,72,173,.28);display:flex;justify-content:center}
+.exam-art-base span{height:4px;width:30%;background:rgba(62,75,151,.34);border-radius:0 0 12px 12px}
+.exam-art-cap{position:absolute;z-index:4;top:6%;left:28%;display:grid;place-items:center;width:113px;height:91px;color:#dccdff;transform:rotate(-12deg);filter:drop-shadow(0 12px 10px rgba(89,45,173,.38))}
+.exam-art-cap svg{fill:rgba(130,84,241,.82);stroke:#c4b0ff;stroke-width:1.4}
+.exam-art-float{position:absolute;display:grid;place-items:center;width:64px;height:64px;color:#7765e9;border:1px solid rgba(255,255,255,.64);border-radius:18px;background:linear-gradient(130deg,rgba(255,255,255,.67),rgba(211,208,255,.38));box-shadow:0 12px 28px rgba(76,69,165,.18),inset 0 1px rgba(255,255,255,.8);backdrop-filter:blur(17px)}
+.exam-art-float-a{top:34%;right:0;transform:rotate(8deg)}.exam-art-float-b{bottom:12%;left:3%;transform:rotate(-8deg)}.exam-art-float-c{top:16%;left:0;transform:rotate(11deg)}
+.dark .exam-art-float{background:linear-gradient(130deg,rgba(115,100,208,.52),rgba(43,55,109,.54));border-color:rgba(195,176,255,.32);color:#dfd3ff}.dark .exam-art-back{background:linear-gradient(130deg,rgba(64,94,211,.28),rgba(130,55,237,.28))}
+.glass-hero-art:before{opacity:.6}
+@media(max-width:600px){.exam-art{max-width:440px}.exam-art-screen{height:230px;padding:12px}.exam-art-float{width:50px;height:50px}.exam-art-cap{width:80px;height:72px}}
+@media(prefers-reduced-motion:no-preference){.exam-art-float{transition:transform .4s ease,box-shadow .4s ease}.exam-art:hover .exam-art-float-a{transform:translateY(-7px) rotate(8deg)}.exam-art:hover .exam-art-float-b{transform:translateY(-5px) rotate(-8deg)}.exam-art:hover .exam-art-float-c{transform:translateY(-6px) rotate(11deg)}}

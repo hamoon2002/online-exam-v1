@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ChevronDown } from 'lucide-react';
 import useCategories from '../../hooks/useCategories';
 
 type CategorySelectProps = {
@@ -84,6 +84,7 @@ function CategorySelect({ value, onChange, label }: CategorySelectProps) {
           </button>
         </div>
       ) : (
+        <div className="relative w-full">
         <select
           value={value}
           onChange={(e) => {
@@ -93,7 +94,7 @@ function CategorySelect({ value, onChange, label }: CategorySelectProps) {
             }
             onChange(e.target.value);
           }}
-          className={inputClassName}
+          className={`${inputClassName} w-full min-h-11 appearance-none !pl-12 !pr-4 bg-none`}
         >
           <option value="">
             {loading ? 'در حال بارگذاری...' : 'انتخاب کنید'}
@@ -108,6 +109,8 @@ function CategorySelect({ value, onChange, label }: CategorySelectProps) {
           ))}
           <option value="__add__">+ افزودنِ دسته‌بندیِ جدید</option>
         </select>
+        <ChevronDown size={18} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-violet-500 dark:text-violet-300" />
+        </div>
       )}
     </div>
   );

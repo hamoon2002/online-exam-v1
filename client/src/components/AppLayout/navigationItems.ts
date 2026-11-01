@@ -50,6 +50,18 @@ export const navigationItems: NavigationItem[] = [
     roles: ALL_ROLES,
   },
   {
+    label: 'گروه‌ها',
+    to: '/groups',
+    icon: Layers,
+    roles: ['Instructor'],
+  },
+  {
+    label: 'تأیید گروه‌ها',
+    to: '/group-approvals',
+    icon: ShieldCheck,
+    roles: ['SuperAdmin'],
+  },
+  {
     label: 'آزمون‌ها',
     adminLabel: 'آزمون‌ها',
     to: '/exams',
@@ -73,12 +85,6 @@ export const navigationItems: NavigationItem[] = [
     label: 'دانشجویان',
     to: '/students',
     icon: Users,
-    roles: ['Instructor'],
-  },
-  {
-    label: 'گروه‌ها',
-    to: '/groups',
-    icon: Layers,
     roles: ['Instructor'],
   },
   {
@@ -126,7 +132,6 @@ export const navigationItems: NavigationItem[] = [
     roles: ['SuperAdmin'],
     group: 'users',
   },
-  { label: 'تأیید گروه‌ها', to: '/group-approvals', icon: ShieldCheck, roles: ['SuperAdmin'], group: 'users' },
   {
     label: 'دسته‌بندی‌ها',
     to: '/categories',

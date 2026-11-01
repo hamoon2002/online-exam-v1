@@ -24,3 +24,19 @@
 .glass-dashboard .glass-admin-panel thead{background:rgba(118,103,198,.06)}
 @media(max-width:640px){.glass-landing section:first-of-type .max-w-sm{transform:none}.glass-dashboard{margin:-8px -8px 0;padding:15px 8px}.glass-landing section:first-of-type{min-height:auto}}
 @media(prefers-reduced-motion:reduce){.glass-dashboard .glass-stat{transition:none}.glass-landing #features .group:hover,.glass-dashboard .glass-stat:hover{transform:none}}
+
+
+/* Refined landing: soft, layered translucent surfaces and single entrance. */
+.glass-landing section:first-of-type{background:radial-gradient(circle at 18% 45%,rgba(110,91,230,.16),transparent 37%),radial-gradient(circle at 83% 30%,rgba(61,190,225,.11),transparent 31%)}
+.dark .glass-landing section:first-of-type{background:radial-gradient(circle at 18% 45%,rgba(131,97,255,.18),transparent 38%),radial-gradient(circle at 85% 28%,rgba(47,190,224,.13),transparent 34%)}
+.glass-landing .glass-exam-preview{background:linear-gradient(140deg,rgba(255,255,255,.78),rgba(237,238,255,.51))!important;border:1px solid rgba(255,255,255,.85)!important;box-shadow:0 25px 75px rgba(59,48,139,.14),inset 0 1px rgba(255,255,255,.85);backdrop-filter:blur(27px) saturate(140%);-webkit-backdrop-filter:blur(27px) saturate(140%);transform:none!important}
+.dark .glass-landing .glass-exam-preview{background:linear-gradient(140deg,rgba(40,44,79,.73),rgba(18,26,51,.58))!important;border-color:rgba(207,200,255,.19)!important;box-shadow:0 28px 80px rgba(0,0,0,.35),inset 0 1px rgba(255,255,255,.12)}
+.glass-landing #features .group{background:linear-gradient(150deg,rgba(255,255,255,.78),rgba(242,242,255,.48))!important;transition:transform .3s cubic-bezier(.2,.7,.2,1),border-color .3s,box-shadow .3s}
+.dark .glass-landing #features .group{background:linear-gradient(150deg,rgba(41,45,78,.73),rgba(19,28,52,.55))!important}
+.glass-landing .glass-answer:focus-visible{outline:2px solid #8b7df3;outline-offset:3px}
+@keyframes glass-enter-motion{from{opacity:0;transform:translateY(13px);filter:blur(5px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
+.glass-landing .glass-enter{animation:glass-enter-motion .8s cubic-bezier(.2,.75,.2,1) both}
+.glass-landing .glass-delay-1{animation-delay:.08s}
+.glass-landing .glass-delay-2{animation-delay:.16s}
+.glass-landing .glass-delay-3{animation-delay:.24s}
+@media(prefers-reduced-motion:reduce){.glass-landing .glass-enter{animation:none!important}.glass-landing #features .group{transition:none}}

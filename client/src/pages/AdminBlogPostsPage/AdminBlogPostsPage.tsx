@@ -26,13 +26,7 @@ function AdminBlogPostsPage() {
 
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold dark:text-white">پست‌های بلاگ</h1>
-        <button
-          onClick={() => navigate('/blog-posts/new')}
-          className="inline-flex items-center gap-1 rounded-xl bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700"
-        >
-          <Plus size={16} />
-          پستِ جدید
-        </button>
+
       </div>
 
       <div className={`${!loading && posts.length === 0 ? "mx-auto max-w-2xl bg-transparent p-0" : "rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-900"}`}>
@@ -104,6 +98,11 @@ function AdminBlogPostsPage() {
                 ))}
               </tbody>
             </table>
+          </div>
+        )}
+        {!loading && posts.length > 0 && (
+          <div className="mt-6 flex justify-center border-t border-violet-200/40 pt-5 dark:border-violet-400/15">
+            <button type="button" onClick={() => navigate('/blog-posts/new')} className="ui-create-cta"><Plus size={17} /> پست جدید</button>
           </div>
         )}
       </div>

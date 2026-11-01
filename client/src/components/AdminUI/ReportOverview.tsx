@@ -54,7 +54,7 @@ export default function ReportOverview({
         )
       ) : (
         <>
-          <div className="glass-dashboard reports-overview glass-unified-stats grid grid-cols-1 gap-4 sm:grid-cols-2 2xl:grid-cols-4">
+          <div className="reports-overview glass-unified-stats grid gap-4">
             <DashboardStatCard icon={ClipboardCheck} tone="violet" label="آزمون‌های تکمیل‌شده" value={data.completed.toLocaleString("fa-IR")} />
             <DashboardStatCard icon={ChartNoAxesColumnIncreasing} tone="cyan" label="میانگین پاسخ صحیح" value={data.average === null ? "—" : `${data.average.toLocaleString("fa-IR", {maximumFractionDigits:1})}٪`} />
             <DashboardStatCard icon={Wallet} tone="green" label="مبلغ پرداخت‌های موفق (تومان)" value={data.revenue.toLocaleString("fa-IR")} />

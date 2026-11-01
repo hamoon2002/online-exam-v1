@@ -370,3 +370,13 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 /* Reports use the exact shared dashboard statistic component. */
 .reports-overview{background:transparent!important;overflow:visible!important}
 .reports-overview .glass-unified-stat{min-width:0}
+
+
+/* Balanced reporting KPI proportions, independent from admin dashboard grid. */
+.reports-overview.glass-unified-stats{width:100%;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px!important;align-items:stretch}
+.reports-overview .glass-unified-stat{width:100%;min-width:0!important;min-height:148px!important;height:auto!important;padding:19px 21px!important;gap:12px!important;overflow:hidden}
+.reports-overview .glass-unified-stat p{overflow-wrap:anywhere}
+.reports-overview .glass-unified-stat p:first-child{font-size:clamp(1.25rem,2vw,1.8rem)!important;line-height:1.35}
+.reports-overview .glass-unified-stat-icon{width:43px;height:43px}
+@media(min-width:1500px){.reports-overview.glass-unified-stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:640px){.reports-overview.glass-unified-stats{grid-template-columns:minmax(0,1fr)}}

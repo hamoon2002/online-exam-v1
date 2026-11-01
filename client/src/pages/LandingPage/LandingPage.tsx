@@ -22,7 +22,7 @@ function LandingPage() {
   }, [location.state]);
 
   return (
-    <div className="min-h-screen bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white">
+    <div className="glass-landing min-h-screen bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white">
       <Navbar />
       <Hero data={sections?.hero} />
       <Features data={sections?.features} />

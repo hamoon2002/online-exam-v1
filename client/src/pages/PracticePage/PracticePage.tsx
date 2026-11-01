@@ -29,12 +29,7 @@ export default function PracticePage() {
                 : "سؤال‌ها را از بانک انتخاب کنید و پس از بازبینی، برای گروه‌های خود منتشر کنید. بانک‌ها به‌صورت خودکار در دسترس کارآموز نیستند."}
             </p>
           </div>
-          {role === "Instructor" && (
-            <Link className={primary} to="/practice/new">
-              <Plus size={18} />
-              مجموعهٔ تمرین جدید
-            </Link>
-          )}
+
         </header>
         <section className={panel}>
           <ListPagination {...list} />
@@ -98,6 +93,7 @@ export default function PracticePage() {
               ))}
             </div>
           )}
+          {role === "Instructor" && !list.loading && !list.error && <div className="mt-6 flex justify-center border-t border-violet-200/40 pt-5 dark:border-violet-400/15"><Link className="ui-create-cta" to="/practice/new"><Plus size={18}/> مجموعهٔ تمرین جدید</Link></div>}
         </section>
       </div>
     </AppLayout>

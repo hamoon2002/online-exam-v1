@@ -253,3 +253,27 @@
 .glass-dashboard .glass-admin-stat-indicator{background:rgba(121,113,178,.07)!important;color:#8980a6!important}
 .dark .glass-dashboard .glass-admin-stat-indicator{background:rgba(197,184,255,.09)!important;color:#beb4dc!important}
 @media(prefers-reduced-motion:reduce){.glass-dashboard .glass-stat:hover,.glass-dashboard .glass-admin-stats>.glass-admin-stat:hover{transform:none}}
+
+
+/* Unified premium input interaction — soft luminous focus, not hard purple outlines. */
+:where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select){
+  transition:border-color .24s ease,box-shadow .28s ease,background-color .24s ease!important;
+}
+:where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select):hover:not(:disabled){
+  border-color:rgba(126,120,201,.48)!important;
+}
+:where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select):focus,
+:where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select):focus-visible{
+  outline:none!important;
+  border-color:rgba(130,113,230,.72)!important;
+  --tw-ring-shadow:0 0 #0000!important;
+  box-shadow:0 0 0 3px rgba(143,119,255,.10),0 0 23px rgba(116,94,236,.15),inset 0 1px 1px rgba(255,255,255,.22)!important;
+}
+.dark :where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select):focus,
+.dark :where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select):focus-visible{
+  border-color:rgba(165,150,255,.74)!important;
+  box-shadow:0 0 0 3px rgba(147,123,255,.14),0 0 26px rgba(127,102,255,.19)!important;
+}
+@media(prefers-reduced-motion:reduce){
+  :where(.glass-app-shell,.glass-landing,.auth-glass-shell) :is(input,textarea,select){transition:none!important}
+}

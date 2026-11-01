@@ -15,7 +15,7 @@ export default function ExamOversightFilters({ query, status, count, onQuery, on
       <div className="relative"><Search size={16} className="pointer-events-none absolute right-3 top-[25px] text-gray-400" /><input type="search" value={query} onChange={event => onQuery(event.target.value)} className={`${field} pr-10`} placeholder="نام آزمون، نام یا نام کاربری مدرس" /></div>
     </label>
     <label className="text-sm text-gray-600 dark:text-gray-300">وضعیت آزمون
-      <div className="relative min-w-48"><select value={status} onChange={event => onStatus(event.target.value)} className={`${field} appearance-none pr-4 pl-11`}>
+      <div className="relative min-w-48"><select value={status} onChange={event => onStatus(event.target.value)} className={`${field} ui-has-chevron appearance-none pr-4 pl-11`}>
         <option value="">بدون فیلتر وضعیت</option><option value="draft">پیش‌نویس</option><option value="upcoming">زمان‌بندی‌شده</option><option value="completed">پایان‌یافته</option>
       </select><ChevronDown size={17} className="pointer-events-none absolute left-4 top-[25px] text-violet-500" /></div>
     </label>

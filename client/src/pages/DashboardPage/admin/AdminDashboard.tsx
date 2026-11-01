@@ -13,6 +13,7 @@ import {
   UsersRound,
   ClipboardCheck,
   ClockAlert,
+  Minus,
   type LucideIcon,
 } from 'lucide-react';
 import AppLayout from '../../../components/AppLayout/AppLayout';
@@ -83,8 +84,8 @@ function StatCell({
         <span className="glass-admin-stat-icon grid h-12 w-12 shrink-0 place-items-center rounded-2xl" aria-hidden="true">
           <Icon size={23} strokeWidth={1.8} />
         </span>
-        <span className="glass-admin-stat-indicator rounded-full px-2.5 py-1 text-[11px] font-semibold">
-          {alert ? 'نیازمند بررسی' : 'نمای کلی'}
+        <span className="glass-admin-stat-indicator inline-flex h-8 w-8 items-center justify-center rounded-full" title={alert ? 'درخواست‌های نیازمند بررسی' : 'اطلاعات مقایسه‌ای برای تعیین روند موجود نیست'} aria-label={alert ? 'نیازمند بررسی' : 'روند خنثی؛ داده مقایسه‌ای موجود نیست'}>
+          {alert ? <ClockAlert size={17} /> : <Minus size={17} />}
         </span>
       </div>
       <div>

@@ -155,3 +155,20 @@
 .dark :where(.glass-app-shell, .glass-landing) table tbody tr:hover{background-color:rgba(164,142,255,.055)}
 :where(.glass-app-shell, .glass-landing) button:not(:disabled){-webkit-tap-highlight-color:transparent}
 @media(prefers-reduced-motion:reduce){:where(.glass-app-shell, .glass-landing) *{scroll-behavior:auto}}
+
+
+/* Single chevron strategy; keep browser select arrow hidden. */
+:where(.glass-app-shell,.glass-landing) select:not([multiple]){appearance:none!important;-webkit-appearance:none!important;background-image:none!important;padding-left:43px!important;padding-right:14px!important}
+:where(.glass-app-shell,.glass-landing) select:not([multiple]):not(.ui-has-chevron){background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238575bc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;background-position:left 15px center!important;background-repeat:no-repeat!important;background-size:16px!important}
+:where(.glass-app-shell,.glass-landing) select.ui-has-chevron{background-image:none!important}
+.settings-hero{border:1px solid rgba(130,112,225,.18);border-radius:25px;padding:28px 34px;background:linear-gradient(105deg,rgba(255,255,255,.84),rgba(226,220,255,.43));box-shadow:0 12px 35px rgba(88,73,165,.07)}
+.dark .settings-hero{background:linear-gradient(105deg,rgba(39,46,81,.85),rgba(38,29,86,.55));border-color:rgba(192,173,255,.15)}
+.settings-nav{position:sticky;top:90px;border:1px solid rgba(143,124,218,.19);background:rgba(255,255,255,.72);backdrop-filter:blur(22px);box-shadow:0 12px 35px rgba(70,61,130,.055)}
+.dark .settings-nav{background:rgba(29,36,65,.7);border-color:rgba(190,175,255,.14)}
+.settings-nav a{display:flex;align-items:center;gap:12px;padding:13px 14px;border-radius:13px;font-size:13px;font-weight:650;color:#63637c;transition:background .2s,color .2s}
+.settings-nav a:hover,.settings-nav a:focus-visible{color:#6b4cce;background:rgba(129,99,241,.1)}
+.dark .settings-nav a{color:#c2c3db}.dark .settings-nav a:hover{color:#d2c1ff;background:rgba(145,114,255,.17)}
+.settings-content>section{scroll-margin-top:100px;min-width:0}
+.settings-content>section>div{border-radius:23px!important;border:1px solid rgba(141,124,218,.2)!important;background:linear-gradient(145deg,rgba(255,255,255,.87),rgba(245,244,255,.64))!important;box-shadow:0 10px 35px rgba(72,63,142,.06)!important;padding:26px!important}
+.dark .settings-content>section>div{background:linear-gradient(145deg,rgba(41,47,79,.82),rgba(22,29,55,.68))!important;border-color:rgba(191,174,255,.14)!important}
+@media(max-width:640px){.settings-hero{padding:23px}.settings-content>section>div{padding:18px!important}}

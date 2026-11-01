@@ -15,7 +15,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   return (
-    <div className="min-h-screen bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white">
+    <div className={`${title === "داشبورد" || title === "میزکار" ? "glass-app-shell" : ""} min-h-screen bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white`}>
       <div className="flex min-h-screen flex-col md:flex-row">
         <Sidebar
           isOpen={isSidebarOpen}

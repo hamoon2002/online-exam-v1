@@ -246,7 +246,7 @@ function Content({ data }: { data: AdminDashboardData }) {
         <DashboardStatCard label="مدرسان تأییدشده" value={fa(stats.approvedInstructors)} icon={GraduationCap} tone="violet" />
         <DashboardStatCard label="دانشجویان" value={fa(stats.students)} icon={UsersRound} tone="cyan" />
         <DashboardStatCard label="آزمون‌های فعال" value={fa(stats.activeExams)} icon={ClipboardCheck} tone="green" />
-        <StatCell
+        <DashboardStatCard
           label="درخواست‌های منتظر بررسی"
           icon={ClockAlert}
           tone="amber"

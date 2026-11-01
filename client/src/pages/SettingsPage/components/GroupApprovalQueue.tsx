@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import {
   getGroupReviews,
   reviewGroup,
@@ -69,6 +70,7 @@ export default function GroupApprovalQueue({
       <h3 className="font-bold">بررسی گروه‌ها</h3>
       <label className="flex items-center gap-3 text-sm">
         وضعیت گروه
+        <div className="relative min-w-44">
         <select
           disabled={!!busy}
           value={status}
@@ -76,7 +78,7 @@ export default function GroupApprovalQueue({
             setStatus(e.target.value as GroupReview['approvalStatus']);
             setPage(1);
           }}
-          className="rounded-lg border bg-white p-2 text-gray-900 dark:border-gray-700 dark:bg-gray-950 dark:text-white dark:[color-scheme:dark]"
+          className="ui-has-chevron h-11 w-full appearance-none rounded-xl border border-violet-200 bg-white/85 !pr-4 !pl-11 text-sm font-medium text-gray-800 transition-colors focus:border-violet-400 focus:outline-none dark:border-violet-400/20 dark:bg-slate-800/80 dark:text-white"
         >
           {Object.entries(labels).map(([value, label]) => (
             <option key={value} value={value}>
@@ -84,6 +86,8 @@ export default function GroupApprovalQueue({
             </option>
           ))}
         </select>
+        <ChevronDown size={17} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-violet-600 dark:text-violet-300" />
+        </div>
       </label>
       {error && (
         <p role="alert" className="text-sm text-red-600 dark:text-red-400">

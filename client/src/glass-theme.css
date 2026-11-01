@@ -400,7 +400,7 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .reports-overview .glass-unified-stat--cyan{--stat-rgb:22,159,196}.reports-overview .glass-unified-stat--green{--stat-rgb:17,160,117}.reports-overview .glass-unified-stat--amber{--stat-rgb:213,146,48}
 .reports-overview .glass-unified-stat-icon{display:grid;flex:none;width:44px!important;height:44px!important;place-items:center;border-radius:14px;background:rgba(var(--stat-rgb),.11)!important;color:rgb(var(--stat-rgb))!important}
 .reports-overview .glass-unified-stat>div:last-child{min-width:0}
-.reports-overview .glass-unified-stat>div:last-child p:first-child{font-size:clamp(1.25rem,2vw,1.85rem)!important;line-height:1.25;overflow-wrap:anywhere}
+
 .reports-overview .glass-unified-stat::after{content:""!important;display:block!important;position:absolute;z-index:-1;bottom:-60px;left:-28px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(var(--stat-rgb),.16),transparent 72%);pointer-events:none}
 .reports-overview .glass-unified-stat::before{content:"";position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,rgba(var(--stat-rgb),.6),transparent)}
 .dark .reports-overview .glass-unified-stat{background:rgba(31,40,70,.8)!important;border-color:rgba(192,180,255,.16)!important}
@@ -495,3 +495,27 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
   .glass-unified-stat .glass-unified-stat-icon{flex-basis:52px!important;width:52px!important;height:52px!important}
   .glass-unified-stat .glass-unified-stat-content{gap:13px!important}
 }
+
+/* KPI typography contract: labels and numbers never inherit legacy p:first-child styles. */
+.glass-dashboard .glass-unified-stat .glass-unified-stat-label,
+.reports-overview .glass-unified-stat .glass-unified-stat-label {
+  font-size:13px!important;
+  line-height:1.65!important;
+  font-weight:600!important;
+  letter-spacing:normal!important;
+  color:#67738d!important;
+  margin:0 0 8px!important;
+}
+.glass-dashboard .glass-unified-stat .glass-unified-stat-value,
+.reports-overview .glass-unified-stat .glass-unified-stat-value {
+  font-size:30px!important;
+  line-height:1.25!important;
+  font-weight:800!important;
+  color:#182035!important;
+  margin:0!important;
+  letter-spacing:normal!important;
+}
+.dark .glass-dashboard .glass-unified-stat .glass-unified-stat-label,
+.dark .reports-overview .glass-unified-stat .glass-unified-stat-label{color:#bec6db!important}
+.dark .glass-dashboard .glass-unified-stat .glass-unified-stat-value,
+.dark .reports-overview .glass-unified-stat .glass-unified-stat-value{color:#fff!important}

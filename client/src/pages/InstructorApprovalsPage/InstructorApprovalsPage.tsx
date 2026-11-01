@@ -45,19 +45,19 @@ function InstructorApprovalsPage() {
         />
       )}
 
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-7 flex items-center justify-between">
         <h1 className="text-2xl font-bold dark:text-white">تایید مدرس‌ها</h1>
       </div>
 
-      <div className="flex gap-2 mb-4">
+      <div className="mb-5 inline-flex max-w-full flex-wrap gap-1.5 rounded-2xl border border-violet-200/50 bg-white/65 p-1.5 dark:border-violet-400/15 dark:bg-slate-800/60">
         {TABS.map((tab) => (
           <button
             key={tab.value}
             onClick={() => setStatus(tab.value)}
-            className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+            className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors ${
               status === tab.value
-                ? 'bg-brand-600 text-white'
-                : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800'
+                ? 'bg-violet-600 text-white shadow-sm'
+                : 'text-slate-600 hover:bg-violet-50 hover:text-violet-700 dark:text-slate-300 dark:hover:bg-white/10'
             }`}
           >
             {tab.label}
@@ -65,7 +65,7 @@ function InstructorApprovalsPage() {
         ))}
       </div>
 
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-6">
+      <div className="rounded-3xl border border-violet-200/40 bg-white/80 p-5 shadow-sm backdrop-blur-xl dark:border-violet-400/15 dark:bg-slate-800/60 sm:p-7">
         {loading ? (
           <Spinner />
         ) : instructors.length === 0 ? (
@@ -100,11 +100,11 @@ function InstructorApprovalsPage() {
                     </td>
                     {showActions && (
                       <td className="py-3">
-                        <div className="flex gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <button
                             onClick={() => handleApprove(instructor.id)}
                             disabled={actioningId === instructor.id}
-                            className="rounded-lg bg-success-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-success-500 transition disabled:cursor-not-allowed disabled:opacity-50"
+                            className="inline-flex min-h-9 items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-xs font-semibold text-emerald-700 transition-colors hover:border-emerald-500/50 hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-45 dark:text-emerald-300"
                           >
                             <span className="inline-flex items-center gap-1">
                               <CheckCircle2 size={14} />
@@ -115,7 +115,7 @@ function InstructorApprovalsPage() {
                             <button
                               onClick={() => handleReject(instructor.id)}
                               disabled={actioningId === instructor.id}
-                              className="rounded-lg bg-danger-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-danger-700 transition disabled:cursor-not-allowed disabled:opacity-50"
+                              className="inline-flex min-h-9 items-center justify-center rounded-xl border border-rose-500/25 bg-rose-500/5 px-3.5 py-2 text-xs font-semibold text-rose-600 transition-colors hover:border-rose-500/45 hover:bg-rose-500/12 disabled:cursor-not-allowed disabled:opacity-45 dark:text-rose-300"
                             >
                               <span className="inline-flex items-center gap-1">
                                 <XCircle size={14} />

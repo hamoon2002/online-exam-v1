@@ -22,6 +22,7 @@ type ExamFormModalProps = {
   onAllowReviewChange: () => void;
   availableGroups: Group[];
   groupIds: string[];
+  validationError?: string | null;
   onToggleGroup: (id: string) => void;
   onSubmit: (event: React.FormEvent) => void;
   onClose: () => void;
@@ -44,6 +45,7 @@ function ExamFormModal({
   onAllowReviewChange,
   availableGroups,
   groupIds,
+  validationError,
   onToggleGroup,
   onSubmit,
   onClose,
@@ -53,24 +55,26 @@ function ExamFormModal({
       <h2 className="text-lg font-bold mb-4 dark:text-white">
         {isEditing ? 'ویرایش آزمون' : 'آزمون جدید'}
       </h2>
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
+        {validationError && <p role="alert" className="rounded-xl border border-rose-300/50 bg-rose-50 p-3 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-300">{validationError}</p>}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-600 dark:text-gray-300">
             عنوان آزمون
           </label>
           <input
             value={title}
+            aria-invalid={!!validationError && !title.trim()}
             onChange={(e) => onTitleChange(e.target.value)}
-            className="border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-50 dark:focus:ring-brand-900 transition"
+            className={`border bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-400 transition ${validationError && !title.trim() ? "border-rose-500 ring-2 ring-rose-500/15" : "border-gray-200 dark:border-gray-600"}`}
             placeholder="مثلاً: مبانی جاوااسکریپت"
           />
         </div>
 
-        <CategorySelect
+        <div className={validationError && !category.trim() ? "rounded-xl ring-2 ring-rose-500/40" : ""}><CategorySelect
           label="دسته‌بندی"
           value={category}
           onChange={onCategoryChange}
-        />
+        /></div>
 
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-600 dark:text-gray-300">
@@ -83,18 +87,20 @@ function ExamFormModal({
                 onChange={onScheduledDateChange}
               />
             </div>
-            <div className="relative w-32 shrink-0">
-              <Clock
-                size={16}
-                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-              />
+            <div className="w-40 shrink-0">
+              <label htmlFor="exam-start-time" className="mb-1 block text-xs text-gray-500 dark:text-gray-400">ساعت (۲۴ ساعته)</label>
               <input
+                id="exam-start-time"
                 type="time"
+                lang="en-GB"
+                step={60}
                 dir="ltr"
                 value={scheduledTime}
+                aria-invalid={!!validationError && !scheduledTime}
                 onChange={(e) => onScheduledTimeChange(e.target.value)}
-                className="w-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-xl pr-9 pl-3 py-2.5 text-sm text-left outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-50 dark:focus:ring-brand-900 transition"
+                className={`min-h-11 w-full rounded-xl border bg-gray-50 px-3 py-2 text-center text-sm tabular-nums text-gray-800 outline-none focus:border-violet-400 dark:bg-gray-700 dark:text-white ${validationError && !scheduledTime ? 'border-rose-500 ring-2 ring-rose-500/15' : 'border-gray-200 dark:border-gray-600'}`}
               />
+              <p className="mt-1 text-[11px] text-slate-500">مثلاً ۱۴:۳۰ = ۲:۳۰ بعدازظهر</p>
             </div>
           </div>
         </div>
@@ -164,6 +170,7 @@ function ExamFormModal({
           <label className="text-sm text-gray-600 dark:text-gray-300">
             گروه‌های مجاز به دیدن این آزمون
           </label>
+          {validationError && groupIds.length === 0 && <p className="text-xs font-semibold text-rose-600 dark:text-rose-300">حداقل یک گروه را انتخاب کنید.</p>}
           {availableGroups.length === 0 ? (
             <p className="text-xs text-gray-400">
               هنوز هیچ گروهی نساختی — اول از صفحه‌ی گروه‌ها یکی بساز.

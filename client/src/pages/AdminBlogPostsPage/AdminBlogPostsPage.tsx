@@ -6,6 +6,7 @@ import Toast from '../../components/Toast/Toast';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import useAdminBlogPosts from '../../hooks/useAdminBlogPosts';
 import { formatExamDateTime } from '../../utils/formatDate';
+import { toPersianDigits } from '../../utils/persianDigits';
 
 function AdminBlogPostsPage() {
   const navigate = useNavigate();
@@ -27,7 +28,7 @@ function AdminBlogPostsPage() {
         <h1 className="text-2xl font-bold dark:text-white">پست‌های بلاگ</h1>
         <button
           onClick={() => navigate('/blog-posts/new')}
-          className="inline-flex items-center gap-1 rounded-xl bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700"
+          className={`${!loading && posts.length === 0 ? "hidden " : ""}inline-flex items-center gap-1 rounded-xl bg-brand-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-brand-700`}
         >
           <Plus size={16} />
           پستِ جدید
@@ -74,7 +75,7 @@ function AdminBlogPostsPage() {
                       </span>
                     </td>
                     <td className="py-3 text-gray-400 dark:text-gray-500">
-                      {formatExamDateTime(post.createdAt)}
+                      {toPersianDigits(formatExamDateTime(post.createdAt))}
                     </td>
                     <td className="py-3">
                       <div className="flex gap-2">

@@ -8,6 +8,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import useTheme from '../../hooks/useTheme';
+import { toPersianDigits } from '../../utils/persianDigits';
 
 export type ProgressPoint = {
   label: string;
@@ -43,7 +44,7 @@ function ProgressChart({ data }: ProgressChartProps) {
       ) : (
         <ResponsiveContainer width="100%" height={220}>
           <AreaChart
-            data={data}
+            data={data.map(point => ({ ...point, label: toPersianDigits(point.label) }))}
             margin={{ top: 4, right: 4, left: -20, bottom: 0 }}
           >
             <defs>

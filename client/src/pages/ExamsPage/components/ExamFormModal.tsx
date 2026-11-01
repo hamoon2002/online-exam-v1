@@ -100,7 +100,7 @@ function ExamFormModal({
                 onChange={(e) => onScheduledTimeChange(e.target.value)}
                 className={`min-h-11 w-full rounded-xl border bg-gray-50 px-3 py-2 text-center text-sm tabular-nums text-gray-800 outline-none focus:border-violet-400 dark:bg-gray-700 dark:text-white ${validationError && !scheduledTime ? 'border-rose-500 ring-2 ring-rose-500/15' : 'border-gray-200 dark:border-gray-600'}`}
               />
-              <p className="mt-1 text-[11px] text-slate-500">مثلاً ۱۴:۳۰ = ۲:۳۰ بعدازظهر</p>
+              <p className="mt-1 text-[11px] font-medium text-violet-600 dark:text-violet-300">{scheduledTime ? `زمان انتخابی: ${scheduledTime} (${Number(scheduledTime.slice(0,2)) >= 12 ? "بعدازظهر" : "قبل‌ازظهر"})` : "مثلاً ۱۴:۳۰ = ۲:۳۰ بعدازظهر"}</p>
             </div>
           </div>
         </div>

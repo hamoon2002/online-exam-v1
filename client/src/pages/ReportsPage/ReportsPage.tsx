@@ -23,7 +23,7 @@ export default function ReportsPage() {
     `${days}:${order}:${instructorId}`,
   );
   return (
-    <AppLayout title="گزارش‌ها">
+    <AppLayout title="گزارش‌ها">\n      <div className="reports-page">
       <PageHeader
         title="گزارش‌ها"
         description="عملکرد آموزشی و فعالیت سامانه در بازهٔ انتخاب‌شده"
@@ -93,6 +93,7 @@ export default function ReportsPage() {
           },
         ]}
       />
+      </div>
     </AppLayout>
   );
 }

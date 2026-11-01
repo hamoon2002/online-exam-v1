@@ -14,7 +14,8 @@ import {
   getReportSummary,
   type ReportSummary,
 } from '../../api/adminReportingApi';
-import StatCard from '../StatCard/StatCard';
+import { DashboardStatCard } from '../../pages/DashboardPage/components/DashboardVisuals';
+import { ClipboardCheck, ChartNoAxesColumnIncreasing, Wallet, BadgeCheck } from 'lucide-react';
 import { LoadError } from './FilterBar';
 const dayLabel = (day: string) =>
   new Date(`${day}T12:00:00Z`).toLocaleDateString('fa-IR', {
@@ -53,31 +54,11 @@ export default function ReportOverview({
         )
       ) : (
         <>
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard
-              label="آزمون‌های تکمیل‌شده"
-              value={data.completed}
-              hint={`${data.started.toLocaleString('fa-IR')} تلاش شروع‌شده در این بازه`}
-            />
-            <StatCard
-              label="میانگین پاسخ صحیح"
-              value={
-                data.average === null
-                  ? '—'
-                  : `${data.average.toLocaleString('fa-IR', { maximumFractionDigits: 1 })}٪`
-              }
-              hint="میانگین درصد هر آزمون تکمیل‌شده"
-            />
-            <StatCard
-              label="مبلغ پرداخت‌های موفق"
-              value={data.revenue.toLocaleString('fa-IR')}
-              hint={`${data.successfulPayments.toLocaleString('fa-IR')} پرداخت · تومان`}
-            />
-            <StatCard
-              label="اشتراک پولی فعال"
-              value={data.activeSubscriptions}
-              hint="وضعیت فعلی مدرس‌ها"
-            />
+          <div className="glass-dashboard reports-overview glass-unified-stats grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            <DashboardStatCard icon={ClipboardCheck} tone="violet" label="آزمون‌های تکمیل‌شده" value={data.completed.toLocaleString("fa-IR")} />
+            <DashboardStatCard icon={ChartNoAxesColumnIncreasing} tone="cyan" label="میانگین پاسخ صحیح" value={data.average === null ? "—" : `${data.average.toLocaleString("fa-IR", {maximumFractionDigits:1})}٪`} />
+            <DashboardStatCard icon={Wallet} tone="green" label="مبلغ پرداخت‌های موفق (تومان)" value={data.revenue.toLocaleString("fa-IR")} />
+            <DashboardStatCard icon={BadgeCheck} tone="amber" label="اشتراک پولی فعال" value={data.activeSubscriptions.toLocaleString("fa-IR")} />
           </div>
           <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-gray-900">
             <h2 className="font-semibold text-gray-900 dark:text-white">

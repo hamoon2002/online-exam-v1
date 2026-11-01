@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, ArrowLeft, Sparkles, ShieldCheck, BarChart3, Users } from 'lucide-react';
 import LiveExamCard from './LiveExamCard';
 
 const DEFAULT_TRUST_POINTS = [
@@ -34,23 +34,24 @@ function Hero({ data }: HeroProps) {
       : DEFAULT_TRUST_POINTS;
 
   return (
-    <section className="relative overflow-hidden">
+    <section className="glass-hero relative overflow-hidden">
 
       <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-brand-600/10 blur-3xl dark:bg-brand-600/20 " />
       <div className="pointer-events-none absolute top-32 right-0 h-72 w-72 rounded-full bg-accent-500/10 blur-3xl dark:bg-accent-500/10 " />
 
-      <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-24">
+      <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-24 lg:gap-20">
 
-        <div>
+        <div className="glass-hero-copy">
+          <div className="glass-eyebrow mb-6 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold"><Sparkles size={14} /> پلتفرم نسل جدید آموزش و ارزیابی</div>
           {title ? (
-            <h1 className="glass-enter text-4xl font-extrabold leading-[1.3] text-gray-900 dark:text-white sm:text-5xl">
+            <h1 className="glass-enter text-4xl font-black leading-[1.3] text-gray-900 dark:text-white sm:text-5xl lg:text-6xl">
               {title}
             </h1>
           ) : (
             <h1 className="glass-enter text-4xl font-extrabold leading-[1.3] text-gray-900 dark:text-white sm:text-5xl">
               برگزاری آزمون آنلاین،{' '}
               <span className="text-brand-600 dark:text-brand-500">
-                بدون دردسر
+                به سبک آینده
               </span>
             </h1>
           )}
@@ -65,7 +66,7 @@ function Hero({ data }: HeroProps) {
               onClick={() => navigate('/signup')}
               className="rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition duration-300 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-600/40"
             >
-              {ctaText}
+              {ctaText} <ArrowLeft size={16} className="mr-2 inline-block" />
             </button>
             <a
               href="#features"
@@ -88,10 +89,11 @@ function Hero({ data }: HeroProps) {
           </div>
         </div>
 
-        <div className="glass-delay-2 glass-enter flex justify-center md:justify-end">
+        <div className="glass-hero-art glass-delay-2 glass-enter flex justify-center md:justify-end">
           <LiveExamCard />
         </div>
       </div>
+      <div className="glass-hero-benefits relative mx-auto grid max-w-7xl grid-cols-1 gap-3 px-4 pb-12 sm:grid-cols-3 sm:px-6"><div className="glass-benefit"><ShieldCheck size={22} /><span>امنیت و کنترل آزمون‌ها</span></div><div className="glass-benefit"><BarChart3 size={22} /><span>گزارش‌های تحلیلی دقیق</span></div><div className="glass-benefit"><Users size={22} /><span>مدیریت کاربران و گروه‌ها</span></div></div>
     </section>
   );
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import DataTable from '../../components/AdminUI/DataTable';
@@ -50,9 +51,10 @@ export default function AdminStudentsPage() {
             حذف فیلتر
           </button>
         )}
+        <div className="relative inline-flex items-center">
         <select
           aria-label="ترتیب دانشجویان"
-          className={controlClass}
+          className={`${controlClass} ui-has-chevron min-h-11 appearance-none !pl-11 !pr-4`}
           value={order}
           onChange={(e) => setOrder(e.target.value)}
         >
@@ -60,6 +62,8 @@ export default function AdminStudentsPage() {
           <option value="oldest">قدیمی‌ترین</option>
           <option value="name">نام دانشجو</option>
         </select>
+        <ChevronDown size={16} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-violet-600 dark:text-violet-300" />
+        </div>
       </FilterBar>
       <ListPagination {...list} maxSearchLength={100} />
       <LoadError message={list.error} retry={list.reload} />

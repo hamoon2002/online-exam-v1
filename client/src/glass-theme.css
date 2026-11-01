@@ -380,3 +380,15 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .reports-overview .glass-unified-stat-icon{width:43px;height:43px}
 @media(min-width:1500px){.reports-overview.glass-unified-stats{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:640px){.reports-overview.glass-unified-stats{grid-template-columns:minmax(0,1fr)}}
+
+
+/* Shared bottom-centered creation action. */
+.ui-create-cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-width:180px;min-height:45px;padding:10px 23px;border:1px solid rgba(145,112,238,.35);border-radius:14px;background:linear-gradient(115deg,#7657d7,#6247bf);color:#fff;font-size:14px;font-weight:700;box-shadow:0 8px 19px rgba(100,68,187,.19);transition:transform .18s,box-shadow .18s,filter .18s}
+.ui-create-cta:hover:not(:disabled){transform:translateY(-2px);filter:brightness(1.06);box-shadow:0 11px 23px rgba(100,68,187,.27)}
+.ui-create-cta:disabled{opacity:.45;cursor:not-allowed}
+/* Restore the subtle colored flourish in KPI cards without obscuring text. */
+.glass-dashboard .glass-unified-stat{position:relative;isolation:isolate;overflow:hidden}
+.glass-dashboard .glass-unified-stat::after{content:""!important;display:block!important;position:absolute;z-index:-1;inset:auto -28px -65px auto;width:175px;height:175px;border-radius:50%;background:radial-gradient(circle,rgba(var(--stat-rgb),.18) 0%,rgba(var(--stat-rgb),.06) 48%,transparent 72%);pointer-events:none}
+.glass-dashboard .glass-unified-stat::before{content:"";position:absolute;z-index:-1;inset:auto 0 0 0;height:4px;background:linear-gradient(90deg,transparent,rgba(var(--stat-rgb),.68),transparent);opacity:.62}
+.dark .glass-dashboard .glass-unified-stat::after{background:radial-gradient(circle,rgba(var(--stat-rgb),.24),transparent 71%)}
+@media(prefers-reduced-motion:reduce){.ui-create-cta:hover:not(:disabled){transform:none}}

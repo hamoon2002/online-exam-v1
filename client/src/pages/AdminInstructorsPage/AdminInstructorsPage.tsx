@@ -53,7 +53,7 @@ export default function AdminInstructorsPage() {
           aria-label="ترتیب مدرس‌ها"
           value={order}
           onChange={(e) => setOrder(e.target.value)}
-          className={controlClass}
+          className={`${controlClass} ui-has-chevron w-full min-h-11 appearance-none !pr-4 !pl-11`}
         >
           <option value="newest">جدیدترین</option>
           <option value="oldest">قدیمی‌ترین</option>

@@ -44,3 +44,6 @@
 /* No flashes on landing: keep contents opaque and remove blur-based entrance. */
 @keyframes glass-enter-motion{from{opacity:1;transform:translateY(8px);filter:none}to{opacity:1;transform:translateY(0);filter:none}}
 .glass-landing .glass-enter{animation-duration:.45s}
+
+/* Static hero content: no opacity or delayed reveal during load/scroll. */
+.glass-landing .glass-enter{animation:none!important;opacity:1!important;filter:none!important;transform:none!important}

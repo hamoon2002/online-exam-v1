@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { ApiError } from '../lib/apiClient';
 
 type CrudApi<T, TInput> = {
   getAll: () => Promise<T[]>;
@@ -54,8 +55,8 @@ function useCrud<T extends { id: string }, TInput>(
       const newItem = await apiRef.current.add(input);
       setItems((prev) => [...prev, newItem]);
       return newItem;
-    } catch {
-      setError(messagesRef.current.add);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : messagesRef.current.add);
       return undefined;
     }
   }
@@ -69,8 +70,8 @@ function useCrud<T extends { id: string }, TInput>(
       const updated = await apiRef.current.update(id, input);
       setItems((prev) => prev.map((item) => (item.id === id ? updated : item)));
       return updated;
-    } catch {
-      setError(messagesRef.current.update);
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : messagesRef.current.update);
       return undefined;
     }
   }

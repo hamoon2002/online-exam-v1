@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, ChevronRight, ChevronLeft, RefreshCw, Check, X, UsersRound } from 'lucide-react';
+import { ChevronRight, ChevronLeft, RefreshCw, Check, X, UsersRound } from 'lucide-react';
+import UiSelect from '../../../components/UiSelect';
 import {
   getGroupReviews,
   reviewGroup,
@@ -77,15 +78,14 @@ export default function GroupApprovalQueue({
         <label className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-300">
           وضعیت گروه
           <span className="relative block min-w-44">
-            <select
+            <UiSelect
               disabled={!!busy}
               value={status}
               onChange={(e) => { setStatus(e.target.value as GroupReview['approvalStatus']); setPage(1); }}
-              className="ui-has-chevron h-11 w-full appearance-none rounded-xl border border-violet-200 bg-white/90 !pr-4 !pl-11 text-sm font-medium text-slate-800 outline-none transition-colors focus:border-violet-400 dark:border-violet-400/25 dark:bg-slate-900/70 dark:text-white"
+              className="h-11 w-full rounded-xl border border-violet-200 bg-white/90 text-sm font-medium text-slate-800 outline-none transition-colors focus:border-violet-400 dark:border-violet-400/25 dark:bg-slate-900/70 dark:text-white"
             >
               {Object.entries(labels).map(([value,label]) => <option key={value} value={value}>{label}</option>)}
-            </select>
-            <ChevronDown size={16} aria-hidden="true" className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-violet-500"/>
+            </UiSelect>
           </span>
         </label>
       </div>

@@ -184,3 +184,11 @@
 .glass-dashboard .glass-admin-stat-indicator{color:rgb(var(--kpi-rgb));background:rgba(var(--kpi-rgb),.09)}
 .glass-dashboard .glass-admin-stats>.glass-admin-stat:hover{transform:translateY(-3px);border-color:rgba(var(--kpi-rgb),.45)!important;box-shadow:0 18px 42px rgba(66,58,138,.12)!important}
 @media(prefers-reduced-motion:reduce){.glass-dashboard .glass-admin-stats>.glass-admin-stat{transition:none}.glass-dashboard .glass-admin-stats>.glass-admin-stat:hover{transform:none}}
+
+
+/* Very subtle academic watermark on the dashboard canvas only. */
+.glass-app-shell{position:relative;isolation:isolate}
+.glass-app-shell::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.055;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='460' height='460' viewBox='0 0 460 460'%3E%3Cg fill='none' stroke='%237967cf' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M93 169l137-61 137 61-137 61z'/%3E%3Cpath d='M142 201v54c51 40 125 40 176 0v-54'/%3E%3Cpath d='M367 170v87'/%3E%3Cpath d='M354 270c5-22 21-22 26 0'/%3E%3Cpath d='M130 331c52-16 103-16 154 0'/%3E%3Cpath d='M146 354c39-10 80-10 119 0'/%3E%3C/g%3E%3C/svg%3E");background-size:480px 480px;background-position:left 13% top 135px;background-repeat:no-repeat;filter:blur(1.4px)}
+.dark .glass-app-shell::before{opacity:.085;filter:blur(1.7px)}
+.glass-app-shell>:not(style){position:relative;z-index:1}
+@media(max-width:640px){.glass-app-shell::before{background-size:310px 310px;background-position:left -100px top 125px;opacity:.035}.dark .glass-app-shell::before{opacity:.055}}

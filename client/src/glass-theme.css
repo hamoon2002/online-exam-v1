@@ -211,3 +211,16 @@
 @media(max-width:640px){.glass-dashboard::before{background-size:300px auto;background-position:center 200px;opacity:.09}.dark .glass-dashboard::before{opacity:.12}}
 /* Support modal: no purple paint under the suggestion chips. */
 .support-assistant .support-suggestions button{box-shadow:none!important;transform:none!important;background-image:none!important}
+
+
+/* Auth pages aligned with Modern Glass Pro */
+.auth-glass-shell{background:#f5f6ff;min-height:100vh}
+.dark .auth-glass-shell{background:#0b1124}
+.auth-brand-panel{background:radial-gradient(circle at 15% 23%,rgba(63,193,252,.23),transparent 37%),radial-gradient(circle at 94% 85%,rgba(198,116,255,.28),transparent 47%),linear-gradient(147deg,#21164e,#4733a4 58%,#17245c)!important}
+.auth-brand-panel:after{content:"";position:absolute;left:-25%;bottom:7%;width:110%;height:48%;pointer-events:none;border:1px solid rgba(224,217,255,.1);border-radius:50%;transform:rotate(-29deg);box-shadow:0 0 0 55px rgba(219,204,255,.025),0 0 0 115px rgba(185,206,255,.018)}
+.auth-form-panel{background:radial-gradient(circle at 75% 23%,rgba(152,122,244,.15),transparent 37%),radial-gradient(circle at 20% 85%,rgba(52,180,224,.1),transparent 35%)}
+.auth-glass-card{backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);background:rgba(255,255,255,.78)!important;border:1px solid rgba(170,155,223,.3)!important;box-shadow:0 22px 65px rgba(50,49,113,.085),inset 0 1px rgba(255,255,255,.72)!important}
+.dark .auth-glass-card{background:rgba(28,35,63,.81)!important;border-color:rgba(181,161,250,.2)!important;box-shadow:0 23px 65px rgba(0,0,0,.3)!important}
+.auth-glass-card button[type=submit],.auth-glass-card form button[type=button]:not(:disabled){border-radius:13px}
+.auth-glass-card input:focus-visible{outline:2px solid rgba(123,95,237,.4);outline-offset:2px}
+@media(max-width:640px){.auth-form-panel{padding-block:75px 34px}.auth-glass-card{padding-inline:22px}}

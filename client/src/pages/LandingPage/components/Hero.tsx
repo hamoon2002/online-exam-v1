@@ -36,18 +36,18 @@ function Hero({ data }: HeroProps) {
   return (
     <section className="relative overflow-hidden">
 
-      <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-brand-600/10 blur-3xl dark:bg-brand-600/20 animate-drift" />
-      <div className="pointer-events-none absolute top-32 right-0 h-72 w-72 rounded-full bg-accent-500/10 blur-3xl dark:bg-accent-500/10 animate-drift-slow" />
+      <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-brand-600/10 blur-3xl dark:bg-brand-600/20 " />
+      <div className="pointer-events-none absolute top-32 right-0 h-72 w-72 rounded-full bg-accent-500/10 blur-3xl dark:bg-accent-500/10 " />
 
       <div className="relative mx-auto grid max-w-6xl grid-cols-1 items-center gap-14 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-24">
 
         <div>
           {title ? (
-            <h1 className="animate-fade-slide-up text-4xl font-extrabold leading-[1.3] text-gray-900 dark:text-white sm:text-5xl">
+            <h1 className="glass-enter text-4xl font-extrabold leading-[1.3] text-gray-900 dark:text-white sm:text-5xl">
               {title}
             </h1>
           ) : (
-            <h1 className="animate-fade-slide-up text-4xl font-extrabold leading-[1.3] text-gray-900 dark:text-white sm:text-5xl">
+            <h1 className="glass-enter text-4xl font-extrabold leading-[1.3] text-gray-900 dark:text-white sm:text-5xl">
               برگزاری آزمون آنلاین،{' '}
               <span className="text-brand-600 dark:text-brand-500">
                 بدون دردسر
@@ -55,12 +55,12 @@ function Hero({ data }: HeroProps) {
             </h1>
           )}
 
-          <p className="stagger-1 animate-fade-slide-up mt-5 max-w-md text-base leading-8 text-gray-500 dark:text-gray-400">
+          <p className="glass-delay-1 glass-enter mt-5 max-w-md text-base leading-8 text-gray-500 dark:text-gray-400">
             {subtitle ||
               'بانک سوال بساز، آزمون زمان‌دار طراحی کن، و نتیجه رو لحظه‌ای ببین — همه‌چیز تو یه پنل ساده و شیک، آماده‌ی استفاده.'}
           </p>
 
-          <div className="stagger-2 animate-fade-slide-up mt-8 flex flex-wrap items-center gap-3">
+          <div className="glass-delay-2 glass-enter mt-8 flex flex-wrap items-center gap-3">
             <button
               onClick={() => navigate('/signup')}
               className="rounded-xl bg-brand-600 px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition duration-300 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-600/40"
@@ -75,7 +75,7 @@ function Hero({ data }: HeroProps) {
             </a>
           </div>
 
-          <div className="stagger-3 animate-fade-slide-up mt-7 flex flex-col gap-2 sm:flex-row sm:gap-6">
+          <div className="glass-delay-3 glass-enter mt-7 flex flex-col gap-2 sm:flex-row sm:gap-6">
             {trustPoints.map((point) => (
               <div
                 key={point}
@@ -88,7 +88,7 @@ function Hero({ data }: HeroProps) {
           </div>
         </div>
 
-        <div className="stagger-2 animate-fade-slide-up flex justify-center md:justify-end">
+        <div className="glass-delay-2 glass-enter flex justify-center md:justify-end">
           <LiveExamCard />
         </div>
       </div>

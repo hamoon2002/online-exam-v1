@@ -40,6 +40,7 @@ function MemberDashboard() {
         />
       )}
 
+      <div className="glass-dashboard">
       <DashboardHeader user={user} />
 
       <StatsCards
@@ -59,6 +60,7 @@ function MemberDashboard() {
         exams={recentExams}
         getParticipantCount={getParticipantCount}
       />
+      </div>
     </AppLayout>
   );
 }

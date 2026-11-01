@@ -170,9 +170,6 @@ function ExamsPage() {
           <div className="flex items-center justify-between mb-6">
             <div><h1 className="text-2xl font-bold dark:text-white">{pageTitle}</h1>
             {isObserver && <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">آزمون‌های ثبت‌شده توسط مدرس‌ها و میزان مشارکت دانشجویان؛ دسترسی فقط برای مشاهده است.</p>}</div>
-            {canManage && (
-
-            )}
           </div>
 
           {isObserver && <ExamOversightFilters query={search} status={statusFilter} count={reportExams.length} onQuery={setSearch} onStatus={setStatusFilter} />}

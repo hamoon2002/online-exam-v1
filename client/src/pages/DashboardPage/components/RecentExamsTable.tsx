@@ -11,7 +11,7 @@ function RecentExamsTable({
   getParticipantCount,
 }: RecentExamsTableProps) {
   return (
-    <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <section className="glass-panel overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900">
       <div className="flex items-center justify-between border-b border-gray-100 px-6 py-5 dark:border-gray-800">
         <div>
           <h2 className="font-semibold text-gray-900 dark:text-white">

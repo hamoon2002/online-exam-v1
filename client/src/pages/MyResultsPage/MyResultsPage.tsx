@@ -10,6 +10,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
+import EmptyState from '../../components/EmptyState/EmptyState';
 import Spinner from '../../components/Spinner/Spinner';
 import Toast from '../../components/Toast/Toast';
 import { getCurrentUser } from '../../api/authApi';
@@ -112,21 +113,21 @@ function MyResultsPage() {
       label: 'آزمون‌های داده‌شده',
       value: records.length.toLocaleString('fa-IR'),
       icon: ListChecks,
-      bg: 'bg-brand-600',
+      bg: 'bg-violet-500/12 text-violet-600 dark:text-violet-300',
     },
     {
       label: 'میانگین نمره',
       value:
         records.length > 0 ? `${averagePercent.toLocaleString('fa-IR')}٪` : '—',
       icon: TrendingUp,
-      bg: 'bg-accent-500',
+      bg: 'bg-cyan-500/12 text-cyan-600 dark:text-cyan-300',
     },
     {
       label: 'بهترین نمره',
       value:
         records.length > 0 ? `${bestPercent.toLocaleString('fa-IR')}٪` : '—',
       icon: Award,
-      bg: 'bg-success-600',
+      bg: 'bg-emerald-500/12 text-emerald-600 dark:text-emerald-300',
     },
   ];
 
@@ -143,17 +144,17 @@ function MyResultsPage() {
       {loading ? (
         <Spinner />
       ) : (
-        <>
-          <h1 className="text-2xl font-bold mb-6 dark:text-white">نتایج من</h1>
+        <div className="glass-dashboard results-dashboard">
+          <div className="glass-welcome mb-7 rounded-3xl px-7 py-7 text-white"><p className="text-sm text-white/80">عملکرد آموزشی شما</p><h1 className="mt-2 text-2xl font-extrabold">نتایج من</h1><p className="mt-2 text-sm text-white/80">آمار، پیشرفت و تاریخچه آزمون‌های شما در یک نگاه</p></div>
 
           <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {stats.map(({ label, value, icon: Icon, bg }) => (
               <div
                 key={label}
-                className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
+                className="glass-stat glass-kpi results-kpi flex min-h-36 flex-col justify-between rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
               >
                 <div
-                  className={`mb-4 flex h-11 w-11 items-center justify-center rounded-xl text-white ${bg}`}
+                  className={`mb-4 flex h-12 w-12 items-center justify-center rounded-2xl ${bg}`}
                 >
                   <Icon size={20} />
                 </div>
@@ -167,27 +168,13 @@ function MyResultsPage() {
             ))}
           </div>
 
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+          <div className="glass-panel rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
             <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">
               تاریخچه‌ی آزمون‌ها
             </h2>
 
             {sortedAttempts.length === 0 ? (
-              <div className="flex flex-col items-center gap-3 py-12 text-center">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-400 dark:bg-gray-800">
-                  <Inbox size={22} />
-                </div>
-                <p className="text-sm text-gray-400">
-                  هنوز هیچ آزمونی نداده‌ای.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => navigate('/exams')}
-                  className="mt-1 text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 transition"
-                >
-                  رفتن به لیست آزمون‌ها
-                </button>
-              </div>
+              <EmptyState icon={Inbox} title="هنوز آزمونی نداده‌ای" description="بعد از شرکت در اولین آزمون، نتیجه و روند پیشرفتت اینجا نمایش داده می‌شود." action={{label:"مشاهده آزمون‌ها",onClick:()=>navigate('/exams')}} />
             ) : (
               <div className="flex flex-col gap-3">
                 {sortedAttempts.map((attempt) => {
@@ -254,7 +241,7 @@ function MyResultsPage() {
               </div>
             )}
           </div>
-        </>
+        </div>
       )}
     </AppLayout>
   );

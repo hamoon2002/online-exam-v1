@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Clock } from 'lucide-react';
 import Modal from '../../../components/Modal/Modal';
 import { DURATION_PRESETS } from '../../../hooks/useExamFormModal';
@@ -50,7 +51,9 @@ function ExamFormModal({
   onSubmit,
   onClose,
 }: ExamFormModalProps) {
-  const showErrors = Boolean(validationError);
+  const [attempted, setAttempted] = useState(false);
+  useEffect(() => { if (!isOpen) setAttempted(false); }, [isOpen]);
+  const showErrors = attempted || Boolean(validationError);
   const titleError = showErrors && title.trim().length < 2;
   const categoryError = showErrors && !category.trim();
   const dateError = showErrors && !scheduledDate;
@@ -62,7 +65,8 @@ function ExamFormModal({
       <h2 className="text-lg font-bold mb-4 dark:text-white">
         {isEditing ? 'ویرایش آزمون' : 'آزمون جدید'}
       </h2>
-      <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
+      <form onSubmit={(event) => { setAttempted(true); onSubmit(event); }} className="flex flex-col gap-4" noValidate>
+        {showErrors && (titleError || categoryError || dateError || timeError || durationError || groupsError) && <p role="alert" className="form-inline-error">فیلدهای مشخص‌شده را تکمیل کنید تا آزمون ثبت شود.</p>}
         {validationError && <p role="alert" className="form-inline-error">{validationError}</p>}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-600 dark:text-gray-300">
@@ -209,6 +213,7 @@ function ExamFormModal({
 
         <button
           type="submit"
+          onClick={() => setAttempted(true)}
           className="w-full bg-brand-600 text-white font-medium px-4 py-2.5 rounded-xl hover:bg-brand-700 transition"
         >
           {isEditing ? 'ذخیره تغییرات' : 'افزودن'}

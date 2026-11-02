@@ -63,13 +63,13 @@ function FooterSectionForm({ initialData, saving, onSave }: FooterSectionFormPro
       return;
     }
     setFormError('');
-    await onSave({
+    const saved = await onSave({
       description: description.trim(),
       copyrightText: copyrightText.trim(),
       links: links.map((l) => ({ label: l.label.trim(), href: l.href.trim() })),
       socialLinks: socialLinks.map((s) => ({ platform: s.platform, href: s.href.trim() })),
     });
-    else setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
+    if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

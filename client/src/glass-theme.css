@@ -873,3 +873,14 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .support-page-elevated .support-hero-elevated{background:var(--ui-purple-gradient)!important;box-shadow:0 12px 32px rgba(92,66,176,.15)!important}
 .support-page-elevated .support-surface{background:rgba(255,255,255,.82)!important;border-color:rgba(153,128,222,.2)!important;box-shadow:0 10px 26px rgba(74,56,149,.07)!important}
 .dark .support-page-elevated .support-surface{background:rgba(33,39,68,.82)!important;border-color:rgba(183,160,248,.19)!important}
+
+
+/* Consistent group and subscription layout aligned to dashboard cards. */
+.glass-app-shell .groups-premium-grid .group-premium-card{width:100%;min-height:260px}
+.glass-app-shell .glass-plans-page .glass-plan-card{border-radius:24px!important;border-color:rgba(146,120,222,.28)!important}
+.glass-app-shell .glass-plans-page .glass-plan-card button:not(:disabled){background:var(--ui-purple-gradient)!important;color:#fff!important;border:1px solid transparent!important;box-shadow:var(--ui-purple-shadow)!important}
+.glass-app-shell .glass-plans-page > div.rounded-2xl{border-radius:24px!important}
+.glass-app-shell .glass-plans-page .bg-accent-500\/10{background:rgba(125,94,216,.11)!important}
+.glass-app-shell .glass-plans-page .text-accent-600{color:#7252cb!important}
+.glass-app-shell .glass-plans-page .bg-brand-500{background:linear-gradient(90deg,#6546c6,#8562dd)!important}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card{border-color:rgba(186,163,248,.24)!important}

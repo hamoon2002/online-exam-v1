@@ -64,7 +64,7 @@ function Hero({ data }: HeroProps) {
           <div className="glass-delay-2 glass-enter mt-8 flex flex-wrap items-center gap-3">
             <button
               onClick={() => navigate('/signup')}
-              className="ui-primary-gradient rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition duration-300 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-600/40"
+              className="ui-primary-gradient rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition duration-300 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-600/40"
             >
               {ctaText} <ArrowLeft size={16} className="mr-2 inline-block" />
             </button>

@@ -33,7 +33,6 @@ function readItems(data: Record<string, unknown>): FeatureItem[] {
 
 function FeaturesSectionForm({ initialData, saving, onSave }: FeaturesSectionFormProps) {
   const [formError, setFormError] = useState('');
-  const [formSuccess, setFormSuccess] = useState(false);
   const [title, setTitle] = useState(() => readString(initialData, 'title'));
   const [subtitle, setSubtitle] = useState(() => readString(initialData, 'subtitle'));
   const [items, setItems] = useState<FeatureItem[]>(() => readItems(initialData));
@@ -50,12 +49,10 @@ function FeaturesSectionForm({ initialData, saving, onSave }: FeaturesSectionFor
     event.preventDefault();
     if (!title.trim() || !subtitle.trim() || items.some(p => !p.title.trim() || !p.description.trim())) {
       setFormError('عنوان، زیرعنوان و مشخصات تمام امکانات افزوده‌شده الزامی است.');
-      setFormSuccess(false);
       return;
     }
     setFormError('');
-    setFormSuccess(false);
-    const saved = await onSave({
+    await onSave({
       title: title.trim(),
       subtitle: subtitle.trim(),
       items: items.map((it) => ({
@@ -64,14 +61,12 @@ function FeaturesSectionForm({ initialData, saving, onSave }: FeaturesSectionFor
         description: it.description.trim(),
       })),
     });
-    if (saved) setFormSuccess(true);
     else setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       {formError && <p role="alert" className="form-inline-error">{formError}</p>}
-      {formSuccess && <p role="status" className="form-inline-success">تغییرات این بخش ذخیره شد.</p>}
       <div className="flex flex-col gap-1.5">
         <label className={labelClass}>عنوان</label>
         <input

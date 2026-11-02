@@ -52,7 +52,7 @@ function FeaturesSectionForm({ initialData, saving, onSave }: FeaturesSectionFor
       return;
     }
     setFormError('');
-    await onSave({
+    const saved = await onSave({
       title: title.trim(),
       subtitle: subtitle.trim(),
       items: items.map((it) => ({
@@ -61,7 +61,7 @@ function FeaturesSectionForm({ initialData, saving, onSave }: FeaturesSectionFor
         description: it.description.trim(),
       })),
     });
-    else setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
+    if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

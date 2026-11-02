@@ -45,7 +45,10 @@ function Sidebar({
   function handleNavClick(event: React.MouseEvent, to: string) {
     event.preventDefault();
     onClose();
-    guardNavigation(() => navigate(to));
+    guardNavigation(() => {
+      if (user?.role === 'Student') navigate(to);
+      else window.open(to, '_blank', 'noopener,noreferrer');
+    });
   }
 
   function handleLogoClick() {
@@ -145,7 +148,7 @@ function Sidebar({
                       className={({ isActive }) =>
                         `flex items-center gap-3 whitespace-nowrap rounded-xl px-3 py-2 text-sm font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-brand-500 ${
                           isActive
-                            ? 'ui-purple-gradient text-white'
+                            ? 'sidebar-selected-glass text-violet-800 dark:text-violet-100'
                             : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-100'
                         } ${isCollapsed ? 'md:justify-center md:px-0' : ''}`
                       }

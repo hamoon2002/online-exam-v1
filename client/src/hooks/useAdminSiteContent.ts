@@ -43,7 +43,7 @@ function useAdminSiteContent() {
     try {
       await updateSiteContentSection(section, data);
       // Confirm draft persistence without touching the public page.
-      const latest = await getSiteContent();
+      const latest = await getDraftSiteContent();
       const actual = latest.sections[section];
       const matches = Object.entries(data).every(([key, value]) =>
         JSON.stringify(actual[key]) === JSON.stringify(value)

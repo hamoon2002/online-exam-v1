@@ -17,16 +17,27 @@ function readString(data: Record<string, unknown>, key: string, fallback = ''): 
 }
 
 function PricingSectionForm({ initialData, saving, onSave }: PricingSectionFormProps) {
+  const [formError, setFormError] = useState('');
+  const [formSuccess, setFormSuccess] = useState(false);
   const [title, setTitle] = useState(() => readString(initialData, 'title'));
   const [subtitle, setSubtitle] = useState(() => readString(initialData, 'subtitle'));
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    await onSave({ title: title.trim(), subtitle: subtitle.trim() });
+    if (!title.trim() || !subtitle.trim()) {
+      setFormError('عنوان و زیرعنوان این بخش الزامی است.');
+      setFormSuccess(false);
+      return;
+    }
+    setFormError('');
+    setFormSuccess(false);
+    const saved = await onSave({ title: title.trim(), subtitle: subtitle.trim() });
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+      {formError && <p role="alert" className="form-inline-error">{formError}</p>}
+      {formSuccess && <p role="status" className="form-inline-success">تغییرات این بخش ذخیره شد.</p>}
       <p className="rounded-xl bg-gray-50 px-4 py-3 text-xs leading-6 text-gray-500 dark:bg-gray-800/60 dark:text-gray-400">
         کارت‌های پلن و قیمت‌ها از تنظیماتِ پلن‌ها میان، نه از این‌جا - این
         بخش فقط عنوان و زیرعنوانِ بالای جدولِ قیمت رو کنترل می‌کنه.

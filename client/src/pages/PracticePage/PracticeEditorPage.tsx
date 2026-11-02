@@ -80,6 +80,14 @@ function Editor({ id }: { id?: string }) {
   async function save(event: React.FormEvent) {
     event.preventDefault();
     if (pending.current) return;
+    if (title.trim().length < 2) {
+      setError("نام تمرین الزامی است و باید حداقل دو حرف داشته باشد.");
+      return;
+    }
+    if (groupIds.length === 0) {
+      setError("حداقل یک گروه برای دسترسی به تمرین انتخاب کنید.");
+      return;
+    }
     if (!frozen && !selected.length) {
       setError("حداقل یک سؤال انتخاب کنید.");
       return;
@@ -135,7 +143,7 @@ function Editor({ id }: { id?: string }) {
             </button>
           </div>
         ) : (
-          <form onSubmit={save} className="space-y-5">
+          <form onSubmit={save} noValidate className="space-y-5">
             <fieldset disabled={busy} className={`${panel} space-y-4`}>
               <h2 className="text-lg font-bold">۱. مشخصات مجموعه</h2>
               <label className="block text-sm">
@@ -145,6 +153,7 @@ function Editor({ id }: { id?: string }) {
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   required
+                  aria-invalid={!!error && title.trim().length < 2}
                   minLength={2}
                   maxLength={160}
                   placeholder="مثلاً مرور فصل اول ریاضی"

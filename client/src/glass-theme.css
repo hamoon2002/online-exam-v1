@@ -865,3 +865,11 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .site-loading-minimal{border-color:rgba(172,147,249,.2);border-top-color:#a18af6;border-right-color:#8562dd}
 .dark .site-loading-label{color:#aaa0c4}
 @media(prefers-reduced-motion:reduce){.site-loading-minimal{animation:none;border-color:#8562dd;border-right-color:transparent}}
+
+
+/* Support: remove the oversized pseudo-element glow that looked like a second background slab. */
+.support-page-elevated{isolation:auto!important;overflow:visible}
+.support-page-elevated::before{content:none!important;display:none!important}
+.support-page-elevated .support-hero-elevated{background:var(--ui-purple-gradient)!important;box-shadow:0 12px 32px rgba(92,66,176,.15)!important}
+.support-page-elevated .support-surface{background:rgba(255,255,255,.82)!important;border-color:rgba(153,128,222,.2)!important;box-shadow:0 10px 26px rgba(74,56,149,.07)!important}
+.dark .support-page-elevated .support-surface{background:rgba(33,39,68,.82)!important;border-color:rgba(183,160,248,.19)!important}

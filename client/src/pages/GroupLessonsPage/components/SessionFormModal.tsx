@@ -24,6 +24,7 @@ type SessionFormModalProps = {
   onAttachmentChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveAttachment: (index: number) => void;
   onSubmit: (event: React.FormEvent) => void;
+  validationError?: string | null;
   onClose: () => void;
 };
 
@@ -53,6 +54,7 @@ function SessionFormModal({
   onAttachmentChange,
   onRemoveAttachment,
   onSubmit,
+  validationError,
   onClose,
 }: SessionFormModalProps) {
   return (
@@ -60,7 +62,8 @@ function SessionFormModal({
       <h2 className="text-lg font-bold mb-4 dark:text-white">
         {isEditing ? 'ویرایش جلسه' : 'جلسه جدید'}
       </h2>
-      <form onSubmit={onSubmit} className="flex flex-col gap-4">
+      <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+        {validationError && <p role="alert" className="form-inline-error">{validationError}</p>}
         <div className="flex flex-col gap-1">
           <label
             htmlFor="session-title"

@@ -153,7 +153,7 @@ export default function SupportChat({
         />
         <button
           disabled={busy || !draft.trim()}
-          className="rounded-xl bg-blue-700 px-4 py-2 text-white disabled:opacity-60"
+          className="ui-purple-gradient rounded-xl px-4 py-2 font-semibold text-white transition-[filter,box-shadow] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {busy ? 'در حال ارسال…' : 'ارسال پیام'}
         </button>

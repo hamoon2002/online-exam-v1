@@ -2,11 +2,11 @@ import { Check, Crown } from 'lucide-react';
 import type { Plan, PlanId } from '../../../constants/plans';
 
 const VARIANT_STYLES: Record<PlanId, string> = {
-  free: 'bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800',
-  gold: 'bg-white border border-accent-500/30 dark:bg-gray-900 dark:border-accent-500/30',
+  free: 'border border-violet-200/50',
+  gold: 'border border-violet-300/50',
   platinum:
-    'bg-white border-2 border-brand-600 shadow-xl shadow-brand-600/10 lg:-translate-y-3 dark:bg-gray-900',
-  vip: 'bg-gray-900 border border-gray-800 text-white',
+    'border-2 border-violet-400/60 shadow-xl shadow-violet-600/10 lg:-translate-y-1',
+  vip: 'border border-violet-300/50',
 };
 
 function PlanCard({

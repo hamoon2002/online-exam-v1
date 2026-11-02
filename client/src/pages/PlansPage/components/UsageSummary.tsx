@@ -42,7 +42,7 @@ function UsageRow({
         <div className="h-1.5 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800">
           <div
             className={`h-full rounded-full transition-all ${
-              isNearLimit ? 'bg-danger-500' : 'bg-brand-500'
+              'ui-plan-progress'
             }`}
             style={{ width: `${percent}%` }}
           />

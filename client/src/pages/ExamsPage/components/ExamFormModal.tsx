@@ -103,13 +103,15 @@ function ExamFormModal({
               <label htmlFor="exam-start-time" className="mb-1 block text-xs text-gray-500 dark:text-gray-400">ساعت (۲۴ ساعته)</label>
               <input
                 id="exam-start-time"
-                type="time"
-                lang="en-GB"
-                step={60}
+                type="text"
+                inputMode="numeric"
+                placeholder="14:30"
+                maxLength={5}
+                pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
                 dir="ltr"
                 value={scheduledTime}
                 aria-invalid={timeError}
-                onChange={(e) => onScheduledTimeChange(e.target.value)}
+                onChange={(e) => onScheduledTimeChange(e.target.value.replace(/[^0-9:]/g, "").slice(0, 5))}
                 className={`min-h-11 w-full rounded-xl border bg-gray-50 px-3 py-2 text-center text-sm tabular-nums text-gray-800 outline-none focus:border-violet-400 dark:bg-gray-700 dark:text-white ${timeError ? 'border-rose-500 ring-2 ring-rose-500/15' : 'border-gray-200 dark:border-gray-600'}`}
               />
               {timeError && <p role="alert" className="text-xs font-medium text-rose-600 dark:text-rose-300">ساعت برگزاری الزامی است.</p>}

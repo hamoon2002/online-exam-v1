@@ -34,6 +34,7 @@ function QuestionBanksPage() {
   const [editingBank, setEditingBank] = useState<QuestionBank | null>(null);
 
   const [saving, setSaving] = useState(false);
+  const [formError, setFormError] = useState('');
 
   const isEditing = editingBank !== null;
 
@@ -56,7 +57,11 @@ function QuestionBanksPage() {
 
     const name = form.name.trim();
 
-    if (!name || !form.category) return;
+    if (name.length < 2 || !form.category) {
+      setFormError('نام بانک باید حداقل دو حرف باشد و دسته‌بندی انتخاب شود.');
+      return;
+    }
+    setFormError('');
 
     setSaving(true);
 
@@ -115,9 +120,10 @@ function QuestionBanksPage() {
       >
         {canManage && (
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit} noValidate
             className="question-bank-form h-fit rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
           >
+          {formError && <p role="alert" className="form-inline-error mb-4">{formError}</p>}
           <div className="mb-5 flex items-center gap-2">
             <Plus size={20} className="text-brand-600" />
 
@@ -134,6 +140,9 @@ function QuestionBanksPage() {
 
               <input
                 value={form.name}
+                required
+                minLength={2}
+                aria-invalid={!!formError && form.name.trim().length < 2}
                 onChange={(event) =>
                   setForm((current) => ({
                     ...current,
@@ -145,7 +154,7 @@ function QuestionBanksPage() {
               />
             </div>
 
-            <CategorySelect
+            <div className={formError && !form.category ? "form-invalid-field" : ""}><CategorySelect
               label="دسته‌بندی"
               value={form.category}
               onChange={(category) =>
@@ -154,7 +163,7 @@ function QuestionBanksPage() {
                   category,
                 }))
               }
-            />
+            /></div>
 
             <div className="flex gap-2">
               <button

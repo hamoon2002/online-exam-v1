@@ -40,7 +40,7 @@ function QuestionFormModal({
       <h2 className="text-lg font-bold mb-4 dark:text-white">
         {isEditing ? 'ویرایش سوال' : 'سوال جدید'}
       </h2>
-      <form onSubmit={onSubmit}><fieldset disabled={isSubmitting} className="flex flex-col gap-4">
+      <form onSubmit={onSubmit} noValidate><fieldset disabled={isSubmitting} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <label
             htmlFor="question-text"

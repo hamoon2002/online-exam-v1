@@ -144,6 +144,7 @@ function Editor({ id }: { id?: string }) {
           </div>
         ) : (
           <form onSubmit={save} noValidate className="space-y-5">
+            {error && <p role="alert" className="form-inline-error">{error}</p>}
             <fieldset disabled={busy} className={`${panel} space-y-4`}>
               <h2 className="text-lg font-bold">۱. مشخصات مجموعه</h2>
               <label className="block text-sm">

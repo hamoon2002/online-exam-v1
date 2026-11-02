@@ -7,7 +7,6 @@ import DataTable from '../../components/AdminUI/DataTable';
 import FilterBar, {
   RangeSelect,
   LoadError,
-  controlClass,
 } from '../../components/AdminUI/FilterBar';
 import ReportOverview from '../../components/AdminUI/ReportOverview';
 import ListPagination from '../../components/ListPagination/ListPagination';

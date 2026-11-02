@@ -54,7 +54,7 @@ function AboutSectionForm({ initialData, saving, onSave }: AboutSectionFormProps
       return;
     }
     setFormError('');
-    await onSave({
+    const saved = await onSave({
       title: title.trim(),
       description: description.trim(),
       pillars: pillars.map((p) => ({
@@ -63,7 +63,7 @@ function AboutSectionForm({ initialData, saving, onSave }: AboutSectionFormProps
         description: p.description.trim(),
       })),
     });
-    else setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
+    if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

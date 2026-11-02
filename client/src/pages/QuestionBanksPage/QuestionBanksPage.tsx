@@ -168,7 +168,7 @@ function QuestionBanksPage() {
             <div className="flex gap-2">
               <button
                 type="submit"
-                disabled={saving || !form.name.trim() || !form.category}
+                disabled={saving}
                 className="flex-1 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {saving

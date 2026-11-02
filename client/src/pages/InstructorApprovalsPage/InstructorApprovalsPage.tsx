@@ -104,7 +104,7 @@ function InstructorApprovalsPage() {
                           <button
                             onClick={() => handleApprove(instructor.id)}
                             disabled={actioningId === instructor.id}
-                            className="inline-flex min-h-9 items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-xs font-semibold text-emerald-700 transition-colors hover:border-emerald-500/50 hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-45 dark:text-emerald-300"
+                            className="inline-flex h-10 w-28 shrink-0 items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-xs font-semibold text-emerald-700 transition-colors hover:border-emerald-500/50 hover:bg-emerald-500/20 disabled:cursor-not-allowed disabled:opacity-45 dark:text-emerald-300"
                           >
                             <span className="inline-flex items-center gap-1">
                               <CheckCircle2 size={14} />
@@ -115,7 +115,7 @@ function InstructorApprovalsPage() {
                             <button
                               onClick={() => handleReject(instructor.id)}
                               disabled={actioningId === instructor.id}
-                              className="inline-flex min-h-9 items-center justify-center rounded-xl border border-rose-500/25 bg-rose-500/5 px-3.5 py-2 text-xs font-semibold text-rose-600 transition-colors hover:border-rose-500/45 hover:bg-rose-500/12 disabled:cursor-not-allowed disabled:opacity-45 dark:text-rose-300"
+                              className="inline-flex h-10 w-28 shrink-0 items-center justify-center rounded-xl border border-rose-500/25 bg-rose-500/5 px-3.5 py-2 text-xs font-semibold text-rose-600 transition-colors hover:border-rose-500/45 hover:bg-rose-500/12 disabled:cursor-not-allowed disabled:opacity-45 dark:text-rose-300"
                             >
                               <span className="inline-flex items-center gap-1">
                                 <XCircle size={14} />

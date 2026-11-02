@@ -628,3 +628,58 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .support-page-elevated .support-surface{background:rgba(255,255,255,.65)!important;border:1px solid rgba(255,255,255,.82)!important;box-shadow:0 14px 32px rgba(62,51,127,.09),inset 0 1px rgba(255,255,255,.72)!important;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
 .dark .support-page-elevated .support-hero-elevated{background:linear-gradient(115deg,#33246a,#594198)!important;border-color:rgba(193,168,255,.28)!important}
 .dark .support-page-elevated .support-surface{background:rgba(28,35,62,.75)!important;border-color:rgba(186,167,240,.23)!important;box-shadow:0 14px 34px rgba(0,0,0,.24)!important}
+
+
+/* Unified signed-in shell: dashboard is the color and glass reference. */
+.glass-app-shell{
+  background:radial-gradient(ellipse 38% 33% at 15% 12%,rgba(162,120,246,.13),transparent 80%),
+  radial-gradient(ellipse 40% 40% at 88% 55%,rgba(85,182,236,.11),transparent 80%),#f6f7fd!important;
+}
+.dark .glass-app-shell{
+  background:radial-gradient(ellipse 43% 36% at 15% 10%,rgba(118,80,228,.15),transparent 80%),
+  radial-gradient(ellipse 40% 42% at 90% 55%,rgba(39,121,201,.12),transparent 80%),#0e1429!important;
+}
+/* Shared panels, without changing functional alert, button or status colors. */
+.glass-app-shell main .glass-admin-panel,
+.glass-app-shell main .glass-plan-card,
+.glass-app-shell main .glass-plans-page > div:not(.fixed),
+.glass-app-shell main .glass-plans-page > div > div:not(.fixed){
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+.glass-app-shell .glass-plans-page .glass-plan-card,
+.glass-app-shell .glass-plans-page > div.rounded-2xl{
+  background:linear-gradient(135deg,rgba(255,255,255,.76),rgba(255,255,255,.48))!important;
+  border:1px solid rgba(255,255,255,.86)!important;
+  box-shadow:0 12px 30px rgba(73,58,138,.09),inset 0 1px rgba(255,255,255,.72)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card:hover{
+  border-color:rgba(124,91,222,.43)!important;
+  box-shadow:0 17px 34px rgba(95,69,175,.15)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card button:not(:disabled){
+  border-color:rgba(112,78,205,.26);
+}
+.glass-app-shell .glass-plans-page .glass-plan-card button:not(:disabled):hover{
+  box-shadow:0 8px 24px rgba(111,80,211,.15);
+}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card,
+.dark .glass-app-shell .glass-plans-page > div.rounded-2xl{
+  background:linear-gradient(130deg,rgba(41,47,81,.8),rgba(27,34,63,.64))!important;
+  border:1px solid rgba(186,166,241,.22)!important;
+  box-shadow:0 14px 36px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.08)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.bg-gray-900{
+  color:#20243a!important;
+}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.bg-gray-900{
+  color:#f5f2ff!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.bg-gray-900 h3,
+.glass-app-shell .glass-plans-page .glass-plan-card.bg-gray-900 .text-3xl{
+  color:#24213f!important;
+}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.bg-gray-900 h3,
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.bg-gray-900 .text-3xl{
+  color:#fff!important;
+}

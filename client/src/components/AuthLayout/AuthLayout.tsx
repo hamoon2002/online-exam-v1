@@ -88,7 +88,7 @@ function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
           onClick={toggleTheme}
           aria-label={isDark ? 'تغییر به حالت روشن' : 'تغییر به حالت تیره'}
           title={isDark ? 'حالت روشن' : 'حالت تیره'}
-          className="fixed left-4 top-4 z-20 flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition duration-300 hover:rotate-45 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+          className="fixed left-4 top-4 z-20 flex h-9 w-9 cursor-pointer items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition duration-300 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           {isDark ? <Sun size={18} /> : <Moon size={18} />}
         </button>

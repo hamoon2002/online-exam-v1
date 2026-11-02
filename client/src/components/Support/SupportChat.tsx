@@ -12,6 +12,14 @@ type Message = {
   fromStaff: boolean;
   createdAt: string;
 };
+const formatMessageDate = (value: string) => {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '' : new Intl.DateTimeFormat('fa-IR-u-ca-persian', { year: 'numeric', month: 'long', day: 'numeric' }).format(date);
+};
+const formatMessageTime = (value: string) => {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? '' : new Intl.DateTimeFormat('fa-IR', { hour: '2-digit', minute: '2-digit' }).format(date);
+};
 export const statusLabel: Record<string, string> = {
   waiting: 'منتظر پاسخ پشتیبان',
   replied: 'پشتیبان پاسخ داده',
@@ -114,18 +122,23 @@ export default function SupportChat({
           !messages.length && <p>هنوز پیامی ثبت نشده است.</p>
         )}
         {messages.length === 100 && <p>۱۰۰ پیام آخر نمایش داده می‌شود.</p>}
-        {messages.map((m) => (
-          <article
-            key={m.id}
-            className={`support-message-bubble rounded-2xl border p-3.5 ${m.fromStaff ? "support-message-staff" : "support-message-user"}`}
-          >
-            <p className="text-xs font-bold">
-              {m.fromStaff ? 'پشتیبان' : 'کاربر'} ·{' '}
-              {new Date(m.createdAt).toLocaleString('fa-IR')}
-            </p>
-            <p className="whitespace-pre-wrap break-words text-sm">{m.body}</p>
-          </article>
-        ))}
+        {messages.map((m, index) => {
+          const mine = staff ? m.fromStaff : !m.fromStaff;
+          const day = formatMessageDate(m.createdAt);
+          const showDate = index === 0 || day !== formatMessageDate(messages[index - 1].createdAt);
+          const previous = messages[index - 1];
+          const showSender = showDate || !previous || previous.fromStaff !== m.fromStaff;
+          return (
+            <div key={m.id}>
+              {showDate && <div className="support-chat-day" role="separator"><span>{day}</span></div>}
+              <article className={`support-message-bubble ${mine ? 'support-message-own' : 'support-message-other'} ${m.fromStaff ? 'support-message-staff' : 'support-message-user'}`}>
+                {showSender && <div className="support-message-sender">{m.fromStaff ? 'پشتیبان' : 'کاربر'}</div>}
+                <p className="support-message-text whitespace-pre-wrap break-words text-sm">{m.body}</p>
+                <time dateTime={m.createdAt} className="support-message-time" title={new Date(m.createdAt).toLocaleString('fa-IR')}>{formatMessageTime(m.createdAt)}</time>
+              </article>
+            </div>
+          );
+        })}
       </div>
       {error && (
         <p role="alert" className="text-sm text-red-700 dark:text-red-300">

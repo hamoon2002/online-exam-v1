@@ -856,3 +856,12 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .panel-internal-tabs{background:rgba(21,26,53,.55);border-color:rgba(189,164,247,.13)}
 .dark .panel-internal-tab{background:rgba(40,45,74,.6);border-color:rgba(188,166,248,.2);color:#c7bfdb}
 .dark .panel-internal-tab.is-active{background:linear-gradient(105deg,rgba(116,83,215,.35),rgba(143,108,224,.22));color:#f2edff;border-color:rgba(181,154,249,.44)}
+
+
+/* Minimal modern loading: no glass tile, no decorative dots. */
+.site-loading{min-height:145px;padding:24px 16px;gap:13px}
+.site-loading-minimal{display:block;width:31px;height:31px;border-radius:50%;border:2.5px solid rgba(133,98,221,.17);border-top-color:#6546c6;border-right-color:#8562dd;animation:site-loading-rotate .85s linear infinite}
+.site-loading-label{font-size:12px;font-weight:500;color:#827995}
+.dark .site-loading-minimal{border-color:rgba(172,147,249,.2);border-top-color:#a18af6;border-right-color:#8562dd}
+.dark .site-loading-label{color:#aaa0c4}
+@media(prefers-reduced-motion:reduce){.site-loading-minimal{animation:none;border-color:#8562dd;border-right-color:transparent}}

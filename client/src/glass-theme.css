@@ -941,3 +941,10 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .ui-primary-gradient:hover:not(:disabled){filter:brightness(1.07)}
 .ui-primary-gradient:disabled{opacity:.55;box-shadow:none!important}
 .dark .ui-primary-gradient{background:var(--ui-primary-gradient)!important;color:#fff!important}
+
+
+/* Inline validation is anchored to the form rather than a distant toast. */
+.form-inline-error{padding:11px 14px;border-radius:13px;border:1px solid rgba(225,66,87,.34);background:rgba(255,235,239,.89);color:#aa2740;font-size:13px;font-weight:650;line-height:1.9}
+.form-invalid-field{border-radius:14px;outline:2px solid rgba(220,56,82,.47);outline-offset:3px}
+.glass-app-shell [aria-invalid="true"]{border-color:#dc3852!important;box-shadow:0 0 0 3px rgba(220,56,82,.1)!important}
+.dark .form-inline-error{background:rgba(130,39,62,.19);border-color:rgba(246,107,134,.38);color:#ffadbd}

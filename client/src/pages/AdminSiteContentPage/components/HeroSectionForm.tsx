@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, X, Save } from 'lucide-react';
+import { Plus, X, Save, RotateCcw } from 'lucide-react';
 
 type HeroSectionFormProps = {
   initialData: Record<string, unknown>;
@@ -32,6 +32,26 @@ function HeroSectionForm({ initialData, saving, onSave }: HeroSectionFormProps) 
     readStringArray(initialData, 'trustPoints')
   );
 
+  async function restoreDefaultHero() {
+    if (saving || !window.confirm('عنوان، زیرعنوان، متن دکمه و نکات بخش اول به متن استاندارد برگردند؟')) return;
+    const defaults = {
+      title: 'برگزاری آزمون آنلاین، به سبک آینده',
+      subtitle: 'بانک سؤال بساز، آزمون زمان‌دار طراحی کن و نتیجه را لحظه‌ای ببین؛ همه‌چیز در یک پنل ساده و حرفه‌ای.',
+      ctaText: 'شروع رایگان',
+      trustPoints: ['بدون نیاز به کارت بانکی', 'راه‌اندازی در کمتر از ۲ دقیقه'],
+    };
+    setFormError('');
+    const saved = await onSave(defaults);
+    if (!saved) {
+      setFormError('بازگردانی انجام نشد؛ دوباره تلاش کنید.');
+      return;
+    }
+    setTitle(defaults.title);
+    setSubtitle(defaults.subtitle);
+    setCtaText(defaults.ctaText);
+    setTrustPoints(defaults.trustPoints);
+  }
+
   function updatePoint(index: number, value: string) {
     setTrustPoints((prev) => prev.map((p, i) => (i === index ? value : p)));
   }
@@ -59,6 +79,10 @@ function HeroSectionForm({ initialData, saving, onSave }: HeroSectionFormProps) 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       {formError && <p role="alert" className="form-inline-error">{formError}</p>}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-violet-200/50 bg-violet-50/40 px-4 py-3 text-xs text-gray-600 dark:border-violet-400/20 dark:bg-violet-400/5 dark:text-gray-300">
+        <span>متن‌های این فرم مستقیماً در صفحه اصلی نمایش داده می‌شوند.</span>
+        <button type="button" disabled={saving} onClick={() => void restoreDefaultHero()} className="inline-flex items-center gap-1.5 rounded-lg border border-violet-300/60 px-3 py-2 text-violet-700 hover:bg-violet-100/70 disabled:opacity-50 dark:text-violet-200 dark:hover:bg-violet-400/10"><RotateCcw size={14}/>بازگردانی متن استاندارد</button>
+      </div>
       <div className="flex flex-col gap-1.5">
         <label className={labelClass}>عنوان اصلی</label>
         <input

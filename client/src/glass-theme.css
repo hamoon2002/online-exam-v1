@@ -969,3 +969,30 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 }
 :is(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).bg-brand-600:hover:not(:disabled),.ui-primary-gradient:hover:not(:disabled){filter:brightness(1.07)}
 .glass-app-shell .glass-plans-page .ui-plan-progress{background:var(--action-primary-bg)!important}
+
+
+/* Unified interaction contract: buttons highlight without rotating, bouncing or scaling. */
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) button:not(:disabled),
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) a.ui-primary-gradient,
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) a.ui-purple-gradient{
+ transition-property:background-color,border-color,color,box-shadow,filter,opacity!important;
+ transition-duration:180ms!important;
+ transition-timing-function:ease!important;
+}
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) button:hover:not(:disabled),
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) a.ui-primary-gradient:hover,
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) a.ui-purple-gradient:hover{
+ transform:none!important;
+}
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).ui-primary-gradient:hover:not(:disabled),
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).ui-purple-gradient:hover:not(:disabled),
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).bg-brand-600:hover:not(:disabled),
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).bg-violet-600:hover:not(:disabled){
+ filter:brightness(1.09)!important;
+}
+:where(.glass-app-shell,.glass-landing,.glass-auth-page) button:focus-visible{
+ outline:2px solid #8562dd;outline-offset:2px;
+}
+@media(prefers-reduced-motion:reduce){
+ :where(.glass-app-shell,.glass-landing,.glass-auth-page) button{transition:none!important}
+}

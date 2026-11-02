@@ -26,7 +26,7 @@ function HeroSectionForm({ initialData, saving, onSave }: HeroSectionFormProps) 
   const [title, setTitle] = useState(() => readString(initialData, 'title'));
   const [subtitle, setSubtitle] = useState(() => readString(initialData, 'subtitle'));
   const [ctaText, setCtaText] = useState(() =>
-    readString(initialData, 'ctaText', 'شروع رایگان')
+    readString(initialData, 'ctaText')
   );
   const [trustPoints, setTrustPoints] = useState<string[]>(() =>
     readStringArray(initialData, 'trustPoints')
@@ -80,7 +80,7 @@ function HeroSectionForm({ initialData, saving, onSave }: HeroSectionFormProps) 
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       {formError && <p role="alert" className="form-inline-error">{formError}</p>}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-violet-200/50 bg-violet-50/40 px-4 py-3 text-xs text-gray-600 dark:border-violet-400/20 dark:bg-violet-400/5 dark:text-gray-300">
-        <span>متن‌های این فرم مستقیماً در صفحه اصلی نمایش داده می‌شوند.</span>
+        <span>این بخش پیش‌نویس است؛ تا زمان انتشار، متن صفحه اصلی تغییر نمی‌کند.</span>
         <button type="button" disabled={saving} onClick={() => void restoreDefaultHero()} className="inline-flex items-center gap-1.5 rounded-lg border border-violet-300/60 px-3 py-2 text-violet-700 hover:bg-violet-100/70 disabled:opacity-50 dark:text-violet-200 dark:hover:bg-violet-400/10"><RotateCcw size={14}/>بازگردانی متن استاندارد</button>
       </div>
       <div className="flex flex-col gap-1.5">

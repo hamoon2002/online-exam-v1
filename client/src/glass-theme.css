@@ -720,3 +720,25 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .auth-premium-card-emblem{color:#ccbaff;background:rgba(129,95,223,.19)}
 @media(prefers-reduced-motion:reduce){.auth-premium-card button[type=submit]{transition:none!important}}
 @media(prefers-reduced-transparency:reduce){.auth-premium-card,.auth-premium-visual{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+
+
+/* UiSelect: only the interactive trigger carries a frame, never its wrapper. */
+.ui-select-custom{
+  border:0!important;outline:0!important;background:transparent!important;
+  box-shadow:none!important;padding:0!important;
+}
+.ui-select-custom::before,.ui-select-custom::after{content:none!important}
+.ui-select-custom .ui-select-trigger{
+  box-sizing:border-box;
+  outline:0;
+  box-shadow:none;
+}
+.ui-select-custom .ui-select-trigger:focus-visible{
+  outline:0!important;
+  border-color:rgba(132,103,226,.72)!important;
+  box-shadow:0 0 0 2px rgba(132,103,226,.16)!important;
+}
+.dark .ui-select-custom .ui-select-trigger:focus-visible{
+  border-color:rgba(180,157,250,.66)!important;
+  box-shadow:0 0 0 2px rgba(163,139,245,.2)!important;
+}

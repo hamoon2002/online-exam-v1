@@ -40,6 +40,7 @@ function ExamsPage() {
     items: exams,
     loading,
     error,
+    writeError,
     clearError,
     addItem,
     updateItem,
@@ -253,6 +254,7 @@ function ExamsPage() {
         availableGroups={availableGroups}
         groupIds={form.groupIds}
         validationError={form.validationError}
+        saveError={writeError}
         onToggleGroup={form.toggleGroup}
         onSubmit={form.handleSubmit}
         onClose={form.close}

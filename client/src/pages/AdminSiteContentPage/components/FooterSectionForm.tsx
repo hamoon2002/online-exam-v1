@@ -45,7 +45,6 @@ function readSocialLinks(data: Record<string, unknown>): SocialLinkItem[] {
 
 function FooterSectionForm({ initialData, saving, onSave }: FooterSectionFormProps) {
   const [formError, setFormError] = useState('');
-  const [formSuccess, setFormSuccess] = useState(false);
   const [description, setDescription] = useState(() =>
     readString(initialData, 'description')
   );
@@ -61,25 +60,21 @@ function FooterSectionForm({ initialData, saving, onSave }: FooterSectionFormPro
     event.preventDefault();
     if (!description.trim() || links.some(p => !p.label.trim() || !p.href.trim()) || socialLinks.some(p => !p.href.trim())) {
       setFormError('متن زیر لوگو و اطلاعات تمام لینک‌های افزوده‌شده را کامل کنید.');
-      setFormSuccess(false);
       return;
     }
     setFormError('');
-    setFormSuccess(false);
-    const saved = await onSave({
+    await onSave({
       description: description.trim(),
       copyrightText: copyrightText.trim(),
       links: links.map((l) => ({ label: l.label.trim(), href: l.href.trim() })),
       socialLinks: socialLinks.map((s) => ({ platform: s.platform, href: s.href.trim() })),
     });
-    if (saved) setFormSuccess(true);
     else setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-6">
       {formError && <p role="alert" className="form-inline-error">{formError}</p>}
-      {formSuccess && <p role="status" className="form-inline-success">تغییرات این بخش ذخیره شد.</p>}
       <div className="flex flex-col gap-1.5">
         <label className={labelClass}>متنِ زیرِ لوگو</label>
         <textarea

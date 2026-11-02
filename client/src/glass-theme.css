@@ -924,3 +924,20 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .support-page .support-message-user{background:rgba(37,48,72,.83)!important;border-color:rgba(124,148,180,.26)!important;color:#e8edf9}
 .dark .support-page .support-message-staff > p:first-child{color:#d3bfff}
 .dark .support-page .support-message-user > p:first-child{color:#aebfda}
+
+
+/* Canonical primary action gradient shared by landing, help widget and dashboard. */
+:root{--ui-primary-gradient:linear-gradient(105deg,#6546c6 0%,#8562dd 100%);--ui-primary-shadow:0 9px 22px rgba(105,73,200,.23)}
+.ui-primary-gradient,
+.glass-landing .ui-primary-gradient,
+.glass-landing section:first-of-type .ui-primary-gradient,
+.support-assistant .ui-primary-gradient{
+  background:var(--ui-primary-gradient)!important;
+  background-image:var(--ui-primary-gradient)!important;
+  color:#fff!important;
+  border-color:transparent!important;
+  box-shadow:var(--ui-primary-shadow)!important;
+}
+.ui-primary-gradient:hover:not(:disabled){filter:brightness(1.07)}
+.ui-primary-gradient:disabled{opacity:.55;box-shadow:none!important}
+.dark .ui-primary-gradient{background:var(--ui-primary-gradient)!important;color:#fff!important}

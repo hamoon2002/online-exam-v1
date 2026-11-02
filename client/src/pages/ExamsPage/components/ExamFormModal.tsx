@@ -113,7 +113,7 @@ function ExamFormModal({
                 className={`min-h-11 w-full rounded-xl border bg-gray-50 px-3 py-2 text-center text-sm tabular-nums text-gray-800 outline-none focus:border-violet-400 dark:bg-gray-700 dark:text-white ${timeError ? 'border-rose-500 ring-2 ring-rose-500/15' : 'border-gray-200 dark:border-gray-600'}`}
               />
               {timeError && <p role="alert" className="text-xs font-medium text-rose-600 dark:text-rose-300">ساعت برگزاری الزامی است.</p>}
-              <p className="mt-1 text-[11px] font-medium text-violet-600 dark:text-violet-300">{scheduledTime ? `زمان انتخابی: ${scheduledTime} (${Number(scheduledTime.slice(0,2)) >= 12 ? "بعدازظهر" : "قبل‌ازظهر"})` : "مثلاً ۱۴:۳۰ = ۲:۳۰ بعدازظهر"}</p>
+              <p className="mt-1 text-[11px] font-medium text-violet-600 dark:text-violet-300">{scheduledTime ? `زمان انتخابی: ${scheduledTime}` : "مثلاً ۱۴:۳۰"}</p>
             </div>
           </div>
         </div>
@@ -133,7 +133,7 @@ function ExamFormModal({
               aria-invalid={durationError}
               value={durationMinutes}
               onChange={(e) => onDurationChange(Number(e.target.value))}
-              className="w-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-xl pr-11 pl-4 py-2.5 text-sm outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-50 dark:focus:ring-brand-900 transition"
+              className="min-h-11 w-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-xl pr-11 pl-4 py-2.5 text-sm outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-50 dark:focus:ring-brand-900 transition"
               placeholder="مثلاً: ۳۰"
             />
           </div>
@@ -195,13 +195,13 @@ function ExamFormModal({
               {availableGroups.map((g) => (
                 <label
                   key={g.id}
-                  className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200"
+                  className={`flex cursor-pointer items-center justify-between rounded-xl border px-3 py-2.5 text-sm transition ${groupIds.includes(g.id) ? "border-violet-400 bg-violet-50/70 dark:bg-violet-500/10" : "border-gray-200 hover:border-violet-300 dark:border-gray-700"}`}
                 >
                   <input
                     type="checkbox"
                     checked={groupIds.includes(g.id)}
                     onChange={() => onToggleGroup(g.id)}
-                    className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                    className="h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
                   />
                   {g.name}
                 </label>

@@ -79,3 +79,8 @@ export default function Toast(props: ToastProps) {
   // A new message receives its full lifetime; unrelated parent renders do not restart it.
   return <ToastNotification key={`${props.tone}:${props.duration}:${props.message}`} {...props} />;
 }
+
+/** Emit only after the server has confirmed a successful create/update. */
+export function notifySaveSuccess(message = 'تغییرات با موفقیت ذخیره شد') {
+  window.dispatchEvent(new CustomEvent<string>('app:save-success', { detail: message }));
+}

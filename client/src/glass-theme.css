@@ -618,3 +618,13 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 @media(prefers-reduced-transparency:reduce){
  .glass-dashboard .glass-unified-stat,.glass-dashboard .glass-admin-panel{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 }
+
+
+/* Support: cohesive premium glass without changing chat behavior */
+.support-page-elevated{position:relative;isolation:isolate;padding-bottom:24px}
+.support-page-elevated::before{content:"";position:absolute;z-index:-1;pointer-events:none;inset:80px -18px auto;height:460px;background:radial-gradient(ellipse at 78% 18%,rgba(139,102,235,.18),transparent 64%),radial-gradient(ellipse at 20% 55%,rgba(59,181,216,.13),transparent 70%)}
+.support-page-elevated .support-hero-elevated{position:relative;overflow:hidden;background:linear-gradient(115deg,#5739af,#8060d6 75%,#9475e5)!important;border:1px solid rgba(255,255,255,.32)!important;box-shadow:0 18px 36px rgba(85,61,160,.2),inset 0 1px rgba(255,255,255,.25)!important}
+.support-page-elevated .support-hero-elevated::after{content:"";position:absolute;pointer-events:none;width:330px;height:330px;left:-60px;bottom:-220px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.23),transparent 72%)}
+.support-page-elevated .support-surface{background:rgba(255,255,255,.65)!important;border:1px solid rgba(255,255,255,.82)!important;box-shadow:0 14px 32px rgba(62,51,127,.09),inset 0 1px rgba(255,255,255,.72)!important;backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.dark .support-page-elevated .support-hero-elevated{background:linear-gradient(115deg,#33246a,#594198)!important;border-color:rgba(193,168,255,.28)!important}
+.dark .support-page-elevated .support-surface{background:rgba(28,35,62,.75)!important;border-color:rgba(186,167,240,.23)!important;box-shadow:0 14px 34px rgba(0,0,0,.24)!important}

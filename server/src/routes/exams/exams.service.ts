@@ -3,7 +3,6 @@ import { forbidden, badRequest } from '../../lib/errors';
 import type { Role } from '../../lib/jwt';
 import type { AccessibleExam } from '../../lib/examAccess';
 import { examInclude } from '../../lib/examAccess';
-import { prepareQuotaGuard } from '../../lib/quota';
 import { withExamWriteLock } from '../../lib/examLock';
 import { resolveScheduledAt, toMinute } from '../../lib/examTiming';
 import type { updateExamSchema } from '../../validation/examSchemas';
@@ -125,19 +124,8 @@ export async function updateExam(
     ),
   );
 
-  // Reactivating an expired exam must also satisfy the active-exam quota.
-  let quotaGuard: Awaited<ReturnType<typeof prepareQuotaGuard>> | undefined;
-  if (role === 'Instructor') {
-    const now = Date.now();
-    const wasActive =
-      existing.scheduledAt.getTime() + existing.durationMinutes * 60_000 > now;
-    const willBeActive =
-      newScheduledAt.getTime() + data.durationMinutes * 60_000 > now;
-    if (!wasActive && willBeActive) {
-      quotaGuard = await prepareQuotaGuard(sub, 'activeExams');
-    }
-  }
-
+  // Editing an existing exam does not create another exam.
+  // Preserve the attempt lock below, but do not apply creation quota to rescheduling.
   // Recheck edit eligibility under the same lock used by start.
   return withExamWriteLock(
     examId,
@@ -178,6 +166,5 @@ export async function updateExam(
         include: examInclude,
       });
     },
-    { beforeExamLock: quotaGuard },
   );
 }

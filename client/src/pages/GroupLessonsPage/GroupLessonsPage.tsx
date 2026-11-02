@@ -153,11 +153,6 @@ function GroupLessonsPage() {
                   ? 'با دکمه‌ی «جلسه جدید» اولین ویدیوی این گروه رو اضافه کن.'
                   : 'وقتی مدرس ویدیویی برای این گروه اضافه کنه، اینجا نشون داده می‌شه.'
               }
-              action={
-                canManage
-                  ? { label: '+ جلسه جدید', onClick: form.openAdd }
-                  : undefined
-              }
             />
           ) : (
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

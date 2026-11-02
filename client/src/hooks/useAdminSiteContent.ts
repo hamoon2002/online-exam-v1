@@ -37,10 +37,23 @@ function useAdminSiteContent() {
     data: Record<string, unknown>
   ): Promise<boolean> {
     setSavingSection(section);
+    setError(null);
+    setSuccessMessage(null);
     try {
-      const res = await updateSiteContentSection(section, data);
-      setSections((prev) => (prev ? { ...prev, [section]: res.data } : prev));
-      setSuccessMessage('ذخیره شد');
+      await updateSiteContentSection(section, data);
+      // Confirm persistence from the public endpoint instead of trusting the PUT response.
+      const latest = await getSiteContent();
+      const actual = latest.sections[section];
+      const matches = Object.entries(data).every(([key, value]) =>
+        JSON.stringify(actual[key]) === JSON.stringify(value)
+      );
+      setSections(latest.sections);
+      if (!matches) {
+        setError('ذخیره تأیید نشد؛ اطلاعات خوانده‌شده از سرور با فرم متفاوت است.');
+        return false;
+      }
+      setError(null);
+      setSuccessMessage('تغییرات ثبت و از سرور تأیید شد');
       return true;
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'ذخیره‌سازی با خطا مواجه شد');

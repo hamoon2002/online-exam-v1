@@ -757,3 +757,36 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .glass-logout-dialog{background:linear-gradient(135deg,rgba(42,44,78,.96),rgba(22,29,56,.94));border-color:rgba(184,164,248,.28);box-shadow:0 28px 80px rgba(0,0,0,.45),inset 0 1px rgba(255,255,255,.11)}
 .dark .glass-logout-cancel{border-color:rgba(188,170,248,.25);color:#ece4ff;background:rgba(151,126,226,.09)}
 .dark .glass-logout-cancel:hover{background:rgba(151,126,226,.19)}
+
+
+/* Unified dashboard purple: match login Continue button across interactive highlights. */
+:root{--ui-purple-gradient:linear-gradient(105deg,#6546c6 0%,#8562dd 100%);--ui-purple-shadow:0 8px 20px rgba(105,73,200,.23)}
+.dark{--ui-purple-gradient:linear-gradient(105deg,#6546c6 0%,#8562dd 100%);--ui-purple-shadow:0 8px 24px rgba(82,47,173,.3)}
+.ui-purple-gradient,
+.glass-app-shell .bg-brand-600,
+.glass-app-shell .bg-violet-600,
+.glass-app-shell .bg-purple-600,
+.glass-app-shell .bg-brand-700,
+.glass-app-shell .bg-violet-700,
+.glass-app-shell .bg-purple-700{
+ background:var(--ui-purple-gradient)!important;
+ color:#fff!important;
+ border-color:transparent!important;
+ box-shadow:var(--ui-purple-shadow);
+}
+.glass-app-shell :is(button,a).ui-purple-gradient:hover,
+.glass-app-shell :is(button,a).bg-brand-600:hover,
+.glass-app-shell :is(button,a).bg-violet-600:hover,
+.glass-app-shell :is(button,a).bg-purple-600:hover{
+ filter:brightness(1.07);
+}
+.glass-app-shell .ui-purple-gradient :is(svg,span),
+.glass-app-shell .ui-purple-gradient svg{color:inherit}
+.glass-app-shell .ui-select-menu [aria-selected="true"]{
+ background:linear-gradient(105deg,rgba(101,70,198,.16),rgba(133,98,221,.2))!important;
+}
+.glass-app-shell .glass-unified-stat,
+.glass-app-shell .support-surface,
+.glass-app-shell .glass-plan-card{
+ --ui-purple-gradient:linear-gradient(105deg,#6546c6 0%,#8562dd 100%);
+}

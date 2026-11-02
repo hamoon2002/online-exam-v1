@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { XCircle, CheckCircle2, Layout } from 'lucide-react';
+import { XCircle, CheckCircle2, Layout, Send } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Spinner from '../../components/Spinner/Spinner';
 import Toast from '../../components/Toast/Toast';
@@ -32,6 +32,8 @@ function AdminSiteContentPage() {
     clearSuccessMessage,
     savingSection,
     saveSection,
+    publishing,
+    publish,
   } = useAdminSiteContent();
 
   const [activeTab, setActiveTab] = useState<SiteContentSection>('hero');
@@ -62,6 +64,12 @@ function AdminSiteContentPage() {
         </div>
       </div>
 
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-gray-500 dark:text-gray-300">ذخیره هر بخش فقط پیش‌نویس را تغییر می‌دهد. تا انتشار را نزنید، صفحه اصلی تغییر نمی‌کند.</p>
+        <button type="button" onClick={() => void publish()} disabled={publishing || !!savingSection || loading} className="ui-primary-gradient inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold disabled:opacity-50">
+          <Send size={16}/>{publishing ? 'در حال انتشار…' : 'انتشار در صفحه اصلی'}
+        </button>
+      </div>
       <div className="mb-4 flex flex-wrap gap-2">
         {SITE_CONTENT_SECTIONS.map((section) => (
           <button

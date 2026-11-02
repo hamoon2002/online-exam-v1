@@ -948,3 +948,7 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .form-invalid-field{border-radius:14px;outline:2px solid rgba(220,56,82,.47);outline-offset:3px}
 .glass-app-shell [aria-invalid="true"]{border-color:#dc3852!important;box-shadow:0 0 0 3px rgba(220,56,82,.1)!important}
 .dark .form-inline-error{background:rgba(130,39,62,.19);border-color:rgba(246,107,134,.38);color:#ffadbd}
+
+
+.form-inline-success{padding:11px 14px;border:1px solid rgba(21,148,97,.28);border-radius:13px;background:rgba(21,148,97,.1);color:#16815a;font-size:13px;font-weight:650;line-height:1.9}
+.dark .form-inline-success{border-color:rgba(71,201,151,.33);background:rgba(29,146,99,.14);color:#78e8b5}

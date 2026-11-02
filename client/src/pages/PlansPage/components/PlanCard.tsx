@@ -26,7 +26,7 @@ function PlanCard({
   disabled: boolean;
   onSelect: () => void;
 }) {
-  const isDark = plan.id === 'vip';
+  const isDark = false; // All plans use the shared light/dark dashboard glass palette.
 
   return (
     <div

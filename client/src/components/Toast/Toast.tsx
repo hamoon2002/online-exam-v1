@@ -19,20 +19,20 @@ interface ToastProps {
 function ToastNotification({
   message,
   tone = 'warning',
-  duration = 4500,
+  duration = tone === 'danger' ? 0 : 4000,
   icon,
   onDismiss,
 }: ToastProps) {
   const [closing, setClosing] = useState(false);
   const dismissed = useRef(false);
   const reduceMotion = useReducedMotion();
-  const lifetime = Number.isFinite(duration) ? Math.max(0, duration) : 4500;
+  const lifetime = Number.isFinite(duration) ? Math.max(0, duration) : 4000;
   const toneStyles =
     tone === 'danger'
-      ? 'bg-danger-600 shadow-danger-600/30'
+      ? 'toast-danger'
       : tone === 'success'
-      ? 'bg-success-600 shadow-success-600/30'
-      : 'bg-accent-500 shadow-accent-500/30';
+      ? 'toast-success'
+      : 'toast-warning';
   const Icon = icon ?? (tone === 'danger' ? TimerOff : tone === 'success' ? CheckCircle2 : AlertTriangle);
 
   return (
@@ -46,7 +46,7 @@ function ToastNotification({
           onDismiss();
         }
       }}
-      className={`fixed bottom-6 left-4 right-4 z-50 overflow-hidden rounded-2xl text-sm font-semibold text-white shadow-xl sm:left-6 sm:right-auto sm:max-w-md ${toneStyles}`}
+      className={`site-toast fixed bottom-6 left-4 right-4 z-50 overflow-hidden rounded-2xl text-sm font-semibold shadow-xl sm:left-6 sm:right-auto sm:w-[min(420px,calc(100%-3rem))] ${toneStyles}`}
       dir="rtl"
     >
       <div className="flex items-start gap-2.5 px-4 py-3">
@@ -62,15 +62,15 @@ function ToastNotification({
           <X size={18} aria-hidden="true" />
         </button>
       </div>
-      <div className="h-1 bg-white/20" aria-hidden="true">
+      {lifetime > 0 && <div className="site-toast-track" aria-hidden="true">
         <motion.div
-          className="h-full origin-right bg-white/90"
-          initial={{ scaleX: 0 }}
-          animate={{ scaleX: 1 }}
+          className="site-toast-progress h-full origin-right"
+          initial={{ scaleX: 1 }}
+          animate={{ scaleX: 0 }}
           transition={{ duration: lifetime / 1000, ease: 'linear' }}
           onAnimationComplete={() => setClosing(true)}
         />
-      </div>
+      </div>}
     </motion.div>
   );
 }

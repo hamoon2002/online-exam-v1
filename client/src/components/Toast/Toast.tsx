@@ -19,7 +19,7 @@ interface ToastProps {
 function ToastNotification({
   message,
   tone = 'warning',
-  duration = tone === 'danger' ? 0 : 4000,
+  duration = tone === 'danger' ? 5000 : 4000,
   icon,
   onDismiss,
 }: ToastProps) {

@@ -197,7 +197,7 @@ function ExamFormModal({
               هنوز هیچ گروهی نساختی — اول از صفحه‌ی گروه‌ها یکی بساز.
             </p>
           ) : (
-            <div className={`flex flex-col gap-1.5 rounded-xl border p-3 ${groupsError ? "border-rose-500 ring-2 ring-rose-500/15" : "border-gray-200 dark:border-gray-700"}`}>
+            <div className="flex flex-col gap-2">
               {availableGroups.map((g) => (
                 <label
                   key={g.id}

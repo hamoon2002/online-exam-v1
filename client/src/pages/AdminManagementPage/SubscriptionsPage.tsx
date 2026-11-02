@@ -1,3 +1,4 @@
+import UiSelect from '../../components/UiSelect';
 import { useState } from 'react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -52,9 +53,9 @@ export default function SubscriptionsPage() {
             اشتراک انتخاب‌شده از امروز فعال می‌شود و جای اشتراک فعلی را می‌گیرد.
           </p>
           <div className="flex flex-wrap gap-3">
-            <select
+            <UiSelect
               aria-label="اشتراک جدید"
-              className={controlClass}
+              className="min-w-48"
               value={plan}
               disabled={busy}
               onChange={(e) => setPlan(e.target.value as PlanId)}
@@ -64,7 +65,7 @@ export default function SubscriptionsPage() {
                   {PLANS[id].name}
                 </option>
               ))}
-            </select>
+            </UiSelect
             <button
               type="button"
               disabled={busy}

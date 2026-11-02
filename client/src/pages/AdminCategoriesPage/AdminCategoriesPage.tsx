@@ -219,7 +219,7 @@ function AdminCategoriesPage() {
             onClick={() => setTab(t.value)}
             className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
               tab === t.value
-                ? 'bg-brand-600 text-white'
+                ? 'ui-purple-gradient text-white'
                 : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800'
             }`}
           >

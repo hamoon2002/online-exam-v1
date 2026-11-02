@@ -30,7 +30,7 @@ function PlanCard({
 
   return (
     <div
-      className={`relative flex flex-col rounded-2xl p-6 transition duration-300 ${
+      className={`glass-plan-card relative flex flex-col rounded-2xl p-6 transition duration-300 ${
         isCurrentActive ? '' : 'hover:-translate-y-1'
       } ${VARIANT_STYLES[plan.id]}`}
     >

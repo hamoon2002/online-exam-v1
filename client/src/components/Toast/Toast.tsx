@@ -65,8 +65,8 @@ function ToastNotification({
       {lifetime > 0 && <div className="site-toast-track" aria-hidden="true">
         <motion.div
           className="site-toast-progress h-full origin-right"
-          initial={{ scaleX: 1 }}
-          animate={{ scaleX: 0 }}
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
           transition={{ duration: lifetime / 1000, ease: 'linear' }}
           onAnimationComplete={() => setClosing(true)}
         />

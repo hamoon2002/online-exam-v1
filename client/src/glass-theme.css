@@ -826,3 +826,20 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .glass-app-shell .question-bank-card{min-height:225px}
 .glass-app-shell .question-bank-card > .mb-5{background:rgba(123,91,206,.075)!important}
 .dark .glass-app-shell .question-bank-card > .mb-5{background:rgba(151,123,229,.11)!important}
+
+
+/* Shared loading experience: soft premium glass, violet orbit and subdued dots. */
+.site-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;min-height:210px;padding:28px 18px;color:#675b85}
+.site-loading-glass{position:relative;display:grid;place-items:center;width:100px;height:100px;border-radius:30px;background:linear-gradient(135deg,rgba(255,255,255,.88),rgba(239,233,255,.54));border:1px solid rgba(151,121,221,.22);box-shadow:0 14px 36px rgba(98,68,179,.12),inset 0 1px rgba(255,255,255,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.site-loading-orbit{position:relative;display:grid;place-items:center;width:54px;height:54px;border-radius:50%;border:3px solid rgba(135,103,222,.14);border-top-color:#6546c6;border-right-color:#8562dd;animation:site-loading-rotate 1.15s linear infinite}
+.site-loading-core{width:23px;height:23px;border-radius:9px;background:linear-gradient(135deg,#6546c6,#8562dd);box-shadow:0 0 18px rgba(128,94,220,.26)}
+.site-loading-dots{position:absolute;bottom:9px;display:flex;gap:5px}
+.site-loading-dots i{width:4px;height:4px;border-radius:50%;background:#9a7ce5;animation:site-loading-dot 1s ease-in-out infinite}
+.site-loading-dots i:nth-child(2){animation-delay:.15s}.site-loading-dots i:nth-child(3){animation-delay:.3s}
+.site-loading-label{font-size:13px;font-weight:600;letter-spacing:0;color:#726589}
+.dark .site-loading{color:#ddd2fa}
+.dark .site-loading-glass{background:linear-gradient(135deg,rgba(51,48,88,.78),rgba(29,33,62,.66));border-color:rgba(184,158,246,.26);box-shadow:0 18px 45px rgba(0,0,0,.24),inset 0 1px rgba(255,255,255,.09)}
+.dark .site-loading-label{color:#bcb2d7}
+@keyframes site-loading-rotate{to{transform:rotate(360deg)}}
+@keyframes site-loading-dot{0%,80%,100%{opacity:.4;transform:scale(.7)}40%{opacity:1;transform:scale(1.2)}}
+@media(prefers-reduced-motion:reduce){.site-loading-orbit,.site-loading-dots i{animation:none}.site-loading-orbit{border-color:#8562dd}}

@@ -996,3 +996,21 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 @media(prefers-reduced-motion:reduce){
  :where(.glass-app-shell,.glass-landing,.glass-auth-page) button{transition:none!important}
 }
+
+
+/* Messenger-style support conversation (RTL): owned on right, received on left. */
+.support-page [role="log"]{background:linear-gradient(145deg,rgba(244,241,255,.65),rgba(249,251,255,.7))!important;border-radius:22px!important;padding:16px!important}
+.support-page .support-chat-day{display:flex;justify-content:center;margin:14px 0 18px;clear:both}
+.support-page .support-chat-day span{border-radius:999px;padding:5px 13px;background:rgba(113,93,177,.1);color:#73658f;font-size:11px;font-weight:650}
+.support-page .support-message-bubble{display:flex;flex-direction:column;max-width:min(78%,520px);width:fit-content;min-width:110px;padding:10px 13px 7px!important;margin-bottom:8px;border-radius:18px!important;line-height:1.75}
+.support-page .support-message-own{margin-right:0!important;margin-left:auto!important;border-bottom-right-radius:5px!important;background:linear-gradient(125deg,rgba(125,94,220,.20),rgba(157,125,237,.13))!important;border:1px solid rgba(140,110,222,.27)!important;color:#332653}
+.support-page .support-message-other{margin-left:0!important;margin-right:auto!important;border-bottom-left-radius:5px!important;background:rgba(255,255,255,.94)!important;border:1px solid rgba(147,160,182,.24)!important;color:#344054}
+.support-page .support-message-sender{font-size:11px;font-weight:750;margin-bottom:4px;color:#7956c5}
+.support-page .support-message-text{line-height:1.85}
+.support-page .support-message-time{align-self:flex-end;margin-top:5px;font-size:10px;font-weight:500;color:#7c8296;font-variant-numeric:tabular-nums}
+.dark .support-page [role="log"]{background:linear-gradient(145deg,rgba(19,24,46,.84),rgba(31,34,61,.78))!important}
+.dark .support-page .support-chat-day span{background:rgba(163,139,237,.15);color:#c3b7e4}
+.dark .support-page .support-message-own{background:linear-gradient(125deg,rgba(117,82,217,.35),rgba(104,76,183,.27))!important;border-color:rgba(173,144,243,.35)!important;color:#f2edff}
+.dark .support-page .support-message-other{background:rgba(47,54,81,.92)!important;border-color:rgba(151,163,200,.2)!important;color:#e9edf8}
+.dark .support-page .support-message-time{color:#b7b1cc}
+@media(max-width:640px){.support-page .support-message-bubble{max-width:88%}}

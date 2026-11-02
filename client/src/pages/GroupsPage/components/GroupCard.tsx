@@ -21,7 +21,7 @@ function GroupCard({
   onDelete,
 }: GroupCardProps) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
+    <div className="group-premium-card rounded-3xl border border-gray-100 bg-white p-7 shadow-sm transition hover:shadow-md dark:border-gray-800 dark:bg-gray-900">
       <div className="mb-4 flex items-start justify-between gap-2">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-600/15 dark:text-brand-400">
           <Users size={20} />

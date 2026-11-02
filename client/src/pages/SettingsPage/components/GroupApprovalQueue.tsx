@@ -82,7 +82,7 @@ export default function GroupApprovalQueue({
               disabled={!!busy}
               value={status}
               onChange={(e) => { setStatus(e.target.value as GroupReview['approvalStatus']); setPage(1); }}
-              className="h-11 w-full rounded-xl border border-violet-200 bg-white/90 text-sm font-medium text-slate-800 outline-none transition-colors focus:border-violet-400 dark:border-violet-400/25 dark:bg-slate-900/70 dark:text-white"
+              className="w-full"
             >
               {Object.entries(labels).map(([value,label]) => <option key={value} value={value}>{label}</option>)}
             </UiSelect>

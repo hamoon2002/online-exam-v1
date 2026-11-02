@@ -115,7 +115,7 @@ function Sidebar({
               </button>
             </div>
 
-            <nav aria-label="منوی اصلی" className="flex flex-col gap-6 px-3 py-4">
+            <nav aria-label="منوی اصلی" className="flex flex-col gap-4 px-3 py-4">
               {sections.map((section, sectionIndex) => (
                 <div
                   key={section.group ?? 'main'}
@@ -126,7 +126,7 @@ function Sidebar({
                   className="flex flex-col gap-0.5"
                 >
                   {section.group && !isCollapsed && (
-                    <p className="px-3 pb-1.5 text-[11px] font-medium text-gray-600 dark:text-gray-400">
+                    <p className="mx-1 mb-2 mt-2 rounded-lg border-r-[3px] border-violet-400 bg-violet-50/75 px-3 py-2 text-[11px] font-bold text-violet-700 dark:bg-violet-400/10 dark:text-violet-200">
                       {navigationGroupLabel[section.group]}
                     </p>
                   )}

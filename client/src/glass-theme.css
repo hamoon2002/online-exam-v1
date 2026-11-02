@@ -884,3 +884,14 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .glass-app-shell .glass-plans-page .text-accent-600{color:#7252cb!important}
 .glass-app-shell .glass-plans-page .bg-brand-500{background:linear-gradient(90deg,#6546c6,#8562dd)!important}
 .dark .glass-app-shell .glass-plans-page .glass-plan-card{border-color:rgba(186,163,248,.24)!important}
+
+
+/* Welcome section: remove the square translucent header layer behind the purple card. */
+.glass-app-shell .glass-dashboard > header{
+  background:transparent!important;
+  border:0!important;
+  box-shadow:none!important;
+  backdrop-filter:none!important;
+  -webkit-backdrop-filter:none!important;
+}
+.dark .glass-app-shell .glass-dashboard > header{background:transparent!important}

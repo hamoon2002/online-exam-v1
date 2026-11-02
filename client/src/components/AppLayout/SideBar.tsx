@@ -43,9 +43,8 @@ function Sidebar({
   const sections = groupNavigationItems(visibleItems);
 
   function handleNavClick(event: React.MouseEvent, to: string) {
-    onClose();
-    if (user?.role !== 'Student') return;
     event.preventDefault();
+    onClose();
     guardNavigation(() => navigate(to));
   }
 
@@ -141,8 +140,6 @@ function Sidebar({
                     <NavLink
                       key={to}
                       to={to}
-                      target={user?.role === 'Student' ? undefined : '_blank'}
-                      rel={user?.role === 'Student' ? undefined : 'noopener noreferrer'}
                       onClick={(e) => handleNavClick(e, to)}
                       title={isCollapsed ? label : undefined}
                       className={({ isActive }) =>

@@ -66,7 +66,6 @@ function ExamFormModal({
         {isEditing ? 'ویرایش آزمون' : 'آزمون جدید'}
       </h2>
       <form onSubmit={(event) => { setAttempted(true); onSubmit(event); }} className="flex flex-col gap-4" noValidate>
-        {showErrors && (titleError || categoryError || dateError || timeError || durationError || groupsError) && <p role="alert" className="form-inline-error">فیلدهای مشخص‌شده را تکمیل کنید تا آزمون ثبت شود.</p>}
         {validationError && <p role="alert" className="form-inline-error">{validationError}</p>}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-600 dark:text-gray-300">
@@ -82,7 +81,7 @@ function ExamFormModal({
           {titleError && <p role="alert" className="text-xs font-medium text-rose-600 dark:text-rose-300">{title.trim() ? 'عنوان آزمون باید حداقل ۲ حرف باشد.' : 'عنوان آزمون الزامی است.'}</p>}
         </div>
 
-        <div className={categoryError ? "rounded-xl ring-2 ring-rose-500/40" : ""}><CategorySelect
+        <div className={categoryError ? "[&_select]:!border-rose-500" : ""}><CategorySelect
           label="دسته‌بندی"
           value={category}
           onChange={onCategoryChange}
@@ -92,15 +91,15 @@ function ExamFormModal({
           <label className="text-sm text-gray-600 dark:text-gray-300">
             تاریخ و ساعت برگزاری
           </label>
-          <div className="flex gap-2">
-            <div className={`flex-1 ${dateError ? "form-invalid-field" : ""}`}>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-start">
+            <div className={`min-w-0 ${dateError ? "[&_button:first-of-type]:!border-rose-500" : ""}`}>
               <PersianDatePicker
                 value={scheduledDate}
                 onChange={onScheduledDateChange}
               />
               {dateError && <p role="alert" className="mt-1 text-xs font-medium text-rose-600 dark:text-rose-300">تاریخ برگزاری الزامی است.</p>}
             </div>
-            <div className="w-40 shrink-0">
+            <div className="min-w-0">
               <label htmlFor="exam-start-time" className="mb-1 block text-xs text-gray-500 dark:text-gray-400">ساعت (۲۴ ساعته)</label>
               <input
                 id="exam-start-time"
@@ -212,11 +211,7 @@ function ExamFormModal({
         </div>
 
         <button
-          type="button"
-          onClick={(event) => {
-            setAttempted(true);
-            onSubmit(event);
-          }}
+          type="submit"
           className="ui-primary-gradient w-full rounded-xl px-4 py-2.5 font-medium text-white transition"
         >
           {isEditing ? 'ذخیره تغییرات' : 'افزودن'}

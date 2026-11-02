@@ -952,3 +952,20 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 
 .form-inline-success{padding:11px 14px;border:1px solid rgba(21,148,97,.28);border-radius:13px;background:rgba(21,148,97,.1);color:#16815a;font-size:13px;font-weight:650;line-height:1.9}
 .dark .form-inline-success{border-color:rgba(71,201,151,.33);background:rgba(29,146,99,.14);color:#78e8b5}
+
+
+/* Canonical primary CTAs across the product. Keep danger/success/warning actions semantic. */
+:root{--action-primary-bg:linear-gradient(105deg,#6546c6 0%,#8562dd 100%);--action-primary-shadow:0 8px 20px rgba(105,73,200,.23)}
+.dark{--action-primary-bg:linear-gradient(105deg,#6546c6 0%,#8562dd 100%);--action-primary-shadow:0 8px 24px rgba(82,47,173,.3)}
+:is(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).bg-brand-600:not(.text-danger-600):not(.bg-danger-600),
+:is(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).bg-brand-700:not(.text-danger-600),
+:is(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).bg-violet-600,
+:is(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).bg-purple-600,
+.ui-create-cta,.ui-purple-gradient,.ui-primary-gradient{
+ background:var(--action-primary-bg)!important;
+ background-image:var(--action-primary-bg)!important;
+ color:#fff!important;border-color:transparent!important;
+ box-shadow:var(--action-primary-shadow)!important;
+}
+:is(.glass-app-shell,.glass-landing,.glass-auth-page) :is(button,a).bg-brand-600:hover:not(:disabled),.ui-primary-gradient:hover:not(:disabled){filter:brightness(1.07)}
+.glass-app-shell .glass-plans-page .ui-plan-progress{background:var(--action-primary-bg)!important}

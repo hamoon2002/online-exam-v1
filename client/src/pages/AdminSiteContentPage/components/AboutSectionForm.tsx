@@ -33,7 +33,6 @@ function readPillars(data: Record<string, unknown>): Pillar[] {
 
 function AboutSectionForm({ initialData, saving, onSave }: AboutSectionFormProps) {
   const [formError, setFormError] = useState('');
-  const [formSuccess, setFormSuccess] = useState(false);
   const [title, setTitle] = useState(() => readString(initialData, 'title'));
   const [description, setDescription] = useState(() =>
     readString(initialData, 'description')
@@ -52,12 +51,10 @@ function AboutSectionForm({ initialData, saving, onSave }: AboutSectionFormProps
     event.preventDefault();
     if (!title.trim() || !description.trim() || pillars.some(p => !p.title.trim() || !p.description.trim())) {
       setFormError('عنوان، متن و اطلاعات تمام ستون‌های افزوده‌شده الزامی است.');
-      setFormSuccess(false);
       return;
     }
     setFormError('');
-    setFormSuccess(false);
-    const saved = await onSave({
+    await onSave({
       title: title.trim(),
       description: description.trim(),
       pillars: pillars.map((p) => ({
@@ -66,14 +63,12 @@ function AboutSectionForm({ initialData, saving, onSave }: AboutSectionFormProps
         description: p.description.trim(),
       })),
     });
-    if (saved) setFormSuccess(true);
     else setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (
     <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
       {formError && <p role="alert" className="form-inline-error">{formError}</p>}
-      {formSuccess && <p role="status" className="form-inline-success">تغییرات این بخش ذخیره شد.</p>}
       <div className="flex flex-col gap-1.5">
         <label className={labelClass}>عنوان</label>
         <input

@@ -557,3 +557,64 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .glass-dashboard .glass-unified-stat .glass-unified-stat-value,
 .dark .reports-overview .glass-unified-stat .glass-unified-stat-value{color:#F8F8FF!important}
 @media(prefers-reduced-transparency:reduce){.glass-dashboard .glass-admin-panel,.glass-dashboard .glass-unified-stat,.reports-overview .glass-unified-stat{backdrop-filter:none;-webkit-backdrop-filter:none}}
+
+
+/* Visible frosted glass: atmospheric light MUST exist behind transparent panes. */
+.glass-dashboard{
+  position:relative!important;
+  isolation:isolate;
+  overflow:visible!important;
+  background:
+    radial-gradient(ellipse 410px 330px at 11% 30%,rgba(168,117,255,.31),transparent 78%),
+    radial-gradient(ellipse 390px 330px at 90% 54%,rgba(89,195,242,.23),transparent 75%),
+    radial-gradient(ellipse 330px 280px at 42% 83%,rgba(240,142,212,.20),transparent 77%),
+    linear-gradient(145deg,rgba(247,245,255,.72),rgba(231,240,255,.54))!important;
+  border-radius:30px;
+}
+.glass-dashboard::before{
+  content:"";pointer-events:none;position:absolute;z-index:-1;
+  top:210px;left:2%;width:42%;height:350px;
+  border-radius:50%;
+  background:linear-gradient(110deg,rgba(155,112,246,.25),rgba(121,207,255,.18));
+  filter:blur(64px);
+}
+.glass-dashboard .glass-unified-stat,
+.glass-dashboard .glass-admin-panel,
+.glass-dashboard .glass-welcome,
+.glass-dashboard .reports-overview .glass-unified-stat{
+  backdrop-filter:blur(26px) saturate(145%)!important;
+  -webkit-backdrop-filter:blur(26px) saturate(145%)!important;
+  box-shadow:0 14px 36px rgba(69,57,133,.11),inset 0 1px 1px rgba(255,255,255,.9),inset 0 -1px rgba(157,145,224,.12)!important;
+}
+.glass-dashboard .glass-unified-stat,
+.glass-dashboard .glass-admin-panel,
+.glass-dashboard .reports-overview .glass-unified-stat{
+  background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(255,255,255,.34))!important;
+  border:1px solid rgba(255,255,255,.85)!important;
+}
+.glass-dashboard .glass-welcome{
+  background:linear-gradient(112deg,rgba(95,68,196,.85),rgba(145,106,232,.76))!important;
+  border:1px solid rgba(255,255,255,.35)!important;
+}
+.dark .glass-dashboard{
+  background:
+    radial-gradient(ellipse 410px 340px at 11% 29%,rgba(127,84,242,.32),transparent 80%),
+    radial-gradient(ellipse 440px 330px at 88% 58%,rgba(25,130,205,.21),transparent 80%),
+    radial-gradient(ellipse 350px 300px at 43% 88%,rgba(154,64,170,.18),transparent 80%),
+    linear-gradient(145deg,#0d1329,#151c37)!important;
+}
+.dark .glass-dashboard::before{background:linear-gradient(110deg,rgba(102,62,215,.26),rgba(32,137,221,.19))}
+.dark .glass-dashboard .glass-unified-stat,
+.dark .glass-dashboard .glass-admin-panel,
+.dark .glass-dashboard .reports-overview .glass-unified-stat{
+  background:linear-gradient(135deg,rgba(42,48,84,.67),rgba(25,34,67,.45))!important;
+  border:1px solid rgba(191,171,255,.28)!important;
+  box-shadow:0 16px 38px rgba(0,0,0,.25),inset 0 1px rgba(255,255,255,.13)!important;
+}
+.dark .glass-dashboard .glass-welcome{
+  background:linear-gradient(110deg,rgba(57,41,132,.83),rgba(99,65,159,.74))!important;
+  border-color:rgba(207,187,255,.28)!important;
+}
+@media(prefers-reduced-transparency:reduce){
+ .glass-dashboard .glass-unified-stat,.glass-dashboard .glass-admin-panel{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}

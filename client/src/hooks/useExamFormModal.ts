@@ -51,6 +51,7 @@ function useExamFormModal({
     setDurationMinutes(30);
     setAllowReview(true);
     setGroupIds([]);
+    setValidationError(null);
     setIsOpen(true);
   }
 
@@ -64,6 +65,7 @@ function useExamFormModal({
     setDurationMinutes(exam.durationMinutes);
     setAllowReview(exam.allowReview);
     setGroupIds(exam.groupIds);
+    setValidationError(null);
     setIsOpen(true);
   }
 
@@ -116,6 +118,10 @@ function useExamFormModal({
       : undefined;
 
     const scheduledIso = localDateAndTimeToIso(scheduledDate, scheduledTime);
+    if (!Number.isFinite(Date.parse(scheduledIso))) {
+      setValidationError('تاریخ و ساعت برگزاری معتبر نیست.');
+      return;
+    }
 
     // Validate past schedules only on creation or schedule changes, at minute precision.
     const currentMinute = Math.floor(Date.now() / 60_000);

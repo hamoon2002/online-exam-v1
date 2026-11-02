@@ -51,6 +51,7 @@ function useSessionFormModal({
     setIsUploading(false);
     setAttachments([]);
     setIsUploadingAttachment(false);
+    setValidationError(null);
     setIsOpen(true);
   }
 

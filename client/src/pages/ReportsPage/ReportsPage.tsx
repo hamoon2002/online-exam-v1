@@ -1,4 +1,5 @@
 import InstructorFilter from '../../components/AdminUI/InstructorFilter';
+import UiSelect from '../../components/UiSelect';
 import { useState } from 'react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -23,7 +24,8 @@ export default function ReportsPage() {
     `${days}:${order}:${instructorId}`,
   );
   return (
-    <AppLayout title="گزارش‌ها">\n      <div className="reports-page">
+    <AppLayout title="گزارش‌ها">
+      <div className="reports-page">
       <PageHeader
         title="گزارش‌ها"
         description="عملکرد آموزشی و فعالیت سامانه در بازهٔ انتخاب‌شده"
@@ -50,15 +52,15 @@ export default function ReportsPage() {
         <h2 className="text-lg font-semibold dark:text-white">
           نتایج آزمون‌ها
         </h2>
-        <select
+        <UiSelect
           aria-label="ترتیب نتایج"
-          className={controlClass}
+          className="min-w-40"
           value={order}
           onChange={(e) => setOrder(e.target.value)}
         >
           <option value="newest">جدیدترین</option>
           <option value="oldest">قدیمی‌ترین</option>
-        </select>
+        </UiSelect>
       </div>
       <ListPagination {...list} maxSearchLength={100} />
       <LoadError message={list.error} retry={list.reload} />

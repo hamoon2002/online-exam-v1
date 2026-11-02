@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sun, Moon, ArrowRight, Check } from 'lucide-react';
+import { Sun, Moon, ArrowRight, Check, ShieldCheck, Sparkles, BarChart3 } from 'lucide-react';
 import Logo from '../Logo/Logo';
 import useTheme from '../../hooks/useTheme';
 
@@ -22,9 +22,9 @@ function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
   const navigate = useNavigate();
 
   return (
-    <div className="auth-glass-shell min-h-screen flex bg-white dark:bg-gray-950 transition-colors">
+    <div className="auth-glass-shell auth-premium-shell min-h-screen flex bg-white dark:bg-gray-950 transition-colors">
 
-      <div className="auth-brand-panel relative hidden lg:flex lg:w-[42%] xl:w-[38%] flex-col justify-between overflow-hidden bg-brand-700 px-10 py-12 text-white">
+      <div className="auth-brand-panel auth-premium-brand relative hidden lg:flex lg:w-[42%] xl:w-[38%] flex-col justify-between overflow-hidden bg-brand-700 px-10 py-12 text-white">
         <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/5 blur-3xl" />
 
         <button
@@ -59,11 +59,13 @@ function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
         </button>
 
         <div className="relative flex flex-col gap-8">
+          <div className="auth-premium-kicker"><Sparkles size={16} /> فضای یکپارچه یادگیری و ارزیابی</div>
           <h2 className="text-3xl font-extrabold leading-[1.4]">
             برگزاری آزمون آنلاین،{' '}
             <span className="text-brand-200">بدون دردسر</span>
           </h2>
 
+          <div className="auth-premium-visual" aria-hidden="true"><div className="auth-premium-visual-title"><BarChart3 size={19}/> نمای عملکرد سامانه</div><div className="auth-premium-visual-bars"><span/><span/><span/><span/><span/><span/><span/></div><div className="auth-premium-visual-footer"><ShieldCheck size={16}/> مدیریت امن آزمون‌ها</div></div>
           <div className="flex flex-col gap-3">
             {BRAND_POINTS.map((text) => (
               <div key={text} className="flex items-center gap-2.5">
@@ -79,7 +81,7 @@ function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
         </p>
       </div>
 
-      <div className="auth-form-panel relative flex min-w-0 flex-1 flex-col items-center justify-center px-4 py-16">
+      <div className="auth-form-panel auth-premium-form relative flex min-w-0 flex-1 flex-col items-center justify-center px-4 py-16">
 
         <button
           type="button"
@@ -102,7 +104,8 @@ function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
             </button>
           </div>
 
-          <div className="auth-glass-card relative rounded-3xl border border-gray-100 bg-white px-6 pb-7 pt-9 sm:px-9 sm:pb-9 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:shadow-none">
+          <div className="auth-glass-card auth-premium-card relative rounded-3xl border border-gray-100 bg-white px-6 pb-7 pt-9 sm:px-9 sm:pb-9 shadow-sm dark:border-gray-800 dark:bg-gray-900 dark:shadow-none">
+            <div className="auth-premium-card-emblem" aria-hidden="true"><ShieldCheck size={23} strokeWidth={1.8}/></div>
             <h1 className="text-center text-2xl font-bold text-gray-800 dark:text-white">
               {title}
             </h1>

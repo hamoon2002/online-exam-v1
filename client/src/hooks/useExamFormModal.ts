@@ -114,6 +114,11 @@ function useExamFormModal({
       return;
     }
 
+    if (!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(scheduledTime)) {
+      setValidationError('ساعت برگزاری باید به صورت ۲۴ ساعته باشد؛ مانند ۱۴:۳۰');
+      return;
+    }
+
     const existingExam = editingId
       ? exams.find((exam) => exam.id === editingId)
       : undefined;

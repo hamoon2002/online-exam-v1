@@ -117,7 +117,7 @@ export default function SupportChat({
         {messages.map((m) => (
           <article
             key={m.id}
-            className="rounded-lg border border-gray-300 bg-white p-3 dark:border-gray-600 dark:bg-gray-900"
+            className={`support-message-bubble rounded-2xl border p-3.5 ${m.fromStaff ? "support-message-staff" : "support-message-user"}`}
           >
             <p className="text-xs font-bold">
               {m.fromStaff ? 'پشتیبان' : 'کاربر'} ·{' '}

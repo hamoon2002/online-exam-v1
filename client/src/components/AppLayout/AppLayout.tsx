@@ -14,11 +14,11 @@ type AppLayoutProps = {
 };
 
 type PanelTab = { path: string; title: string };
-const TABS_KEY = 'exam-panel-internal-tabs';
+const TABS_KEY_PREFIX = 'exam-panel-tabs-account:';
 
-function readTabs(): PanelTab[] {
+function readTabs(key: string): PanelTab[] {
   try {
-    const saved: unknown = JSON.parse(sessionStorage.getItem(TABS_KEY) ?? '[]');
+    const saved: unknown = JSON.parse(sessionStorage.getItem(key) ?? '[]');
     if (!Array.isArray(saved)) return [];
     const valid = saved.filter((tab): tab is PanelTab =>
       typeof tab === 'object' && tab !== null &&
@@ -39,27 +39,32 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [tabs, setTabs] = useState<PanelTab[]>(readTabs);
   const showTabs = user?.role === 'Instructor' || user?.role === 'SuperAdmin';
+  const accountKey = showTabs && user?.id ? `${TABS_KEY_PREFIX}${user.id}` : '';
+  const [tabState, setTabState] = useState<{ accountKey: string; tabs: PanelTab[] }>(() => ({ accountKey: '', tabs: [] }));
+  const tabs = tabState.accountKey === accountKey ? tabState.tabs : [];
   const currentPath = location.pathname;
 
   useEffect(() => {
-    if (!showTabs) return;
-    setTabs(previous => {
-      const next = previous.some(tab => tab.path === currentPath)
-        ? previous.map(tab => tab.path === currentPath ? { ...tab, title } : tab)
-        : [...previous, { path: currentPath, title }];
-      sessionStorage.setItem(TABS_KEY, JSON.stringify(next.slice(-20)));
-      return next.slice(-20);
+    if (!accountKey) return;
+    setTabState(previous => {
+      const existing = previous.accountKey === accountKey ? previous.tabs : readTabs(accountKey);
+      const next = existing.some(tab => tab.path === currentPath)
+        ? existing.map(tab => tab.path === currentPath ? { ...tab, title } : tab)
+        : [...existing, { path: currentPath, title }];
+      const updated = next.slice(-20);
+      sessionStorage.setItem(accountKey, JSON.stringify(updated));
+      return { accountKey, tabs: updated };
     });
-  }, [currentPath, title, showTabs]);
+  }, [accountKey, currentPath, title]);
 
   function closeTab(path: string) {
+    if (!accountKey) return;
     const index = tabs.findIndex(tab => tab.path === path);
     if (index < 0) return;
     const remaining = tabs.filter(tab => tab.path !== path);
-    sessionStorage.setItem(TABS_KEY, JSON.stringify(remaining));
-    setTabs(remaining);
+    sessionStorage.setItem(accountKey, JSON.stringify(remaining));
+    setTabState({ accountKey, tabs: remaining });
     if (path === currentPath) {
       const next = remaining[Math.min(index, remaining.length - 1)];
       guardNavigation(() => navigate(next?.path ?? '/dashboard'));

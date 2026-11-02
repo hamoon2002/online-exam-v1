@@ -19,6 +19,14 @@ export function getSiteContent(): Promise<{ sections: SiteContentMap }> {
   return apiRequest<{ sections: SiteContentMap }>('/cms');
 }
 
+export function getDraftSiteContent(): Promise<{ sections: SiteContentMap }> {
+  return apiRequest<{ sections: SiteContentMap }>('/cms/admin/drafts');
+}
+
+export function publishSiteContent(): Promise<{ publishedCount: number }> {
+  return apiRequest<{ publishedCount: number }>('/cms/admin/publish', { method: 'POST' });
+}
+
 export function updateSiteContentSection(
   section: SiteContentSection,
   data: Record<string, unknown>

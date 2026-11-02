@@ -92,7 +92,8 @@ function ExamFormModal({
             تاریخ و ساعت برگزاری
           </label>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-start">
-            <div className={`min-w-0 ${dateError ? "[&_button:first-of-type]:!border-rose-500" : ""}`}>
+            <div className={`min-w-0 [&>div>div>button:first-child]:min-h-11 ${dateError ? "[&_button:first-of-type]:!border-rose-500" : ""}`}>
+              <label className="mb-1 block text-xs text-gray-500 dark:text-gray-400">تاریخ</label>
               <PersianDatePicker
                 value={scheduledDate}
                 onChange={onScheduledDateChange}

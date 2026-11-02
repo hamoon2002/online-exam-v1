@@ -200,6 +200,7 @@ function GroupLessonsPage() {
         onAttachmentChange={form.handleAttachmentChange}
         onRemoveAttachment={form.removeAttachment}
         onSubmit={form.handleSubmit}
+        validationError={form.validationError}
         onClose={form.close}
       />
 

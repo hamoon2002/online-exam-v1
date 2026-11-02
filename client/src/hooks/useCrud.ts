@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { ApiError } from '../lib/apiClient';
+import { notifySaveSuccess } from '../components/Toast/Toast';
 
 type CrudApi<T, TInput> = {
   getAll: () => Promise<T[]>;
@@ -54,6 +55,7 @@ function useCrud<T extends { id: string }, TInput>(
     try {
       const newItem = await apiRef.current.add(input);
       setItems((prev) => [...prev, newItem]);
+      notifySaveSuccess('مورد جدید با موفقیت ثبت شد');
       return newItem;
     } catch (err) {
       setError(err instanceof ApiError ? err.message : messagesRef.current.add);
@@ -69,6 +71,7 @@ function useCrud<T extends { id: string }, TInput>(
     try {
       const updated = await apiRef.current.update(id, input);
       setItems((prev) => prev.map((item) => (item.id === id ? updated : item)));
+      notifySaveSuccess('تغییرات با موفقیت ذخیره شد');
       return updated;
     } catch (err) {
       setError(err instanceof ApiError ? err.message : messagesRef.current.update);

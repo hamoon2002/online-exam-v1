@@ -46,6 +46,19 @@ router.get('/admin/drafts', asyncHandler(async (_req, res) => {
   res.json({ sections });
 }));
 
+
+router.delete('/admin/drafts/:section', asyncHandler(async (req, res) => {
+  const { sub } = req.user!;
+  const { section } = req.params;
+  if (!isSiteContentSection(section)) throw badRequest('بخش نامعتبره');
+  await prisma.siteContent.upsert({
+    where: { section: draftKey(section) },
+    create: { section: draftKey(section), data: {}, updatedById: sub },
+    update: { data: {}, updatedById: sub },
+  });
+  res.json({ section, data: {} });
+}));
+
 router.post('/admin/publish', asyncHandler(async (req, res) => {
   const { sub } = req.user!;
   const rows = await prisma.siteContent.findMany();

@@ -116,7 +116,7 @@ function QuestionBanksPage() {
         {canManage && (
           <form
             onSubmit={handleSubmit}
-            className="h-fit rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800"
+            className="question-bank-form h-fit rounded-3xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-700 dark:bg-gray-800"
           >
           <div className="mb-5 flex items-center gap-2">
             <Plus size={20} className="text-brand-600" />
@@ -200,7 +200,7 @@ function QuestionBanksPage() {
                 <article
                   key={bank.id}
                   onClick={() => navigate(`/question-banks/${bank.id}`)}
-                  className="cursor-pointer rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-brand-800"
+                  className="question-bank-card cursor-pointer rounded-3xl border border-gray-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-brand-200 hover:shadow-md dark:border-gray-700 dark:bg-gray-800 dark:hover:border-brand-800"
                 >
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <div className="min-w-0">

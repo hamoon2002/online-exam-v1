@@ -20,11 +20,12 @@ function readTabs(): PanelTab[] {
   try {
     const saved: unknown = JSON.parse(sessionStorage.getItem(TABS_KEY) ?? '[]');
     if (!Array.isArray(saved)) return [];
-    return saved.filter((tab): tab is PanelTab =>
+    const valid = saved.filter((tab): tab is PanelTab =>
       typeof tab === 'object' && tab !== null &&
       typeof tab.path === 'string' && tab.path.startsWith('/') &&
       typeof tab.title === 'string'
-    ).slice(-20);
+    );
+    return Array.from(new Map(valid.map(tab => [tab.path.split('?')[0], { ...tab, path: tab.path.split('?')[0] }])).values()).slice(-20);
   } catch {
     return [];
   }
@@ -40,7 +41,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [tabs, setTabs] = useState<PanelTab[]>(readTabs);
   const showTabs = user?.role === 'Instructor' || user?.role === 'SuperAdmin';
-  const currentPath = location.pathname + location.search;
+  const currentPath = location.pathname;
 
   useEffect(() => {
     if (!showTabs) return;

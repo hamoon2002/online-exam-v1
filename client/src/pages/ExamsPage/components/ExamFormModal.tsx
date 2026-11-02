@@ -24,6 +24,7 @@ type ExamFormModalProps = {
   availableGroups: Group[];
   groupIds: string[];
   validationError?: string | null;
+  saveError?: string | null;
   onToggleGroup: (id: string) => void;
   onSubmit: (event: React.FormEvent) => void;
   onClose: () => void;
@@ -47,6 +48,7 @@ function ExamFormModal({
   availableGroups,
   groupIds,
   validationError,
+  saveError,
   onToggleGroup,
   onSubmit,
   onClose,
@@ -67,6 +69,7 @@ function ExamFormModal({
       </h2>
       <form onSubmit={(event) => { setAttempted(true); onSubmit(event); }} className="flex flex-col gap-4" noValidate>
         {validationError && <p role="alert" className="form-inline-error">{validationError}</p>}
+        {saveError && <p role="alert" className="form-inline-error">{saveError}</p>}
         <div className="flex flex-col gap-1">
           <label className="text-sm text-gray-600 dark:text-gray-300">
             عنوان آزمون

@@ -43,12 +43,10 @@ function Sidebar({
   const sections = groupNavigationItems(visibleItems);
 
   function handleNavClick(event: React.MouseEvent, to: string) {
-    event.preventDefault();
     onClose();
-    guardNavigation(() => {
-      if (user?.role === 'Student') navigate(to);
-      else window.open(to, '_blank', 'noopener,noreferrer');
-    });
+    if (user?.role !== 'Student') return;
+    event.preventDefault();
+    guardNavigation(() => navigate(to));
   }
 
   function handleLogoClick() {
@@ -143,6 +141,8 @@ function Sidebar({
                     <NavLink
                       key={to}
                       to={to}
+                      target={user?.role === 'Student' ? undefined : '_blank'}
+                      rel={user?.role === 'Student' ? undefined : 'noopener noreferrer'}
                       onClick={(e) => handleNavClick(e, to)}
                       title={isCollapsed ? label : undefined}
                       className={({ isActive }) =>

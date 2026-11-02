@@ -12,7 +12,7 @@ import useSiteContent from '../../hooks/useSiteContent';
 function BlogPage() {
   const [posts, setPosts] = useState<BlogPostSummary[] | null>(null);
   const [error, setError] = useState(false);
-  const sections = useSiteContent();
+  const { sections } = useSiteContent();
 
   useEffect(() => {
     let cancelled = false;

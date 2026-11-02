@@ -763,12 +763,12 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 :root{--ui-purple-gradient:linear-gradient(105deg,#6546c6 0%,#8562dd 100%);--ui-purple-shadow:0 8px 20px rgba(105,73,200,.23)}
 .dark{--ui-purple-gradient:linear-gradient(105deg,#6546c6 0%,#8562dd 100%);--ui-purple-shadow:0 8px 24px rgba(82,47,173,.3)}
 .ui-purple-gradient,
-.glass-app-shell .bg-brand-600,
-.glass-app-shell .bg-violet-600,
-.glass-app-shell .bg-purple-600,
-.glass-app-shell .bg-brand-700,
-.glass-app-shell .bg-violet-700,
-.glass-app-shell .bg-purple-700{
+.glass-app-shell :is(button,a).bg-brand-600,
+.glass-app-shell :is(button,a).bg-violet-600,
+.glass-app-shell :is(button,a).bg-purple-600,
+.glass-app-shell :is(button,a).bg-brand-700,
+.glass-app-shell :is(button,a).bg-violet-700,
+.glass-app-shell :is(button,a).bg-purple-700{
  background:var(--ui-purple-gradient)!important;
  color:#fff!important;
  border-color:transparent!important;

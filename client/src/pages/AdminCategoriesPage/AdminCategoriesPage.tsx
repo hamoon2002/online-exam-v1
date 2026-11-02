@@ -1,3 +1,4 @@
+import UiSelect from '../../components/UiSelect';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import FilterBar, { controlClass } from '../../components/AdminUI/FilterBar';
 import StatusBadge from '../../components/StatusBadge/StatusBadge';
@@ -210,7 +211,7 @@ function AdminCategoriesPage() {
         </form>
       )}
 
-      <FilterBar><input aria-label="جستجوی دسته‌بندی" type="search" placeholder="جستجو" value={search} onChange={e => setSearch(e.target.value)} className={controlClass} /><select aria-label="ترتیب دسته‌بندی‌ها" value={order} onChange={e => setOrder(e.target.value)} className={controlClass}><option value="asc">نام: صعودی</option><option value="desc">نام: نزولی</option></select></FilterBar>
+      <FilterBar><input aria-label="جستجوی دسته‌بندی" type="search" placeholder="جستجو" value={search} onChange={e => setSearch(e.target.value)} className={controlClass} /><UiSelect aria-label="ترتیب دسته‌بندی‌ها" value={order} onChange={e => setOrder(e.target.value)} className="min-w-44"><option value="asc">نام: صعودی</option><option value="desc">نام: نزولی</option></UiSelect</FilterBar>
       <div className="flex gap-2 mb-4">
         {TABS.map((t) => (
           <button

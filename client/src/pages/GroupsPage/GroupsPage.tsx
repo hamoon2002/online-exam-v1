@@ -192,6 +192,7 @@ function GroupsPage() {
         studentIds={form.studentIds}
         onToggleStudent={form.toggleStudent}
         onSubmit={form.handleSubmit}
+        validationError={form.validationError}
         onClose={form.close}
       />
 

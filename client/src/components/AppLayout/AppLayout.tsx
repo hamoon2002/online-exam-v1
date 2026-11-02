@@ -36,7 +36,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
             onOpenSidebar={() => setIsSidebarOpen(true)}
           />
 
-          <div className="mx-auto w-full max-w-[110rem] px-4 py-6 md:px-6 md:py-8 xl:px-8 xl:py-9">
+          <div className="mx-auto w-full max-w-none px-3 py-5 sm:px-4 md:px-5 md:py-7 xl:px-6 xl:py-8">
             {children}
           </div>
         </main>

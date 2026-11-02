@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   getDraftSiteContent,
   publishSiteContent,
+  resetSiteContentDraft,
   updateSiteContentSection,
   uploadSiteContentImage,
   type SiteContentMap,
@@ -64,6 +65,24 @@ function useAdminSiteContent() {
     }
   }
 
+  async function resetDraft(section: SiteContentSection): Promise<boolean> {
+    setSavingSection(section);
+    setError(null);
+    setSuccessMessage(null);
+    try {
+      await resetSiteContentDraft(section);
+      const latest = await getDraftSiteContent();
+      setSections(latest.sections);
+      setSuccessMessage('پیش‌نویس این بخش پاک شد؛ صفحه اصلی تغییری نکرد.');
+      return true;
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'پاک کردن پیش‌نویس انجام نشد.');
+      return false;
+    } finally {
+      setSavingSection(null);
+    }
+  }
+
   const [publishing, setPublishing] = useState(false);
   async function publish() {
     setPublishing(true);
@@ -104,6 +123,7 @@ function useAdminSiteContent() {
     savingSection,
     uploadingSection,
     saveSection,
+    resetDraft,
     publishing,
     publish,
     uploadImage,

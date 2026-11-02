@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sun, Moon, ArrowRight, Check, ShieldCheck, Sparkles, BarChart3 } from 'lucide-react';
+import { Sun, Moon, ArrowRight, Check, ShieldCheck, Sparkles } from 'lucide-react';
 import Logo from '../Logo/Logo';
 import useTheme from '../../hooks/useTheme';
 
@@ -65,7 +65,7 @@ function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProps) {
             <span className="text-brand-200">بدون دردسر</span>
           </h2>
 
-          <div className="auth-premium-visual" aria-hidden="true"><div className="auth-premium-visual-title"><BarChart3 size={19}/> نمای عملکرد سامانه</div><div className="auth-premium-visual-bars"><span/><span/><span/><span/><span/><span/><span/></div><div className="auth-premium-visual-footer"><ShieldCheck size={16}/> مدیریت امن آزمون‌ها</div></div>
+          <div className="auth-premium-simple" aria-hidden="true"><div className="auth-premium-simple-icon"><ShieldCheck size={27} strokeWidth={1.5}/></div><div><p className="text-base font-bold text-white">محیطی امن برای یادگیری</p><p className="mt-1 text-xs leading-6 text-violet-100/80">آزمون‌ها و نتایج، همه در یک فضای منظم</p></div></div>
           <div className="flex flex-col gap-3">
             {BRAND_POINTS.map((text) => (
               <div key={text} className="flex items-center gap-2.5">

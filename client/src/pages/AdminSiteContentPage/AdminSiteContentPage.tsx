@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { XCircle, CheckCircle2, Layout, Send } from 'lucide-react';
+import { XCircle, CheckCircle2, Layout, Send, Trash2 } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Spinner from '../../components/Spinner/Spinner';
 import Toast from '../../components/Toast/Toast';
@@ -32,11 +32,18 @@ function AdminSiteContentPage() {
     clearSuccessMessage,
     savingSection,
     saveSection,
+    resetDraft,
     publishing,
     publish,
   } = useAdminSiteContent();
 
   const [activeTab, setActiveTab] = useState<SiteContentSection>('hero');
+  const [draftRevision, setDraftRevision] = useState(0);
+
+  async function clearCurrentDraft() {
+    if (!window.confirm('پیش‌نویس این بخش پاک شود؟ محتوای منتشرشده در سایت تغییر نمی‌کند.')) return;
+    if (await resetDraft(activeTab)) setDraftRevision(value => value + 1);
+  }
 
   return (
     <AppLayout title="محتوای فرود">
@@ -86,6 +93,11 @@ function AdminSiteContentPage() {
         ))}
       </div>
 
+      <div className="mb-3 flex items-center justify-end">
+        <button type="button" disabled={!!savingSection || publishing || loading} onClick={() => void clearCurrentDraft()} className="inline-flex items-center gap-2 rounded-xl border border-violet-200 px-4 py-2 text-xs font-semibold text-violet-700 transition hover:bg-violet-50 disabled:opacity-50 dark:border-violet-400/25 dark:text-violet-200 dark:hover:bg-violet-400/10">
+          <Trash2 size={14}/> شروع با فرم خالی (پاک کردن پیش‌نویس)
+        </button>
+      </div>
       <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-900">
         {loading || !sections ? (
           <Spinner />
@@ -93,6 +105,7 @@ function AdminSiteContentPage() {
           <>
             {activeTab === 'hero' && (
               <HeroSectionForm
+                key={`${activeTab}:${draftRevision}`}
                 initialData={sections.hero}
                 saving={savingSection === 'hero'}
                 onSave={(data) => saveSection('hero', data)}
@@ -100,6 +113,7 @@ function AdminSiteContentPage() {
             )}
             {activeTab === 'about' && (
               <AboutSectionForm
+                key={`${activeTab}:${draftRevision}`}
                 initialData={sections.about}
                 saving={savingSection === 'about'}
                 onSave={(data) => saveSection('about', data)}
@@ -107,6 +121,7 @@ function AdminSiteContentPage() {
             )}
             {activeTab === 'features' && (
               <FeaturesSectionForm
+                key={`${activeTab}:${draftRevision}`}
                 initialData={sections.features}
                 saving={savingSection === 'features'}
                 onSave={(data) => saveSection('features', data)}
@@ -114,6 +129,7 @@ function AdminSiteContentPage() {
             )}
             {activeTab === 'pricing' && (
               <PricingSectionForm
+                key={`${activeTab}:${draftRevision}`}
                 initialData={sections.pricing}
                 saving={savingSection === 'pricing'}
                 onSave={(data) => saveSection('pricing', data)}
@@ -121,6 +137,7 @@ function AdminSiteContentPage() {
             )}
             {activeTab === 'news' && (
               <NewsSectionForm
+                key={`${activeTab}:${draftRevision}`}
                 initialData={sections.news}
                 saving={savingSection === 'news'}
                 onSave={(data) => saveSection('news', data)}
@@ -128,6 +145,7 @@ function AdminSiteContentPage() {
             )}
             {activeTab === 'footer' && (
               <FooterSectionForm
+                key={`${activeTab}:${draftRevision}`}
                 initialData={sections.footer}
                 saving={savingSection === 'footer'}
                 onSave={(data) => saveSection('footer', data)}

@@ -1,5 +1,6 @@
 import { toPersianDigits } from '../../../utils/persianDigits';
-import { ChevronDown, Search, ClipboardList } from 'lucide-react';
+import { Search, ClipboardList } from 'lucide-react';
+import UiSelect from '../../../components/UiSelect';
 import type { Exam } from '../../../api/examApi';
 export function filterOversightExams(exams: Exam[], query: string, status: string) {
   const term = query.trim().toLocaleLowerCase('fa-IR');
@@ -15,9 +16,9 @@ export default function ExamOversightFilters({ query, status, count, onQuery, on
       <div className="relative"><Search size={16} className="pointer-events-none absolute right-3 top-[25px] text-gray-400" /><input type="search" value={query} onChange={event => onQuery(event.target.value)} className={`${field} pr-10`} placeholder="نام آزمون، نام یا نام کاربری مدرس" /></div>
     </label>
     <label className="text-sm text-gray-600 dark:text-gray-300">وضعیت آزمون
-      <div className="relative min-w-48"><select value={status} onChange={event => onStatus(event.target.value)} className={`${field} ui-has-chevron appearance-none pr-4 pl-11`}>
+      <div className="relative mt-2 min-w-48"><UiSelect value={status} onChange={event => onStatus(event.target.value)} aria-label="وضعیت آزمون" className="w-full">
         <option value="">بدون فیلتر وضعیت</option><option value="draft">پیش‌نویس</option><option value="upcoming">زمان‌بندی‌شده</option><option value="completed">پایان‌یافته</option>
-      </select><ChevronDown size={17} className="pointer-events-none absolute left-4 top-[25px] text-violet-500" /></div>
+      </UiSelect></div>
     </label>
     <p className="inline-flex h-11 items-center gap-2 rounded-xl border border-violet-200/60 bg-violet-50/70 px-4 text-sm font-semibold text-violet-700 dark:border-violet-400/20 dark:bg-violet-500/10 dark:text-violet-200" role="status"><ClipboardList size={16}/>{toPersianDigits(count.toLocaleString('fa-IR'))} آزمون</p>
   </div>;

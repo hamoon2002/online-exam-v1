@@ -77,7 +77,7 @@ function Navbar() {
           </button>
           <button
             onClick={() => navigate('/signup')}
-            className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-600/20 transition duration-300 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/40"
+            className="ui-primary-gradient rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-600/20 transition duration-300 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/40"
           >
             ثبت‌نام رایگان
           </button>
@@ -136,7 +136,7 @@ function Navbar() {
             </button>
             <button
               onClick={() => navigate('/signup')}
-              className="flex-1 rounded-xl bg-brand-600 py-2 text-sm font-semibold text-white"
+              className="ui-primary-gradient flex-1 rounded-xl py-2 text-sm font-semibold text-white"
             >
               ثبت‌نام رایگان
             </button>

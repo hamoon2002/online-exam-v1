@@ -61,7 +61,7 @@ function Navbar() {
             type="button"
             onClick={toggleTheme}
             aria-label={isDark ? 'حالت روشن' : 'حالت شب'}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition duration-300 hover:rotate-45 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition duration-300 hover:bg-violet-50 hover:border-violet-300 hover:text-violet-700 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-violet-500/15"
           >
             {isDark ? <Sun size={16} /> : <Moon size={16} />}
           </button>

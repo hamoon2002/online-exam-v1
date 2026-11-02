@@ -85,7 +85,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
           {showTabs && (
             <nav aria-label="تب‌های باز پنل" className="panel-internal-tabs">
               {tabs.map(tab => (
-                <div key={tab.path} className={`panel-internal-tab ${tab.path === currentPath ? 'is-active' : ''}`}>
+                <div key={tab.path} onMouseDown={(event) => { if (event.button === 1) { event.preventDefault(); closeTab(tab.path); } }} className={`panel-internal-tab ${tab.path === currentPath ? 'is-active' : ''}`}>
                   <button type="button" className="panel-internal-tab-label" onClick={() => guardNavigation(() => navigate(tab.path))} aria-current={tab.path === currentPath ? 'page' : undefined} title={tab.title}>
                     {tab.title}
                   </button>

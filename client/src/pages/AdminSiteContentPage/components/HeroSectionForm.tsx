@@ -47,13 +47,13 @@ function HeroSectionForm({ initialData, saving, onSave }: HeroSectionFormProps) 
       return;
     }
     setFormError('');
-    await onSave({
+    const saved = await onSave({
       title: title.trim(),
       subtitle: subtitle.trim(),
       ctaText: ctaText.trim(),
       trustPoints: trustPoints.map((p) => p.trim()).filter(Boolean),
     });
-    else setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
+    if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

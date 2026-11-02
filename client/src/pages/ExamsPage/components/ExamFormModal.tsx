@@ -212,9 +212,12 @@ function ExamFormModal({
         </div>
 
         <button
-          type="submit"
-          onClick={() => setAttempted(true)}
-          className="w-full bg-brand-600 text-white font-medium px-4 py-2.5 rounded-xl hover:bg-brand-700 transition"
+          type="button"
+          onClick={(event) => {
+            setAttempted(true);
+            onSubmit(event);
+          }}
+          className="ui-primary-gradient w-full rounded-xl px-4 py-2.5 font-medium text-white transition"
         >
           {isEditing ? 'ذخیره تغییرات' : 'افزودن'}
         </button>

@@ -71,13 +71,13 @@ function Navbar() {
           >
             <LogIn
               size={15}
-              className="transition-transform duration-300 group-hover:-translate-x-0.5"
+              className="transition-transform duration-300 group-hover:text-violet-600"
             />
             ورود
           </button>
           <button
             onClick={() => navigate('/signup')}
-            className="ui-primary-gradient rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-600/20 transition duration-300 hover:-translate-y-0.5 hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/40"
+            className="ui-primary-gradient rounded-xl px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-brand-600/20 transition duration-300 hover:bg-brand-700 hover:shadow-lg hover:shadow-brand-600/40"
           >
             ثبت‌نام رایگان
           </button>

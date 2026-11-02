@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  getSiteContent,
+  getDraftSiteContent,
+  publishSiteContent,
   updateSiteContentSection,
   uploadSiteContentImage,
   type SiteContentMap,
@@ -22,7 +23,7 @@ function useAdminSiteContent() {
 
   const load = useCallback(() => {
     setLoading(true);
-    getSiteContent()
+    getDraftSiteContent()
       .then((res) => setSections(res.sections))
       .catch(() => setError('دریافتِ محتوای فرود با خطا مواجه شد'))
       .finally(() => setLoading(false));
@@ -41,7 +42,7 @@ function useAdminSiteContent() {
     setSuccessMessage(null);
     try {
       await updateSiteContentSection(section, data);
-      // Confirm persistence from the public endpoint instead of trusting the PUT response.
+      // Confirm draft persistence without touching the public page.
       const latest = await getSiteContent();
       const actual = latest.sections[section];
       const matches = Object.entries(data).every(([key, value]) =>
@@ -53,13 +54,27 @@ function useAdminSiteContent() {
         return false;
       }
       setError(null);
-      setSuccessMessage('تغییرات ثبت و از سرور تأیید شد');
+      setSuccessMessage('پیش‌نویس ذخیره شد؛ برای نمایش در سایت، انتشار را بزنید.');
       return true;
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'ذخیره‌سازی با خطا مواجه شد');
       return false;
     } finally {
       setSavingSection(null);
+    }
+  }
+
+  const [publishing, setPublishing] = useState(false);
+  async function publish() {
+    setPublishing(true);
+    setError(null);
+    try {
+      const result = await publishSiteContent();
+      setSuccessMessage(result.publishedCount ? 'محتوا با موفقیت در صفحه اصلی منتشر شد.' : 'تغییر تازه‌ای برای انتشار وجود ندارد.');
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : 'انتشار انجام نشد؛ دوباره تلاش کنید.');
+    } finally {
+      setPublishing(false);
     }
   }
 
@@ -89,6 +104,8 @@ function useAdminSiteContent() {
     savingSection,
     uploadingSection,
     saveSection,
+    publishing,
+    publish,
     uploadImage,
     refresh: load,
   };

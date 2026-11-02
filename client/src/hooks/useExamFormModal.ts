@@ -23,7 +23,8 @@ function isoToLocalDateAndTime(iso: string): { date: string; time: string } {
 }
 
 function localDateAndTimeToIso(date: string, time: string): string {
-  return new Date(`${date}T${time}`).toISOString();
+  const parsed = new Date(`${date}T${time}`);
+  return Number.isNaN(parsed.getTime()) ? '' : parsed.toISOString();
 }
 
 function useExamFormModal({
@@ -118,7 +119,7 @@ function useExamFormModal({
       : undefined;
 
     const scheduledIso = localDateAndTimeToIso(scheduledDate, scheduledTime);
-    if (!Number.isFinite(Date.parse(scheduledIso))) {
+    if (!scheduledIso || !Number.isFinite(Date.parse(scheduledIso))) {
       setValidationError('تاریخ و ساعت برگزاری معتبر نیست.');
       return;
     }

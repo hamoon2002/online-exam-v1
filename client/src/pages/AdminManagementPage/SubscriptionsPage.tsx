@@ -65,7 +65,7 @@ export default function SubscriptionsPage() {
                   {PLANS[id].name}
                 </option>
               ))}
-            </UiSelect
+            </UiSelect>
             <button
               type="button"
               disabled={busy}

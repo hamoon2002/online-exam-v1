@@ -1,6 +1,5 @@
 import UiSelect from '../../components/UiSelect';
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import PageHeader from '../../components/PageHeader/PageHeader';
 import DataTable from '../../components/AdminUI/DataTable';

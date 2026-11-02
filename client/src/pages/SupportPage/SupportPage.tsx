@@ -53,14 +53,14 @@ export default function SupportPage() {
   }
   return (
     <AppLayout title="پشتیبانی">
-      <div dir="rtl" className="support-page mx-auto max-w-6xl space-y-6">
-        <header className="support-hero flex flex-wrap items-center justify-between gap-5 rounded-3xl px-7 py-8 text-white sm:px-9">
+      <div dir="rtl" className="support-page support-page-elevated mx-auto max-w-6xl space-y-6">
+        <header className="support-hero support-hero-elevated flex flex-wrap items-center justify-between gap-5 rounded-3xl px-7 py-8 text-white sm:px-9">
           <div>
             <div className="mb-2 flex items-center gap-2 text-sm text-white/85"><Headset size={18}/> مرکز ارتباط با پشتیبانی</div>
             <h1 className="text-2xl font-extrabold">پشتیبانی</h1>
             <p className="mt-2 max-w-md text-sm leading-7 text-white/80">سؤال یا مشکلت رو مطرح کن و گفت‌وگوها رو همین‌جا پیگیری کن.</p>
           </div>
-          <div className="grid h-16 w-16 place-items-center rounded-2xl border border-white/20 bg-white/10"><MessagesSquare size={30} strokeWidth={1.6}/></div>
+          <div className="grid h-16 w-16 place-items-center rounded-2xl border border-white/35 bg-white/15 shadow-lg backdrop-blur-xl"><MessagesSquare size={30} strokeWidth={1.6}/></div>
         </header>
         {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-500/25 dark:bg-rose-500/10 dark:text-rose-300">{error}</p>}
         {staff ? (

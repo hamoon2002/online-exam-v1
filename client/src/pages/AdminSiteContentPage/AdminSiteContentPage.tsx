@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { XCircle, CheckCircle2, Layout, Send, Trash2, FolderOpen } from 'lucide-react';
+import { XCircle, CheckCircle2, Layout, Send, RotateCcw, FolderOpen } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Spinner from '../../components/Spinner/Spinner';
 import Toast from '../../components/Toast/Toast';
@@ -32,7 +32,6 @@ function AdminSiteContentPage() {
     clearSuccessMessage,
     savingSection,
     saveSection,
-    resetDraft,
     publishing,
     publish,
   } = useAdminSiteContent();
@@ -52,12 +51,10 @@ function AdminSiteContentPage() {
     setDraftRevision(value => value + 1);
   }
 
-  async function clearCurrentDraft() {
-    if (!window.confirm('پیش‌نویس این بخش پاک شود؟ محتوای منتشرشده در سایت تغییر نمی‌کند.')) return;
-    if (await resetDraft(activeTab)) {
-      setShowSavedDraft(false);
-      setDraftRevision(value => value + 1);
-    }
+  function clearCurrentDraft() {
+    // Start with an empty local editor. Never call the API or delete a saved draft.
+    setShowSavedDraft(false);
+    setDraftRevision(value => value + 1);
   }
 
   return (
@@ -113,8 +110,8 @@ function AdminSiteContentPage() {
         <button type="button" disabled={!!savingSection || publishing || loading} onClick={loadSavedDraft} className="inline-flex items-center gap-2 rounded-xl border border-violet-200 px-4 py-2 text-xs font-semibold text-violet-700 transition hover:bg-violet-50 disabled:opacity-50 dark:border-violet-400/25 dark:text-violet-200 dark:hover:bg-violet-400/10">
           <FolderOpen size={14}/> بارگذاری پیش‌نویس قبلی
         </button>
-        <button type="button" disabled={!!savingSection || publishing || loading} onClick={() => void clearCurrentDraft()} className="inline-flex items-center gap-2 rounded-xl border border-violet-200 px-4 py-2 text-xs font-semibold text-violet-700 transition hover:bg-violet-50 disabled:opacity-50 dark:border-violet-400/25 dark:text-violet-200 dark:hover:bg-violet-400/10">
-          <Trash2 size={14}/> پاک کردن پیش‌نویس ذخیره‌شده
+        <button type="button" disabled={!!savingSection || publishing || loading} onClick={clearCurrentDraft} className="inline-flex items-center gap-2 rounded-xl border border-violet-200 px-4 py-2 text-xs font-semibold text-violet-700 transition hover:bg-violet-50 disabled:opacity-50 dark:border-violet-400/25 dark:text-violet-200 dark:hover:bg-violet-400/10">
+          <RotateCcw size={14}/> شروع با فرم خالی
         </button>
       </div>
       <div className="rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-900">

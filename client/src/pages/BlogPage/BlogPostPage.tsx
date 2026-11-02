@@ -13,7 +13,7 @@ import useSiteContent from '../../hooks/useSiteContent';
 function BlogPostPage() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const sections = useSiteContent();
+  const { sections } = useSiteContent();
 
   const [post, setPost] = useState<BlogPostDetail | null>(null);
   const [notFound, setNotFound] = useState(false);

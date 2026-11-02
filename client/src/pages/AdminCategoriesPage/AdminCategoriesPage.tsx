@@ -100,7 +100,7 @@ function CategoryRow({
                 <button
                   onClick={() => onApprove(category.id)}
                   disabled={isActioning}
-                  className="rounded-lg bg-success-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-success-500 transition disabled:cursor-not-allowed disabled:opacity-50"
+                  className="inline-flex h-10 min-w-28 items-center justify-center rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 text-xs font-semibold text-emerald-700 hover:bg-emerald-500/20 dark:text-emerald-300 transition disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <span className="inline-flex items-center gap-1">
                     <CheckCircle2 size={14} />
@@ -111,7 +111,7 @@ function CategoryRow({
               <button
                 onClick={() => setIsEditing(true)}
                 disabled={isActioning}
-                className="rounded-lg border border-gray-200 dark:border-gray-600 px-3 py-1.5 text-xs font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-10 min-w-28 items-center justify-center rounded-xl border border-violet-200 bg-violet-50/60 px-3 text-xs font-semibold text-violet-700 hover:bg-violet-100 dark:border-violet-400/25 dark:bg-violet-400/10 dark:text-violet-200 transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span className="inline-flex items-center gap-1">
                   <Pencil size={14} />
@@ -121,7 +121,7 @@ function CategoryRow({
               <button
                 onClick={() => onDelete(category.id)}
                 disabled={isActioning}
-                className="rounded-lg bg-danger-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-danger-700 transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-10 min-w-28 items-center justify-center rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 text-xs font-semibold text-rose-700 hover:bg-rose-500/20 dark:text-rose-300 transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span className="inline-flex items-center gap-1">
                   <XCircle size={14} />

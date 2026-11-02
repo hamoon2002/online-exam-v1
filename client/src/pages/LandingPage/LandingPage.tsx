@@ -44,7 +44,7 @@ function LandingPage() {
       <Pricing data={sections?.pricing} />
       <Footer data={sections?.footer} />
       </>
-      )
+      )}
       <SupportWidget />
     </div>
   );

@@ -912,3 +912,15 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .site-toast.toast-success{border-color:rgba(64,191,134,.34);--toast-color:#50d6a1}
 .dark .site-toast.toast-warning{border-color:rgba(242,185,70,.32);--toast-color:#f4c86b}
 .dark .site-toast.toast-danger{border-color:rgba(245,91,112,.35);--toast-color:#fb8299}
+
+
+/* Support chat: distinguish user from staff messages in both themes. */
+.support-page .support-message-bubble{max-width:86%;width:fit-content;min-width:min(190px,100%);line-height:1.85;box-shadow:0 4px 16px rgba(48,44,97,.055)}
+.support-page .support-message-staff{margin-inline-start:auto;margin-inline-end:0;background:linear-gradient(135deg,rgba(122,92,216,.16),rgba(163,135,235,.08))!important;border-color:rgba(129,96,215,.27)!important;color:#3a295b}
+.support-page .support-message-user{margin-inline-start:0;margin-inline-end:auto;background:rgba(255,255,255,.88)!important;border-color:rgba(148,163,184,.28)!important;color:#303a53}
+.support-page .support-message-staff > p:first-child{color:#704dcc}
+.support-page .support-message-user > p:first-child{color:#64748b}
+.dark .support-page .support-message-staff{background:linear-gradient(135deg,rgba(116,86,210,.27),rgba(91,72,162,.17))!important;border-color:rgba(181,152,248,.33)!important;color:#f3edff}
+.dark .support-page .support-message-user{background:rgba(37,48,72,.83)!important;border-color:rgba(124,148,180,.26)!important;color:#e8edf9}
+.dark .support-page .support-message-staff > p:first-child{color:#d3bfff}
+.dark .support-page .support-message-user > p:first-child{color:#aebfda}

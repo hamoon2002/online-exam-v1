@@ -74,7 +74,7 @@ function useCrud<T extends { id: string }, TInput>(
       notifySaveSuccess('تغییرات با موفقیت ذخیره شد');
       return updated;
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : messagesRef.current.update);
+      setError(err instanceof ApiError && err.message === 'محدودیت پلن' ? 'این تغییر ممکن است آزمون منقضی‌شده را دوباره فعال کند، اما ظرفیت آزمون‌های فعال پلن شما تکمیل است. برای تغییر ساعت، ابتدا ظرفیت آزاد کنید یا پلن را ارتقا دهید.' : err instanceof ApiError ? err.message : messagesRef.current.update);
       return undefined;
     }
   }

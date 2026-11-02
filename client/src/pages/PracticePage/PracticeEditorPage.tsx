@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../components/AppLayout/AppLayout";
+import { notifySaveSuccess } from "../../components/Toast/Toast";
 import { getGroups, type Group } from "../../api/groupApi";
 import { getQuestionBanks, type QuestionBank } from "../../api/questionBankApi";
 import {
@@ -105,6 +106,7 @@ function Editor({ id }: { id?: string }) {
       const saved = id
         ? await updatePractice(id, data)
         : await createPractice(data);
+      notifySaveSuccess(id ? "تمرین با موفقیت ویرایش شد" : "تمرین با موفقیت ثبت شد");
       navigate(`/practice/${saved.id}`);
     } catch (e) {
       setError(

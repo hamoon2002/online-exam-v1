@@ -117,7 +117,7 @@ function Assistant() {
           disabled={
             busy || !input.trim() || remote === null || (remote && !consent)
           }
-          className="rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-violet-300 disabled:text-white dark:disabled:bg-slate-700"
+          className="ui-primary-gradient rounded-xl px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-violet-700 disabled:cursor-not-allowed disabled:bg-violet-300 disabled:text-white dark:disabled:bg-slate-700"
         >
           {busy ? 'در حال پاسخ…' : 'پرسیدن سؤال'}
         </button>
@@ -133,7 +133,7 @@ export default function SupportWidget() {
     <div dir="rtl">
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-5 left-4 z-40 rounded-full bg-violet-600 px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-600/20 transition-colors hover:bg-violet-700"
+        className="ui-primary-gradient fixed bottom-5 left-4 z-40 rounded-full px-5 py-3 text-sm font-bold text-white shadow-lg shadow-violet-600/20 transition-colors hover:bg-violet-700"
         aria-haspopup="dialog"
       >
         راهنما و پشتیبانی
@@ -150,7 +150,7 @@ export default function SupportWidget() {
               key={t}
               aria-pressed={tab === t}
               onClick={() => setTab(t)}
-              className={`rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors ${tab === t ? 'border-violet-600 bg-violet-600 text-white shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}
+              className={`rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors ${tab === t ? 'ui-primary-gradient border-violet-600 text-white shadow-sm' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}
             >
               {t === 'assistant' ? 'دستیار راهنما' : 'گفت‌وگو با پشتیبان'}
             </button>

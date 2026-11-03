@@ -19,7 +19,7 @@ interface ToastProps {
 function ToastNotification({
   message,
   tone = 'warning',
-  duration = tone === 'danger' ? 3000 : 4000,
+  duration = tone === 'danger' ? 4500 : 4000,
   icon,
   onDismiss,
 }: ToastProps) {
@@ -83,4 +83,9 @@ export default function Toast(props: ToastProps) {
 /** Emit only after the server has confirmed a successful create/update. */
 export function notifySaveSuccess(message = 'تغییرات با موفقیت ذخیره شد') {
   window.dispatchEvent(new CustomEvent<string>('app:save-success', { detail: message }));
+}
+
+/** Notify the global bottom-left error toast, separate from inline validation. */
+export function notifySaveError(message: string) {
+  window.dispatchEvent(new CustomEvent<string>('app:save-error', { detail: message }));
 }

@@ -79,10 +79,10 @@ function ExamRow({
       className={`border-b border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-200 transition-colors duration-150 motion-reduce:transition-none
         ${onSelect ? 'cursor-pointer focus-visible:outline-2 focus-visible:outline-brand-500 focus-visible:-outline-offset-2' : ''}
         ${selected && onSelect
-          ? 'bg-brand-50 dark:bg-brand-950/50 hover:bg-brand-100 dark:hover:bg-brand-950/70'
-          : 'hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+          ? 'bg-violet-100/80 dark:bg-violet-700/25 hover:bg-violet-100 dark:hover:bg-violet-700/30 ring-1 ring-inset ring-violet-300/35'
+          : 'hover:bg-violet-50/70 dark:hover:bg-violet-900/20'}`}
     >
-      <td className="py-3">{exam.title}</td>
+      <td className="px-3 py-4">{exam.title}</td>
       {isObserver && <td className="py-3">{exam.instructor?.name?.trim() || exam.instructor?.username || 'مدرس بدون نام'}</td>}
       <td className="py-3">{exam.category}</td>
       <td className="py-3">{formatExamDateTime(exam.date)}</td>

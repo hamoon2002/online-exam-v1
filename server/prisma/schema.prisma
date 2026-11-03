@@ -587,7 +587,7 @@ model SupportTicket {
   priority     SupportTicketPriority @default(Normal)
   status       SupportTicketStatus   @default(Open)
   createdAt    DateTime              @default(now())
-  updatedAt    DateTime              @updatedAt
+  updatedAt    DateTime              @default(now()) @updatedAt
   messages     SupportTicketMessage[]
 
   @@index([userId, updatedAt])

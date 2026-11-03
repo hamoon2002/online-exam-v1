@@ -17,7 +17,7 @@ export default function DataTable<T extends { id: string }>({
 }) {
   return (
     <div
-      className="overflow-x-auto rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900"
+      className="ui-admin-table overflow-x-auto rounded-2xl border border-violet-200/50 bg-white/85 shadow-sm dark:border-violet-400/15 dark:bg-gray-900/85"
       aria-busy={loading}
     >
       <table className="w-full text-right text-sm">

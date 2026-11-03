@@ -1,9 +1,12 @@
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   Trash2,
   LoaderCircle,
   CheckCheck,
+  List,
+  BellRing,
   Info,
   Users as UsersIcon,
   Award,
@@ -60,10 +63,12 @@ function formatRelativeTime(iso: string): string {
 }
 
 function NotificationsPanel() {
-  const { notifications, unreadCount, markOneRead, markAllRead, refresh, removeNotification, deleteError, deletingIds, loading } =
+  const { notifications, unreadCount, markOneRead, markAllRead, refresh, removeNotification, removeAllNotifications, deletingAll, deleteError, deletingIds, loading } =
     useNotifications();
 
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const recentNotifications = notifications.slice(0, 5);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useOnClickOutside(panelRef, () => setIsOpen(false), isOpen);
@@ -87,16 +92,16 @@ function NotificationsPanel() {
         aria-expanded={isOpen}
         aria-haspopup="true"
         onClick={togglePanel}
-        className="relative flex h-9 w-9 items-center justify-center rounded-xl text-gray-500 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
+        className={`relative flex h-10 w-10 items-center justify-center rounded-xl border transition-colors ${unreadCount ? "border-violet-300/60 bg-violet-100 text-violet-700 shadow-sm shadow-violet-300/20 dark:border-violet-400/40 dark:bg-violet-500/20 dark:text-violet-200" : "border-transparent text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"}`}
       >
-        <Bell size={19} strokeWidth={1.9} />
+        {unreadCount ? <BellRing size={21} strokeWidth={2.2} /> : <Bell size={19} strokeWidth={1.9} />}
 
         {unreadCount > 0 && (
           <span
             aria-label={`${unreadCount.toLocaleString(
               'fa-IR'
             )} اعلان خوانده‌نشده`}
-            className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-danger-500 text-[10px] text-white"
+            className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-violet-600 ring-2 ring-white text-[10px] dark:ring-gray-900 text-white"
           >
             {unreadCount.toLocaleString('fa-IR')}
           </span>
@@ -110,31 +115,24 @@ function NotificationsPanel() {
           className="absolute left-0 top-full z-50 mt-2 w-88 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-900"
         >
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-gray-800">
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white">
-              اعلان‌ها
-            </h3>
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white">اعلان‌ها <span className="ms-1 rounded-lg bg-violet-100 px-2 py-1 text-xs text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">{unreadCount.toLocaleString('fa-IR')} خوانده‌نشده</span></h3>
 
-            {unreadCount > 0 && (
-              <button
-                type="button"
-                onClick={markAllRead}
-                className="flex items-center gap-1 text-xs font-medium text-brand-600 transition hover:text-brand-700 dark:text-brand-400"
-              >
-                <CheckCheck size={13} />
-                خواندن همه
-              </button>
-            )}
+
           </div>
 
+          <div className="flex flex-wrap items-center gap-2 border-b border-violet-100 px-3 py-2 dark:border-violet-400/10">
+            <button type="button" disabled={unreadCount === 0 || loading} onClick={markAllRead} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-violet-700 hover:bg-violet-50 disabled:opacity-40 dark:text-violet-200 dark:hover:bg-violet-500/10"><CheckCheck size={15}/>خواندن همه</button>
+            <button type="button" disabled={!notifications.length || deletingAll || loading} onClick={() => { if (window.confirm('همه اعلان‌های این حساب پاک شوند؟')) void removeAllNotifications(); }} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-rose-600 hover:bg-rose-50 disabled:opacity-40 dark:text-rose-300 dark:hover:bg-rose-500/10"><Trash2 size={14}/>{deletingAll ? 'در حال پاک کردن…' : 'پاک کردن همه'}</button>
+          </div>
           {deleteError && <p role="alert" className="px-4 py-2 text-xs text-danger-600 dark:text-danger-400">{deleteError}</p>}
           {loading && <p role="status" className="px-4 py-2 text-xs text-gray-500">در حال دریافت اعلان‌ها…</p>}
           <div className="max-h-80 overflow-y-auto">
-            {notifications.length === 0 ? (
+            {recentNotifications.length === 0 ? (
               <p className="px-4 py-8 text-center text-sm text-gray-400">
                 اعلان جدیدی نداری
               </p>
             ) : (
-              notifications.map((notification: Notification) => {
+              recentNotifications.map((notification: Notification) => {
                 const style = NOTIFICATION_STYLES[notification.icon];
 
                 if (!style) {
@@ -194,6 +192,7 @@ function NotificationsPanel() {
               })
             )}
           </div>
+          <button type="button" onClick={() => { setIsOpen(false); navigate('/notifications'); }} className="flex w-full items-center justify-center gap-2 border-t border-violet-100 bg-violet-50/60 px-4 py-3 text-sm font-semibold text-violet-700 transition hover:bg-violet-100 dark:border-violet-400/15 dark:bg-violet-500/10 dark:text-violet-200 dark:hover:bg-violet-500/20"><List size={17}/> مشاهده همه اعلان‌ها</button>
         </div>
       )}
     </div>

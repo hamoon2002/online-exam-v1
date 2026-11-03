@@ -41,7 +41,7 @@ export default function TimePicker({ value, onChange, invalid = false }: Props) 
         />
       </div>
       {open && (
-        <div className="absolute right-0 top-full z-30 mt-2 w-[min(340px,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] rounded-2xl border border-violet-200/70 bg-white p-3.5 shadow-xl shadow-violet-600/10 dark:border-violet-400/30 dark:bg-gray-900">
+        <div className="relative mt-2 w-full min-w-0 rounded-2xl border border-violet-200/70 bg-white p-3 shadow-lg shadow-violet-600/10 dark:border-violet-400/30 dark:bg-gray-900">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">انتخاب زمان</span>
             <div className="inline-flex rounded-lg bg-violet-50 p-1 dark:bg-violet-500/10" role="group" aria-label="قالب ساعت">
@@ -49,7 +49,7 @@ export default function TimePicker({ value, onChange, invalid = false }: Props) 
               <button type="button" onClick={() => setMode('12')} aria-pressed={mode === '12'} className={`rounded-md px-2 py-1 text-xs ${mode === '12' ? 'bg-violet-600 text-white' : 'text-violet-700 dark:text-violet-200'}`}>۱۲ ساعته</button>
             </div>
           </div>
-          <div className={`grid min-w-0 items-center gap-2 ${mode === '12' ? 'grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_minmax(0,1.25fr)]' : 'grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]'}`} dir="ltr">
+          <div className={`grid min-w-0 items-center gap-2 ${mode === '12' ? 'grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_minmax(0,1.2fr)]' : 'grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]'}`} dir="ltr">
             <select aria-label="ساعت" value={mode === '24' ? pad(hour) : twelveHour} onChange={e => setHour(e.target.value)} className={inputClass}>
               {(mode === '24' ? HOURS : HOURS.slice(1,13)).map(h => <option value={h} key={h}>{h}</option>)}
             </select>

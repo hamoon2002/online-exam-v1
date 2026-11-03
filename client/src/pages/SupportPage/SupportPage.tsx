@@ -53,15 +53,27 @@ export default function SupportPage() {
   }
   return (
     <AppLayout title="پشتیبانی">
-      <div dir="rtl" className="support-page support-page-elevated mx-auto w-full max-w-7xl space-y-5">
-        <header className="support-hero support-hero-elevated flex flex-wrap items-center justify-between gap-5 rounded-3xl px-7 py-8 text-white sm:px-9">
-          <div>
-            <div className="mb-2 flex items-center gap-2 text-sm text-white/85"><Headset size={18}/> مرکز ارتباط با پشتیبانی</div>
-            <h1 className="text-2xl font-extrabold">پشتیبانی</h1>
-            <p className="mt-2 max-w-md text-sm leading-7 text-white/80">سؤال یا مشکلت رو مطرح کن و گفت‌وگوها رو همین‌جا پیگیری کن.</p>
-          </div>
-          <div className="grid h-16 w-16 place-items-center rounded-2xl border border-white/35 bg-white/15 shadow-lg backdrop-blur-xl"><MessagesSquare size={30} strokeWidth={1.6}/></div>
-        </header>
+      <div dir="rtl" className={`support-page support-page-elevated mx-auto w-full space-y-5 ${staff ? 'max-w-7xl' : 'support-instructor-page max-w-4xl'}`}>
+        {staff ? (
+          <header className="support-hero support-hero-elevated flex flex-wrap items-center justify-between gap-5 rounded-3xl px-7 py-8 text-white sm:px-9">
+            <div>
+              <div className="mb-2 flex items-center gap-2 text-sm text-white/85"><Headset size={18}/> مرکز ارتباط با پشتیبانی</div>
+              <h1 className="text-2xl font-extrabold">پشتیبانی</h1>
+              <p className="mt-2 max-w-md text-sm leading-7 text-white/80">سؤال یا مشکلت رو مطرح کن و گفت‌وگوها رو همین‌جا پیگیری کن.</p>
+            </div>
+            <div className="grid h-16 w-16 place-items-center rounded-2xl border border-white/35 bg-white/15 shadow-lg backdrop-blur-xl"><MessagesSquare size={30} strokeWidth={1.6}/></div>
+          </header>
+        ) : (
+          <header className="support-instructor-header flex flex-wrap items-center gap-4 rounded-2xl border border-violet-200/50 bg-white/75 px-5 py-5 shadow-sm backdrop-blur-xl dark:border-violet-400/20 dark:bg-slate-900/70 sm:px-6">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200"><Headset size={23}/></div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold text-violet-600 dark:text-violet-300">مرکز ارتباط با پشتیبانی</p>
+              <h1 className="mt-1 text-xl font-extrabold text-slate-900 dark:text-white">گفت‌وگو با پشتیبانی</h1>
+              <p className="mt-1 text-xs leading-6 text-slate-500 dark:text-slate-400">پیام خود را ارسال کنید و پاسخ‌ها را در همین صفحه دنبال کنید.</p>
+            </div>
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-200/60 bg-violet-50/80 px-3 py-1.5 text-xs font-semibold text-violet-700 dark:border-violet-400/25 dark:bg-violet-500/10 dark:text-violet-200"><MessageCircle size={14}/>گفت‌وگوی آنلاین</span>
+          </header>
+        )}
         {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-500/25 dark:bg-rose-500/10 dark:text-rose-300">{error}</p>}
         {staff ? (
           <div className="grid items-start gap-5 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
@@ -98,7 +110,16 @@ export default function SupportPage() {
             </section>
           </div>
         ) : (
-          <section className="support-surface support-chat-container mx-auto w-full max-w-none rounded-3xl p-4 sm:p-6"><SupportChat key={user?.id}/></section>
+          <section className="support-surface support-chat-container support-instructor-chat mx-auto w-full rounded-2xl border border-violet-200/35 bg-white/85 p-4 shadow-sm dark:border-violet-400/15 dark:bg-slate-900/75 sm:p-6">
+            <div className="mb-4 flex items-center gap-3 border-b border-violet-100/80 pb-4 dark:border-violet-400/15">
+              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-violet-100/90 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200"><MessagesSquare size={18}/></div>
+              <div>
+                <h2 className="text-sm font-bold text-slate-800 dark:text-white">پیام‌های پشتیبانی</h2>
+                <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">تاریخچه مکالمه و ارسال پیام جدید</p>
+              </div>
+            </div>
+            <SupportChat key={user?.id}/>
+          </section>
         )}
       </div>
     </AppLayout>

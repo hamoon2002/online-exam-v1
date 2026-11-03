@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { Clock3, ChevronDown } from 'lucide-react';
 import UiSelect from '../UiSelect';
 
@@ -10,6 +10,32 @@ const MINUTES = Array.from({ length: 60 }, (_, i) => pad(i));
 export default function TimePicker({ value, onChange, invalid = false }: Props) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<'24' | '12'>('24');
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const [popupPosition, setPopupPosition] = useState<{ top: number; left: number; width: number } | null>(null);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    function positionPopup() {
+      const rect = triggerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      const width = Math.min(390, window.innerWidth - 24);
+      const left = Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12));
+      const popupHeight = 210;
+      const fitsBelow = window.innerHeight - rect.bottom >= popupHeight + 12;
+      const top = fitsBelow ? rect.bottom + 8 : Math.max(12, rect.top - popupHeight - 8);
+      setPopupPosition({ top, left, width });
+    }
+    function onKeyDown(event: KeyboardEvent) { if (event.key === 'Escape') setOpen(false); }
+    positionPopup();
+    window.addEventListener('resize', positionPopup);
+    window.addEventListener('scroll', positionPopup, true);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      window.removeEventListener('resize', positionPopup);
+      window.removeEventListener('scroll', positionPopup, true);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [open]);
   const parsed = /^([01][0-9]|2[0-3]):([0-5][0-9])$/.exec(value);
   const hour = parsed ? Number(parsed[1]) : 0;
   const minute = parsed ? parsed[2] : '00';
@@ -23,7 +49,7 @@ export default function TimePicker({ value, onChange, invalid = false }: Props) 
   }
 
   return (
-    <div className="relative">
+    <div className="relative min-w-0" ref={triggerRef}>
       <div className={`flex min-h-11 items-center gap-2 rounded-xl border bg-gray-50 px-3 dark:bg-gray-700 ${invalid ? 'border-rose-500' : 'border-gray-200 dark:border-gray-600'}`}>
         <button type="button" aria-label="انتخاب ساعت و دقیقه" aria-expanded={open} onClick={() => setOpen(v => !v)} className="shrink-0 rounded-lg p-1 text-violet-600 hover:bg-violet-100 dark:text-violet-300">
           <Clock3 size={18}/><ChevronDown size={12} className="mx-auto"/>
@@ -42,7 +68,7 @@ export default function TimePicker({ value, onChange, invalid = false }: Props) 
         />
       </div>
       {open && (
-        <div className="relative mt-2 w-full min-w-0 max-w-full rounded-2xl border border-violet-200/70 bg-white p-3 shadow-lg shadow-violet-600/10 dark:border-violet-400/30 dark:bg-gray-900">
+        <div style={popupPosition ?? { top: -9999, left: 0, width: 350 }} className="fixed z-[100] max-w-[calc(100vw-1.5rem)] rounded-2xl border border-violet-200/70 bg-white p-3 shadow-xl shadow-violet-600/10 dark:border-violet-400/30 dark:bg-gray-900">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">انتخاب زمان</span>
             <div className="inline-flex rounded-lg bg-violet-50 p-1 dark:bg-violet-500/10" role="group" aria-label="قالب ساعت">

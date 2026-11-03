@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import {
   AlertTriangle,
@@ -33,6 +33,11 @@ function ToastNotification({
       : tone === 'success'
       ? 'toast-success'
       : 'toast-warning';
+  useEffect(() => {
+    if (!lifetime) return;
+    const timeout = window.setTimeout(() => setClosing(true), lifetime);
+    return () => window.clearTimeout(timeout);
+  }, [lifetime]);
   const Icon = icon ?? (tone === 'danger' ? TimerOff : tone === 'success' ? CheckCircle2 : AlertTriangle);
 
   return (
@@ -68,7 +73,7 @@ function ToastNotification({
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: lifetime / 1000, ease: 'linear' }}
-          onAnimationComplete={() => setClosing(true)}
+
         />
       </div>}
     </motion.div>

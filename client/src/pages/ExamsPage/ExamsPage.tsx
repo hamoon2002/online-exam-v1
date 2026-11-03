@@ -27,6 +27,7 @@ import useExamFormModal from '../../hooks/useExamFormModal';
 import useInstructorPlanLimit from '../../hooks/useInstructorPlanLimit';
 import { getCurrentUser } from '../../api/authApi';
 import { getRemainingActiveExamQuota } from '../../api/subscriptionApi';
+import { getMyResultsHistory } from '../../api/examAttemptApi';
 import {
   getGroupsByInstructor,
   type Group,
@@ -70,6 +71,18 @@ function ExamsPage() {
   const isFiltered = isObserver && !!(search.trim() || statusFilter);
   const pageTitle = 'آزمون‌ها';
   const [selectedExamId, setSelectedExamId] = useState<string | null>(null);
+  const [finishedExamIds, setFinishedExamIds] = useState<Set<string>>(new Set());
+
+  useEffect(() => {
+    if (currentUser?.role !== 'Student') return;
+    let cancelled = false;
+    getMyResultsHistory().then((history) => {
+      if (!cancelled) setFinishedExamIds(new Set(history.map((item) => item.exam.id)));
+    }).catch(() => {
+      // Keep exam list usable if the results service is temporarily unavailable.
+    });
+    return () => { cancelled = true; };
+  }, [currentUser?.id, currentUser?.role]);
 
   const [availableGroups, setAvailableGroups] = useState<Group[]>([]);
 
@@ -222,6 +235,7 @@ function ExamsPage() {
                         selected={selectedExamId === exam.id}
                         onSelect={() => setSelectedExamId(exam.id)}
                         canTake={currentUser?.role === 'Student'}
+                        hasFinished={finishedExamIds.has(exam.id)}
                         participantCount={exam.participants}
                         onTake={(e) => navigate(`/exams/${e.id}/take`)}
                         onOpenQuestions={(e) =>

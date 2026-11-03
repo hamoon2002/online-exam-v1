@@ -245,6 +245,7 @@ function ExamsPage() {
       <ExamFormModal
         isOpen={form.isOpen}
         isEditing={!!form.editingId}
+        isSubmitting={form.isSubmitting}
         title={form.title}
         onTitleChange={form.setTitle}
         category={form.category}

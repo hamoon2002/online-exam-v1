@@ -1,4 +1,4 @@
-import { Check, Gift, Medal, Gem, Crown } from 'lucide-react';
+import { Check, Gift, Medal, Gem, Crown, Sparkles } from 'lucide-react';
 import type { Plan, PlanId } from '../../../constants/plans';
 
 const VARIANT_STYLES: Record<PlanId, string> = {
@@ -8,6 +8,18 @@ const VARIANT_STYLES: Record<PlanId, string> = {
   vip: 'plan-tier-vip border-2 border-violet-400/60 shadow-xl shadow-violet-600/10',
 };
 const PLAN_ICONS = { free: Gift, gold: Medal, platinum: Gem, vip: Crown };
+const TIER_LABELS: Record<PlanId, string> = {
+  free: 'شروع هوشمند',
+  gold: 'نشان طلایی',
+  platinum: 'الماس پلاتینیوم',
+  vip: 'تاج ویژه',
+};
+const TIER_ACCENTS: Record<PlanId, string> = {
+  free: 'from-slate-400 via-slate-300 to-slate-400',
+  gold: 'from-amber-500 via-yellow-300 to-amber-600',
+  platinum: 'from-sky-500 via-slate-200 to-indigo-500',
+  vip: 'from-purple-600 via-fuchsia-400 to-amber-400',
+};
 
 function PlanCard({
   plan,
@@ -29,10 +41,14 @@ function PlanCard({
   const TierIcon = PLAN_ICONS[plan.id];
   return (
     <div
-      className={`glass-plan-card relative flex flex-col rounded-2xl p-6 transition duration-300 ${
+      className={`glass-plan-card relative isolate flex flex-col overflow-visible rounded-2xl p-6 transition duration-300 ${
         isCurrentActive ? '' : 'hover:-translate-y-1'
       } ${VARIANT_STYLES[plan.id]}`}
     >
+      <div aria-hidden="true" className={`pointer-events-none absolute inset-x-5 top-0 h-1 rounded-b-full bg-gradient-to-l ${TIER_ACCENTS[plan.id]}`} />
+      {(plan.id === 'platinum' || plan.id === 'vip') && (
+        <Sparkles aria-hidden="true" className={`pointer-events-none absolute left-5 top-5 ${plan.id === 'vip' ? 'text-fuchsia-500 dark:text-fuchsia-300' : 'text-sky-500 dark:text-sky-300'}`} size={19} />
+      )}
       {isHighlighted && !isCurrent && (
         <span className="absolute -top-3 right-1/2 translate-x-1/2 rounded-full bg-brand-600 px-3 py-1 text-xs font-bold text-white shadow-sm">
           پیشنهاد محبوب
@@ -45,12 +61,11 @@ function PlanCard({
       )}
 
       <div className="flex items-center gap-3">
-        <span className="plan-tier-icon flex h-11 w-11 items-center justify-center rounded-2xl"><TierIcon size={22} strokeWidth={1.8} /></span>
-        <h3
-          className={`text-base font-bold text-gray-900 dark:text-white`}
-        >
-          {plan.name}
-        </h3>
+        <span className="plan-tier-icon flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-inner"><TierIcon size={29} strokeWidth={1.85} /></span>
+        <div className="min-w-0">
+          <h3 className="text-lg font-extrabold text-gray-900 dark:text-white">{plan.name}</h3>
+          <p className="mt-1 text-[11px] font-semibold text-gray-500 dark:text-gray-300">{TIER_LABELS[plan.id]}</p>
+        </div>
       </div>
 
       <div className="mt-5 flex items-baseline gap-1.5">

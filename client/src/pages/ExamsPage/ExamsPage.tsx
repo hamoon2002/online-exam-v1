@@ -201,15 +201,15 @@ function ExamsPage() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full min-w-150 text-right text-sm">
-                  <thead>
-                    <tr className="text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-800">
-                      <th className="py-2">عنوان</th>
-                      {isObserver && <th className="py-2">مدرس</th>}
-                      <th className="py-2">دسته‌بندی</th>
-                      <th className="py-2">تاریخ</th>
-                      {(canManage || isObserver) && <th className="py-2" title="تعداد دانشجویانی که آزمون را شروع کرده‌اند">شرکت‌کنندگان</th>}
-                      <th className="py-2">وضعیت</th>
-                      <th className="py-2"></th>
+                  <thead className="bg-gray-50 text-xs text-gray-500 dark:bg-gray-800/60 dark:text-gray-400">
+                    <tr>
+                      <th scope="col" className="whitespace-nowrap px-5 py-4 font-medium">عنوان</th>
+                      {isObserver && <th scope="col" className="whitespace-nowrap px-5 py-4 font-medium">مدرس</th>}
+                      <th scope="col" className="whitespace-nowrap px-5 py-4 font-medium">دسته‌بندی</th>
+                      <th scope="col" className="whitespace-nowrap px-5 py-4 font-medium">تاریخ</th>
+                      {(canManage || isObserver) && <th scope="col" className="whitespace-nowrap px-5 py-4 font-medium" title="تعداد دانشجویانی که آزمون را شروع کرده‌اند">شرکت‌کنندگان</th>}
+                      <th scope="col" className="whitespace-nowrap px-5 py-4 font-medium">وضعیت</th>
+                      <th scope="col" className="whitespace-nowrap px-5 py-4 font-medium"><span className="sr-only">عملیات</span></th>
                     </tr>
                   </thead>
                   <tbody>

@@ -1,13 +1,13 @@
-import { Check } from 'lucide-react';
+import { Check, Gift, Medal, Gem, Crown } from 'lucide-react';
 import type { Plan, PlanId } from '../../../constants/plans';
 
 const VARIANT_STYLES: Record<PlanId, string> = {
-  free: 'border border-violet-200/50',
-  gold: 'border border-violet-300/50',
-  platinum:
-    'border-2 border-violet-400/60 shadow-xl shadow-violet-600/10 lg:-translate-y-1',
-  vip: 'border border-violet-300/50',
+  free: 'plan-tier-free border border-slate-200/70',
+  gold: 'plan-tier-gold border border-amber-300/60',
+  platinum: 'plan-tier-platinum border-2 border-slate-300/80 shadow-lg',
+  vip: 'plan-tier-vip border-2 border-violet-400/60 shadow-xl shadow-violet-600/10',
 };
+const PLAN_ICONS = { free: Gift, gold: Medal, platinum: Gem, vip: Crown };
 
 function PlanCard({
   plan,
@@ -26,6 +26,7 @@ function PlanCard({
   disabled: boolean;
   onSelect: () => void;
 }) {
+  const TierIcon = PLAN_ICONS[plan.id];
   return (
     <div
       className={`glass-plan-card relative flex flex-col rounded-2xl p-6 transition duration-300 ${
@@ -43,7 +44,8 @@ function PlanCard({
         </span>
       )}
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
+        <span className="plan-tier-icon flex h-11 w-11 items-center justify-center rounded-2xl"><TierIcon size={22} strokeWidth={1.8} /></span>
         <h3
           className={`text-base font-bold text-gray-900 dark:text-white`}
         >

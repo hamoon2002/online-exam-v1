@@ -10,6 +10,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
+import DataTable from '../../components/AdminUI/DataTable';
 import EmptyState from '../../components/EmptyState/EmptyState';
 import Spinner from '../../components/Spinner/Spinner';
 import Toast from '../../components/Toast/Toast';
@@ -48,6 +49,7 @@ function MyResultsPage() {
   const [records, setRecords] = useState<FinishedAttemptWithExam[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedAttemptId, setSelectedAttemptId] = useState<string | null>(null);
 
   const userId = currentUser?.id;
 
@@ -134,113 +136,101 @@ function MyResultsPage() {
   return (
     <AppLayout title="نتایج من">
       {error && (
-        <Toast
-          message={error}
-          tone="danger"
-          icon={XCircle}
-          onDismiss={() => setError(null)}
-        />
+        <Toast message={error} tone="danger" icon={XCircle} onDismiss={() => setError(null)} />
       )}
       {loading ? (
         <Spinner />
       ) : (
-        <div className="glass-dashboard results-dashboard">
-          <div className="glass-welcome mb-7 rounded-3xl px-7 py-7 text-white"><p className="text-sm text-white/80">عملکرد آموزشی شما</p><h1 className="mt-2 text-2xl font-extrabold">نتایج من</h1><p className="mt-2 text-sm text-white/80">آمار، پیشرفت و تاریخچه آزمون‌های شما در یک نگاه</p></div>
+        <div className="results-dashboard space-y-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">نتایج من</h1>
+              <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+                آمار عملکرد و تاریخچه آزمون‌های شما
+              </p>
+            </div>
+          </div>
 
-          <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {stats.map(({ label, value, icon: Icon, bg }) => (
-              <div
-                key={label}
-                className="glass-stat glass-kpi results-kpi flex min-h-36 flex-col justify-between rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900"
-              >
-                <div
-                  className={`mb-4 flex h-12 w-12 items-center justify-center rounded-2xl ${bg}`}
-                >
-                  <Icon size={20} />
+              <div key={label} className="results-kpi flex min-h-36 flex-col justify-between rounded-2xl border border-violet-200/40 bg-white/80 p-5 shadow-sm backdrop-blur-xl dark:border-violet-400/20 dark:bg-slate-900/75">
+                <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${bg}`}>
+                  <Icon size={21} />
                 </div>
-                <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-                  {label}
-                </p>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                  {value}
-                </p>
+                <div className="mt-4">
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</p>
+                  <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-900 dark:text-white">{value}</p>
+                </div>
               </div>
             ))}
           </div>
 
-          <div className="glass-panel rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
-            <h2 className="mb-4 text-lg font-bold text-gray-900 dark:text-white">
-              تاریخچه‌ی آزمون‌ها
-            </h2>
-
+          <section aria-label="تاریخچه آزمون‌ها" className="space-y-3">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white">تاریخچه آزمون‌ها</h2>
+              <span className="rounded-lg bg-violet-100/80 px-3 py-1.5 text-xs font-semibold text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">
+                {sortedAttempts.length.toLocaleString('fa-IR')} نتیجه
+              </span>
+            </div>
             {sortedAttempts.length === 0 ? (
-              <EmptyState icon={Inbox} title="هنوز آزمونی نداده‌ای" description="بعد از شرکت در اولین آزمون، نتیجه و روند پیشرفتت اینجا نمایش داده می‌شود." action={{label:"مشاهده آزمون‌ها",onClick:()=>navigate('/exams')}} />
-            ) : (
-              <div className="flex flex-col gap-3">
-                {sortedAttempts.map((attempt) => {
-                  const percent = Math.round(
-                    (attempt.correctCount / (attempt.totalQuestions || 1)) * 100
-                  );
-                  const tone = scoreTone(percent);
-
-                  return (
-                    <div
-                      key={attempt.id}
-                      className="flex flex-col gap-3 rounded-xl border border-gray-100 p-4 dark:border-gray-800 sm:flex-row sm:items-center sm:justify-between"
-                    >
-                      <div>
-                        <p className="font-medium text-gray-800 dark:text-gray-200">
-                          {attempt.exam.title}
-                        </p>
-                        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-400">
-                          <span>
-                            {new Date(attempt.finishedAt).toLocaleDateString(
-                              'fa-IR'
-                            )}
-                          </span>
-                          <span>
-                            {attempt.correctCount.toLocaleString('fa-IR')} از{' '}
-                            {attempt.totalQuestions.toLocaleString('fa-IR')}{' '}
-                            پاسخ درست
-                          </span>
-                          {attempt.endedByTimeout && (
-                            <span
-                              title="با اتمام وقت به پایان رسید"
-                              className="flex items-center gap-1 text-danger-500"
-                            >
-                              <TimerOff size={12} />
-                              اتمام وقت
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="flex shrink-0 items-center gap-3">
-                        <span
-                          className={`rounded-full px-3 py-1 text-sm font-bold ${tone.bg} ${tone.text}`}
-                        >
-                          {percent.toLocaleString('fa-IR')}٪
-                        </span>
-
-                        {attempt.exam.allowReview && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              navigate(`/exams/${attempt.exam.id}/review`)
-                            }
-                            className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition"
-                          >
-                            <Eye size={13} />
-                            مرور پاسخ‌ها
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="ui-admin-table flex min-h-80 items-center justify-center rounded-2xl border border-violet-200/50 bg-white/85 px-5 py-8 shadow-sm dark:border-violet-400/15 dark:bg-gray-900/85">
+                <EmptyState
+                  icon={Inbox}
+                  title="هنوز آزمونی نداده‌ای"
+                  description="بعد از شرکت در اولین آزمون، نتیجه و روند پیشرفتت اینجا نمایش داده می‌شود."
+                  action={{label:'مشاهده آزمون‌ها',onClick:()=>navigate('/exams')}}
+                />
               </div>
+            ) : (
+              <DataTable
+                items={sortedAttempts}
+                selectedId={selectedAttemptId}
+                onSelect={(attempt) => setSelectedAttemptId(attempt.id)}
+                columns={[
+                  {
+                    key: 'exam',
+                    label: 'آزمون',
+                    render: (attempt) => <span className="font-semibold text-slate-800 dark:text-slate-100">{attempt.exam.title}</span>,
+                  },
+                  {
+                    key: 'date',
+                    label: 'تاریخ پایان',
+                    render: (attempt) => <time className="whitespace-nowrap text-slate-500 dark:text-slate-400" dateTime={attempt.finishedAt}>{new Date(attempt.finishedAt).toLocaleString('fa-IR')}</time>,
+                  },
+                  {
+                    key: 'correct',
+                    label: 'پاسخ‌های صحیح',
+                    render: (attempt) => <span className="whitespace-nowrap tabular-nums">{attempt.correctCount.toLocaleString('fa-IR')} از {attempt.totalQuestions.toLocaleString('fa-IR')}</span>,
+                  },
+                  {
+                    key: 'score',
+                    label: 'نمره',
+                    render: (attempt) => {
+                      const percent = Math.round((attempt.correctCount / (attempt.totalQuestions || 1)) * 100);
+                      const tone = scoreTone(percent);
+                      return <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold tabular-nums ${tone.bg} ${tone.text}`}>{percent.toLocaleString('fa-IR')}٪</span>;
+                    },
+                  },
+                  {
+                    key: 'status',
+                    label: 'وضعیت',
+                    render: (attempt) => attempt.endedByTimeout ? (
+                      <span className="inline-flex items-center gap-1 whitespace-nowrap text-xs text-rose-600 dark:text-rose-300"><TimerOff size={14}/> اتمام وقت</span>
+                    ) : <span className="whitespace-nowrap text-xs text-slate-500 dark:text-slate-400">تکمیل‌شده</span>,
+                  },
+                  {
+                    key: 'actions',
+                    label: 'عملیات',
+                    render: (attempt) => attempt.exam.allowReview ? (
+                      <button type="button" onClick={() => navigate(`/exams/${attempt.exam.id}/review`)} className="ui-action-edit inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-violet-200 px-3 py-2 text-xs font-semibold text-violet-700 transition hover:bg-violet-50 dark:border-violet-400/25 dark:text-violet-200 dark:hover:bg-violet-500/10">
+                        <Eye size={15}/> مرور پاسخ‌ها
+                      </button>
+                    ) : <span className="text-xs text-slate-400">—</span>,
+                  },
+                ]}
+              />
             )}
-          </div>
+          </section>
         </div>
       )}
     </AppLayout>

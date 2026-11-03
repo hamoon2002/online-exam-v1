@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { CheckCircle2, XCircle, ShieldCheck } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Spinner from '../../components/Spinner/Spinner';
@@ -20,6 +21,7 @@ const EMPTY_STATE_TEXT: Record<InstructorApprovalStatus, string> = {
 };
 
 function InstructorApprovalsPage() {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const {
     status,
     setStatus,
@@ -65,7 +67,7 @@ function InstructorApprovalsPage() {
         ))}
       </div>
 
-      <div className="rounded-3xl border border-violet-200/40 bg-white/80 p-5 shadow-sm backdrop-blur-xl dark:border-violet-400/15 dark:bg-slate-800/60 sm:p-7">
+      <div className="ui-unified-table rounded-3xl border border-violet-200/40 bg-white/80 p-5 shadow-sm backdrop-blur-xl dark:border-violet-400/15 dark:bg-slate-800/60 sm:p-7">
         {loading ? (
           <Spinner />
         ) : instructors.length === 0 ? (
@@ -89,6 +91,10 @@ function InstructorApprovalsPage() {
                 {instructors.map((instructor) => (
                   <tr
                     key={instructor.id}
+                    tabIndex={0}
+                    aria-selected={selectedId === instructor.id}
+                    onClick={(event) => { if (!(event.target as HTMLElement).closest('button,a,input,select')) setSelectedId(instructor.id); }}
+                    onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); setSelectedId(instructor.id); } }}
                     className="border-b border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-200 transition duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50"
                   >
                     <td className="py-3">{instructor.name}</td>

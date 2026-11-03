@@ -14,6 +14,9 @@ export default defineConfig({
         target: apiTarget,
         changeOrigin: true,
         ws: true,
+        // Browser sees /__api/auth/*, while the backend sets refreshToken Path=/auth.
+        // Rewrite the cookie path so it is included on refresh after page reload.
+        cookiePathRewrite: { '/auth': '/__api/auth' },
         rewrite: (path) => path.replace(/^\/__api/, ''),
       },
     },

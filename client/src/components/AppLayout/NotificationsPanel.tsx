@@ -119,17 +119,17 @@ function NotificationsPanel() {
         <div
           role="dialog"
           aria-label="اعلان‌ها"
-          className="absolute left-0 top-full z-50 mt-2 w-88 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-900"
+          className="absolute left-0 top-full z-50 mt-2 w-90 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-violet-200/50 bg-white/95 shadow-xl shadow-violet-950/10 backdrop-blur-xl dark:border-violet-400/20 dark:bg-gray-900/95"
         >
-          <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-gray-800">
-            <h3 className="text-sm font-bold text-gray-900 dark:text-white">اعلان‌ها <span className="ms-1 rounded-lg bg-violet-100 px-2 py-1 text-xs text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">{unreadCount.toLocaleString('fa-IR')} خوانده‌نشده</span></h3>
+          <div className="flex items-center justify-between border-b border-violet-100/70 px-4 py-3.5 dark:border-violet-400/15">
+            <h3 className="flex flex-wrap items-center gap-2 text-sm font-bold text-gray-900 dark:text-white">اعلان‌ها <span className="rounded-full bg-violet-100 px-2.5 py-0.5 text-[11px] text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">{unreadCount.toLocaleString('fa-IR')} خوانده‌نشده</span></h3>
 
 
           </div>
 
           {deleteError && <p role="alert" className="px-4 py-2 text-xs text-danger-600 dark:text-danger-400">{deleteError}</p>}
           {loading && <p role="status" className="px-4 py-2 text-xs text-gray-500">در حال دریافت اعلان‌ها…</p>}
-          <div className="max-h-80 overflow-y-auto">
+          <div className="max-h-72 overflow-y-auto">
             {recentNotifications.length === 0 ? (
               <p className="px-4 py-8 text-center text-sm text-gray-400">
                 اعلان جدیدی نداری
@@ -145,7 +145,7 @@ function NotificationsPanel() {
                 const { Icon, iconBg } = style;
 
                 return (
-                  <div key={notification.id} className="flex items-center border-b border-gray-50 dark:border-gray-800/60">
+                  <div key={notification.id} className="flex items-center border-b border-violet-100/50 last:border-0 dark:border-violet-400/10">
                   <button
                     type="button"
                     onClick={() => markOneRead(notification.id)}
@@ -187,7 +187,7 @@ function NotificationsPanel() {
                   <button type="button" aria-label={`حذف اعلان: ${notification.title}`} title="حذف اعلان"
                     disabled={deletingIds.includes(notification.id)}
                     onClick={() => void removeNotification(notification.id)}
-                    className="me-2 flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-danger-50 hover:text-danger-600 focus-visible:outline-2 focus-visible:outline-brand-500 disabled:opacity-50 dark:hover:bg-danger-950/40">
+                    className="me-2 flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-rose-50 hover:text-rose-600 focus-visible:outline-2 focus-visible:outline-violet-500 disabled:opacity-50 dark:hover:bg-rose-500/10">
                     {deletingIds.includes(notification.id) ? <LoaderCircle size={16} className="animate-spin" /> : <Trash2 size={16} />}
                   </button>
                   </div>
@@ -195,11 +195,11 @@ function NotificationsPanel() {
               })
             )}
           </div>
-          <div className="flex flex-wrap items-center gap-2 border-t border-violet-100 px-3 py-2 dark:border-violet-400/10">
+          <div className="flex items-center justify-between gap-2 border-t border-violet-100/70 bg-violet-50/25 px-3 py-2.5 dark:border-violet-400/15 dark:bg-violet-500/5">
             <button type="button" disabled={unreadCount === 0 || loading} onClick={markAllRead} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-violet-700 hover:bg-violet-50 disabled:opacity-40 dark:text-violet-200 dark:hover:bg-violet-500/10"><CheckCheck size={15}/>خواندن همه</button>
             <button type="button" disabled={!notifications.length || deletingAll || loading} onClick={() => setConfirmClear(true)} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-rose-600 hover:bg-rose-50 disabled:opacity-40 dark:text-rose-300 dark:hover:bg-rose-500/10"><Trash2 size={14}/>{deletingAll ? 'در حال پاک کردن…' : 'پاک کردن همه'}</button>
           </div>
-          <button type="button" onClick={() => { setIsOpen(false); navigate('/notifications'); }} className="flex w-full items-center justify-center gap-2 border-t border-violet-100 bg-violet-50/60 px-4 py-3 text-sm font-semibold text-violet-700 transition hover:bg-violet-100 dark:border-violet-400/15 dark:bg-violet-500/10 dark:text-violet-200 dark:hover:bg-violet-500/20"><List size={17}/> مشاهده همه اعلان‌ها</button>
+          <button type="button" onClick={() => { setIsOpen(false); navigate('/notifications'); }} className="flex w-full items-center justify-center gap-2 border-t border-violet-100/70 bg-transparent px-4 py-3 text-xs font-semibold text-violet-700 transition hover:bg-violet-50 dark:border-violet-400/15 dark:text-violet-200 dark:hover:bg-violet-500/10"><List size={17}/> مشاهده همه اعلان‌ها</button>
         </div>
       )}
     </div>

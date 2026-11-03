@@ -58,6 +58,19 @@ function AppLayout({ children, title }: AppLayoutProps) {
     });
   }, [accountKey, currentPath, title]);
 
+  function selectPlainTableRow(event: React.MouseEvent<HTMLElement>) {
+    const target = event.target;
+    if (!(target instanceof HTMLElement) || target.closest('button,a,input,select,textarea,[role="button"]')) return;
+    const row = target.closest('tbody tr');
+    if (!(row instanceof HTMLTableRowElement) || row.hasAttribute('aria-selected')) return;
+    const table = row.closest('table');
+    if (!table) return;
+    table.querySelectorAll('tbody tr[data-selected-row="true"]').forEach(previous => {
+      previous.removeAttribute('data-selected-row');
+    });
+    row.setAttribute('data-selected-row', 'true');
+  }
+
   function closeTab(path: string) {
     if (!accountKey) return;
     const index = tabs.findIndex(tab => tab.path === path);
@@ -80,7 +93,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
           isCollapsed={isCollapsed}
           onToggleCollapse={toggleCollapse}
         />
-        <main className={`min-w-0 flex-1 transition-all duration-300 motion-reduce:transition-none ${isCollapsed ? 'md:w-[calc(100%-5rem)]' : 'md:w-[calc(100%-16rem)]'}`}>
+        <main onClickCapture={selectPlainTableRow} className={`min-w-0 flex-1 transition-all duration-300 motion-reduce:transition-none ${isCollapsed ? 'md:w-[calc(100%-5rem)]' : 'md:w-[calc(100%-16rem)]'}`}>
           <Header
             title={title}
             isDark={isDark}

@@ -1072,3 +1072,36 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .glass-app-shell .plan-tier-gold .plan-tier-icon{color:#f0ce7a}
 .dark .glass-app-shell .plan-tier-platinum .plan-tier-icon{color:#b6d4f3}
 .dark .glass-app-shell .plan-tier-vip .plan-tier-icon{color:#e5c6ff}
+
+
+/* Shared table language: visible selectable rows (not hover-only). */
+.glass-app-shell .ui-admin-table,
+.glass-app-shell .ui-unified-table{border:1px solid rgba(137,108,222,.2);border-radius:20px;background:rgba(255,255,255,.88);box-shadow:0 8px 28px rgba(72,55,140,.055);overflow:hidden}
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) table{width:100%;border-collapse:separate;border-spacing:0}
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) thead{background:linear-gradient(100deg,rgba(125,96,215,.135),rgba(145,115,220,.07))!important}
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) th{padding:15px 16px;text-align:right;font-size:12px;font-weight:750;color:#584581;border-bottom:1px solid rgba(121,84,206,.2);white-space:nowrap}
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) td{padding:15px 16px;border-bottom:1px solid rgba(135,114,190,.1);vertical-align:middle}
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr:last-child td{border-bottom:0}
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr:hover{background:rgba(128,98,221,.09)!important}
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr.ui-table-selected,
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr[aria-selected="true"]{background:rgba(120,86,222,.21)!important;box-shadow:inset -4px 0 #7650d9;outline:1px solid rgba(120,86,222,.2);outline-offset:-1px}
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr.ui-table-selected:hover,
+.glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr[aria-selected="true"]:hover{background:rgba(120,86,222,.25)!important}
+.dark .glass-app-shell :is(.ui-admin-table,.ui-unified-table){background:rgba(27,33,58,.88);border-color:rgba(179,150,245,.2)}
+.dark .glass-app-shell :is(.ui-admin-table,.ui-unified-table) th{color:#d9c8ff;border-color:rgba(183,153,249,.22)}
+.dark .glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr.ui-table-selected,
+.dark .glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr[aria-selected="true"]{background:rgba(144,100,238,.35)!important;box-shadow:inset -4px 0 #c09aff}
+.dark .glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr.ui-table-selected:hover,
+.dark .glass-app-shell :is(.ui-admin-table,.ui-unified-table) tbody tr[aria-selected="true"]:hover{background:rgba(144,100,238,.43)!important}
+/* Shared action appearance; semantic action colors remain distinct. */
+.glass-app-shell .ui-action-edit{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid rgba(129,95,226,.25);border-radius:11px;background:rgba(127,96,220,.085);color:#7045c7;padding:8px 12px;font-weight:650}
+.glass-app-shell .ui-action-edit:hover{background:rgba(127,96,220,.17)}
+.glass-app-shell .ui-action-save{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;padding:10px 18px;font-weight:700;background:var(--action-primary-bg)!important;color:#fff!important;box-shadow:var(--action-primary-shadow)}
+.glass-app-shell .ui-action-save:disabled{opacity:.55}
+.dark .glass-app-shell .ui-action-edit{color:#d6c1ff;background:rgba(143,107,236,.18)}
+/* Settings hero, navigation and content share one width and predictable sizing. */
+.glass-app-shell .settings-hero,.glass-app-shell .settings-layout-refined{width:100%;max-width:1180px!important;margin-inline:auto;box-sizing:border-box}
+.glass-app-shell .settings-hero{min-height:144px;padding:24px 30px;display:flex;flex-direction:column;justify-content:center;border-radius:24px}
+.glass-app-shell .settings-nav-refined{width:100%;box-sizing:border-box}
+.glass-app-shell .settings-content-refined>section>div{min-height:220px}
+@media(max-width:640px){.glass-app-shell .settings-hero{padding:20px;min-height:130px}}

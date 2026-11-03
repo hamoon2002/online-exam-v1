@@ -233,7 +233,7 @@ function AdminCategoriesPage() {
         ))}
       </div>
 
-      <div className="ui-admin-table overflow-hidden rounded-2xl border border-violet-200/50 bg-white/85 p-4 shadow-sm dark:border-violet-400/15 dark:bg-gray-900/85 sm:p-6">
+      <div className="ui-admin-table overflow-hidden rounded-2xl border border-violet-200/50 bg-white/85 shadow-sm dark:border-violet-400/15 dark:bg-gray-900/85">
         {loading ? (
           <Spinner />
         ) : visible.length === 0 ? (

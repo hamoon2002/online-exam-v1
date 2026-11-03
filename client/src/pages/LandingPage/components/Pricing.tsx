@@ -40,12 +40,12 @@ const TIER_SUBTITLES = { free: 'شروع رایگان', gold: 'نشان طلای
 const TIER_BARS = { free: 'from-slate-400 via-slate-200 to-slate-400', gold: 'from-amber-600 via-yellow-300 to-amber-500', platinum: 'from-sky-600 via-slate-200 to-indigo-500', vip: 'from-purple-700 via-fuchsia-400 to-amber-300' };
 const VARIANT_STYLES: Record<PlanView['variant'], string> = {
   plain:
-    'bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 dark:from-slate-900 dark:to-slate-800 dark:border-slate-700',
+    'border border-slate-200/60 bg-white/65 backdrop-blur-xl shadow-sm dark:border-slate-500/25 dark:bg-slate-900/65',
   accent:
-    'bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100 border-2 border-amber-300 shadow-lg shadow-amber-500/10 dark:from-amber-950 dark:via-stone-900 dark:to-amber-900 dark:border-amber-600/60',
+    'border border-amber-300/50 bg-gradient-to-br from-white/80 via-amber-50/65 to-violet-50/50 backdrop-blur-xl shadow-md shadow-amber-500/5 dark:border-amber-500/30 dark:from-stone-900/85 dark:via-stone-900/75 dark:to-violet-950/75',
   highlighted:
-    'bg-gradient-to-br from-sky-50 via-slate-50 to-indigo-100 border-2 border-sky-400 shadow-xl shadow-sky-500/15 lg:-translate-y-2 dark:from-slate-800 dark:via-sky-950 dark:to-indigo-950 dark:border-sky-500',
-  dark: 'bg-gradient-to-br from-violet-950 via-purple-900 to-fuchsia-950 border-2 border-fuchsia-400 text-white shadow-2xl shadow-purple-600/25',
+    'border border-sky-300/55 bg-gradient-to-br from-white/80 via-sky-50/65 to-violet-50/60 backdrop-blur-xl shadow-lg shadow-indigo-500/10 lg:-translate-y-1 dark:border-sky-400/40 dark:from-slate-900/85 dark:via-slate-800/75 dark:to-indigo-950/75',
+  dark: 'border border-violet-300/65 bg-gradient-to-br from-violet-100/90 via-purple-100/80 to-indigo-100/75 backdrop-blur-xl shadow-xl shadow-purple-600/15 dark:border-violet-400/55 dark:from-violet-950/90 dark:via-purple-950/85 dark:to-indigo-950/80',
 };
 
 type PricingProps = {
@@ -82,7 +82,7 @@ function Pricing({ data }: PricingProps) {
         {PLAN_ORDER.map((planId) => {
           const plan = PLANS[planId];
           const view = PLAN_VIEWS[planId];
-          const isDark = view.variant === 'dark';
+          const isDark = false;
           const TierIcon = TIER_ICONS[planId];
           const isHighlighted = view.variant === 'highlighted';
 

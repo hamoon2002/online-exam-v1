@@ -89,7 +89,7 @@ function NotificationsPanel() {
         onClick={togglePanel}
         className="relative flex h-9 w-9 items-center justify-center rounded-xl text-gray-500 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
       >
-        <Bell size={16} />
+        <Bell size={19} strokeWidth={1.9} />
 
         {unreadCount > 0 && (
           <span
@@ -107,7 +107,7 @@ function NotificationsPanel() {
         <div
           role="dialog"
           aria-label="اعلان‌ها"
-          className="absolute left-0 top-full z-50 mt-2 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-900"
+          className="absolute left-0 top-full z-50 mt-2 w-88 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-xl dark:border-gray-800 dark:bg-gray-900"
         >
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3 dark:border-gray-800">
             <h3 className="text-sm font-bold text-gray-900 dark:text-white">
@@ -161,9 +161,9 @@ function NotificationsPanel() {
                   >
                     <span
                       aria-hidden="true"
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${iconBg}`}
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-current/10 shadow-sm ${iconBg}`}
                     >
-                      <Icon size={15} />
+                      <Icon size={18} strokeWidth={1.8} />
                     </span>
 
                     <span className="min-w-0 flex-1">

@@ -9,6 +9,7 @@ import {
   type SiteContentSection,
 } from '../api/cmsApi';
 import { ApiError } from '../lib/apiClient';
+import { notifySaveSuccess } from '../components/Toast/Toast';
 
 function useAdminSiteContent() {
   const [sections, setSections] = useState<SiteContentMap | null>(null);
@@ -55,7 +56,7 @@ function useAdminSiteContent() {
         return false;
       }
       setError(null);
-      setSuccessMessage('پیش‌نویس ذخیره شد؛ برای نمایش در سایت، انتشار را بزنید.');
+      notifySaveSuccess('پیش‌نویس ذخیره شد؛ برای نمایش در سایت، انتشار را بزنید.');
       return true;
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'ذخیره‌سازی با خطا مواجه شد');

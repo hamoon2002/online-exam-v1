@@ -129,7 +129,7 @@ function Pricing({ data }: PricingProps) {
                     isDark ? 'text-white' : 'text-gray-900 dark:text-white'
                   }`}
                 >
-                  {plan.priceLabel}
+                  <span className="pricing-numeral">{plan.priceLabel}</span>
                 </span>
                 <span
                   className={`text-xs ${

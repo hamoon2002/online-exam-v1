@@ -10,6 +10,7 @@ import type { Group } from '../../../api/groupApi';
 type ExamFormModalProps = {
   isOpen: boolean;
   isEditing: boolean;
+  isSubmitting?: boolean;
   title: string;
   onTitleChange: (value: string) => void;
   category: string;
@@ -34,6 +35,7 @@ type ExamFormModalProps = {
 function ExamFormModal({
   isOpen,
   isEditing,
+  isSubmitting = false,
   title,
   onTitleChange,
   category,
@@ -207,9 +209,10 @@ function ExamFormModal({
 
         <button
           type="submit"
+          disabled={isSubmitting}
           className="ui-primary-gradient w-full rounded-xl px-4 py-2.5 font-medium text-white transition"
         >
-          {isEditing ? 'ذخیره تغییرات' : 'افزودن'}
+          {isSubmitting ? 'در حال ذخیره…' : isEditing ? 'ذخیره تغییرات' : 'افزودن آزمون'}
         </button>
       </form>
     </Modal>

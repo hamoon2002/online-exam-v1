@@ -53,7 +53,7 @@ export default function SupportPage() {
   }
   return (
     <AppLayout title="پشتیبانی">
-      <div dir="rtl" className="support-page support-page-elevated mx-auto max-w-6xl space-y-6">
+      <div dir="rtl" className="support-page support-page-elevated mx-auto w-full max-w-7xl space-y-5">
         <header className="support-hero support-hero-elevated flex flex-wrap items-center justify-between gap-5 rounded-3xl px-7 py-8 text-white sm:px-9">
           <div>
             <div className="mb-2 flex items-center gap-2 text-sm text-white/85"><Headset size={18}/> مرکز ارتباط با پشتیبانی</div>
@@ -86,7 +86,7 @@ export default function SupportPage() {
                 <button type="button" disabled={threads.length < 30} onClick={() => setPage(p => p+1)} className="support-pagination-button">بعدی <ChevronLeft size={16}/></button>
               </nav>
             </section>
-            <section className="support-surface min-h-80 rounded-3xl p-5 sm:p-7">
+            <section className="support-surface support-chat-container min-h-80 min-w-0 rounded-3xl p-4 sm:p-6">
               {selected ? (
                 <>
                   <SupportChat key={selected} threadId={selected} staff />
@@ -98,7 +98,7 @@ export default function SupportPage() {
             </section>
           </div>
         ) : (
-          <section className="support-surface mx-auto max-w-3xl rounded-3xl p-5 sm:p-8"><SupportChat key={user?.id}/></section>
+          <section className="support-surface support-chat-container mx-auto w-full max-w-none rounded-3xl p-4 sm:p-6"><SupportChat key={user?.id}/></section>
         )}
       </div>
     </AppLayout>

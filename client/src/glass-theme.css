@@ -1355,3 +1355,69 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
   }
   .site-toast.site-toast-css {animation:none;transition:none}
 }
+
+/* Instructor support: focused messenger layout; administrator inbox remains unchanged. */
+.support-page.support-instructor-page {
+  width:100%;
+  max-width:880px;
+}
+.support-instructor-page .support-instructor-header {
+  min-height:110px;
+}
+.support-instructor-page .support-instructor-chat {
+  box-shadow:0 14px 40px rgba(66,53,129,.075),inset 0 1px rgba(255,255,255,.85)!important;
+  border-color:rgba(153,128,222,.22)!important;
+  border-radius:22px!important;
+}
+.support-instructor-page .support-instructor-chat > section {
+  gap:12px!important;
+}
+.support-instructor-page .support-instructor-chat [role="log"] {
+  width:100%;
+  min-height:clamp(300px,42dvh,440px)!important;
+  max-height:52dvh!important;
+  padding:18px!important;
+  border-radius:16px!important;
+  border-color:rgba(157,145,211,.19)!important;
+  background:linear-gradient(145deg,rgba(249,248,255,.83),rgba(241,245,253,.67))!important;
+}
+.support-instructor-page .support-message-bubble {
+  max-width:min(75%,475px)!important;
+  min-width:110px!important;
+  padding:11px 15px 9px!important;
+}
+.support-instructor-page .support-instructor-chat form {
+  display:grid;
+  gap:10px;
+  padding-top:14px;
+  border-top:1px solid rgba(149,131,207,.16);
+}
+.support-instructor-page .support-instructor-chat form textarea {
+  width:100%;
+  min-height:90px!important;
+  max-height:175px;
+  border-radius:14px;
+  background:rgba(249,249,255,.86)!important;
+}
+.support-instructor-page .support-instructor-chat form button[type="submit"] {
+  min-height:42px;
+  width:fit-content;
+  padding-inline:26px!important;
+  justify-self:end;
+}
+.dark .support-instructor-page .support-instructor-chat [role="log"] {
+  background:linear-gradient(145deg,rgba(21,27,49,.85),rgba(35,39,66,.7))!important;
+  border-color:rgba(177,155,238,.2)!important;
+}
+.dark .support-instructor-page .support-instructor-chat form textarea {
+  background:rgba(27,34,59,.9)!important;
+}
+@media(max-width:640px) {
+  .support-instructor-page .support-instructor-chat [role="log"] {
+    min-height:310px!important;
+    max-height:55dvh!important;
+    padding:12px!important;
+  }
+  .support-instructor-page .support-message-bubble{max-width:88%!important}
+  .support-instructor-page .support-instructor-chat form button[type="submit"]{width:100%;justify-self:stretch}
+}

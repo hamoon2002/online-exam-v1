@@ -93,7 +93,7 @@ export default function PracticePage() {
               ))}
             </div>
           )}
-          {role === "Instructor" && !list.loading && !list.error && <div className="mt-6 flex justify-center border-t border-violet-200/40 pt-5 dark:border-violet-400/15"><Link className="ui-create-cta" to="/practice/new"><Plus size={18}/> مجموعهٔ تمرین جدید</Link></div>}
+          {role === "Instructor" && !list.loading && !list.error && <div className="mt-4 flex justify-center rounded-xl bg-violet-50/25 px-4 py-4 dark:bg-violet-500/5"><Link className="ui-create-cta" to="/practice/new"><Plus size={18}/> مجموعهٔ تمرین جدید</Link></div>}
         </section>
       </div>
     </AppLayout>

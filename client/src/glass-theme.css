@@ -1141,3 +1141,41 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .site-toast-css.is-closing{animation:none;opacity:0;transform:translateY(12px)}
 .site-toast-progress-css{transform:scaleX(0);animation-name:siteToastProgress;animation-timing-function:linear;animation-fill-mode:forwards}
 @media(prefers-reduced-motion:reduce){.site-toast-css{animation:none;transition:none}.site-toast-progress-css{animation:none;transform:scaleX(1)}}
+
+/* Strong visual tier hierarchy for subscription cards, with dark-mode contrast. */
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-free{
+  background:linear-gradient(150deg,#f8fafc,#e9edf4)!important;
+  border:1px solid #cbd5e1!important;
+  box-shadow:0 8px 22px rgba(71,85,105,.07)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold{
+  background:linear-gradient(145deg,#fff7d3 0%,#fbe9ae 58%,#f4d47c 100%)!important;
+  border:2px solid #d5a12c!important;
+  box-shadow:0 16px 38px rgba(183,124,13,.18)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum{
+  background:linear-gradient(145deg,#f5fbff 0%,#d6ebfc 50%,#b9c9ec 100%)!important;
+  border:2px solid #6b94ce!important;
+  box-shadow:0 19px 42px rgba(50,105,183,.23)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip{
+  background:linear-gradient(145deg,#f5e9ff 0%,#dbc0ff 48%,#bd9af1 100%)!important;
+  border:2px solid #9352d4!important;
+  box-shadow:0 25px 56px rgba(105,55,174,.29)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold .plan-tier-icon{
+  background:linear-gradient(135deg,#fff0a2,#e6ac31)!important;color:#774406!important;
+  box-shadow:inset 0 1px 2px #fff9d8,0 5px 16px rgba(177,113,13,.2);
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum .plan-tier-icon{
+  background:linear-gradient(135deg,#f5fdff,#8fbbef)!important;color:#27548c!important;
+  box-shadow:inset 0 1px 2px white,0 5px 17px rgba(59,116,185,.2);
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip .plan-tier-icon{
+  background:linear-gradient(135deg,#f9e9ff,#b782eb)!important;color:#6021a9!important;
+  box-shadow:inset 0 1px 2px white,0 7px 20px rgba(116,53,185,.24);
+}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-free{background:linear-gradient(145deg,#202738,#303748)!important;border-color:#566174!important}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold{background:linear-gradient(145deg,#3c2c19,#654923)!important;border-color:#bd8d36!important}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum{background:linear-gradient(145deg,#202e48,#35587c)!important;border-color:#80b0e2!important}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip{background:linear-gradient(145deg,#35204f,#673c93)!important;border-color:#c18af7!important}

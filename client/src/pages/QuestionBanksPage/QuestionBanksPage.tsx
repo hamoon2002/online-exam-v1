@@ -9,6 +9,7 @@ import EmptyState from '../../components/EmptyState/EmptyState';
 import Spinner from '../../components/Spinner/Spinner';
 import Toast from '../../components/Toast/Toast';
 import CategorySelect from '../../components/CategorySelect/CategorySelect';
+import ConfirmDeleteModal from '../../components/Modal/ConfirmDeleteModal';
 
 import useQuestionBanks from '../../hooks/useQuestionBanks';
 
@@ -35,6 +36,8 @@ function QuestionBanksPage() {
 
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState('');
+  const [deleteTarget, setDeleteTarget] = useState<QuestionBank | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const isEditing = editingBank !== null;
 
@@ -88,17 +91,17 @@ function QuestionBanksPage() {
     }
   }
 
-  async function handleDelete(bank: QuestionBank) {
-    const confirmed = window.confirm(
-      `بانک «${bank.name}» و تمام سوال‌های داخل آن حذف شوند؟`
-    );
-
-    if (!confirmed) return;
-
-    const removed = await deleteBank(bank.id);
-
-    if (removed && editingBank?.id === bank.id) {
-      resetForm();
+  async function handleDelete() {
+    if (!deleteTarget || deleting) return;
+    setDeleting(true);
+    try {
+      const removed = await deleteBank(deleteTarget.id);
+      if (removed) {
+        if (editingBank?.id === deleteTarget.id) resetForm();
+        setDeleteTarget(null);
+      }
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -252,7 +255,7 @@ function QuestionBanksPage() {
                         type="button"
                         onClick={(event) => {
                           event.stopPropagation();
-                          void handleDelete(bank);
+                          setDeleteTarget(bank);
                         }}
                         className="flex items-center justify-center rounded-lg border border-danger-200 px-3 py-2 text-danger-600 transition hover:bg-danger-50 dark:border-danger-900 dark:text-danger-400 dark:hover:bg-danger-950/30"
                         aria-label={`حذف ${bank.name}`}
@@ -267,6 +270,14 @@ function QuestionBanksPage() {
           )}
         </section>
       </div>
+      <ConfirmDeleteModal
+        isOpen={!!deleteTarget}
+        title="حذف بانک سؤال"
+        description={`بانک «${deleteTarget?.name ?? ''}» و تمام سؤال‌های داخل آن حذف شوند؟`}
+        busy={deleting}
+        onConfirm={handleDelete}
+        onClose={() => { if (!deleting) setDeleteTarget(null); }}
+      />
     </AppLayout>
   );
 }

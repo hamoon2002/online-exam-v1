@@ -1,3 +1,4 @@
+import { notifySaveError } from '../../../components/Toast/Toast';
 import { useState } from 'react';
 import { Save } from 'lucide-react';
 
@@ -25,11 +26,13 @@ function NewsSectionForm({ initialData, saving, onSave }: NewsSectionFormProps) 
     event.preventDefault();
     if (!title.trim() || !subtitle.trim()) {
       setFormError('عنوان و زیرعنوان این بخش الزامی است.');
+      notifySaveError('عنوان و زیرعنوان این بخش الزامی است.');
       return;
     }
     setFormError('');
     const saved = await onSave({ title: title.trim(), subtitle: subtitle.trim() });
     if (!saved) setFormError('ذخیره انجام نشد؛ دوباره تلاش کنید.');
+      notifySaveError('ذخیره انجام نشد؛ دوباره تلاش کنید.');
   }
 
   return (

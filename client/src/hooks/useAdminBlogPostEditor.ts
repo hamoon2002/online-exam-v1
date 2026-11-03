@@ -7,6 +7,7 @@ import {
   type BlogPostAdmin,
 } from '../api/blogApi';
 import { ApiError } from '../lib/apiClient';
+import { notifySaveError, notifySaveSuccess } from '../components/Toast/Toast';
 
 // Keep slug rules aligned with server validation.
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -83,6 +84,7 @@ function useAdminBlogPostEditor(postId: string | undefined) {
   ): Promise<BlogPostAdmin | null> {
     const validationError = validate();
     if (validationError) {
+      notifySaveError(validationError);
       setError(validationError);
       return null;
     }
@@ -104,13 +106,12 @@ function useAdminBlogPostEditor(postId: string | undefined) {
 
       setPost(saved);
       setPublished(saved.published);
+      notifySaveSuccess(saved.published ? 'پست بلاگ ذخیره و منتشر شد' : 'پست بلاگ به‌صورت پیش‌نویس ذخیره شد');
       return saved;
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : 'ذخیره‌سازیِ پست با خطا مواجه شد'
-      );
+      const message = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'ذخیره‌سازی پست با خطا مواجه شد';
+      setError(message);
+      notifySaveError(message);
       return null;
     } finally {
       setSaving(false);
@@ -123,6 +124,7 @@ function useAdminBlogPostEditor(postId: string | undefined) {
     try {
       const updated = await uploadBlogCoverImage(post.id, file);
       setPost(updated);
+      notifySaveSuccess('تصویر کاور با موفقیت بارگذاری شد');
     } catch (err) {
       setError(
         err instanceof ApiError ? err.message : 'آپلودِ کاور با خطا مواجه شد'

@@ -57,7 +57,7 @@ function CategoryRow({
 
   return (
     <tr className="border-b border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-200 transition duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50">
-      <td className="py-3">
+      <td className="px-3 py-3.5">
         {isEditing ? (
           <form onSubmit={submitRename} className="flex gap-2">
             <input
@@ -89,7 +89,7 @@ function CategoryRow({
           category.name
         )}
       </td>
-      <td className="py-3 text-gray-400 dark:text-gray-500">
+      <td className="px-3 py-3.5 text-gray-400 dark:text-gray-500">
         <StatusBadge tone={category.status === 'Pending' ? 'warning' : 'success'}>{category.status === 'Pending' ? 'در انتظار تأیید' : 'تأییدشده'}</StatusBadge>
       </td>
       {showActions && (
@@ -228,7 +228,7 @@ function AdminCategoriesPage() {
         ))}
       </div>
 
-      <div className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-6">
+      <div className="ui-admin-table overflow-hidden rounded-2xl border border-violet-200/50 bg-white/85 p-4 shadow-sm dark:border-violet-400/15 dark:bg-gray-900/85 sm:p-6">
         {loading ? (
           <Spinner />
         ) : visible.length === 0 ? (
@@ -242,7 +242,7 @@ function AdminCategoriesPage() {
             <table className="w-full min-w-125 text-right text-sm">
               <thead>
                 <tr className="text-gray-500 dark:text-gray-400 border-b border-gray-100 dark:border-gray-800">
-                  <th className="py-2">نام</th>
+                  <th className="px-3 py-3">نام</th>
                   <th className="py-2">وضعیت</th>
                   <th className="py-2"></th>
                 </tr>

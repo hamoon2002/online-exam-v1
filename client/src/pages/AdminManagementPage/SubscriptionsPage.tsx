@@ -16,6 +16,7 @@ import { PLANS, PLAN_ORDER, type PlanId } from '../../constants/plans';
 export default function SubscriptionsPage() {
   const list = usePagedList((q) => getAdminInstructors(q, 'Approved'));
   const [editing, setEditing] = useState<InstructorSummary | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [plan, setPlan] = useState<PlanId>('free');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -92,6 +93,8 @@ export default function SubscriptionsPage() {
       )}
       <DataTable
         items={list.items}
+        selectedId={selectedId}
+        onSelect={(item) => setSelectedId(item.id)}
         loading={list.loading}
         columns={[
           { key: 'name', label: 'مدرس', render: (i) => userDisplayName(i) },

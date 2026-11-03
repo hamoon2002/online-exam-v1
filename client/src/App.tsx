@@ -26,7 +26,7 @@ function GlobalSaveNotifications() {
     <Toast
       key={notification.id}
       tone={notification.tone}
-      duration={notification.tone === 'danger' ? 4500 : 4000}
+      duration={3000}
       message={notification.message}
       onDismiss={() => setNotification(current => current?.id === notification.id ? null : current)}
     />

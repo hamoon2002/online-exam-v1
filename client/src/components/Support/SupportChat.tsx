@@ -114,7 +114,7 @@ export default function SupportChat({
       <div
         role="log"
         aria-label="پیام‌های پشتیبانی"
-        className="max-h-[40dvh] min-h-24 space-y-3 overflow-y-auto rounded-xl bg-gray-50 p-3 dark:bg-gray-800"
+        className="max-h-[58dvh] min-h-56 space-y-3 overflow-y-auto rounded-2xl bg-gray-50 p-4 sm:p-5 dark:bg-gray-800"
       >
         {loading ? (
           <p>در حال دریافت پیام‌ها…</p>
@@ -161,8 +161,8 @@ export default function SupportChat({
           onChange={(e) => setDraft(e.target.value)}
           disabled={busy}
           maxLength={2000}
-          rows={3}
-          className="w-full rounded-xl border border-gray-400 bg-transparent p-3"
+          rows={4}
+          className="min-h-28 w-full resize-y rounded-2xl border border-violet-200 bg-white/70 p-4 text-sm leading-7 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-200/50 dark:border-violet-400/25 dark:bg-gray-800/70"
         />
         <button
           disabled={busy || !draft.trim()}

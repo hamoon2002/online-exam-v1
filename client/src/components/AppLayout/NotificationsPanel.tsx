@@ -13,6 +13,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import useNotifications from '../../hooks/useNotifications';
+import ConfirmDeleteModal from '../Modal/ConfirmDeleteModal';
 import useOnClickOutside from '../../hooks/useOnClickOutside';
 import type { Notification } from '../../api/notificationApi';
 
@@ -67,6 +68,7 @@ function NotificationsPanel() {
     useNotifications();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
   const navigate = useNavigate();
   const recentNotifications = notifications.slice(0, 5);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -108,6 +110,11 @@ function NotificationsPanel() {
         )}
       </button>
 
+      <ConfirmDeleteModal isOpen={confirmClear} title="پاک‌کردن همه اعلان‌ها"
+        description="همه اعلان‌های این حساب از فهرست شما پاک شوند؟ اعلان‌های سایر کاربران تغییر نمی‌کنند."
+        busy={deletingAll} error={deleteError ?? undefined}
+        onConfirm={async () => { await removeAllNotifications(); setConfirmClear(false); }}
+        onClose={() => { if (!deletingAll) setConfirmClear(false); }} />
       {isOpen && (
         <div
           role="dialog"
@@ -122,7 +129,7 @@ function NotificationsPanel() {
 
           <div className="flex flex-wrap items-center gap-2 border-b border-violet-100 px-3 py-2 dark:border-violet-400/10">
             <button type="button" disabled={unreadCount === 0 || loading} onClick={markAllRead} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-violet-700 hover:bg-violet-50 disabled:opacity-40 dark:text-violet-200 dark:hover:bg-violet-500/10"><CheckCheck size={15}/>خواندن همه</button>
-            <button type="button" disabled={!notifications.length || deletingAll || loading} onClick={() => { if (window.confirm('همه اعلان‌های این حساب پاک شوند؟')) void removeAllNotifications(); }} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-rose-600 hover:bg-rose-50 disabled:opacity-40 dark:text-rose-300 dark:hover:bg-rose-500/10"><Trash2 size={14}/>{deletingAll ? 'در حال پاک کردن…' : 'پاک کردن همه'}</button>
+            <button type="button" disabled={!notifications.length || deletingAll || loading} onClick={() => setConfirmClear(true)} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-rose-600 hover:bg-rose-50 disabled:opacity-40 dark:text-rose-300 dark:hover:bg-rose-500/10"><Trash2 size={14}/>{deletingAll ? 'در حال پاک کردن…' : 'پاک کردن همه'}</button>
           </div>
           {deleteError && <p role="alert" className="px-4 py-2 text-xs text-danger-600 dark:text-danger-400">{deleteError}</p>}
           {loading && <p role="status" className="px-4 py-2 text-xs text-gray-500">در حال دریافت اعلان‌ها…</p>}

@@ -1421,3 +1421,34 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
   .support-instructor-page .support-message-bubble{max-width:88%!important}
   .support-instructor-page .support-instructor-chat form button[type="submit"]{width:100%;justify-self:stretch}
 }
+
+/* Workspace wallpapers: restrained gradients, persistent user preference. */
+.glass-app-shell.workspace-theme-aurora{background:radial-gradient(ellipse at 25% 25%,rgba(153,130,232,.20),transparent 48%),linear-gradient(145deg,#f8f7ff,#eef0ff 57%,#eaf5ff)!important}
+.glass-app-shell.workspace-theme-mist{background:linear-gradient(140deg,#f9fafc,#edf1f7 54%,#f7f9fd)!important}
+.glass-app-shell.workspace-theme-lavender{background:radial-gradient(ellipse at 72% 12%,rgba(204,160,240,.24),transparent 56%),linear-gradient(140deg,#fbf8ff,#f2ebfa 65%,#f6f2ff)!important}
+.glass-app-shell.workspace-theme-ocean{background:radial-gradient(ellipse at 25% 20%,rgba(131,200,219,.22),transparent 55%),linear-gradient(145deg,#f5fbff,#e9f5fa 65%,#edf3ff)!important}
+.glass-app-shell.workspace-theme-minimal{background:#f5f6fb!important}
+.dark .glass-app-shell.workspace-theme-aurora{background:linear-gradient(150deg,#11142c,#1b1940 55%,#14273e)!important}
+.dark .glass-app-shell.workspace-theme-mist{background:linear-gradient(145deg,#111827,#202637)!important}
+.dark .glass-app-shell.workspace-theme-lavender{background:linear-gradient(145deg,#20172e,#302041)!important}
+.dark .glass-app-shell.workspace-theme-ocean{background:linear-gradient(145deg,#102131,#15354a)!important}
+.dark .glass-app-shell.workspace-theme-minimal{background:#151923!important}
+.workspace-empty-stage{min-height:calc(100dvh - 160px);width:100%;border-radius:24px;background:transparent}
+.workspace-preview-aurora{background:linear-gradient(135deg,#c5b3fb,#e3d9fb 55%,#adddf7)}
+.workspace-preview-mist{background:linear-gradient(135deg,#fcfdff,#e3e9f2)}
+.workspace-preview-lavender{background:linear-gradient(135deg,#f3d7f8,#d7c0f2)}
+.workspace-preview-ocean{background:linear-gradient(135deg,#c4ecfa,#bad2ef)}
+.workspace-preview-minimal{background:linear-gradient(135deg,#f8f9fc,#e9ecf2)}
+/* Numeral typography, limited to stats and plan prices. */
+.glass-unified-stat-value,
+.glass-app-shell .glass-plan-card .plan-price-amount,
+.results-dashboard .results-kpi .results-kpi-number,
+.glass-landing .pricing-numeral {
+  font-family:'Estedad','Vazirmatn Variable',sans-serif!important;
+  font-feature-settings:"tnum" 1,"ss20" 1;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.025em;
+  font-weight:800;
+}
+/* Preserve whitespace and avoid an extra horizontal scroll in exam modal. */
+.glass-app-shell .ui-select-custom{min-width:0}

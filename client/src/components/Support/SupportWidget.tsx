@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import Modal from '../Modal/Modal';
 import { useAuth } from '../../context/AuthContext';
 import { apiRequest } from '../../lib/apiClient';
-import SupportChat from './SupportChat';
 function Assistant() {
   const [remote, setRemote] = useState<boolean | null>(null);
   const [consent, setConsent] = useState(false);
@@ -159,7 +158,14 @@ export default function SupportWidget() {
         {tab === 'assistant' ? (
           <Assistant />
         ) : user && isSessionReady ? (
-          <SupportChat key={user.id} />
+          <div className="rounded-2xl border border-violet-200/50 bg-violet-50/40 p-5 text-center dark:border-violet-400/20 dark:bg-violet-500/10">
+            <p className="mb-4 text-sm leading-7 text-slate-600 dark:text-slate-300">
+              هر درخواست پشتیبانی به‌صورت تیکت مستقل با کد رهگیری، درجه اهمیت و وضعیت ثبت می‌شود.
+            </p>
+            <Link to="/support" onClick={() => setOpen(false)} className="ui-primary-gradient inline-flex min-h-11 items-center justify-center rounded-xl px-5 text-sm font-semibold text-white">
+              مشاهده و ثبت تیکت‌ها
+            </Link>
+          </div>
         ) : (
           <p>
             برای ثبت و پیگیری امن پیام‌ها،{' '}

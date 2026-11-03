@@ -127,10 +127,6 @@ function NotificationsPanel() {
 
           </div>
 
-          <div className="flex flex-wrap items-center gap-2 border-b border-violet-100 px-3 py-2 dark:border-violet-400/10">
-            <button type="button" disabled={unreadCount === 0 || loading} onClick={markAllRead} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-violet-700 hover:bg-violet-50 disabled:opacity-40 dark:text-violet-200 dark:hover:bg-violet-500/10"><CheckCheck size={15}/>خواندن همه</button>
-            <button type="button" disabled={!notifications.length || deletingAll || loading} onClick={() => setConfirmClear(true)} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-rose-600 hover:bg-rose-50 disabled:opacity-40 dark:text-rose-300 dark:hover:bg-rose-500/10"><Trash2 size={14}/>{deletingAll ? 'در حال پاک کردن…' : 'پاک کردن همه'}</button>
-          </div>
           {deleteError && <p role="alert" className="px-4 py-2 text-xs text-danger-600 dark:text-danger-400">{deleteError}</p>}
           {loading && <p role="status" className="px-4 py-2 text-xs text-gray-500">در حال دریافت اعلان‌ها…</p>}
           <div className="max-h-80 overflow-y-auto">
@@ -198,6 +194,10 @@ function NotificationsPanel() {
                 );
               })
             )}
+          </div>
+          <div className="flex flex-wrap items-center gap-2 border-t border-violet-100 px-3 py-2 dark:border-violet-400/10">
+            <button type="button" disabled={unreadCount === 0 || loading} onClick={markAllRead} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-violet-700 hover:bg-violet-50 disabled:opacity-40 dark:text-violet-200 dark:hover:bg-violet-500/10"><CheckCheck size={15}/>خواندن همه</button>
+            <button type="button" disabled={!notifications.length || deletingAll || loading} onClick={() => setConfirmClear(true)} className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5 text-xs text-rose-600 hover:bg-rose-50 disabled:opacity-40 dark:text-rose-300 dark:hover:bg-rose-500/10"><Trash2 size={14}/>{deletingAll ? 'در حال پاک کردن…' : 'پاک کردن همه'}</button>
           </div>
           <button type="button" onClick={() => { setIsOpen(false); navigate('/notifications'); }} className="flex w-full items-center justify-center gap-2 border-t border-violet-100 bg-violet-50/60 px-4 py-3 text-sm font-semibold text-violet-700 transition hover:bg-violet-100 dark:border-violet-400/15 dark:bg-violet-500/10 dark:text-violet-200 dark:hover:bg-violet-500/20"><List size={17}/> مشاهده همه اعلان‌ها</button>
         </div>

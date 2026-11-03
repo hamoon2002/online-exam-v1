@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link as LinkIcon, Upload, Loader2, FileText, X } from 'lucide-react';
+import { Link as LinkIcon, Upload, Loader2, FileText, X, Save } from 'lucide-react';
 import Modal from '../../../components/Modal/Modal';
 import type { Attachment } from '../../../api/lessonApi';
 
@@ -238,9 +238,9 @@ function SessionFormModal({
         <button
           type="submit"
           disabled={isUploading || isUploadingAttachment || isSubmitting}
-          className="ui-primary-gradient w-full rounded-xl px-4 py-2.5 font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-60"
+          className="ui-primary-gradient flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isEditing ? 'ذخیره تغییرات' : 'افزودن جلسه'}
+          <Save size={17}/>{isSubmitting ? 'در حال ذخیره…' : isEditing ? 'ذخیره تغییرات' : 'افزودن جلسه'}
         </button>
       </form>
     </Modal>

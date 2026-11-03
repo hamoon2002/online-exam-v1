@@ -237,7 +237,13 @@ function ExamsPage() {
                 </table>
               </div>
             )}
-            {canManage && reportExams.length > 0 && <div className="mt-6 flex justify-center border-t border-violet-200/40 pt-5 dark:border-violet-400/15"><button type="button" onClick={openAddModal} disabled={planLimit.checkingLimit} className="ui-create-cta">+ آزمون جدید</button></div>}
+            {canManage && reportExams.length > 0 && (
+              <div className="flex min-h-28 items-center justify-center border-t border-violet-200/40 bg-violet-50/30 px-5 py-5 dark:border-violet-400/15 dark:bg-violet-500/5">
+                <button type="button" onClick={openAddModal} disabled={planLimit.checkingLimit} className="ui-create-cta flex min-h-13 w-full max-w-64 items-center justify-center rounded-xl px-8 text-base font-bold shadow-md transition-shadow hover:shadow-lg disabled:opacity-50 sm:min-w-60">
+                  + آزمون جدید
+                </button>
+              </div>
+            )}
           </div>
         </>
       )}

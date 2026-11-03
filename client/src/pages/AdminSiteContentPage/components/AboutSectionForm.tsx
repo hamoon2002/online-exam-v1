@@ -1,3 +1,4 @@
+import { notifySaveError } from '../../../components/Toast/Toast';
 import { useState } from 'react';
 import { Plus, X, Save } from 'lucide-react';
 import { ICON_NAMES, resolveIcon, DEFAULT_ICON_NAME } from '../../../constants/iconRegistry';
@@ -51,6 +52,7 @@ function AboutSectionForm({ initialData, saving, onSave }: AboutSectionFormProps
     event.preventDefault();
     if (!title.trim() || !description.trim() || pillars.some(p => !p.title.trim() || !p.description.trim())) {
       setFormError('عنوان، متن و اطلاعات تمام ستون‌های افزوده‌شده الزامی است.');
+      notifySaveError('عنوان، متن و اطلاعات تمام ستون‌های افزوده‌شده الزامی است.');
       return;
     }
     setFormError('');
@@ -64,6 +66,7 @@ function AboutSectionForm({ initialData, saving, onSave }: AboutSectionFormProps
       })),
     });
     if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
+      notifySaveError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

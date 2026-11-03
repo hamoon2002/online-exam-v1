@@ -1123,3 +1123,13 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .glass-app-shell main table tbody tr[data-selected-row="true"]:hover{background:rgba(120,86,222,.27)!important}
 .dark .glass-app-shell main table tbody tr[data-selected-row="true"]{background:rgba(144,100,238,.35)!important;box-shadow:inset -4px 0 #c09aff}
 .dark .glass-app-shell main table tbody tr[data-selected-row="true"]:hover{background:rgba(144,100,238,.44)!important}
+
+/* Tier colors must beat the original glass-plan-card !important background. */
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-free{background:linear-gradient(140deg,#f9fbff,#edf1fa)!important}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold{background:linear-gradient(145deg,#fff8df,#f7e4b9)!important}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum{background:linear-gradient(145deg,#f1f6ff,#d5e2f4)!important}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip{background:linear-gradient(145deg,#f2e9ff,#d8c4fb)!important}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-free{background:linear-gradient(145deg,#22283a,#2d3246)!important}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold{background:linear-gradient(145deg,#3d301b,#594021)!important}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum{background:linear-gradient(145deg,#283850,#40536e)!important}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip{background:linear-gradient(145deg,#37264f,#563679)!important}

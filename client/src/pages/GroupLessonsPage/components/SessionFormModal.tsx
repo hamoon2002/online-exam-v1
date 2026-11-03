@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link as LinkIcon, Upload, Loader2, FileText, X } from 'lucide-react';
 import Modal from '../../../components/Modal/Modal';
 import type { Attachment } from '../../../api/lessonApi';
@@ -57,12 +58,17 @@ function SessionFormModal({
   validationError,
   onClose,
 }: SessionFormModalProps) {
+  const [attempted, setAttempted] = useState(false);
+  useEffect(() => { if (!isOpen) setAttempted(false); }, [isOpen]);
+  const showErrors = attempted || Boolean(validationError);
+  const titleInvalid = showErrors && title.trim().length < 2;
+  const videoInvalid = showErrors && (videoType === 'link' ? !videoUrl.trim() : !uploadedFile);
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <h2 className="text-lg font-bold mb-4 dark:text-white">
         {isEditing ? 'ویرایش جلسه' : 'جلسه جدید'}
       </h2>
-      <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+      <form onSubmit={event => { setAttempted(true); onSubmit(event); }} noValidate className="flex flex-col gap-4">
         {validationError && <p role="alert" className="form-inline-error">{validationError}</p>}
         <div className="flex flex-col gap-1">
           <label
@@ -74,10 +80,12 @@ function SessionFormModal({
           <input
             id="session-title"
             value={title}
+            aria-invalid={titleInvalid}
             onChange={(e) => onTitleChange(e.target.value)}
             className="border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-50 dark:focus:ring-brand-900 transition"
             placeholder="مثلاً: جلسه ۱: معرفی متغیرها"
           />
+          {titleInvalid && <p role="alert" className="text-xs font-medium text-rose-600 dark:text-rose-300">عنوان جلسه باید حداقل دو حرف باشد.</p>}
         </div>
 
         <div className="flex flex-col gap-1">
@@ -134,6 +142,7 @@ function SessionFormModal({
             <input
               value={videoUrl}
               aria-label="لینک ویدیو"
+              aria-invalid={videoInvalid}
               onChange={(e) => onVideoUrlChange(e.target.value)}
               className="border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-800 dark:text-white rounded-xl px-4 py-2.5 text-sm outline-none focus:border-brand-400 focus:ring-4 focus:ring-brand-50 dark:focus:ring-brand-900 transition"
               placeholder="https://www.aparat.com/v/... یا لینک یوتیوب"
@@ -165,6 +174,7 @@ function SessionFormModal({
               />
             </label>
           )}
+          {videoInvalid && <p role="alert" className="text-xs font-medium text-rose-600 dark:text-rose-300">{videoType === 'link' ? 'لینک ویدیو را وارد کنید.' : 'ابتدا فایل ویدیو را آپلود کنید.'}</p>}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -228,7 +238,7 @@ function SessionFormModal({
         <button
           type="submit"
           disabled={isUploading || isUploadingAttachment || isSubmitting}
-          className="w-full bg-brand-600 text-white font-medium px-4 py-2.5 rounded-xl hover:bg-brand-700 transition disabled:cursor-not-allowed disabled:opacity-60"
+          className="ui-primary-gradient w-full rounded-xl px-4 py-2.5 font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isEditing ? 'ذخیره تغییرات' : 'افزودن جلسه'}
         </button>

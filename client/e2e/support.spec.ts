@@ -44,57 +44,82 @@ test('mobile home guide is accessible and offers internal support login', async 
     page.getByRole('button', { name: 'راهنما و پشتیبانی' }),
   ).toBeFocused();
 });
-for (const role of ['Student', 'SuperAdmin'])
-  test(`${role} can send internal support message`, async ({ page }) => {
-    const user = {
-      id: 'support-user',
-      role,
-      name: 'کاربر پشتیبانی',
-      username: 'support',
-      approvalStatus: 'Approved',
-      onboardingCompleted: true,
-    };
-    const messages: unknown[] = [];
-    const thread = {
-      id: 'thread',
-      status: 'waiting',
-      updatedAt: new Date().toISOString(),
-      user: { name: 'کاربر پشتیبانی' },
-    };
-    await page.route('http://127.0.0.1:4109/**', async (route) => {
-      const path = new URL(route.request().url()).pathname;
-      let body: unknown = [];
-      if (path === '/auth/refresh') body = { accessToken: 'test-token' };
-      if (path === '/auth/me') body = user;
-      if (path === '/support/threads') body = [thread];
-      if (path === '/support/mine') body = thread;
-      if (path.endsWith('/messages')) {
-        if (route.request().method() === 'POST') {
-          const data = route.request().postDataJSON();
-          messages.push({
-            id: data.clientId,
-            body: data.body,
-            fromStaff: role === 'SuperAdmin',
-            createdAt: new Date().toISOString(),
-          });
-          body = { id: 'thread' };
-        } else body = messages;
-      }
-      await route.fulfill({
-        status: 200,
-        contentType: 'application/json',
-        body: JSON.stringify(body),
-      });
-    });
-    await page.goto('/support');
-    if (role === 'SuperAdmin')
-      await page.getByRole('button', { name: /کاربر پشتیبانی/ }).click();
-    await page
-      .getByRole('textbox', { name: /پیام به/ })
-      .fill('سلام، لطفاً راهنمایی کنید.');
-    await page.getByRole('button', { name: 'ارسال پیام', exact: true }).click();
-    await expect(page.getByRole('log')).toContainText(
-      'سلام، لطفاً راهنمایی کنید.',
-    );
-    expect(messages).toHaveLength(1);
+test('student can create a ticket with tracking code and open the conversation', async ({ page }) => {
+  const user = {
+    id: 'student-1', role: 'Student', name: 'دانشجو', username: 'student',
+    approvalStatus: 'Approved', onboardingCompleted: true,
+  };
+  const ticket = {
+    id: 'ticket-1', userId: user.id, trackingCode: 'TK-TEST-001',
+    subject: 'مشکل ورود به آزمون', category: 'Exams', priority: 'High',
+    status: 'Open', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  };
+  const messages = [{
+    id: 'msg-1', ticketId: ticket.id, clientId: 'uuid-1', fromStaff: false,
+    body: 'صفحه آزمون باز نمی‌شود.', createdAt: new Date().toISOString(),
+  }];
+  let created = false;
+  await page.route('http://127.0.0.1:4109/**', async route => {
+    const path = new URL(route.request().url()).pathname;
+    let body: unknown = [];
+    if (path === '/auth/refresh') body = { accessToken: 'token' };
+    else if (path === '/auth/me') body = user;
+    else if (path === '/support/mine/tickets') body = created ? [ticket] : [];
+    else if (path === '/support/tickets' && route.request().method() === 'POST') {
+      created = true;
+      body = ticket;
+    } else if (path === '/support/tickets/ticket-1') body = ticket;
+    else if (path === '/support/tickets/ticket-1/messages') body = messages;
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
+  await page.goto('/support');
+  await page.getByRole('button', { name: 'ثبت تیکت جدید' }).click();
+  await page.getByLabel('موضوع').fill(ticket.subject);
+  await page.getByLabel('شرح درخواست').fill(messages[0].body);
+  await page.getByRole('button', { name: 'ثبت تیکت', exact: true }).click();
+  await expect(page.getByText(ticket.trackingCode)).toBeVisible();
+  await expect(page.getByRole('log', { name: 'پیام‌های تیکت' })).toContainText(messages[0].body);
+});
+
+test('super admin sees teachers before their tickets and can reply', async ({ page }) => {
+  const user = {
+    id: 'admin-1', role: 'SuperAdmin', name: 'مدیر', username: 'admin',
+    approvalStatus: 'Approved', onboardingCompleted: true,
+  };
+  const ticket = {
+    id: 'ticket-1', userId: 'teacher-1', trackingCode: 'TK-TEST-002',
+    subject: 'مشکل بانک سؤال', category: 'Exams', priority: 'Urgent',
+    status: 'Open', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  };
+  let messages = [{
+    id: 'msg-1', ticketId: ticket.id, clientId: 'uuid-1', fromStaff: false,
+    body: 'بانک سؤال ذخیره نمی‌شود.', createdAt: new Date().toISOString(),
+  }];
+  await page.route('http://127.0.0.1:4109/**', async route => {
+    const path = new URL(route.request().url()).pathname;
+    let body: unknown = [];
+    if (path === '/auth/refresh') body = { accessToken: 'token' };
+    else if (path === '/auth/me') body = user;
+    else if (path === '/support/instructors') body = [{ id: 'teacher-1', name: 'مدرس تست', username: 'teacher', ticketCount: 1, openCount: 1 }];
+    else if (path === '/support/instructors/teacher-1/tickets') body = [ticket];
+    else if (path === '/support/tickets/ticket-1') body = ticket;
+    else if (path === '/support/tickets/ticket-1/messages') {
+      if (route.request().method() === 'POST') {
+        const input = route.request().postDataJSON();
+        messages = [...messages, {
+          id: 'msg-2', ticketId: ticket.id, clientId: input.clientId, fromStaff: true,
+          body: input.body, createdAt: new Date().toISOString(),
+        }];
+        body = { id: ticket.id };
+      } else body = messages;
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
+  });
+  await page.goto('/support');
+  await expect(page.getByText('مدرس تست')).toBeVisible();
+  await page.getByRole('button', { name: 'مشاهده تیکت‌ها' }).click();
+  await page.getByRole('button', { name: 'جزئیات' }).click();
+  await page.getByRole('textbox', { name: 'پاسخ به تیکت' }).fill('در حال بررسی است.');
+  await page.getByRole('button', { name: 'ارسال', exact: true }).click();
+  await expect(page.getByRole('log', { name: 'پیام‌های تیکت' })).toContainText('در حال بررسی است.');
+});

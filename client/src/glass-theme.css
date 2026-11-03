@@ -1285,3 +1285,31 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
   background:linear-gradient(145deg,rgba(56,43,79,.89),rgba(76,52,112,.75))!important;
   border-color:rgba(192,150,239,.44)!important;
 }
+
+/* Support layout: the conversation, not its surrounding frame, owns the space. */
+.support-page .support-chat-container{min-width:0}
+.support-page .support-chat-container > section{display:flex;min-width:0;flex-direction:column;gap:14px}
+.support-page .support-chat-container [role="log"]{
+  box-sizing:border-box;
+  width:100%;
+  min-height:clamp(370px,52dvh,650px)!important;
+  max-height:64dvh!important;
+  padding:20px!important;
+  flex:1 1 auto;
+}
+.support-page .support-chat-container form{width:100%;margin-top:0!important}
+.support-page .support-chat-container form textarea{min-height:110px;max-height:190px}
+@media(max-width:640px){
+  .support-page .support-chat-container [role="log"]{
+    min-height:clamp(310px,44dvh,480px)!important;
+    max-height:58dvh!important;
+    padding:13px!important;
+  }
+}
+/* An explicit full-width time bar is needed for transform scale animation. */
+.site-toast-track{width:100%;overflow:hidden}
+.site-toast-progress-css{display:block;width:100%;will-change:transform}
+.site-toast-css.is-closing{opacity:0;transform:translateY(12px);pointer-events:none}
+@media(prefers-reduced-motion:reduce){
+  .site-toast-progress-css{animation:none!important;transform:scaleX(1)!important}
+}

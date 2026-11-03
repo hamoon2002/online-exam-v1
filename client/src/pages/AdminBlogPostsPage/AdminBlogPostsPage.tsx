@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ConfirmDeleteModal from '../../components/Modal/ConfirmDeleteModal';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Pencil, Trash2, XCircle, Newspaper } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
@@ -12,12 +13,13 @@ import { toPersianDigits } from '../../utils/persianDigits';
 function AdminBlogPostsPage() {
   const navigate = useNavigate();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<{ id: string; title: string } | null>(null);
   const { posts, loading, error, clearError, deletingId, handleDelete } =
     useAdminBlogPosts();
 
-  async function onDelete(id: string, title: string) {
-    if (!window.confirm(`پستِ «${title}» حذف بشه؟ این کار برگشت‌ناپذیره.`)) return;
-    await handleDelete(id);
+  async function confirmDelete() {
+    if (!deleteTarget) return;
+    if (await handleDelete(deleteTarget.id)) setDeleteTarget(null);
   }
 
   return (
@@ -90,7 +92,7 @@ function AdminBlogPostsPage() {
                           </span>
                         </button>
                         <button
-                          onClick={() => onDelete(post.id, post.title)}
+                          onClick={() => setDeleteTarget({ id: post.id, title: post.title })}
                           disabled={deletingId === post.id}
                           className="rounded-lg bg-danger-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-danger-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
@@ -113,6 +115,10 @@ function AdminBlogPostsPage() {
           </div>
         )}
       </div>
+      <ConfirmDeleteModal isOpen={!!deleteTarget} title="حذف پست بلاگ"
+        description={`پست «${deleteTarget?.title ?? ''}» حذف شود؟`}
+        busy={!!deletingId} error={error ?? undefined}
+        onConfirm={confirmDelete} onClose={() => { if (!deletingId) setDeleteTarget(null); }}/>
     </AppLayout>
   );
 }

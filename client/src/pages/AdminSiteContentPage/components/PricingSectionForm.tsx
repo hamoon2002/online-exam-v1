@@ -32,7 +32,6 @@ function PricingSectionForm({ initialData, saving, onSave }: PricingSectionFormP
     setFormError('');
     const saved = await onSave({ title: title.trim(), subtitle: subtitle.trim() });
     if (!saved) setFormError('ذخیره انجام نشد؛ دوباره تلاش کنید.');
-      notifySaveError('ذخیره انجام نشد؛ دوباره تلاش کنید.');
   }
 
   return (

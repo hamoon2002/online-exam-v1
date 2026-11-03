@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Bell, BellRing, CheckCheck, Trash2, RefreshCw, Info, Users, Award } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
+import ConfirmDeleteModal from '../../components/Modal/ConfirmDeleteModal';
 import useNotifications from '../../hooks/useNotifications';
 import type { Notification } from '../../api/notificationApi';
 
@@ -9,6 +10,7 @@ const ICONS = { info: Info, people: Users, award: Award };
 export default function NotificationsPage() {
   const { notifications, unreadCount, loading, deleteError, deletingIds, deletingAll, markOneRead, markAllRead, removeNotification, removeAllNotifications, refresh } = useNotifications();
   const [filter, setFilter] = useState<'all'|'unread'|'read'>('all');
+  const [confirmClear, setConfirmClear] = useState(false);
   const items = notifications.filter(n => filter === 'all' || (filter === 'unread' ? !n.read : n.read));
 
   return (
@@ -21,7 +23,7 @@ export default function NotificationsPage() {
         <div className="flex flex-wrap items-center gap-2">
           <button type="button" aria-label="تازه‌سازی اعلان‌ها" onClick={refresh} disabled={loading} className="rounded-xl border border-violet-200 bg-white/75 p-2.5 text-violet-700 disabled:opacity-50 dark:border-violet-400/25 dark:bg-gray-900 dark:text-violet-200"><RefreshCw size={17}/></button>
           <button type="button" disabled={loading || !unreadCount} onClick={markAllRead} className="inline-flex items-center gap-2 rounded-xl border border-violet-200 bg-white/75 px-4 py-2.5 text-sm font-medium text-violet-700 disabled:opacity-40 dark:border-violet-400/25 dark:bg-gray-900 dark:text-violet-200"><CheckCheck size={17}/>خواندن همه</button>
-          <button type="button" disabled={loading || deletingAll || !notifications.length} onClick={() => { if (window.confirm('همه اعلان‌های این حساب پاک شوند؟')) void removeAllNotifications(); }} className="inline-flex items-center gap-2 rounded-xl border border-rose-200 bg-white/75 px-4 py-2.5 text-sm font-medium text-rose-700 disabled:opacity-40 dark:border-rose-400/25 dark:bg-gray-900 dark:text-rose-300"><Trash2 size={16}/>{deletingAll ? 'در حال پاک کردن…' : 'پاک کردن همه'}</button>
+          <button type="button" disabled={loading || deletingAll || !notifications.length} onClick={() => setConfirmClear(true)} className="inline-flex items-center gap-2 rounded-xl border border-rose-200 bg-white/75 px-4 py-2.5 text-sm font-medium text-rose-700 disabled:opacity-40 dark:border-rose-400/25 dark:bg-gray-900 dark:text-rose-300"><Trash2 size={16}/>{deletingAll ? 'در حال پاک کردن…' : 'پاک کردن همه'}</button>
         </div>
       </div>
       {deleteError && <p role="alert" className="form-inline-error mb-4">{deleteError}</p>}
@@ -63,6 +65,11 @@ export default function NotificationsPage() {
           );
         })}
       </div>
+      <ConfirmDeleteModal isOpen={confirmClear} title="پاک‌کردن همه اعلان‌ها"
+        description="همه اعلان‌های این حساب از فهرست شما حذف شوند؟"
+        busy={deletingAll} error={deleteError ?? undefined}
+        onConfirm={async () => { if (await removeAllNotifications()) setConfirmClear(false); }}
+        onClose={() => { if (!deletingAll) setConfirmClear(false); }}/>
     </AppLayout>
   );
 }

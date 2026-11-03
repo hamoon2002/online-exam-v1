@@ -180,7 +180,7 @@ function ExamsPage() {
           </div>
 
           {isObserver && <ExamOversightFilters query={search} status={statusFilter} count={reportExams.length} onQuery={setSearch} onStatus={setStatusFilter} />}
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-6">
+          <div className="ui-admin-table overflow-hidden rounded-2xl border border-violet-200/50 bg-white/90 shadow-sm dark:border-violet-400/15 dark:bg-gray-900/90">
             {reportExams.length === 0 ? (
               <EmptyState
                 icon={ClipboardList}
@@ -220,7 +220,7 @@ function ExamsPage() {
                         canManage={canManage}
                         isObserver={isObserver}
                         selected={selectedExamId === exam.id}
-                        onSelect={isObserver ? () => setSelectedExamId(exam.id) : undefined}
+                        onSelect={() => setSelectedExamId(exam.id)}
                         canTake={currentUser?.role === 'Student'}
                         participantCount={exam.participants}
                         onTake={(e) => navigate(`/exams/${e.id}/take`)}

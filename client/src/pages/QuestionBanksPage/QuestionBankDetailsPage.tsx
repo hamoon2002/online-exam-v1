@@ -1,7 +1,7 @@
 import ListPagination from '../../components/ListPagination/ListPagination';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, Upload, Plus, Save } from 'lucide-react';
+import { ArrowRight, Upload, Plus } from 'lucide-react';
 
 import AppLayout from '../../components/AppLayout/AppLayout';
 import { getCurrentUser } from '../../api/authApi';

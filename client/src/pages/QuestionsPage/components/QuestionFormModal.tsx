@@ -1,4 +1,4 @@
-import { Plus, X } from 'lucide-react';
+import { Plus, X, Save } from 'lucide-react';
 import Modal from './ExamQuestionDialog';
 import { MIN_OPTIONS, MAX_OPTIONS } from '../../../hooks/useQuestionFormModal';
 
@@ -124,9 +124,9 @@ function QuestionFormModal({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full bg-brand-600 text-white font-medium px-4 py-2.5 rounded-xl hover:bg-brand-700 transition disabled:cursor-not-allowed disabled:opacity-60"
+          className="ui-primary-gradient flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-semibold text-white transition disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? 'در حال ذخیره…' : isEditing ? 'ذخیره تغییرات' : 'افزودن سؤال به آزمون'}
+          <Save size={17}/>{isSubmitting ? 'در حال ذخیره…' : isEditing ? 'ذخیره تغییرات' : 'افزودن سؤال به آزمون'}
         </button>
       </fieldset></form>
     </Modal>

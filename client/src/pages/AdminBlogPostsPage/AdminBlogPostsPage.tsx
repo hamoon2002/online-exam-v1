@@ -36,7 +36,8 @@ function AdminBlogPostsPage() {
           <EmptyState
             icon={Newspaper}
             title="هنوز پستی نیست"
-            description="اولین پستِ بلاگ رو بساز تا این‌جا لیست بشه."
+            description="با ساخت اولین پست، می‌توانید آن را به‌صورت پیش‌نویس نگه دارید یا منتشر کنید."
+            action={{ label: '+ پست جدید', onClick: () => navigate('/blog-posts/new') }}
           />
         ) : (
           <div className="overflow-x-auto">

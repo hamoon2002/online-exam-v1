@@ -86,9 +86,6 @@ jobs:
       - name: Run client tests
         run: npm test -w client
 
-      - name: Lint and check server formatting
-        run: npm run lint -w server && npm run format:check -w server
-
       - name: Build server
         run: npm run build -w server
 
@@ -122,6 +119,9 @@ jobs:
       - name: Run server tests
         if: ${{ success() }}
         run: npm test -w server
+
+      - name: Lint and check server formatting
+        run: npm run lint -w server && npm run format:check -w server
 
   container-build:
     runs-on: ubuntu-latest

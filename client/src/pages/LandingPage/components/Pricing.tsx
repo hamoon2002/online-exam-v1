@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Check, Crown } from 'lucide-react';
+import { Check, Crown, Medal, Gem, Gift, Sparkles } from 'lucide-react';
 
 import { PLANS, PLAN_ORDER, type PlanId } from '../../../constants/plans';
 import Reveal, { RevealGroup, RevealItem } from '../../../components/motion/Reveal';
@@ -35,14 +35,17 @@ const PLAN_VIEWS: Record<PlanId, PlanView> = {
   },
 };
 
+const TIER_ICONS = { free: Gift, gold: Medal, platinum: Gem, vip: Crown };
+const TIER_SUBTITLES = { free: 'شروع رایگان', gold: 'نشان طلایی', platinum: 'الماس پلاتینیوم', vip: 'تاج ویژه' };
+const TIER_BARS = { free: 'from-slate-400 via-slate-200 to-slate-400', gold: 'from-amber-600 via-yellow-300 to-amber-500', platinum: 'from-sky-600 via-slate-200 to-indigo-500', vip: 'from-purple-700 via-fuchsia-400 to-amber-300' };
 const VARIANT_STYLES: Record<PlanView['variant'], string> = {
   plain:
-    'bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-800',
+    'bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 dark:from-slate-900 dark:to-slate-800 dark:border-slate-700',
   accent:
-    'bg-white border border-accent-500/30 dark:bg-gray-900 dark:border-accent-500/30',
+    'bg-gradient-to-br from-amber-50 via-yellow-50 to-amber-100 border-2 border-amber-300 shadow-lg shadow-amber-500/10 dark:from-amber-950 dark:via-stone-900 dark:to-amber-900 dark:border-amber-600/60',
   highlighted:
-    'bg-white border-2 border-brand-600 shadow-xl shadow-brand-600/10 lg:-translate-y-3 dark:bg-gray-900',
-  dark: 'bg-gray-900 border border-gray-800 text-white',
+    'bg-gradient-to-br from-sky-50 via-slate-50 to-indigo-100 border-2 border-sky-400 shadow-xl shadow-sky-500/15 lg:-translate-y-2 dark:from-slate-800 dark:via-sky-950 dark:to-indigo-950 dark:border-sky-500',
+  dark: 'bg-gradient-to-br from-violet-950 via-purple-900 to-fuchsia-950 border-2 border-fuchsia-400 text-white shadow-2xl shadow-purple-600/25',
 };
 
 type PricingProps = {
@@ -80,6 +83,7 @@ function Pricing({ data }: PricingProps) {
           const plan = PLANS[planId];
           const view = PLAN_VIEWS[planId];
           const isDark = view.variant === 'dark';
+          const TierIcon = TIER_ICONS[planId];
           const isHighlighted = view.variant === 'highlighted';
 
           return (
@@ -89,6 +93,8 @@ function Pricing({ data }: PricingProps) {
                 VARIANT_STYLES[view.variant]
               }`}
             >
+              <div aria-hidden="true" className={`absolute inset-x-5 top-0 h-1 rounded-b-full bg-gradient-to-l ${TIER_BARS[planId]}`} />
+              {(planId === 'platinum' || planId === 'vip') && <Sparkles size={19} aria-hidden="true" className={`absolute left-5 top-5 ${isDark ? 'text-amber-300' : 'text-sky-500'}`} />}
               {view.badge && (
                 <span className="absolute -top-3 right-1/2 translate-x-1/2 rounded-full bg-brand-600 px-3 py-1 text-xs font-bold text-white shadow-sm">
                   {view.badge}
@@ -96,14 +102,17 @@ function Pricing({ data }: PricingProps) {
               )}
 
               <div className="flex items-center gap-2">
-                {isDark && <Crown size={18} className="text-accent-400" />}
+                <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-inner ${planId === 'free' ? 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-200' : planId === 'gold' ? 'bg-amber-200 text-amber-800 dark:bg-amber-700/30 dark:text-amber-200' : planId === 'platinum' ? 'bg-sky-200 text-blue-800 dark:bg-sky-700/30 dark:text-sky-200' : 'bg-white/15 text-amber-200'}`}><TierIcon size={29} strokeWidth={1.8}/></span>
+                <div>
                 <h3
-                  className={`text-base font-bold ${
+                  className={`text-lg font-extrabold ${
                     isDark ? 'text-white' : 'text-gray-900 dark:text-white'
                   }`}
                 >
                   {plan.name}
                 </h3>
+                <span className={`text-[11px] font-semibold ${isDark ? 'text-purple-200' : 'text-gray-500 dark:text-gray-300'}`}>{TIER_SUBTITLES[planId]}</span>
+                </div>
               </div>
 
               <p

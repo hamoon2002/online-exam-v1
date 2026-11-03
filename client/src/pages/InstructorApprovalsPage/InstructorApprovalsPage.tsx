@@ -67,7 +67,7 @@ function InstructorApprovalsPage() {
         ))}
       </div>
 
-      <div className="ui-unified-table rounded-3xl border border-violet-200/40 bg-white/80 p-5 shadow-sm backdrop-blur-xl dark:border-violet-400/15 dark:bg-slate-800/60 sm:p-7">
+      <div className="ui-admin-table overflow-hidden rounded-2xl border border-violet-200/40 bg-white/85 shadow-sm backdrop-blur-xl dark:border-violet-400/15 dark:bg-slate-800/60">
         {loading ? (
           <Spinner />
         ) : instructors.length === 0 ? (

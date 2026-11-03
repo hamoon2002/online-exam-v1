@@ -1,3 +1,4 @@
+import '../../glass-theme.css';
 import type { ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Sun, Moon, ArrowRight, Check, ShieldCheck, Sparkles } from 'lucide-react';

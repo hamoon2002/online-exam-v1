@@ -1,3 +1,4 @@
+import { notifySaveError } from '../../../components/Toast/Toast';
 import { useState } from 'react';
 import { Plus, X, Save } from 'lucide-react';
 import { ICON_NAMES, resolveIcon, DEFAULT_ICON_NAME } from '../../../constants/iconRegistry';
@@ -49,6 +50,7 @@ function FeaturesSectionForm({ initialData, saving, onSave }: FeaturesSectionFor
     event.preventDefault();
     if (!title.trim() || !subtitle.trim() || items.some(p => !p.title.trim() || !p.description.trim())) {
       setFormError('عنوان، زیرعنوان و مشخصات تمام امکانات افزوده‌شده الزامی است.');
+      notifySaveError('عنوان، زیرعنوان و مشخصات تمام امکانات افزوده‌شده الزامی است.');
       return;
     }
     setFormError('');
@@ -62,6 +64,7 @@ function FeaturesSectionForm({ initialData, saving, onSave }: FeaturesSectionFor
       })),
     });
     if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
+      notifySaveError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

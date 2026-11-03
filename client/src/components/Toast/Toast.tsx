@@ -14,13 +14,15 @@ function ToastNotification({ message, tone = 'warning', duration = 3000, icon, o
   const dismissed = useRef(false);
   const onDismissRef = useRef(onDismiss);
   onDismissRef.current = onDismiss;
-  const lifetime = Number.isFinite(duration) ? Math.max(0, duration) : 4000;
+  const lifetime = Number.isFinite(duration) ? Math.max(0, duration) : 3000;
+  const exitDuration = 320;
+  const progressDuration = Math.max(0, lifetime - exitDuration);
   const toneStyles = tone === 'danger' ? 'toast-danger' : tone === 'success' ? 'toast-success' : 'toast-warning';
   const Icon = icon ?? (tone === 'danger' ? TimerOff : tone === 'success' ? CheckCircle2 : AlertTriangle);
 
   useEffect(() => {
     if (lifetime === 0) return;
-    const timer = window.setTimeout(() => setClosing(true), lifetime);
+    const timer = window.setTimeout(() => setClosing(true), progressDuration);
     return () => window.clearTimeout(timer);
   }, [lifetime]);
 
@@ -31,7 +33,7 @@ function ToastNotification({ message, tone = 'warning', duration = 3000, icon, o
         dismissed.current = true;
         onDismissRef.current();
       }
-    }, 300);
+    }, exitDuration);
     return () => window.clearTimeout(timer);
   }, [closing]);
 
@@ -57,7 +59,7 @@ function ToastNotification({ message, tone = 'warning', duration = 3000, icon, o
         <div className="site-toast-track toast-timer-track" aria-hidden="true">
           <div
             className="toast-timer-fill"
-            style={{ animation: `toastTimerFill ${lifetime}ms linear both` }}
+            style={{ animation: `toastTimerFill ${progressDuration}ms linear forwards` }}
           />
         </div>
       )}

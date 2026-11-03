@@ -64,7 +64,6 @@ function FeaturesSectionForm({ initialData, saving, onSave }: FeaturesSectionFor
       })),
     });
     if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
-      notifySaveError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

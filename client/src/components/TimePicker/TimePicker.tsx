@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Clock3, ChevronDown } from 'lucide-react';
+import UiSelect from '../UiSelect';
 
 type Props = { value: string; onChange: (value: string) => void; invalid?: boolean };
 const pad = (value: number) => String(value).padStart(2, '0');
@@ -14,7 +15,7 @@ export default function TimePicker({ value, onChange, invalid = false }: Props) 
   const minute = parsed ? parsed[2] : '00';
   const period = hour >= 12 ? 'PM' : 'AM';
   const twelveHour = pad(hour % 12 || 12);
-  const inputClass = 'block min-w-0 w-full appearance-auto rounded-xl border border-sky-200 bg-sky-50/80 px-1.5 py-2.5 text-center text-sm font-semibold tabular-nums text-slate-800 shadow-sm outline-none transition focus:border-sky-400 focus:ring-2 focus:ring-sky-200/60 dark:border-sky-400/40 dark:bg-sky-950/30 dark:text-white dark:focus:ring-sky-500/25';
+
 
   function setHour(next: string) {
     const converted = mode === '24' ? Number(next) : Number(next) % 12 + (period === 'PM' ? 12 : 0);
@@ -41,7 +42,7 @@ export default function TimePicker({ value, onChange, invalid = false }: Props) 
         />
       </div>
       {open && (
-        <div className="relative mt-2 w-full min-w-0 rounded-2xl border border-violet-200/70 bg-white p-3 shadow-lg shadow-violet-600/10 dark:border-violet-400/30 dark:bg-gray-900">
+        <div className="relative mt-2 w-full min-w-0 max-w-full rounded-2xl border border-violet-200/70 bg-white p-3 shadow-lg shadow-violet-600/10 dark:border-violet-400/30 dark:bg-gray-900">
           <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
             <span className="text-xs font-semibold text-gray-600 dark:text-gray-300">انتخاب زمان</span>
             <div className="inline-flex rounded-lg bg-violet-50 p-1 dark:bg-violet-500/10" role="group" aria-label="قالب ساعت">
@@ -49,17 +50,16 @@ export default function TimePicker({ value, onChange, invalid = false }: Props) 
               <button type="button" onClick={() => setMode('12')} aria-pressed={mode === '12'} className={`rounded-md px-2 py-1 text-xs ${mode === '12' ? 'bg-violet-600 text-white' : 'text-violet-700 dark:text-violet-200'}`}>۱۲ ساعته</button>
             </div>
           </div>
-          <div className={`grid min-w-0 items-center gap-2 ${mode === '12' ? 'grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_minmax(0,1.2fr)]' : 'grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]'}`} dir="ltr">
-            <select aria-label="ساعت" value={mode === '24' ? pad(hour) : twelveHour} onChange={e => setHour(e.target.value)} className={inputClass}>
+          <div className={`grid min-w-0 items-center gap-2 ${mode === '12' ? 'grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)]' : 'grid-cols-[minmax(0,1fr)_minmax(0,1fr)]'}`} dir="ltr">
+            <UiSelect aria-label="ساعت" value={mode === '24' ? pad(hour) : twelveHour} onChange={e => setHour(e.target.value)} className="min-w-0 [&_.ui-select-trigger]:!px-2 [&_.ui-select-trigger]:!bg-sky-50/80 dark:[&_.ui-select-trigger]:!bg-sky-950/30">
               {(mode === '24' ? HOURS : HOURS.slice(1,13)).map(h => <option value={h} key={h}>{h}</option>)}
-            </select>
-            <span className="text-center font-bold text-violet-500">:</span>
-            <select aria-label="دقیقه" value={minute} onChange={e => onChange(`${pad(hour)}:${e.target.value}`)} className={inputClass}>
+            </UiSelect>
+            <UiSelect aria-label="دقیقه" value={minute} onChange={e => onChange(`${pad(hour)}:${e.target.value}`)} className="min-w-0 [&_.ui-select-trigger]:!px-2 [&_.ui-select-trigger]:!bg-sky-50/80 dark:[&_.ui-select-trigger]:!bg-sky-950/30">
               {MINUTES.map(m => <option key={m} value={m}>{m}</option>)}
-            </select>
-            {mode === '12' && <select aria-label="قبل یا بعد از ظهر" value={period} onChange={e => onChange(`${pad((hour % 12) + (e.target.value === 'PM' ? 12 : 0))}:${minute}`)} className={inputClass}>
+            </UiSelect>
+            {mode === '12' && <UiSelect aria-label="قبل یا بعد از ظهر" value={period} onChange={e => onChange(`${pad((hour % 12) + (e.target.value === 'PM' ? 12 : 0))}:${minute}`)} className="min-w-0 [&_.ui-select-trigger]:!px-2 [&_.ui-select-trigger]:!bg-sky-50/80 dark:[&_.ui-select-trigger]:!bg-sky-950/30">
               <option value="AM">AM</option><option value="PM">PM</option>
-            </select>}
+            </UiSelect>}
           </div>
           <button type="button" onClick={() => { if (!parsed) onChange('09:00'); setOpen(false); }} className="ui-primary-gradient mt-3 w-full rounded-xl px-3 py-2.5 text-xs font-semibold">تأیید زمان</button>
         </div>

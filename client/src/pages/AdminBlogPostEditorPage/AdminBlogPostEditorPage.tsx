@@ -2,7 +2,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowRight, Save, Loader2, XCircle } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Spinner from '../../components/Spinner/Spinner';
-import Toast from '../../components/Toast/Toast';
 import ToggleSwitch from '../../components/ToggleSwitch/ToggleSwitch';
 import MarkdownEditor from '../../components/MarkdownEditor/MarkdownEditor';
 import ImageUploadField from '../../components/ImageUploadField/ImageUploadField';
@@ -48,9 +47,7 @@ function AdminBlogPostEditorPage() {
 
   return (
     <AppLayout title={isEditMode ? 'ویرایشِ پست' : 'پستِ جدید'}>
-      {error && (
-        <Toast message={error} tone="danger" icon={XCircle} onDismiss={clearError} />
-      )}
+      {error && <div className="form-inline-error mb-4 flex items-center justify-between gap-3" role="alert"><span>{error}</span><button type="button" aria-label="بستن خطا" onClick={clearError}><XCircle size={17}/></button></div>}
 
       <button
         onClick={() => navigate('/blog-posts')}

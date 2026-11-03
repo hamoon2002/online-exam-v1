@@ -39,6 +39,17 @@ export default function SupportChat({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const pending = useRef<{ body: string; clientId: string } | null>(null);
+  const messageListRef = useRef<HTMLDivElement>(null);
+  const latestRenderedMessageRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (staff || loading || messages.length === 0) return;
+    const latest = messages[messages.length - 1].id;
+    if (latestRenderedMessageRef.current !== latest) {
+      const list = messageListRef.current;
+      if (list) list.scrollTop = list.scrollHeight;
+      latestRenderedMessageRef.current = latest;
+    }
+  }, [staff, loading, messages]);
   const load = useCallback(
     async (signal?: AbortSignal) => {
       const current = threadId
@@ -108,7 +119,7 @@ export default function SupportChat({
           <span className="text-xs text-slate-500 dark:text-slate-400">پیام‌ها در همین گفتگو ذخیره می‌شوند.</span>
           {thread?.status && <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-semibold text-violet-700 dark:bg-violet-500/10 dark:text-violet-200">{statusLabel[thread.status] ?? thread.status}</span>}
         </div>
-        <div role="log" aria-label="پیام‌های پشتیبانی" className="support-modern-messages min-h-0 overflow-y-auto px-4 py-5 sm:px-7">
+        <div ref={messageListRef} role="log" aria-label="پیام‌های پشتیبانی" className="support-modern-messages min-h-0 overflow-y-auto px-4 py-5 sm:px-7">
           {loading ? <p className="py-12 text-center text-sm text-slate-500">در حال دریافت پیام‌ها…</p> : !messages.length ? (
             <div className="flex h-full min-h-48 flex-col items-center justify-center text-center">
               <p className="font-semibold text-slate-700 dark:text-slate-200">هنوز پیامی ثبت نشده است</p>

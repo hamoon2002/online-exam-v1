@@ -1475,3 +1475,98 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
     animation:none!important;
   }
 }
+
+/* Instructor support messenger v2: one contained frame, no nested oversized cards. */
+.support-page.support-instructor-page{max-width:780px!important;padding-bottom:16px}
+.support-instructor-page .support-modern-frame{
+  overflow:hidden!important;
+  isolation:isolate;
+  border-radius:22px!important;
+  border:1px solid rgba(149,130,208,.24)!important;
+  background:rgba(255,255,255,.92)!important;
+  box-shadow:0 14px 38px rgba(63,50,115,.075)!important;
+}
+.support-instructor-page .support-modern{display:flex;flex-direction:column;gap:0!important;min-width:0}
+.support-instructor-page .support-modern-messages[role="log"]{
+  display:block;
+  box-sizing:border-box;
+  flex:none!important;
+  width:100%;
+  height:clamp(330px,46dvh,460px)!important;
+  min-height:330px!important;
+  max-height:460px!important;
+  overflow-x:hidden;
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:rgba(139,123,187,.36) transparent;
+  border:0!important;
+  border-radius:0!important;
+  padding:22px 26px!important;
+  background:linear-gradient(150deg,rgba(250,249,255,.94),rgba(246,247,253,.84))!important;
+}
+.support-instructor-page .support-modern-messages[role="log"]::-webkit-scrollbar{width:5px}
+.support-instructor-page .support-modern-messages[role="log"]::-webkit-scrollbar-thumb{
+  border-radius:6px;background:rgba(139,123,187,.35)
+}
+.support-instructor-page .support-modern-messages .support-message-bubble{
+  width:fit-content;
+  min-width:0!important;
+  max-width:min(78%,465px)!important;
+  margin-bottom:9px!important;
+  padding:12px 16px 10px!important;
+  border-radius:16px!important;
+  box-shadow:0 2px 7px rgba(50,42,92,.045)!important;
+  font-size:13px;
+}
+.support-instructor-page .support-modern-messages .support-message-own{
+  margin-right:0!important;margin-left:auto!important;
+  border-bottom-right-radius:5px!important;
+  background:#ede7fc!important;
+  color:#342853!important;
+  border-color:rgba(135,106,210,.19)!important;
+}
+.support-instructor-page .support-modern-messages .support-message-other{
+  margin-left:0!important;margin-right:auto!important;
+  border-bottom-left-radius:5px!important;
+  background:#fff!important;
+  color:#354052!important;
+  border-color:rgba(143,153,179,.22)!important;
+}
+.support-instructor-page .support-modern-messages .support-message-text{
+  font-size:13px!important;line-height:1.85!important;
+}
+.support-instructor-page .support-modern-messages .support-chat-day{margin:13px 0 18px}
+.support-instructor-page .support-modern-compose{
+  display:block!important;width:100%;margin:0!important;
+  border-top:1px solid rgba(145,129,188,.12);
+  padding:16px 22px!important;
+}
+.support-instructor-page .support-modern-compose .support-modern-input{
+  display:block;min-height:76px!important;max-height:76px!important;
+  resize:none!important;background:rgba(249,249,253,.8)!important;
+}
+.support-instructor-page .support-modern-compose .support-modern-send{
+  min-width:115px;height:40px;width:auto!important;margin:0!important;
+  justify-self:auto;padding:0 20px!important;
+}
+.dark .support-instructor-page .support-modern-frame{
+  background:rgba(28,33,56,.95)!important;border-color:rgba(169,148,227,.19)!important
+}
+.dark .support-instructor-page .support-modern-messages[role="log"]{
+  background:linear-gradient(140deg,#1c2236,#22273f)!important
+}
+.dark .support-instructor-page .support-modern-messages .support-message-own{
+  background:#433460!important;color:#f3edff!important;border-color:rgba(174,147,237,.22)!important
+}
+.dark .support-instructor-page .support-modern-messages .support-message-other{
+  background:#30384f!important;color:#eef0f9!important;border-color:rgba(145,155,185,.2)!important
+}
+@media(max-width:640px){
+ .support-instructor-page .support-modern-messages[role="log"]{
+  height:clamp(290px,43dvh,380px)!important;min-height:290px!important;
+  max-height:380px!important;padding:15px!important
+ }
+ .support-instructor-page .support-modern-compose{padding:14px!important}
+ .support-instructor-page .support-modern-messages .support-message-bubble{max-width:88%!important}
+ .support-instructor-page .support-modern-compose .support-modern-send{width:auto!important}
+}

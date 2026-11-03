@@ -113,7 +113,7 @@ function NotificationsPanel() {
       <ConfirmDeleteModal isOpen={confirmClear} title="پاک‌کردن همه اعلان‌ها"
         description="همه اعلان‌های این حساب از فهرست شما پاک شوند؟ اعلان‌های سایر کاربران تغییر نمی‌کنند."
         busy={deletingAll} error={deleteError ?? undefined}
-        onConfirm={async () => { await removeAllNotifications(); setConfirmClear(false); }}
+        onConfirm={async () => { if (await removeAllNotifications()) setConfirmClear(false); }}
         onClose={() => { if (!deletingAll) setConfirmClear(false); }} />
       {isOpen && (
         <div

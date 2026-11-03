@@ -1231,3 +1231,57 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .glass-app-shell main table:not([role="presentation"]) > tbody > tr:nth-child(even):not([aria-selected="true"]):not([data-selected-row="true"]){background:rgba(155,134,221,.045)}
 .dark .glass-app-shell main table:not([role="presentation"]) > tbody > tr:hover{background:rgba(151,112,231,.13)!important}
 .dark .glass-app-shell main table:not([role="presentation"]) > tbody > tr:is([aria-selected="true"],[data-selected-row="true"],.ui-table-selected){background:rgba(144,100,238,.35)!important;box-shadow:inset -4px 0 #c09aff!important}
+
+/* Harmonized subscription cards: translucent glass with subtle tier accents. */
+.glass-app-shell .glass-plans-page .glass-plan-card{
+  backdrop-filter:blur(22px);
+  -webkit-backdrop-filter:blur(22px);
+  box-shadow:0 12px 32px rgba(83,69,146,.09),inset 0 1px rgba(255,255,255,.65)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-free{
+  background:linear-gradient(145deg,rgba(255,255,255,.78),rgba(235,237,251,.51))!important;
+  border:1px solid rgba(149,146,192,.29)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold{
+  background:linear-gradient(145deg,rgba(255,253,244,.80),rgba(245,233,204,.44),rgba(237,228,254,.29))!important;
+  border:1.5px solid rgba(205,172,101,.42)!important;
+  box-shadow:0 13px 33px rgba(151,116,66,.11),inset 0 1px rgba(255,255,255,.74)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum{
+  background:linear-gradient(145deg,rgba(248,252,255,.82),rgba(220,232,251,.49),rgba(230,220,252,.35))!important;
+  border:1.5px solid rgba(129,155,205,.43)!important;
+  box-shadow:0 15px 36px rgba(85,109,171,.12),inset 0 1px rgba(255,255,255,.77)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip{
+  background:linear-gradient(145deg,rgba(253,249,255,.85),rgba(232,219,252,.58),rgba(209,193,247,.39))!important;
+  border:1.5px solid rgba(157,115,209,.53)!important;
+  box-shadow:0 18px 42px rgba(112,75,167,.17),inset 0 1px rgba(255,255,255,.82)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold .plan-tier-icon{
+  background:rgba(235,204,128,.32)!important;color:#946e24!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.6)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum .plan-tier-icon{
+  background:rgba(163,190,230,.31)!important;color:#5d7ca8!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.6)!important;
+}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip .plan-tier-icon{
+  background:rgba(176,143,224,.29)!important;color:#7651ad!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.65)!important;
+}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-free{
+  background:linear-gradient(145deg,rgba(35,41,64,.88),rgba(48,48,79,.73))!important;
+  border-color:rgba(156,158,194,.27)!important;
+}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold{
+  background:linear-gradient(145deg,rgba(58,49,52,.89),rgba(72,60,65,.71),rgba(56,45,77,.75))!important;
+  border-color:rgba(208,178,124,.37)!important;
+}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum{
+  background:linear-gradient(145deg,rgba(37,49,74,.89),rgba(54,63,98,.72))!important;
+  border-color:rgba(148,180,224,.38)!important;
+}
+.dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip{
+  background:linear-gradient(145deg,rgba(56,43,79,.89),rgba(76,52,112,.75))!important;
+  border-color:rgba(192,150,239,.44)!important;
+}

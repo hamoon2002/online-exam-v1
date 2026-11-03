@@ -9,7 +9,7 @@ const MINUTES = Array.from({ length: 60 }, (_, i) => pad(i));
 export default function TimePicker({ value, onChange, invalid = false }: Props) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<'24' | '12'>('24');
-  const parsed = /^([01]\\d|2[0-3]):([0-5]\\d)$/.exec(value);
+  const parsed = /^([01][0-9]|2[0-3]):([0-5][0-9])$/.exec(value);
   const hour = parsed ? Number(parsed[1]) : 0;
   const minute = parsed ? parsed[2] : '00';
   const period = hour >= 12 ? 'PM' : 'AM';

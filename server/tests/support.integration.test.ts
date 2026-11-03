@@ -148,3 +148,55 @@ test('remote assistant requires explicit consent before any provider call', asyn
     process.env.ASSISTANT_PROVIDER = 'local';
   }
 });
+
+test('ticketing separates student and instructor requests, provides unique tracking codes and restricts admin inbox', async (t) => {
+  if (!ready) return unavailable(t, 'PostgreSQL/Redis unavailable');
+  const student = await user('Student');
+  const instructor = await user('Instructor');
+  const outsider = await user('Instructor');
+  const admin = await user('SuperAdmin');
+
+  const studentResponse = await request('/tickets', student, {
+    subject: 'مشکل ورود دانشجو', category: 'Account', priority: 'Normal',
+    body: 'امکان مشاهده نتایج را ندارم.',
+  });
+  assert.equal(studentResponse.status, 201);
+  const studentTicket = (await studentResponse.json()) as { id: string; trackingCode: string; status: string };
+  assert.match(studentTicket.trackingCode, /^TK-[A-Z0-9-]+$/);
+  assert.equal(studentTicket.status, 'Open');
+
+  const instructorResponse = await request('/tickets', instructor, {
+    subject: 'خطای بانک سوال', category: 'Exams', priority: 'High',
+    body: 'در ایجاد سوال جدید با خطا مواجه شدم.',
+  });
+  assert.equal(instructorResponse.status, 201);
+  const instructorTicket = (await instructorResponse.json()) as { id: string; trackingCode: string };
+  assert.notEqual(studentTicket.trackingCode, instructorTicket.trackingCode);
+
+  assert.equal((await request(`/tickets/${studentTicket.id}`, outsider)).status, 404);
+  assert.equal((await request(`/tickets/${studentTicket.id}`, admin)).status, 404);
+  assert.equal((await request(`/tickets/${instructorTicket.id}`, student)).status, 404);
+  assert.equal((await request(`/tickets/${instructorTicket.id}`, admin)).status, 200);
+  assert.equal((await request(`/tickets/${instructorTicket.id}/messages`, admin)).status, 200);
+
+  const mine = (await (await request('/mine/tickets', instructor)).json()) as Array<{ id: string }>;
+  assert.ok(mine.some(ticket => ticket.id === instructorTicket.id));
+  assert.ok(!mine.some(ticket => ticket.id === studentTicket.id));
+
+  const adminsInstructors = (await (await request('/instructors', admin)).json()) as Array<{ id: string; ticketCount: number }>;
+  assert.ok(adminsInstructors.some(row => row.ticketCount > 0));
+  assert.equal((await request('/instructors', student)).status, 403);
+  const instructorDetail = await request(`/tickets/${instructorTicket.id}/messages`, admin, {
+    body: 'مشکل را بررسی می‌کنیم.', clientId: randomUUID(),
+  });
+  assert.equal(instructorDetail.status, 201);
+  assert.equal((await request(`/tickets/${studentTicket.id}/messages`, admin, {
+    body: 'نباید مجاز باشد', clientId: randomUUID(),
+  })).status, 404);
+
+  const updated = await request(`/tickets/${instructorTicket.id}`, instructor, { status: 'Closed' }, 'PATCH');
+  assert.equal(updated.status, 200);
+  assert.equal((await request(`/tickets/${instructorTicket.id}/messages`, instructor, {
+    body: 'تیکت بسته است', clientId: randomUUID(),
+  })).status, 400);
+});

@@ -97,7 +97,7 @@ function ExamFormModal({
           <label className="text-sm text-gray-600 dark:text-gray-300">
             تاریخ و ساعت برگزاری
           </label>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:items-start">
+          <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 sm:items-start">
             <div className={`min-w-0 [&>div>div>button:first-child]:min-h-11 ${dateError ? "[&_button:first-of-type]:!border-rose-500" : ""}`}>
               <label className="mb-1 block text-xs text-gray-500 dark:text-gray-400">تاریخ</label>
               <PersianDatePicker
@@ -106,7 +106,7 @@ function ExamFormModal({
               />
               {dateError && <p role="alert" className="mt-1 text-xs font-medium text-rose-600 dark:text-rose-300">تاریخ برگزاری الزامی است.</p>}
             </div>
-            <div className="min-w-0">
+            <div className="min-w-0 sm:col-span-2">
               <label htmlFor="exam-start-time" className="mb-1 block text-xs text-gray-500 dark:text-gray-400">ساعت برگزاری (انتخاب ۱۲ یا ۲۴ ساعته)</label>
               <TimePicker value={scheduledTime} onChange={onScheduledTimeChange} invalid={timeError} />
               {timeError && <p role="alert" className="text-xs font-medium text-rose-600 dark:text-rose-300">ساعت برگزاری الزامی است.</p>}

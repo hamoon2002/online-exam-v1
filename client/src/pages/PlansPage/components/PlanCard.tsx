@@ -70,7 +70,7 @@ function PlanCard({
 
       <div className="mt-5 flex items-baseline gap-1.5">
         <span
-          className={`text-3xl font-extrabold text-gray-900 dark:text-white`}
+          className={`plan-price-amount text-3xl font-extrabold text-gray-900 dark:text-white`}
         >
           {plan.priceLabel}
         </span>

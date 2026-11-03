@@ -67,7 +67,7 @@ function SettingsPage() {
           /></section>
         )}
 
-        <section id="settings-appearance"><AppearanceSection isDark={isDark} onToggle={toggleTheme} /></section>
+        <section id="settings-appearance"><AppearanceSection isDark={isDark} onToggle={toggleTheme} userId={currentUser?.id} /></section>
       </div></div>
     </AppLayout>
   );

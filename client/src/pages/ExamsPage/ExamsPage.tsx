@@ -238,8 +238,8 @@ function ExamsPage() {
               </div>
             )}
             {canManage && reportExams.length > 0 && (
-              <div className="flex min-h-28 items-center justify-center border-t border-violet-200/40 bg-violet-50/30 px-5 py-5 dark:border-violet-400/15 dark:bg-violet-500/5">
-                <button type="button" onClick={openAddModal} disabled={planLimit.checkingLimit} className="ui-create-cta flex min-h-13 w-full max-w-64 items-center justify-center rounded-xl px-8 text-base font-bold shadow-md transition-shadow hover:shadow-lg disabled:opacity-50 sm:min-w-60">
+              <div className="flex items-center justify-center bg-violet-50/20 px-5 py-4 dark:bg-violet-500/5">
+                <button type="button" onClick={openAddModal} disabled={planLimit.checkingLimit} className="ui-create-cta inline-flex min-h-12 w-full max-w-72 items-center justify-center rounded-xl px-8 text-sm font-bold shadow-md transition-shadow hover:shadow-lg disabled:opacity-50">
                   + آزمون جدید
                 </button>
               </div>

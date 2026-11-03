@@ -76,7 +76,7 @@ function StudentsPage() {
             <h1 className="text-2xl font-bold dark:text-white">دانشجویان</h1>
           </div>
 
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm p-6">
+          <div className="ui-admin-table overflow-hidden rounded-2xl border border-violet-200/50 bg-white/85 shadow-sm dark:border-violet-400/15 dark:bg-gray-900/85">
             {visibleStudents.length === 0 ? (
               <EmptyState
                 icon={Users}

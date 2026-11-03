@@ -106,7 +106,7 @@ function ExamFormModal({
               />
               {dateError && <p role="alert" className="mt-1 text-xs font-medium text-rose-600 dark:text-rose-300">تاریخ برگزاری الزامی است.</p>}
             </div>
-            <div className="min-w-0 sm:col-span-2">
+            <div className="min-w-0">
               <label htmlFor="exam-start-time" className="mb-1 block text-xs text-gray-500 dark:text-gray-400">ساعت برگزاری (انتخاب ۱۲ یا ۲۴ ساعته)</label>
               <TimePicker value={scheduledTime} onChange={onScheduledTimeChange} invalid={timeError} />
               {timeError && <p role="alert" className="text-xs font-medium text-rose-600 dark:text-rose-300">ساعت برگزاری الزامی است.</p>}

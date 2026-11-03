@@ -1117,3 +1117,9 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold .plan-tier-icon{color:#a76b10!important;background:#f7e4b0!important}
 .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum .plan-tier-icon{color:#577dad!important;background:#dae6f7!important}
 .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip .plan-tier-icon{color:#7540cb!important;background:#e7d8ff!important}
+
+/* Fallback selection for pages not yet using the typed DataTable component. */
+.glass-app-shell main table tbody tr[data-selected-row="true"]{background:rgba(120,86,222,.22)!important;box-shadow:inset -4px 0 #7650d9}
+.glass-app-shell main table tbody tr[data-selected-row="true"]:hover{background:rgba(120,86,222,.27)!important}
+.dark .glass-app-shell main table tbody tr[data-selected-row="true"]{background:rgba(144,100,238,.35)!important;box-shadow:inset -4px 0 #c09aff}
+.dark .glass-app-shell main table tbody tr[data-selected-row="true"]:hover{background:rgba(144,100,238,.44)!important}

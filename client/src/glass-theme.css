@@ -1027,3 +1027,29 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
  background:linear-gradient(112deg,#302263 0%,#473183 52%,#60429d 100%)!important;
  border-color:rgba(191,167,247,.26)!important;
 }
+
+
+/* One calm table language across admin lists. */
+.glass-app-shell .ui-admin-table table{border-collapse:separate;border-spacing:0;width:100%}
+.glass-app-shell .ui-admin-table thead{background:linear-gradient(105deg,rgba(113,83,204,.095),rgba(153,129,227,.045))!important;color:#635382}
+.glass-app-shell .ui-admin-table th{font-weight:700;text-align:right;padding-block:14px;border-bottom:1px solid rgba(137,111,204,.18)}
+.glass-app-shell .ui-admin-table tbody tr{transition:background-color .18s ease}
+.glass-app-shell .ui-admin-table tbody tr:nth-child(even){background:rgba(132,111,200,.032)}
+.glass-app-shell .ui-admin-table tbody tr:hover{background:rgba(125,94,216,.082)!important}
+.dark .glass-app-shell .ui-admin-table thead{background:rgba(135,102,215,.16)!important;color:#d3c4ff}
+.dark .glass-app-shell .ui-admin-table tbody tr:nth-child(even){background:rgba(155,134,221,.045)}
+.dark .glass-app-shell .ui-admin-table tbody tr:hover{background:rgba(151,112,231,.13)!important}
+
+/* Settings navigation and panels share a stable geometry. */
+.glass-app-shell .settings-nav-refined{border-radius:20px!important;padding:12px!important;gap:9px!important;align-items:center}
+.glass-app-shell .settings-nav-refined>a{flex:0 0 auto;min-width:132px;justify-content:center;min-height:43px!important;border-radius:12px!important}
+.glass-app-shell .settings-nav-refined>a:hover{border-color:rgba(122,92,211,.4);background:rgba(130,103,216,.11)}
+.glass-app-shell .settings-content-refined>section{display:flex;flex-direction:column;min-width:0}
+.glass-app-shell .settings-content-refined>section>div{flex:1;min-height:220px;box-sizing:border-box}
+@media(max-width:560px){.glass-app-shell .settings-nav-refined>a{flex:1 1 130px;min-width:0}}
+
+/* More breathable support chat without oversized bubbles on wide screens. */
+.support-page [role="log"]{min-height:250px!important;max-height:58dvh!important;padding:20px!important}
+.support-page .support-message-bubble{max-width:min(83%,610px)!important;min-width:135px;padding:13px 17px 10px!important;margin-bottom:12px!important}
+.support-page .support-message-text{font-size:14px;line-height:2}
+@media(max-width:640px){.support-page [role="log"]{padding:12px!important}.support-page .support-message-bubble{max-width:92%!important}}

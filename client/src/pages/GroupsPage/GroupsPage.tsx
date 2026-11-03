@@ -154,6 +154,7 @@ function GroupsPage() {
 
           </div>
 
+          <section className="groups-outer-panel rounded-2xl border border-violet-200/50 bg-white/80 p-4 shadow-sm backdrop-blur-xl dark:border-violet-400/15 dark:bg-gray-900/80 sm:p-5">
           {visibleGroups.length === 0 ? (
             <EmptyState
               icon={Users}
@@ -177,7 +178,8 @@ function GroupsPage() {
               ))}
             </div>
           )}
-          {visibleGroups.length > 0 && <div className="mt-6 flex justify-center"><button type="button" onClick={openAddModal} disabled={planLimit.checkingLimit} className="ui-create-cta"><Plus size={17}/> گروه جدید</button></div>}
+          {visibleGroups.length > 0 && <div className="mt-4 flex justify-center rounded-xl bg-violet-50/25 px-4 py-4 dark:bg-violet-500/5"><button type="button" onClick={openAddModal} disabled={planLimit.checkingLimit} className="ui-create-cta"><Plus size={17}/> گروه جدید</button></div>}
+          </section>
         </>
       )}
 

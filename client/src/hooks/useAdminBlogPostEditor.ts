@@ -34,6 +34,7 @@ function useAdminBlogPostEditor(postId: string | undefined) {
   const [title, setTitle] = useState('');
   const [slug, setSlug] = useState('');
   const [slugTouched, setSlugTouched] = useState(false);
+  const [fallbackSlug] = useState(() => `post-${Date.now().toString(36)}`);
   const [excerpt, setExcerpt] = useState('');
   const [contentMarkdown, setContentMarkdown] = useState('');
   const [published, setPublished] = useState(false);
@@ -59,7 +60,7 @@ function useAdminBlogPostEditor(postId: string | undefined) {
 
   function handleTitleChange(value: string) {
     setTitle(value);
-    if (!slugTouched) setSlug(slugify(value));
+    if (!slugTouched) setSlug(value.trim() ? slugify(value) || fallbackSlug : '');
   }
 
   function handleSlugChange(value: string) {

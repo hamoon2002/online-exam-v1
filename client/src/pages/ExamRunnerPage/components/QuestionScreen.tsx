@@ -32,8 +32,6 @@ function QuestionScreen({
   isLastQuestion,
   answers,
   timeLeft,
-  saveStatus,
-  onRetrySave,
   activeWarning,
   onDismissWarning,
   onSelectAnswer,

@@ -109,7 +109,7 @@ function AdminBlogPostsPage() {
           </div>
         )}
         {!loading && posts.length > 0 && (
-          <div className="mt-6 flex justify-center border-t border-violet-200/40 pt-5 dark:border-violet-400/15">
+          <div className="mt-4 flex justify-center rounded-xl bg-violet-50/25 px-4 py-4 dark:bg-violet-500/5">
             <button type="button" onClick={() => navigate('/blog-posts/new')} className="ui-create-cta"><Plus size={17} /> پست جدید</button>
           </div>
         )}

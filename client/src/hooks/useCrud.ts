@@ -49,6 +49,7 @@ function useCrud<T extends { id: string }, TInput>(
   }, []);
 
   async function addItem(input: TInput): Promise<T | undefined> {
+    setWriteError(null);
     if (!apiRef.current.add) {
       setError(messagesRef.current.unsupported);
       return undefined;
@@ -59,7 +60,9 @@ function useCrud<T extends { id: string }, TInput>(
       notifySaveSuccess('مورد جدید با موفقیت ثبت شد');
       return newItem;
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : messagesRef.current.add);
+      const message = err instanceof ApiError ? err.message : messagesRef.current.add;
+      setWriteError(message);
+      setError(message);
       return undefined;
     }
   }

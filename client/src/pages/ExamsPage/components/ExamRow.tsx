@@ -14,6 +14,7 @@ type ExamRowProps = {
   canManage: boolean;
   isObserver?: boolean;
   canTake?: boolean;
+  hasFinished?: boolean;
   selected?: boolean;
   onSelect?: () => void;
   participantCount: number;
@@ -50,6 +51,7 @@ function ExamRow({
   canManage,
   isObserver = false,
   canTake = false,
+  hasFinished = false,
   selected = false,
   onSelect,
   participantCount,
@@ -120,9 +122,9 @@ function ExamRow({
               className="inline-flex h-9 w-29 items-center justify-center rounded-lg text-xs font-semibold text-violet-600 transition hover:bg-violet-50 dark:text-violet-300 dark:hover:bg-violet-500/10"><ListChecks size={16}/> مشاهده سؤال‌ها</button>
           ) : (
             <button type="button" onClick={() => onTake(exam)}
-              disabled={!canTake || exam.status === 'draft' || exam.status === 'completed'}
-              title={exam.status === 'draft' ? 'آزمون هنوز منتشر نشده' : exam.status === 'completed' ? 'آزمون پایان یافته' : 'شروع آزمون'}
-              className="inline-flex h-9 w-28 items-center justify-center gap-1.5 rounded-lg text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-30 dark:text-emerald-300 dark:hover:bg-emerald-500/10"><PlayCircle size={16}/> شروع آزمون</button>
+              disabled={!canTake || hasFinished || exam.status === 'draft' || exam.status === 'completed'}
+              title={hasFinished ? 'این آزمون را قبلاً به پایان رسانده‌اید' : exam.status === 'draft' ? 'آزمون هنوز منتشر نشده' : exam.status === 'completed' ? 'آزمون پایان یافته' : 'شروع آزمون'}
+              className="inline-flex h-9 min-w-28 items-center justify-center gap-1.5 rounded-lg px-2 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-50 disabled:cursor-not-allowed disabled:opacity-50 dark:text-emerald-300 dark:hover:bg-emerald-500/10"><PlayCircle size={16}/>{hasFinished ? 'انجام‌شده' : 'شروع آزمون'}</button>
           )}
         </div>
       </td>

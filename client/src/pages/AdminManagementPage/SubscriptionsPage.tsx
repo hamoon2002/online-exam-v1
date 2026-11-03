@@ -1,4 +1,6 @@
 import UiSelect from '../../components/UiSelect';
+import { Save, Pencil } from 'lucide-react';
+import { notifySaveSuccess, notifySaveError } from '../../components/Toast/Toast';
 import { useState } from 'react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import PageHeader from '../../components/PageHeader/PageHeader';
@@ -27,9 +29,11 @@ export default function SubscriptionsPage() {
     try {
       await assignSubscription(editing.id, plan);
       setEditing(null);
+      notifySaveSuccess('اشتراک مدرس با موفقیت تغییر کرد');
       list.reload();
     } catch {
       setError('تغییر اشتراک انجام نشد؛ دوباره تلاش کنید.');
+      notifySaveError('تغییر اشتراک انجام نشد؛ دوباره تلاش کنید.');
     } finally {
       setBusy(false);
     }
@@ -71,9 +75,9 @@ export default function SubscriptionsPage() {
               type="button"
               disabled={busy}
               onClick={save}
-              className="rounded-xl bg-brand-600 px-4 py-2 text-white disabled:opacity-50"
+              className="ui-primary-gradient inline-flex items-center gap-2 rounded-xl px-4 py-2 text-white disabled:opacity-50"
             >
-              {busy ? 'در حال ثبت…' : 'تأیید تغییر'}
+              <Save size={17}/>{busy ? 'در حال ثبت…' : 'ذخیره تغییر'}
             </button>
             <button
               type="button"
@@ -118,14 +122,14 @@ export default function SubscriptionsPage() {
             render: (i) => (
               <button
                 type="button"
-                className="rounded-lg px-3 py-2 text-brand-600 hover:bg-brand-50 dark:text-brand-400 dark:hover:bg-white/5"
+                className="ui-action-edit rounded-lg px-3 py-2"
                 onClick={() => {
                   setEditing(i);
                   setPlan((i.plan?.planId || 'free') as PlanId);
                   setError(null);
                 }}
               >
-                تغییر اشتراک
+                <Pencil size={15}/> تغییر اشتراک
               </button>
             ),
           },

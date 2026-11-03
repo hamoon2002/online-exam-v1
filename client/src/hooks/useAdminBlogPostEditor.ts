@@ -23,6 +23,9 @@ function slugify(title: string): string {
     .replace(/^-|-$/g, '');
 }
 
+export type BlogField = 'title' | 'slug' | 'excerpt' | 'contentMarkdown';
+export type BlogFieldErrors = Partial<Record<BlogField, string>>;
+
 function useAdminBlogPostEditor(postId: string | undefined) {
   const isEditMode = Boolean(postId);
 
@@ -30,6 +33,7 @@ function useAdminBlogPostEditor(postId: string | undefined) {
   const [loading, setLoading] = useState(isEditMode);
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<BlogFieldErrors>({});
   const [uploadingCover, setUploadingCover] = useState(false);
 
   const [title, setTitle] = useState('');
@@ -59,38 +63,58 @@ function useAdminBlogPostEditor(postId: string | undefined) {
       .finally(() => setLoading(false));
   }, [postId]);
 
+  function clearFieldError(field: BlogField) {
+    setFieldErrors(previous => {
+      if (!previous[field]) return previous;
+      const next = { ...previous };
+      delete next[field];
+      return next;
+    });
+    setError(null);
+  }
+
   function handleTitleChange(value: string) {
+    clearFieldError('title');
     setTitle(value);
     if (!slugTouched) setSlug(value.trim() ? slugify(value) || fallbackSlug : '');
   }
 
   function handleSlugChange(value: string) {
+    clearFieldError('slug');
     setSlugTouched(true);
     setSlug(value);
   }
 
-  function validate(): string | null {
-    if (!title.trim()) return 'عنوان الزامیه';
-    if (!slug.trim() || !SLUG_PATTERN.test(slug.trim())) {
-      return 'اسلاگ فقط می‌تونه شامل حروف/عدد انگلیسی کوچک و خط‌تیره باشه';
+  function validate(): BlogFieldErrors {
+    const errors: BlogFieldErrors = {};
+    if (!title.trim()) errors.title = 'عنوان پست را وارد کنید.';
+    else if (title.trim().length > 200) errors.title = 'عنوان نباید بیشتر از ۲۰۰ کاراکتر باشد.';
+    if (!slug.trim()) errors.slug = 'آدرس (اسلاگ) پست را وارد کنید.';
+    else if (slug.trim().length > 200 || !SLUG_PATTERN.test(slug.trim())) {
+      errors.slug = 'اسلاگ فقط باید حروف انگلیسی کوچک، عدد و خط تیره داشته باشد (حداکثر ۲۰۰ کاراکتر).';
     }
-    if (!excerpt.trim()) return 'خلاصه الزامیه';
-    if (!contentMarkdown.trim()) return 'محتوا الزامیه';
-    return null;
+    if (!excerpt.trim()) errors.excerpt = 'خلاصه پست را وارد کنید.';
+    else if (excerpt.trim().length > 500) errors.excerpt = 'خلاصه نباید بیشتر از ۵۰۰ کاراکتر باشد.';
+    if (!contentMarkdown.trim()) errors.contentMarkdown = 'محتوای پست را وارد کنید.';
+    return errors;
   }
 
   async function handleSave(
     nextPublished?: boolean
   ): Promise<BlogPostAdmin | null> {
-    const validationError = validate();
+    const errors = validate();
+    setFieldErrors(errors);
+    const validationError = Object.values(errors)[0];
     if (validationError) {
-      notifySaveError(validationError);
-      setError(validationError);
+      const message = 'لطفاً فیلدهای مشخص‌شده را تکمیل یا اصلاح کنید.';
+      notifySaveError(message);
+      setError(message);
       return null;
     }
 
     setSaving(true);
     setError(null);
+    setFieldErrors({});
     try {
       const input = {
         title: title.trim(),
@@ -140,6 +164,7 @@ function useAdminBlogPostEditor(postId: string | undefined) {
     loading,
     error,
     clearError: () => setError(null),
+    fieldErrors,
     saving,
     uploadingCover,
     title,
@@ -149,8 +174,8 @@ function useAdminBlogPostEditor(postId: string | undefined) {
     published,
     setTitle: handleTitleChange,
     setSlug: handleSlugChange,
-    setExcerpt,
-    setContentMarkdown,
+    setExcerpt: (value: string) => { clearFieldError('excerpt'); setExcerpt(value); },
+    setContentMarkdown: (value: string) => { clearFieldError('contentMarkdown'); setContentMarkdown(value); },
     setPublished,
     handleSave,
     handleUploadCover,

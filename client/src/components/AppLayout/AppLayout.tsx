@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import useTheme from '../../hooks/useTheme';
 import useSidebarCollapse from '../../hooks/useSidebarCollapse';
+import useWorkspaceBackground from '../../hooks/useWorkspaceBackground';
 import { useAuth } from '../../context/AuthContext';
 import { useExamGuard } from '../../context/ExamGuardContext';
 import Sidebar from './SideBar';
@@ -36,6 +37,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const { isDark, toggleTheme } = useTheme();
   const { isCollapsed, toggleCollapse } = useSidebarCollapse();
   const { user } = useAuth();
+  const { selected: workspaceBackground } = useWorkspaceBackground(user?.id);
   const { guardNavigation } = useExamGuard();
   const location = useLocation();
   const navigate = useNavigate();
@@ -47,7 +49,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const currentPath = location.pathname;
 
   useEffect(() => {
-    if (!accountKey) return;
+    if (!accountKey || currentPath === '/workspace') return;
     setTabState(previous => {
       const existing = previous.accountKey === accountKey ? previous.tabs : readTabs(accountKey);
       const next = existing.some(tab => tab.path === currentPath)
@@ -81,12 +83,12 @@ function AppLayout({ children, title }: AppLayoutProps) {
     setTabState({ accountKey, tabs: remaining });
     if (path === currentPath) {
       const next = remaining[Math.min(index, remaining.length - 1)];
-      guardNavigation(() => navigate(next?.path ?? '/dashboard'));
+      guardNavigation(() => navigate(next?.path ?? '/workspace'));
     }
   }
 
   return (
-    <div className="glass-app-shell min-h-screen bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white">
+    <div className={`glass-app-shell workspace-theme-${workspaceBackground} min-h-screen bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white`}>
       <div className="flex min-h-screen flex-col md:flex-row">
         <Sidebar
           isOpen={isSidebarOpen}

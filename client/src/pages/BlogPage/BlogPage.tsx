@@ -44,7 +44,9 @@ function BlogPage() {
 
         {posts === null && !error ? (
           <Spinner />
-        ) : error || posts?.length === 0 ? (
+        ) : error ? (
+          <EmptyState icon={Newspaper} title="دریافت بلاگ ناموفق بود" description="اتصال سرور را بررسی کنید و صفحه را دوباره باز کنید." />
+        ) : posts?.length === 0 ? (
           <EmptyState
             icon={Newspaper}
             title="فعلاً پستی منتشر نشده"

@@ -26,7 +26,7 @@ function AdminBlogPostsPage() {
 
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold dark:text-white">پست‌های بلاگ</h1>
-
+        <button type="button" onClick={() => navigate('/blog-posts/new')} className="ui-create-cta inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm"><Plus size={16}/> پست جدید</button>
       </div>
 
       <div className={`${!loading && posts.length === 0 ? "mx-auto max-w-2xl bg-transparent p-0" : "ui-admin-table rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-900"}`}>

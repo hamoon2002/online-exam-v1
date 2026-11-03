@@ -72,7 +72,6 @@ function FooterSectionForm({ initialData, saving, onSave }: FooterSectionFormPro
       socialLinks: socialLinks.map((s) => ({ platform: s.platform, href: s.href.trim() })),
     });
     if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
-      notifySaveError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

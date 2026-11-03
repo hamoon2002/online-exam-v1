@@ -1,3 +1,4 @@
+import '../../glass-theme.css';
 import SupportWidget from '../../components/Support/SupportWidget';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';

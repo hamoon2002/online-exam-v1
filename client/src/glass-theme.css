@@ -1179,3 +1179,55 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold{background:linear-gradient(145deg,#3c2c19,#654923)!important;border-color:#bd8d36!important}
 .dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum{background:linear-gradient(145deg,#202e48,#35587c)!important;border-color:#80b0e2!important}
 .dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip{background:linear-gradient(145deg,#35204f,#673c93)!important;border-color:#c18af7!important}
+
+/* One table system across admin and instructor panels, including legacy tables
+   that do not yet use the shared DataTable component. */
+.glass-app-shell main table:not([role="presentation"]){
+  width:100%;
+  border-collapse:separate;
+  border-spacing:0;
+  text-align:right;
+  font-size:14px;
+}
+.glass-app-shell main table:not([role="presentation"]) > thead{
+  background:linear-gradient(100deg,rgba(125,96,215,.135),rgba(145,115,220,.07))!important;
+}
+.glass-app-shell main table:not([role="presentation"]) > thead > tr{
+  background:transparent!important;
+  border:0!important;
+}
+.glass-app-shell main table:not([role="presentation"]) > thead > tr > th{
+  padding:15px 16px!important;
+  text-align:right!important;
+  font-size:12px!important;
+  line-height:1.5!important;
+  font-weight:700!important;
+  color:#584581!important;
+  border-bottom:1px solid rgba(121,84,206,.2)!important;
+  white-space:nowrap;
+  background:transparent!important;
+}
+.glass-app-shell main table:not([role="presentation"]) > tbody > tr > td{
+  padding:14px 16px!important;
+  vertical-align:middle;
+  border-bottom:1px solid rgba(135,114,190,.1)!important;
+}
+.glass-app-shell main table:not([role="presentation"]) > tbody > tr:last-child > td{border-bottom:0!important}
+.glass-app-shell main table:not([role="presentation"]) > tbody > tr{transition:background-color .18s ease}
+.glass-app-shell main table:not([role="presentation"]) > tbody > tr:nth-child(even):not([aria-selected="true"]):not([data-selected-row="true"]){
+  background:rgba(132,111,200,.032);
+}
+.glass-app-shell main table:not([role="presentation"]) > tbody > tr:hover{background:rgba(128,98,221,.09)!important}
+.glass-app-shell main table:not([role="presentation"]) > tbody > tr:is([aria-selected="true"],[data-selected-row="true"],.ui-table-selected){
+  background:rgba(120,86,222,.21)!important;
+  box-shadow:inset -4px 0 #7650d9!important;
+}
+.glass-app-shell main table:not([role="presentation"]) > tbody > tr:is([aria-selected="true"],[data-selected-row="true"],.ui-table-selected):hover{background:rgba(120,86,222,.25)!important}
+.dark .glass-app-shell main table:not([role="presentation"]) > thead{background:rgba(135,102,215,.16)!important}
+.dark .glass-app-shell main table:not([role="presentation"]) > thead > tr > th{
+  color:#d9c8ff!important;
+  border-bottom-color:rgba(183,153,249,.22)!important;
+}
+.dark .glass-app-shell main table:not([role="presentation"]) > tbody > tr:nth-child(even):not([aria-selected="true"]):not([data-selected-row="true"]){background:rgba(155,134,221,.045)}
+.dark .glass-app-shell main table:not([role="presentation"]) > tbody > tr:hover{background:rgba(151,112,231,.13)!important}
+.dark .glass-app-shell main table:not([role="presentation"]) > tbody > tr:is([aria-selected="true"],[data-selected-row="true"],.ui-table-selected){background:rgba(144,100,238,.35)!important;box-shadow:inset -4px 0 #c09aff!important}

@@ -38,6 +38,8 @@ function CategoryRow({
   onApprove,
   onDelete,
   onRename,
+  selected,
+  onSelect,
 }: {
   category: CategoryOption;
   showActions: boolean;
@@ -45,6 +47,8 @@ function CategoryRow({
   onApprove: (id: string) => void;
   onDelete: (id: string) => void;
   onRename: (id: string, name: string) => Promise<boolean>;
+  selected: boolean;
+  onSelect: () => void;
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [draftName, setDraftName] = useState(category.name);
@@ -56,7 +60,7 @@ function CategoryRow({
   }
 
   return (
-    <tr className="border-b border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-200 transition duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50">
+    <tr tabIndex={0} aria-selected={selected} onClick={(event) => { if (!(event.target as HTMLElement).closest("button,input,select")) onSelect(); }} onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onSelect(); } }} className="cursor-pointer border-b border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-200 transition duration-200 hover:bg-gray-50 dark:hover:bg-gray-800/50">
       <td className="px-3 py-3.5">
         {isEditing ? (
           <form onSubmit={submitRename} className="flex gap-2">
@@ -70,7 +74,7 @@ function CategoryRow({
             <button
               type="submit"
               disabled={isActioning || !draftName.trim()}
-              className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700 transition disabled:cursor-not-allowed disabled:opacity-50"
+              className="ui-action-save rounded-lg px-3 py-1.5 text-xs font-medium text-white hover:bg-brand-700 transition disabled:cursor-not-allowed disabled:opacity-50"
             >
               ذخیره
             </button>
@@ -153,6 +157,7 @@ function AdminCategoriesPage() {
   } = useAdminCategories();
 
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
   const [search, setSearch] = useState('');
   const [order, setOrder] = useState('asc');
@@ -257,6 +262,8 @@ function AdminCategoriesPage() {
                     onApprove={handleApprove}
                     onDelete={handleDelete}
                     onRename={handleRename}
+                    selected={selectedCategoryId === category.id}
+                    onSelect={() => setSelectedCategoryId(category.id)}
                   />
                 ))}
               </tbody>

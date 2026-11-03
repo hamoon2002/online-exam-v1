@@ -1,3 +1,4 @@
+import { notifySaveError } from '../../../components/Toast/Toast';
 import { useState } from 'react';
 import { Plus, X, Save, RotateCcw } from 'lucide-react';
 
@@ -44,6 +45,7 @@ function HeroSectionForm({ initialData, saving, onSave }: HeroSectionFormProps) 
     const saved = await onSave(defaults);
     if (!saved) {
       setFormError('بازگردانی انجام نشد؛ دوباره تلاش کنید.');
+      notifySaveError('بازگردانی انجام نشد؛ دوباره تلاش کنید.');
       return;
     }
     setTitle(defaults.title);
@@ -64,6 +66,7 @@ function HeroSectionForm({ initialData, saving, onSave }: HeroSectionFormProps) 
     event.preventDefault();
     if (!title.trim() || !subtitle.trim() || !ctaText.trim() || trustPoints.some(p => !p.trim())) {
       setFormError('عنوان، زیرعنوان، متن دکمه و نکته‌های افزوده‌شده را کامل کنید.');
+      notifySaveError('عنوان، زیرعنوان، متن دکمه و نکته‌های افزوده‌شده را کامل کنید.');
       return;
     }
     setFormError('');
@@ -74,6 +77,7 @@ function HeroSectionForm({ initialData, saving, onSave }: HeroSectionFormProps) 
       trustPoints: trustPoints.map((p) => p.trim()).filter(Boolean),
     });
     if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
+      notifySaveError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

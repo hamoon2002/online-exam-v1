@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { MotionConfig } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
 import AppRoutes from './routes/AppRoutes';
 import Toast from './components/Toast/Toast';
@@ -36,12 +35,10 @@ function GlobalSaveNotifications() {
 
 function App() {
   return (
-    <MotionConfig reducedMotion="user">
-      <AuthProvider>
+    <AuthProvider>
         <AppRoutes />
         <GlobalSaveNotifications />
-      </AuthProvider>
-    </MotionConfig>
+    </AuthProvider>
   );
 }
 

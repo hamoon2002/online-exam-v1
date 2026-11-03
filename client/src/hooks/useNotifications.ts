@@ -82,18 +82,20 @@ function useNotifications() {
     }
   }
 
-  async function removeAllNotifications(): Promise<void> {
-    if (deletingAll || notifications.length === 0) return;
+  async function removeAllNotifications(): Promise<boolean> {
+    if (deletingAll || notifications.length === 0) return false;
     setDeletingAll(true);
     setDeleteError(null);
     const userId = currentUser?.id;
     try {
       await dismissAllNotifications();
-      if (owner.current !== userId) return;
+      if (owner.current !== userId) return false;
       notifications.forEach(item => removedIds.current.add(item.id));
       setNotifications([]);
+      return true;
     } catch {
       if (owner.current === userId) setDeleteError('پاک‌کردن همه اعلان‌ها انجام نشد؛ دوباره تلاش کنید.');
+      return false;
     } finally {
       if (owner.current === userId) setDeletingAll(false);
     }

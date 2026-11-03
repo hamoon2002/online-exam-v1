@@ -1313,3 +1313,45 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 @media(prefers-reduced-motion:reduce){
   .site-toast-progress-css{animation:none!important;transform:scaleX(1)!important}
 }
+
+/* Toast lifetime indicator: an actual 0-to-100% fill, then the existing
+   closing state fades and slides the entire notification away. */
+@keyframes toastTimerFill {
+  from { width: 0; }
+  to { width: 100%; }
+}
+.site-toast .toast-timer-track {
+  position:relative;
+  display:block;
+  width:100%;
+  height:5px;
+  overflow:hidden;
+  background:var(--toast-soft,rgba(124,93,213,.12));
+}
+.site-toast .toast-timer-fill {
+  display:block;
+  height:100%;
+  width:0;
+  background:var(--toast-color,#7954d2);
+  border-radius:0 5px 5px 0;
+  animation-name:toastTimerFill;
+  animation-timing-function:linear;
+  animation-fill-mode:forwards;
+}
+.site-toast.site-toast-css {
+  animation:siteToastEnter 230ms ease-out both;
+  transition:opacity 230ms ease,transform 230ms ease;
+}
+.site-toast.site-toast-css.is-closing {
+  animation:none;
+  opacity:0;
+  transform:translateY(14px);
+  pointer-events:none;
+}
+@media (prefers-reduced-motion:reduce) {
+  .site-toast .toast-timer-fill {
+    animation:none;
+    width:100%;
+  }
+  .site-toast.site-toast-css {animation:none;transition:none}
+}

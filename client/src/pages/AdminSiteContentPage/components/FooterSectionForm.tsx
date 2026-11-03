@@ -1,3 +1,4 @@
+import { notifySaveError } from '../../../components/Toast/Toast';
 import { useState } from 'react';
 import { Plus, X, Save } from 'lucide-react';
 
@@ -60,6 +61,7 @@ function FooterSectionForm({ initialData, saving, onSave }: FooterSectionFormPro
     event.preventDefault();
     if (!description.trim() || links.some(p => !p.label.trim() || !p.href.trim()) || socialLinks.some(p => !p.href.trim())) {
       setFormError('متن زیر لوگو و اطلاعات تمام لینک‌های افزوده‌شده را کامل کنید.');
+      notifySaveError('متن زیر لوگو و اطلاعات تمام لینک‌های افزوده‌شده را کامل کنید.');
       return;
     }
     setFormError('');
@@ -70,6 +72,7 @@ function FooterSectionForm({ initialData, saving, onSave }: FooterSectionFormPro
       socialLinks: socialLinks.map((s) => ({ platform: s.platform, href: s.href.trim() })),
     });
     if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
+      notifySaveError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

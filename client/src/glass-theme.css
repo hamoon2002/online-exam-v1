@@ -1053,3 +1053,22 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .support-page .support-message-bubble{max-width:min(83%,610px)!important;min-width:135px;padding:13px 17px 10px!important;margin-bottom:12px!important}
 .support-page .support-message-text{font-size:14px;line-height:2}
 @media(max-width:640px){.support-page [role="log"]{padding:12px!important}.support-page .support-message-bubble{max-width:92%!important}}
+
+
+/* Subscription tiers: restrained differences, more premium at higher levels. */
+.glass-app-shell .plan-tier-free{background:linear-gradient(140deg,rgba(247,249,253,.96),rgba(237,241,250,.8))!important}
+.glass-app-shell .plan-tier-gold{background:linear-gradient(145deg,rgba(255,248,226,.96),rgba(255,238,185,.48))!important}
+.glass-app-shell .plan-tier-platinum{background:linear-gradient(145deg,rgba(238,244,253,.98),rgba(214,226,243,.62))!important}
+.glass-app-shell .plan-tier-vip{background:linear-gradient(145deg,rgba(242,232,255,.96),rgba(210,190,251,.57))!important;box-shadow:0 16px 38px rgba(107,75,180,.14)}
+.glass-app-shell .plan-tier-icon{background:rgba(124,133,153,.12);color:#667085}
+.glass-app-shell .plan-tier-gold .plan-tier-icon{background:rgba(224,161,47,.18);color:#a16a10}
+.glass-app-shell .plan-tier-platinum .plan-tier-icon{background:rgba(103,134,181,.16);color:#4d6896}
+.glass-app-shell .plan-tier-vip .plan-tier-icon{background:rgba(131,87,206,.18);color:#7446c5}
+.dark .glass-app-shell .plan-tier-free{background:linear-gradient(145deg,#22283a,#2c3045)!important}
+.dark .glass-app-shell .plan-tier-gold{background:linear-gradient(145deg,#382e23,#483922)!important}
+.dark .glass-app-shell .plan-tier-platinum{background:linear-gradient(145deg,#262f44,#39445a)!important}
+.dark .glass-app-shell .plan-tier-vip{background:linear-gradient(145deg,#32254d,#4c346f)!important}
+.dark .glass-app-shell .plan-tier-icon{color:#c8cbda}
+.dark .glass-app-shell .plan-tier-gold .plan-tier-icon{color:#f0ce7a}
+.dark .glass-app-shell .plan-tier-platinum .plan-tier-icon{color:#b6d4f3}
+.dark .glass-app-shell .plan-tier-vip .plan-tier-icon{color:#e5c6ff}

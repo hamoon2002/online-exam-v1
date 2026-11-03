@@ -42,6 +42,7 @@ function useExamFormModal({
   const [allowReview, setAllowReview] = useState(true);
   const [groupIds, setGroupIds] = useState<string[]>([]);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   function openAdd() {
     setEditingId(null);
@@ -82,6 +83,7 @@ function useExamFormModal({
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
+    if (isSubmitting) return;
 
     if (
       !title.trim() ||
@@ -154,13 +156,18 @@ function useExamFormModal({
       groupIds,
     };
 
-    const saved = editingId
-      ? await updateItem(editingId, examData)
-      : await addItem(examData);
-
-    // Keep the form contents when saving fails.
-    if (saved) {
-      setIsOpen(false);
+    setValidationError(null);
+    setIsSubmitting(true);
+    try {
+      const saved = editingId
+        ? await updateItem(editingId, examData)
+        : await addItem(examData);
+      // The CRUD handler shows precise backend errors inside the dialog.
+      if (saved) setIsOpen(false);
+    } catch (err) {
+      setValidationError(err instanceof Error ? err.message : 'ذخیره آزمون انجام نشد.');
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -182,6 +189,7 @@ function useExamFormModal({
     groupIds,
     toggleGroup,
     validationError,
+    isSubmitting,
     dismissValidationError: () => setValidationError(null),
     openAdd,
     openEdit,

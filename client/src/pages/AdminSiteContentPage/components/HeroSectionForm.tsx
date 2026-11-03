@@ -77,7 +77,6 @@ function HeroSectionForm({ initialData, saving, onSave }: HeroSectionFormProps) 
       trustPoints: trustPoints.map((p) => p.trim()).filter(Boolean),
     });
     if (!saved) setFormError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
-      notifySaveError('ذخیره انجام نشد؛ لطفاً دوباره تلاش کنید.');
   }
 
   return (

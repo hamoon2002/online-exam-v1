@@ -1452,3 +1452,26 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 }
 /* Preserve whitespace and avoid an extra horizontal scroll in exam modal. */
 .glass-app-shell .ui-select-custom{min-width:0}
+
+/* Toast entrance and exit share the three-second lifetime.
+   Keep explicit keyframes so older CSS animation resets cannot cause snapping. */
+@keyframes toastSoftAppear {
+  0% { opacity:0; transform:translate3d(0,15px,0) scale(.98); }
+  100% { opacity:1; transform:translate3d(0,0,0) scale(1); }
+}
+@keyframes toastSoftDisappear {
+  0% { opacity:1; transform:translate3d(0,0,0) scale(1); }
+  100% { opacity:0; transform:translate3d(0,10px,0) scale(.985); }
+}
+.site-toast.site-toast-css:not(.is-closing) {
+  animation:toastSoftAppear 380ms cubic-bezier(.16,1,.3,1) both!important;
+}
+.site-toast.site-toast-css.is-closing {
+  animation:toastSoftDisappear 320ms ease-in both!important;
+  pointer-events:none;
+}
+@media (prefers-reduced-motion:reduce) {
+  .site-toast.site-toast-css:not(.is-closing), .site-toast.site-toast-css.is-closing {
+    animation:none!important;
+  }
+}

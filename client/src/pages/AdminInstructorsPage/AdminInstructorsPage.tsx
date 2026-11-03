@@ -19,6 +19,7 @@ const statuses = {
   Rejected: 'ردشده',
 };
 export default function AdminInstructorsPage() {
+  const [selectedInstructorId, setSelectedInstructorId] = useState<string | null>(null);
   const [status, setStatus] = useState('');
   const [order, setOrder] = useState('newest');
   const list = usePagedList(
@@ -64,6 +65,8 @@ export default function AdminInstructorsPage() {
       <LoadError message={list.error} retry={list.reload} />
       <DataTable
         items={list.items}
+        selectedId={selectedInstructorId}
+        onSelect={(item) => setSelectedInstructorId(item.id)}
         loading={list.loading}
         columns={[
           {

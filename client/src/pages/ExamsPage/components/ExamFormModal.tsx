@@ -66,7 +66,7 @@ function ExamFormModal({
   const durationError = showErrors && (!Number.isFinite(durationMinutes) || durationMinutes <= 0);
   const groupsError = showErrors && groupIds.length === 0;
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} wide label={isEditing ? 'ویرایش آزمون' : 'آزمون جدید'}>
       <h2 className="text-lg font-bold mb-4 dark:text-white">
         {isEditing ? 'ویرایش آزمون' : 'آزمون جدید'}
       </h2>

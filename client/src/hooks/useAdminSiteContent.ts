@@ -9,7 +9,7 @@ import {
   type SiteContentSection,
 } from '../api/cmsApi';
 import { ApiError } from '../lib/apiClient';
-import { notifySaveSuccess } from '../components/Toast/Toast';
+import { notifySaveError, notifySaveSuccess } from '../components/Toast/Toast';
 
 function useAdminSiteContent() {
   const [sections, setSections] = useState<SiteContentMap | null>(null);
@@ -43,23 +43,26 @@ function useAdminSiteContent() {
     setError(null);
     setSuccessMessage(null);
     try {
-      await updateSiteContentSection(section, data);
-      // Confirm draft persistence without touching the public page.
-      const latest = await getDraftSiteContent();
-      const actual = latest.sections[section];
+      const result = await updateSiteContentSection(section, data);
+      // Confirm the write response first; refreshing the draft is a separate request.
+      const stored = result.data;
       const matches = Object.entries(data).every(([key, value]) =>
-        JSON.stringify(actual[key]) === JSON.stringify(value)
+        JSON.stringify(stored[key]) === JSON.stringify(value)
       );
-      setSections(latest.sections);
+      setSections(previous => previous ? { ...previous, [section]: stored } : previous);
       if (!matches) {
-        setError('ذخیره تأیید نشد؛ اطلاعات خوانده‌شده از سرور با فرم متفاوت است.');
+        const message = 'ذخیره تأیید نشد؛ پاسخ سرور با اطلاعات فرم متفاوت است.';
+        setError(message);
+        notifySaveError(message);
         return false;
       }
       setError(null);
       notifySaveSuccess('پیش‌نویس ذخیره شد؛ برای نمایش در سایت، انتشار را بزنید.');
       return true;
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'ذخیره‌سازی با خطا مواجه شد');
+      const message = err instanceof ApiError ? err.message : err instanceof Error ? err.message : 'ذخیره‌سازی با خطا مواجه شد';
+      setError(message);
+      notifySaveError(message);
       return false;
     } finally {
       setSavingSection(null);
@@ -74,7 +77,7 @@ function useAdminSiteContent() {
       await resetSiteContentDraft(section);
       const latest = await getDraftSiteContent();
       setSections(latest.sections);
-      setSuccessMessage('پیش‌نویس این بخش پاک شد؛ صفحه اصلی تغییری نکرد.');
+      notifySaveSuccess('پیش‌نویس این بخش پاک شد؛ صفحه اصلی تغییری نکرد.');
       return true;
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'پاک کردن پیش‌نویس انجام نشد.');
@@ -90,7 +93,7 @@ function useAdminSiteContent() {
     setError(null);
     try {
       const result = await publishSiteContent();
-      setSuccessMessage(result.publishedCount ? 'محتوا با موفقیت در صفحه اصلی منتشر شد.' : 'تغییر تازه‌ای برای انتشار وجود ندارد.');
+      notifySaveSuccess(result.publishedCount ? 'محتوا با موفقیت در صفحه اصلی منتشر شد.' : 'تغییر تازه‌ای برای انتشار وجود ندارد.');
     } catch (err) {
       setError(err instanceof ApiError ? err.message : 'انتشار انجام نشد؛ دوباره تلاش کنید.');
     } finally {

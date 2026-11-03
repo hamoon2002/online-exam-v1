@@ -159,7 +159,7 @@ function MyResultsPage() {
                 </div>
                 <div className="mt-4">
                   <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</p>
-                  <p className="mt-1 text-2xl font-extrabold tabular-nums text-slate-900 dark:text-white">{value}</p>
+                  <p className="results-kpi-number mt-1 text-2xl font-extrabold tabular-nums text-slate-900 dark:text-white">{value}</p>
                 </div>
               </div>
             ))}

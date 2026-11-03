@@ -1133,3 +1133,11 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold{background:linear-gradient(145deg,#3d301b,#594021)!important}
 .dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum{background:linear-gradient(145deg,#283850,#40536e)!important}
 .dark .glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip{background:linear-gradient(145deg,#37264f,#563679)!important}
+
+/* Lightweight CSS-only toast: full lifetime independent of animation end events. */
+@keyframes siteToastEnter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes siteToastProgress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.site-toast-css{animation:siteToastEnter .2s ease-out both;transition:opacity .2s ease,transform .2s ease}
+.site-toast-css.is-closing{animation:none;opacity:0;transform:translateY(12px)}
+.site-toast-progress-css{transform:scaleX(0);animation-name:siteToastProgress;animation-timing-function:linear;animation-fill-mode:forwards}
+@media(prefers-reduced-motion:reduce){.site-toast-css{animation:none;transition:none}.site-toast-progress-css{animation:none;transform:scaleX(1)}}

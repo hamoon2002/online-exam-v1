@@ -114,7 +114,7 @@ function useExamFormModal({
       return;
     }
 
-    if (!/^([01]\\d|2[0-3]):[0-5]\\d$/.test(scheduledTime)) {
+    if (!/^([01][0-9]|2[0-3]):[0-5][0-9]$/.test(scheduledTime)) {
       setValidationError('ساعت برگزاری باید به صورت ۲۴ ساعته باشد؛ مانند ۱۴:۳۰');
       return;
     }

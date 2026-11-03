@@ -9,7 +9,7 @@ interface ToastProps {
   onDismiss: () => void;
 }
 
-function ToastNotification({ message, tone = 'warning', duration = tone === 'danger' ? 4500 : 4000, icon, onDismiss }: ToastProps) {
+function ToastNotification({ message, tone = 'warning', duration = 3000, icon, onDismiss }: ToastProps) {
   const [closing, setClosing] = useState(false);
   const dismissed = useRef(false);
   const onDismissRef = useRef(onDismiss);
@@ -31,7 +31,7 @@ function ToastNotification({ message, tone = 'warning', duration = tone === 'dan
         dismissed.current = true;
         onDismissRef.current();
       }
-    }, 220);
+    }, 300);
     return () => window.clearTimeout(timer);
   }, [closing]);
 
@@ -57,7 +57,7 @@ function ToastNotification({ message, tone = 'warning', duration = tone === 'dan
         <div className="site-toast-track toast-timer-track" aria-hidden="true">
           <div
             className="toast-timer-fill"
-            style={{ animationDuration: `${lifetime}ms` }}
+            style={{ animation: `toastTimerFill ${lifetime}ms linear both` }}
           />
         </div>
       )}

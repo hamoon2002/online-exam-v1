@@ -46,6 +46,15 @@ function AdminSiteContentPage() {
     setDraftRevision(value => value + 1);
   }
 
+  async function saveAndClear(section: SiteContentSection, data: Record<string, unknown>): Promise<boolean> {
+    const saved = await saveSection(section, data);
+    if (saved) {
+      setShowSavedDraft(false);
+      setDraftRevision(value => value + 1);
+    }
+    return saved;
+  }
+
   function loadSavedDraft() {
     setShowSavedDraft(true);
     setDraftRevision(value => value + 1);
@@ -124,7 +133,7 @@ function AdminSiteContentPage() {
                 key={`${activeTab}:${draftRevision}`}
                 initialData={showSavedDraft ? sections.hero : {}}
                 saving={savingSection === 'hero'}
-                onSave={(data) => saveSection('hero', data)}
+                onSave={(data) => saveAndClear('hero', data)}
               />
             )}
             {activeTab === 'about' && (
@@ -132,7 +141,7 @@ function AdminSiteContentPage() {
                 key={`${activeTab}:${draftRevision}`}
                 initialData={showSavedDraft ? sections.about : {}}
                 saving={savingSection === 'about'}
-                onSave={(data) => saveSection('about', data)}
+                onSave={(data) => saveAndClear('about', data)}
               />
             )}
             {activeTab === 'features' && (
@@ -140,7 +149,7 @@ function AdminSiteContentPage() {
                 key={`${activeTab}:${draftRevision}`}
                 initialData={showSavedDraft ? sections.features : {}}
                 saving={savingSection === 'features'}
-                onSave={(data) => saveSection('features', data)}
+                onSave={(data) => saveAndClear('features', data)}
               />
             )}
             {activeTab === 'pricing' && (
@@ -148,7 +157,7 @@ function AdminSiteContentPage() {
                 key={`${activeTab}:${draftRevision}`}
                 initialData={showSavedDraft ? sections.pricing : {}}
                 saving={savingSection === 'pricing'}
-                onSave={(data) => saveSection('pricing', data)}
+                onSave={(data) => saveAndClear('pricing', data)}
               />
             )}
             {activeTab === 'news' && (
@@ -156,7 +165,7 @@ function AdminSiteContentPage() {
                 key={`${activeTab}:${draftRevision}`}
                 initialData={showSavedDraft ? sections.news : {}}
                 saving={savingSection === 'news'}
-                onSave={(data) => saveSection('news', data)}
+                onSave={(data) => saveAndClear('news', data)}
               />
             )}
             {activeTab === 'footer' && (
@@ -164,7 +173,7 @@ function AdminSiteContentPage() {
                 key={`${activeTab}:${draftRevision}`}
                 initialData={showSavedDraft ? sections.footer : {}}
                 saving={savingSection === 'footer'}
-                onSave={(data) => saveSection('footer', data)}
+                onSave={(data) => saveAndClear('footer', data)}
               />
             )}
           </>

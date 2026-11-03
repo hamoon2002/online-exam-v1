@@ -821,7 +821,7 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
  border-color:rgba(184,165,247,.2)!important;
  box-shadow:0 16px 38px rgba(0,0,0,.2),inset 0 1px rgba(255,255,255,.07)!important;
 }
-.glass-app-shell .group-premium-card{min-height:255px}
+.glass-app-shell .group-premium-card{min-height:0}
 .glass-app-shell .lesson-premium-card{min-height:205px}
 .glass-app-shell .question-bank-card{min-height:225px}
 .glass-app-shell .question-bank-card > .mb-5{background:rgba(123,91,206,.075)!important}
@@ -876,7 +876,7 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 
 
 /* Consistent group and subscription layout aligned to dashboard cards. */
-.glass-app-shell .groups-premium-grid .group-premium-card{width:100%;min-height:260px}
+.glass-app-shell .groups-premium-grid .group-premium-card{width:100%;min-height:0;max-width:440px;justify-self:stretch}
 .glass-app-shell .glass-plans-page .glass-plan-card{border-radius:24px!important;border-color:rgba(146,120,222,.28)!important}
 .glass-app-shell .glass-plans-page .glass-plan-card button:not(:disabled){background:var(--ui-purple-gradient)!important;color:#fff!important;border:1px solid transparent!important;box-shadow:var(--ui-purple-shadow)!important}
 .glass-app-shell .glass-plans-page > div.rounded-2xl{border-radius:24px!important}
@@ -1105,3 +1105,15 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
 .glass-app-shell .settings-nav-refined{width:100%;box-sizing:border-box}
 .glass-app-shell .settings-content-refined>section>div{min-height:220px}
 @media(max-width:640px){.glass-app-shell .settings-hero{padding:20px;min-height:130px}}
+
+/* Final overrides: compact instructor cards and clear pricing hierarchy. */
+.glass-app-shell .groups-premium-grid{grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr))!important;gap:16px!important}
+.glass-app-shell .groups-premium-grid .group-premium-card{min-height:0!important;max-width:420px;padding:18px!important;border-radius:18px!important;align-self:start}
+.glass-app-shell .group-premium-card>p:last-child{font-size:11px;line-height:1.55}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-free{border-color:rgba(142,155,181,.45)!important}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold{border:1.5px solid rgba(224,162,42,.65)!important;box-shadow:0 14px 32px rgba(176,122,22,.12)!important}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum{border:2px solid rgba(115,145,191,.72)!important;box-shadow:0 18px 36px rgba(67,103,154,.16)!important;transform:translateY(-3px)}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip{border:2px solid rgba(140,90,222,.82)!important;box-shadow:0 22px 48px rgba(121,74,205,.23)!important;transform:translateY(-6px)}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-gold .plan-tier-icon{color:#a76b10!important;background:#f7e4b0!important}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-platinum .plan-tier-icon{color:#577dad!important;background:#dae6f7!important}
+.glass-app-shell .glass-plans-page .glass-plan-card.plan-tier-vip .plan-tier-icon{color:#7540cb!important;background:#e7d8ff!important}

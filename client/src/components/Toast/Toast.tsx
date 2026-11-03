@@ -41,7 +41,7 @@ function ToastNotification({ message, tone = 'warning', duration = tone === 'dan
       dir="rtl"
     >
       <div className="flex items-start gap-2.5 px-4 py-3">
-        <Icon size={18} className="mt-1 shrink-0" aria-hidden="true" />
+        {tone !== 'danger' && <Icon size={18} className="mt-1 shrink-0" aria-hidden="true" />}
         <p className="min-w-0 flex-1 break-words leading-6" role={tone === 'danger' ? 'alert' : 'status'}>{message}</p>
         <button
           type="button"

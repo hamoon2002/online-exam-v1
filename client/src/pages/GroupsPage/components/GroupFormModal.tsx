@@ -1,3 +1,4 @@
+import { Save } from 'lucide-react';
 import { userDisplayName } from '../../../lib/userDisplayName';
 import Modal from '../../../components/Modal/Modal';
 import type { Category } from '../../../constants/categories';
@@ -97,9 +98,9 @@ function GroupFormModal({
 
         <button
           type="submit"
-          className="w-full bg-brand-600 text-white font-medium px-4 py-2.5 rounded-xl hover:bg-brand-700 transition"
+          className="ui-primary-gradient flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-semibold text-white transition"
         >
-          {isEditing ? 'ذخیره تغییرات' : 'ساخت گروه'}
+          <Save size={17} /> {isEditing ? 'ذخیره تغییرات' : 'ساخت گروه'}
         </button>
       </form>
     </Modal>

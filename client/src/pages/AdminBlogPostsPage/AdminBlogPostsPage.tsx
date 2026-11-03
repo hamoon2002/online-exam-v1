@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Pencil, Trash2, XCircle, Newspaper } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
@@ -10,6 +11,7 @@ import { toPersianDigits } from '../../utils/persianDigits';
 
 function AdminBlogPostsPage() {
   const navigate = useNavigate();
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const { posts, loading, error, clearError, deletingId, handleDelete } =
     useAdminBlogPosts();
 
@@ -54,6 +56,10 @@ function AdminBlogPostsPage() {
                 {posts.map((post) => (
                   <tr
                     key={post.id}
+                    tabIndex={0}
+                    aria-selected={selectedId === post.id}
+                    onClick={(event) => { if (!(event.target as HTMLElement).closest('button,a,input')) setSelectedId(post.id); }}
+                    onKeyDown={(event) => { if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); setSelectedId(post.id); } }}
                     className="border-b border-gray-100 text-gray-700 transition duration-200 hover:bg-gray-50 dark:border-gray-800 dark:text-gray-200 dark:hover:bg-gray-800/50"
                   >
                     <td className="py-3">{post.title}</td>

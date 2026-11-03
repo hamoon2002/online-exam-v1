@@ -1,7 +1,7 @@
 import ListPagination from '../../components/ListPagination/ListPagination';
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, Upload } from 'lucide-react';
+import { ArrowRight, Upload, Plus, Save } from 'lucide-react';
 
 import AppLayout from '../../components/AppLayout/AppLayout';
 import { getCurrentUser } from '../../api/authApi';
@@ -10,6 +10,8 @@ import useBankQuestions from '../../hooks/useBankQuestions';
 import useImportBankQuestionsModal from '../../hooks/useImportBankQuestionsModal';
 import ImportBankQuestionsModal from './components/ImportBankQuestionsModal';
 import BankQuestionForm from './components/BankQuestionForm';
+import Modal from '../../components/Modal/Modal';
+import ConfirmDeleteModal from '../../components/Modal/ConfirmDeleteModal';
 import BankQuestionList from './components/BankQuestionList';
 
 import type { BankQuestion, BankQuestionInput } from '../../api/questionBankApi';
@@ -47,6 +49,9 @@ function QuestionBankDetailsPage() {
   const [form, setForm] = useState<BankQuestionInput>(EMPTY_FORM);
 
   const [editing, setEditing] = useState<BankQuestion | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<BankQuestion | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const [saving, setSaving] = useState(false);
 
@@ -61,6 +66,7 @@ function QuestionBankDetailsPage() {
   }, [form]);
 
   function resetForm() {
+    setFormOpen(false);
     setEditing(null);
 
     setForm({
@@ -70,6 +76,7 @@ function QuestionBankDetailsPage() {
   }
 
   function startEdit(question: BankQuestion) {
+    setFormOpen(true);
     setEditing(question);
 
     setForm({
@@ -114,17 +121,17 @@ function QuestionBankDetailsPage() {
     }
   }
 
-  async function handleDelete(question: BankQuestion) {
-    if (!window.confirm('این سوال حذف شود؟')) {
-      return;
-    }
-
-    const removed = await removeQuestion(question.id);
-
-    if (!removed) return;
-
-    if (editing?.id === question.id) {
-      resetForm();
+  async function handleDelete() {
+    if (!deleteTarget || deleting) return;
+    setDeleting(true);
+    try {
+      const removed = await removeQuestion(deleteTarget.id);
+      if (removed) {
+        if (editing?.id === deleteTarget.id) resetForm();
+        setDeleteTarget(null);
+      }
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -152,48 +159,41 @@ function QuestionBankDetailsPage() {
         )}
       </div>
 
-      <div
-        className={`grid gap-6 ${
-          canManage ? 'lg:grid-cols-[380px_minmax(0,1fr)]' : ''
-        }`}
-      >
-        {canManage && (
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <h1 className="text-xl font-bold text-slate-800 dark:text-white">سؤال‌های بانک</h1>
+        {canManage && <button type="button" onClick={() => { resetForm(); setFormOpen(true); }} className="ui-primary-gradient inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold"><Plus size={17}/> سؤال جدید</button>}
+      </div>
+      <section>
+        <ListPagination {...{ page, pageSize, total, loading, q, setPage, setSearch }} />
+        {error && <p role="alert" className="form-inline-error mb-3">{error}</p>}
+        <BankQuestionList
+          questions={questions}
+          offset={(page - 1) * pageSize}
+          loading={loading}
+          onEdit={canManage ? startEdit : undefined}
+          onDelete={canManage ? setDeleteTarget : undefined}
+        />
+      </section>
+      {canManage && <Modal isOpen={formOpen} onClose={() => { if (!saving) resetForm(); }} label={editing ? 'ویرایش سؤال بانک' : 'سؤال جدید بانک'} wide>
         <BankQuestionForm
           form={form}
           isEditing={editing !== null}
           saving={saving}
           error={error ?? ''}
           canSubmit={canSubmit}
-          onTextChange={(text) =>
-            setForm((current) => ({ ...current, text }))
-          }
+          onTextChange={(text) => setForm((current) => ({ ...current, text }))}
           onOptionChange={updateOption}
-          onCorrectOptionChange={(index) =>
-            setForm((current) => ({ ...current, correctOptionIndex: index }))
-          }
-          onDifficultyChange={(difficulty) =>
-            setForm((current) => ({ ...current, difficulty }))
-          }
+          onCorrectOptionChange={(index) => setForm((current) => ({ ...current, correctOptionIndex: index }))}
+          onDifficultyChange={(difficulty) => setForm((current) => ({ ...current, difficulty }))}
           onSubmit={handleSubmit}
           onCancel={resetForm}
         />
-        )}
-
-        <section>
-          <ListPagination {...{ page, pageSize, total, loading, q, setPage, setSearch }} />
-          {error && <p role="alert" className="mb-3 text-danger-600">{error}</p>}
-          <BankQuestionList
-            questions={questions}
-            offset={(page - 1) * pageSize}
-            loading={loading}
-            onEdit={canManage ? startEdit : undefined}
-            onDelete={
-              canManage ? (question) => void handleDelete(question) : undefined
-            }
-          />
-        </section>
-      </div>
-
+      </Modal>}
+      <ConfirmDeleteModal isOpen={!!deleteTarget} title="حذف سؤال بانک"
+        description="آیا این سؤال از بانک حذف شود؟ این عملیات قابل بازگشت نیست."
+        busy={deleting} error={error ?? undefined}
+        onConfirm={handleDelete} onClose={() => { if (!deleting) setDeleteTarget(null); }}
+      />
       {canManage && (
       <ImportBankQuestionsModal
         isOpen={importModal.isOpen}

@@ -41,6 +41,7 @@ function ExamsPage() {
     loading,
     error,
     writeError,
+    clearWriteError,
     clearError,
     addItem,
     updateItem,
@@ -129,7 +130,12 @@ function ExamsPage() {
   } });
 
   async function openAddModal() {
-    if (await planLimit.ensureAllowed()) form.openAdd();
+    if (await planLimit.ensureAllowed()) { clearWriteError(); form.openAdd(); }
+  }
+
+  function openEditModal(exam: Exam) {
+    clearWriteError();
+    form.openEdit(exam);
   }
 
   async function confirmDelete() {
@@ -221,7 +227,7 @@ function ExamsPage() {
                         onOpenQuestions={(e) =>
                           navigate(`/exams/${e.id}/questions`)
                         }
-                        onEdit={form.openEdit}
+                        onEdit={openEditModal}
                         onDelete={setDeleteTarget}
                         onPublish={handlePublish}
                         onUnpublish={handleUnpublish}

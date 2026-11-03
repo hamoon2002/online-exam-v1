@@ -25,8 +25,6 @@ function ReviewScreen({
   questions,
   answers,
   timeLeft,
-  saveStatus,
-  onRetrySave,
   activeWarning,
   onDismissWarning,
   onGoToQuestion,

@@ -1,119 +1,274 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
+import { ArrowRight, CheckCircle2, ClipboardList, Headset, MessageSquareText, Plus, Send, Ticket, X } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
-import { Headset, MessagesSquare, ChevronRight, ChevronLeft, LockKeyhole, MessageCircle } from 'lucide-react';
-import SupportChat, {
-  statusLabel,
-  type Thread,
-} from '../../components/Support/SupportChat';
+import Modal from '../../components/Modal/Modal';
+import DataTable from '../../components/AdminUI/DataTable';
 import { useAuth } from '../../context/AuthContext';
-import { apiRequest } from '../../lib/apiClient';
+import {
+  createSupportTicket, getInstructorTickets, getMyTickets,
+  getSupportInstructors, getTicket, getTicketMessages,
+  postTicketMessage, updateTicketStatus,
+  ticketCategoryLabels, ticketPriorityLabels, ticketStatusLabels,
+  type SupportTicket, type SupportInstructor, type TicketMessage,
+  type TicketCategory, type TicketPriority,
+} from '../../api/supportTicketApi';
+
+const priorityColor: Record<TicketPriority, string> = {
+  Low: 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-200',
+  Normal: 'bg-sky-50 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300',
+  High: 'bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300',
+  Urgent: 'bg-rose-50 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300',
+};
+function fmt(value: string) {
+  return new Date(value).toLocaleString('fa-IR', { dateStyle: 'medium', timeStyle: 'short' });
+}
+function Status({ status }: { status: SupportTicket['status'] }) {
+  const color = status === 'Closed'
+    ? 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-200'
+    : status === 'Answered'
+      ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
+      : 'bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-200';
+  return <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${color}`}>{ticketStatusLabels[status]}</span>;
+}
+
 export default function SupportPage() {
   const { user } = useAuth();
-  const staff = user?.role === 'SuperAdmin';
-  const [threads, setThreads] = useState<Thread[]>([]);
-  const [selected, setSelected] = useState<string>();
+  const isAdmin = user?.role === 'SuperAdmin';
+  const [instructors, setInstructors] = useState<SupportInstructor[]>([]);
+  const [instructorId, setInstructorId] = useState<string | null>(null);
+  const [tickets, setTickets] = useState<SupportTicket[]>([]);
+  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
+  const [messages, setMessages] = useState<TicketMessage[]>([]);
   const [page, setPage] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [detailLoading, setDetailLoading] = useState(false);
   const [error, setError] = useState('');
-  const [revision, setRevision] = useState(0);
+  const [createOpen, setCreateOpen] = useState(false);
+  const [subject, setSubject] = useState('');
+  const [category, setCategory] = useState<TicketCategory>('Technical');
+  const [priority, setPriority] = useState<TicketPriority>('Normal');
+  const [body, setBody] = useState('');
+  const [draft, setDraft] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+  const chatRef = useRef<HTMLDivElement>(null);
+  const pendingId = useRef<string | null>(null);
+
+  const loadList = useCallback(async () => {
+    if (isAdmin && !instructorId) return;
+    const items = isAdmin ? await getInstructorTickets(instructorId!, page) : await getMyTickets(page);
+    setTickets(items);
+  }, [isAdmin, instructorId, page]);
+
   useEffect(() => {
-    if (!staff) return;
-    const controller = new AbortController();
-    let timer: ReturnType<typeof setTimeout>;
-    const tick = async () => {
+    let active = true;
+    setLoading(true);
+    setError('');
+    const run = async () => {
       try {
-        const data = await apiRequest<Thread[]>(
-          `/support/threads?page=${page}`,
-          { signal: controller.signal },
-        );
-        if (!controller.signal.aborted) {
-          setThreads(data);
-          setError('');
+        if (isAdmin && !instructorId) {
+          const items = await getSupportInstructors();
+          if (active) setInstructors(items);
+        } else {
+          const items = isAdmin ? await getInstructorTickets(instructorId!, page) : await getMyTickets(page);
+          if (active) setTickets(items);
         }
-      } catch {
-        if (!controller.signal.aborted) setError('دریافت فهرست ناموفق بود.');
-      }
-      if (!controller.signal.aborted) timer = setTimeout(tick, 10000);
+      } catch (err) {
+        if (active) setError(err instanceof Error ? err.message : 'دریافت تیکت‌ها انجام نشد.');
+      } finally { if (active) setLoading(false); }
     };
-    void tick();
-    return () => {
-      controller.abort();
-      clearTimeout(timer);
-    };
-  }, [staff, page, revision]);
-  async function close() {
+    void run();
+    return () => { active = false; };
+  }, [isAdmin, instructorId, page, refreshKey]);
+
+  const openTicket = useCallback(async (ticket: SupportTicket) => {
+    setSelectedTicket(ticket);
+    setDetailLoading(true);
+    setMessages([]);
+    setError('');
     try {
-      await apiRequest(`/support/${selected}`, {
-        method: 'PATCH',
-        body: { status: 'closed' },
-      });
-      setRevision((x) => x + 1);
-    } catch {
-      setError('بستن گفت‌وگو ناموفق بود.');
-    }
+      const [latest, history] = await Promise.all([getTicket(ticket.id), getTicketMessages(ticket.id)]);
+      setSelectedTicket(latest);
+      setMessages(history);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'دریافت گفت‌وگو انجام نشد.');
+    } finally { setDetailLoading(false); }
+  }, []);
+
+  useEffect(() => {
+    if (!selectedTicket) return;
+    chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight });
+  }, [messages, selectedTicket]);
+
+  useEffect(() => {
+    if (!selectedTicket) return;
+    let active = true;
+    const id = window.setInterval(() => {
+      void getTicketMessages(selectedTicket.id).then(rows => {
+        if (active) setMessages(old => {
+          const lastOld = old.at(-1)?.id;
+          const lastNew = rows.at(-1)?.id;
+          return lastOld === lastNew && old.length === rows.length ? old : rows;
+        });
+      }).catch(() => {});
+    }, 15000);
+    return () => { active = false; window.clearInterval(id); };
+  }, [selectedTicket?.id]);
+
+  async function submitTicket(event: FormEvent) {
+    event.preventDefault();
+    if (saving || subject.trim().length < 3 || body.trim().length < 5) return;
+    setSaving(true);
+    setError('');
+    try {
+      const created = await createSupportTicket({ subject: subject.trim(), category, priority, body: body.trim() });
+      setCreateOpen(false);
+      setSubject(''); setBody(''); setPriority('Normal'); setCategory('Technical');
+      setPage(0);
+      setRefreshKey(key => key + 1);
+      await openTicket(created);
+    } catch (err) { setError(err instanceof Error ? err.message : 'ثبت تیکت ناموفق بود.'); }
+    finally { setSaving(false); }
   }
+
+  async function sendMessage(event: FormEvent) {
+    event.preventDefault();
+    if (!selectedTicket || sending || !draft.trim()) return;
+    const id = pendingId.current ?? crypto.randomUUID();
+    pendingId.current = id;
+    setSending(true);
+    setError('');
+    try {
+      await postTicketMessage(selectedTicket.id, draft.trim(), id);
+      pendingId.current = null;
+      setDraft('');
+      await openTicket(selectedTicket);
+      void loadList().catch(() => {});
+    } catch (err) { setError(err instanceof Error ? err.message : 'ارسال پیام ناموفق بود.'); }
+    finally { setSending(false); }
+  }
+
+  async function toggleTicketStatus() {
+    if (!selectedTicket || saving) return;
+    setSaving(true);
+    setError('');
+    try {
+      const updated = await updateTicketStatus(selectedTicket.id, selectedTicket.status === 'Closed' ? 'Open' : 'Closed');
+      setSelectedTicket(updated);
+      setTickets(old => old.map(item => item.id === updated.id ? updated : item));
+    } catch (err) { setError(err instanceof Error ? err.message : 'تغییر وضعیت انجام نشد.'); }
+    finally { setSaving(false); }
+  }
+
+  const currentInstructor = instructors.find(item => item.id === instructorId);
+  const sectionTitle = selectedTicket ? 'جزئیات تیکت' : isAdmin && !instructorId ? 'تیکت‌های مدرس‌ها' : isAdmin ? `تیکت‌های ${currentInstructor?.name || currentInstructor?.username || 'مدرس'}` : 'تیکت‌های من';
+
   return (
     <AppLayout title="پشتیبانی">
-      <div dir="rtl" className={`support-page support-page-elevated mx-auto w-full space-y-5 ${staff ? 'max-w-7xl' : 'support-instructor-page max-w-3xl'}`}>
-        {staff ? (
-          <header className="support-hero support-hero-elevated flex flex-wrap items-center justify-between gap-5 rounded-3xl px-7 py-8 text-white sm:px-9">
+      <div dir="rtl" className="mx-auto w-full max-w-6xl space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            {(selectedTicket || (isAdmin && instructorId)) && (
+              <button type="button" onClick={() => {
+                if (selectedTicket) { setSelectedTicket(null); setDraft(''); }
+                else { setInstructorId(null); setPage(0); }
+                setError('');
+              }} aria-label="بازگشت" className="grid h-10 w-10 place-items-center rounded-xl border border-violet-200 bg-white text-violet-700 hover:bg-violet-50 dark:border-violet-400/20 dark:bg-slate-900 dark:text-violet-200"><ArrowRight size={19}/></button>
+            )}
             <div>
-              <div className="mb-2 flex items-center gap-2 text-sm text-white/85"><Headset size={18}/> مرکز ارتباط با پشتیبانی</div>
-              <h1 className="text-2xl font-extrabold">پشتیبانی</h1>
-              <p className="mt-2 max-w-md text-sm leading-7 text-white/80">سؤال یا مشکلت رو مطرح کن و گفت‌وگوها رو همین‌جا پیگیری کن.</p>
+              <p className="text-xs font-medium text-violet-600 dark:text-violet-300">مرکز پشتیبانی</p>
+              <h1 className="mt-1 text-xl font-extrabold text-slate-900 dark:text-white">{sectionTitle}</h1>
             </div>
-            <div className="grid h-16 w-16 place-items-center rounded-2xl border border-white/35 bg-white/15 shadow-lg backdrop-blur-xl"><MessagesSquare size={30} strokeWidth={1.6}/></div>
-          </header>
-        ) : null}        {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 p-3 text-sm text-rose-700 dark:border-rose-500/25 dark:bg-rose-500/10 dark:text-rose-300">{error}</p>}
-        {staff ? (
-          <div className="grid items-start gap-5 lg:grid-cols-[minmax(280px,360px)_minmax(0,1fr)]">
-            <section className="support-surface space-y-4 rounded-3xl p-5 sm:p-6">
-              <div className="flex items-center justify-between gap-3">
-                <h2 className="flex items-center gap-2 font-bold"><MessagesSquare size={18} className="text-violet-600 dark:text-violet-300"/> صندوق پیام‌ها</h2>
-                <span className="rounded-full bg-violet-500/10 px-2.5 py-1 text-xs font-semibold text-violet-700 dark:text-violet-300">{threads.length.toLocaleString('fa-IR')} گفت‌وگو</span>
-              </div>
-              {!threads.length && <div className="rounded-2xl border border-dashed border-violet-200 bg-violet-50/40 px-4 py-10 text-center dark:border-violet-500/20 dark:bg-violet-500/5"><MessageCircle size={27} className="mx-auto mb-3 text-violet-400"/><p className="text-sm text-slate-500 dark:text-slate-400">گفت‌وگویی در این صفحه نیست.</p></div>}
-              <div className="max-h-[60vh] space-y-2 overflow-y-auto">
-              {threads.map((t) => (
-                <button key={t.id} type="button" onClick={() => setSelected(t.id)} aria-pressed={selected === t.id}
-                  className={`block w-full rounded-2xl border px-4 py-3.5 text-right transition-colors ${selected === t.id ? 'border-violet-400 bg-violet-500/10 dark:border-violet-400/60 dark:bg-violet-500/15' : 'border-slate-200/70 bg-white/60 hover:border-violet-300 hover:bg-violet-50/60 dark:border-slate-700 dark:bg-slate-900/40 dark:hover:bg-violet-500/10'}`}>
-                  <span className="block truncate text-sm font-semibold text-slate-800 dark:text-white">{t.user?.name || t.user?.username || 'کاربر'}</span>
-                  <span className="mt-1 block text-xs leading-6 text-slate-500 dark:text-slate-400">{statusLabel[t.status] || t.status} · {new Date(t.updatedAt).toLocaleString('fa-IR')}</span>
-                </button>
-              ))}
-              </div>
-              <nav aria-label="صفحه‌بندی گفت‌وگوها" className="flex items-center justify-between gap-2 border-t border-slate-200/60 pt-4 dark:border-slate-700/60">
-                <button type="button" disabled={!page} onClick={() => setPage(p => p-1)} className="support-pagination-button"><ChevronRight size={16}/> قبلی</button>
-                <span className="text-xs text-slate-500">صفحه {(page+1).toLocaleString('fa-IR')}</span>
-                <button type="button" disabled={threads.length < 30} onClick={() => setPage(p => p+1)} className="support-pagination-button">بعدی <ChevronLeft size={16}/></button>
-              </nav>
-            </section>
-            <section className="support-surface support-chat-container min-h-80 min-w-0 rounded-3xl p-4 sm:p-6">
-              {selected ? (
-                <>
-                  <SupportChat key={selected} threadId={selected} staff />
-                  <button type="button" className="mt-5 inline-flex min-h-10 items-center gap-2 rounded-xl border border-slate-300 px-4 text-sm font-semibold text-slate-600 transition-colors hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 dark:border-slate-600 dark:text-slate-300 dark:hover:bg-rose-500/10" onClick={() => void close()}><LockKeyhole size={16}/> بستن گفت‌وگو</button>
-                </>
-              ) : (
-                <div className="flex min-h-72 flex-col items-center justify-center gap-3 text-center"><div className="grid h-16 w-16 place-items-center rounded-2xl bg-violet-500/10 text-violet-600 dark:text-violet-300"><MessageCircle size={29}/></div><h3 className="font-bold text-slate-700 dark:text-white">یک گفت‌وگو انتخاب کن</h3><p className="text-sm text-slate-500 dark:text-slate-400">پیام‌ها و جزئیات مکالمه اینجا نمایش داده می‌شن.</p></div>
-              )}
-            </section>
           </div>
-        ) : (
-          <section className="support-surface support-instructor-chat support-modern-frame mx-auto w-full overflow-hidden rounded-3xl border border-violet-200/40 bg-white/90 shadow-sm dark:border-violet-400/20 dark:bg-slate-900/85">
-            <div className="support-modern-topbar flex items-center justify-between gap-4 border-b border-slate-100 px-5 py-4 dark:border-white/10 sm:px-6">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-violet-100 text-violet-700 dark:bg-violet-500/20 dark:text-violet-200"><Headset size={22}/></div>
-                <div className="min-w-0">
-                  <h1 className="text-base font-bold text-slate-900 dark:text-white">پشتیبانی</h1>
-                  <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">گفت‌وگو با تیم پشتیبانی</p>
+          {!isAdmin && !selectedTicket && <button type="button" onClick={() => setCreateOpen(true)} className="ui-primary-gradient inline-flex min-h-10 items-center gap-2 rounded-xl px-5 text-sm font-semibold"><Plus size={17}/> ثبت تیکت جدید</button>}
+        </div>
+
+        {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300">{error}</p>}
+
+        {selectedTicket ? (
+          <section className="overflow-hidden rounded-2xl border border-violet-200/50 bg-white/90 shadow-sm dark:border-violet-400/20 dark:bg-slate-900/85">
+            <div className="flex flex-wrap items-start justify-between gap-3 border-b border-violet-100 px-5 py-5 dark:border-violet-400/15 sm:px-7">
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-violet-600 dark:text-violet-300" dir="ltr">{selectedTicket.trackingCode}</p>
+                <h2 className="mt-1 break-words text-lg font-bold text-slate-900 dark:text-white">{selectedTicket.subject}</h2>
+                <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                  <span>{ticketCategoryLabels[selectedTicket.category]}</span>
+                  <span>·</span>
+                  <span className={`rounded-full px-2.5 py-1 ${priorityColor[selectedTicket.priority]}`}>اولویت {ticketPriorityLabels[selectedTicket.priority]}</span>
+                  <span>·</span><span>{fmt(selectedTicket.createdAt)}</span>
                 </div>
               </div>
-              <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5 text-[11px] font-semibold text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500"/> ثبت پیام</span>
+              <div className="flex items-center gap-2"><Status status={selectedTicket.status}/><button type="button" disabled={saving} onClick={() => void toggleTicketStatus()} className="rounded-xl border border-violet-200 px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-50 disabled:opacity-50 dark:border-violet-400/25 dark:text-violet-200">{selectedTicket.status === 'Closed' ? 'بازکردن تیکت' : 'بستن تیکت'}</button></div>
             </div>
-            <SupportChat key={user?.id}/>
+            <div ref={chatRef} role="log" aria-label="پیام‌های تیکت" className="max-h-[55dvh] min-h-72 space-y-4 overflow-y-auto bg-violet-50/20 px-5 py-5 dark:bg-slate-950/20 sm:px-7">
+              {detailLoading ? <p className="text-center text-sm text-slate-500">در حال بارگذاری پیام‌ها…</p> : messages.map(message => {
+                const mine = isAdmin ? message.fromStaff : !message.fromStaff;
+                return <div key={message.id} className={`flex ${mine ? 'justify-start' : 'justify-end'}`}>
+                  <div className={`max-w-[85%] rounded-2xl border px-4 py-3 shadow-sm sm:max-w-[75%] ${mine ? 'border-violet-200 bg-violet-100 text-slate-800 dark:border-violet-400/25 dark:bg-violet-500/20 dark:text-white' : 'border-slate-200 bg-white text-slate-800 dark:border-slate-600 dark:bg-slate-800 dark:text-white'}`}>
+                    <p className="mb-2 text-[11px] font-bold opacity-70">{message.fromStaff ? 'پشتیبانی' : 'کاربر'}</p>
+                    <p className="whitespace-pre-wrap break-words text-sm leading-7">{message.body}</p>
+                    <time className="mt-2 block text-left text-[10px] opacity-60" dateTime={message.createdAt}>{fmt(message.createdAt)}</time>
+                  </div>
+                </div>;
+              })}
+            </div>
+            <form onSubmit={e => void sendMessage(e)} className="border-t border-violet-100 px-5 py-4 dark:border-violet-400/15 sm:px-7">
+              {selectedTicket.status === 'Closed' ? <p className="text-sm text-slate-500">این تیکت بسته شده است. برای ادامه گفتگو ابتدا آن را باز کنید.</p> : <div className="flex items-end gap-3">
+                <textarea aria-label="پاسخ به تیکت" value={draft} onChange={e => { setDraft(e.target.value); pendingId.current = null; }} maxLength={2000} rows={2} placeholder="پاسخ خود را بنویسید…" className="min-h-20 min-w-0 flex-1 resize-y rounded-xl border border-violet-200 bg-slate-50/70 px-4 py-3 text-sm outline-none focus:border-violet-400 dark:border-violet-400/25 dark:bg-slate-800 dark:text-white"/>
+                <button type="submit" disabled={sending || !draft.trim()} className="ui-primary-gradient inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold disabled:opacity-40"><Send size={16}/>{sending ? 'ارسال…' : 'ارسال'}</button>
+              </div>}
+            </form>
           </section>
+        ) : isAdmin && !instructorId ? (
+          <DataTable items={instructors} loading={loading} empty="هنوز هیچ مدرسی تیکت ثبت نکرده است." onSelect={item => { setInstructorId(item.id); setPage(0); }}
+            columns={[
+              { key: 'name', label: 'مدرس', render: item => <span className="font-semibold">{item.name || item.username || 'مدرس بدون نام'}</span> },
+              { key: 'tickets', label: 'تعداد تیکت', render: item => item.ticketCount.toLocaleString('fa-IR') },
+              { key: 'open', label: 'در انتظار رسیدگی', render: item => item.openCount.toLocaleString('fa-IR') },
+              { key: 'action', label: 'عملیات', render: item => <button type="button" onClick={() => {setInstructorId(item.id); setPage(0);}} className="rounded-lg px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-50 dark:text-violet-300">مشاهده تیکت‌ها</button> },
+            ]}
+          />
+        ) : (
+          <>
+            <DataTable items={tickets} loading={loading} empty="تیکتی ثبت نشده است." onSelect={item => void openTicket(item)}
+              columns={[
+                { key: 'code', label: 'کد رهگیری', render: item => <span dir="ltr" className="font-mono text-xs font-semibold text-violet-700 dark:text-violet-300">{item.trackingCode}</span> },
+                { key: 'subject', label: 'موضوع', render: item => <span className="font-semibold">{item.subject}</span> },
+                { key: 'category', label: 'دسته‌بندی', render: item => ticketCategoryLabels[item.category] },
+                { key: 'priority', label: 'اهمیت', render: item => <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${priorityColor[item.priority]}`}>{ticketPriorityLabels[item.priority]}</span> },
+                { key: 'status', label: 'وضعیت', render: item => <Status status={item.status}/> },
+                { key: 'date', label: 'آخرین تغییر', render: item => <span className="whitespace-nowrap text-xs">{fmt(item.updatedAt)}</span> },
+                { key: 'action', label: 'عملیات', render: item => <button type="button" onClick={() => void openTicket(item)} className="rounded-lg px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-50 dark:text-violet-300">جزئیات</button> },
+              ]}
+            />
+            <div className="flex items-center justify-center gap-3">
+              <button type="button" disabled={page === 0 || loading} onClick={() => setPage(p => Math.max(0,p-1))} className="rounded-xl border border-violet-200 px-4 py-2 text-sm text-violet-700 disabled:opacity-40 dark:border-violet-400/25 dark:text-violet-200">قبلی</button>
+              <span className="text-xs text-slate-500">صفحه {(page+1).toLocaleString('fa-IR')}</span>
+              <button type="button" disabled={loading || tickets.length < 50} onClick={() => setPage(p => p+1)} className="rounded-xl border border-violet-200 px-4 py-2 text-sm text-violet-700 disabled:opacity-40 dark:border-violet-400/25 dark:text-violet-200">بعدی</button>
+            </div>
+          </>
         )}
       </div>
+
+      <Modal isOpen={createOpen} onClose={() => { if (!saving) setCreateOpen(false); }} wide label="ثبت تیکت پشتیبانی">
+        <div dir="rtl">
+          <div className="mb-5 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Ticket size={20}/><h2 className="text-lg font-bold text-slate-900 dark:text-white">ثبت تیکت جدید</h2></div>
+            <button type="button" onClick={() => setCreateOpen(false)} aria-label="بستن" className="text-slate-400"><X size={20}/></button>
+          </div>
+          <form onSubmit={e => void submitTicket(e)} className="space-y-4">
+            <div><label htmlFor="ticket-subject" className="mb-1.5 block text-sm font-semibold dark:text-white">موضوع</label><input id="ticket-subject" required minLength={3} maxLength={160} value={subject} onChange={e => setSubject(e.target.value)} placeholder="مثلاً مشکل نمایش نتایج آزمون" className="min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-violet-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"/></div>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div><label htmlFor="ticket-category" className="mb-1.5 block text-sm font-semibold dark:text-white">دسته‌بندی</label><select id="ticket-category" value={category} onChange={e => setCategory(e.target.value as TicketCategory)} className="min-h-11 w-full rounded-xl border border-violet-200 bg-white px-3 text-sm dark:border-violet-400/25 dark:bg-slate-800 dark:text-white">{(Object.keys(ticketCategoryLabels) as TicketCategory[]).map(key => <option key={key} value={key}>{ticketCategoryLabels[key]}</option>)}</select></div>
+              <div><label htmlFor="ticket-priority" className="mb-1.5 block text-sm font-semibold dark:text-white">درجه اهمیت</label><select id="ticket-priority" value={priority} onChange={e => setPriority(e.target.value as TicketPriority)} className="min-h-11 w-full rounded-xl border border-violet-200 bg-white px-3 text-sm dark:border-violet-400/25 dark:bg-slate-800 dark:text-white">{(Object.keys(ticketPriorityLabels) as TicketPriority[]).map(key => <option key={key} value={key}>{ticketPriorityLabels[key]}</option>)}</select></div>
+            </div>
+            <div><label htmlFor="ticket-body" className="mb-1.5 block text-sm font-semibold dark:text-white">شرح درخواست</label><textarea id="ticket-body" required minLength={5} maxLength={2000} rows={5} value={body} onChange={e => setBody(e.target.value)} placeholder="مشکل یا درخواست خود را با جزئیات توضیح دهید…" className="w-full resize-y rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 outline-none focus:border-violet-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"/></div>
+            <p className="flex items-center gap-2 text-xs text-slate-500"><ClipboardList size={15}/> پس از ثبت، کد رهگیری یکتا دریافت می‌کنید.</p>
+            <button type="submit" disabled={saving || subject.trim().length < 3 || body.trim().length < 5} className="ui-primary-gradient inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl font-bold disabled:opacity-40"><CheckCircle2 size={17}/>{saving ? 'در حال ثبت…' : 'ثبت تیکت'}</button>
+          </form>
+        </div>
+      </Modal>
     </AppLayout>
   );
 }

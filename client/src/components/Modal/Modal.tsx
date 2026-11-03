@@ -6,10 +6,11 @@ type ModalProps = {
   onClose: () => void;
   children: React.ReactNode;
   label?: string;
+  wide?: boolean;
 };
 
 // Backdrop clicks must not discard an unfinished form.
-function Modal({ isOpen, onClose, children, label = 'پنجرهٔ گفتگو' }: ModalProps) {
+function Modal({ isOpen, onClose, children, label = 'پنجرهٔ گفتگو', wide = false }: ModalProps) {
   const container = useRef<HTMLDivElement>(null);
   const close = useRef(onClose);
   close.current = onClose;
@@ -45,7 +46,7 @@ function Modal({ isOpen, onClose, children, label = 'پنجرهٔ گفتگو' }:
       aria-modal="true"
       className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50"
     >
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-md max-h-[calc(100vh-2rem)] overflow-y-auto p-6">
+      <div className={`w-full max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl border border-violet-200/30 bg-white p-5 shadow-2xl dark:border-violet-400/15 dark:bg-gray-900 sm:p-6 ${wide ? "max-w-2xl" : "max-w-md"}`}>
         <div className="flex justify-end mb-2">
           <button
             type="button"

@@ -55,7 +55,7 @@ function ToastNotification({ message, tone = 'warning', duration = tone === 'dan
       </div>
       {lifetime > 0 && (
         <div className="site-toast-track" aria-hidden="true">
-          <div className="site-toast-progress site-toast-progress-css h-full origin-right" style={{ animationDuration: `${lifetime}ms` }}/>
+          <div className="site-toast-progress site-toast-progress-css h-full w-full origin-right" style={{ animation: `siteToastProgress ${lifetime}ms linear forwards` }}/>
         </div>
       )}
     </div>

@@ -9,11 +9,15 @@ export default function DataTable<T extends { id: string }>({
   columns,
   loading = false,
   empty = 'موردی با این شرایط پیدا نشد.',
+  selectedId,
+  onSelect,
 }: {
   items: T[];
   columns: Column<T>[];
   loading?: boolean;
   empty?: string;
+  selectedId?: string | null;
+  onSelect?: (item: T) => void;
 }) {
   return (
     <div
@@ -48,7 +52,11 @@ export default function DataTable<T extends { id: string }>({
             : items.map((item) => (
                 <tr
                   key={item.id}
-                  className="text-gray-700 transition-colors hover:bg-brand-50/50 focus-within:bg-brand-50/50 dark:text-gray-200 dark:hover:bg-white/5 dark:focus-within:bg-white/5"
+                  tabIndex={onSelect ? 0 : undefined}
+                  aria-selected={onSelect ? selectedId === item.id : undefined}
+                  onClick={onSelect ? (event) => { if (!(event.target as HTMLElement).closest("button, a, input, select, textarea")) onSelect(item); } : undefined}
+                  onKeyDown={onSelect ? (event) => { if (event.target === event.currentTarget && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); onSelect(item); } } : undefined}
+                  className={`text-gray-700 transition-colors dark:text-gray-200 ${onSelect ? "cursor-pointer focus-visible:outline-2 focus-visible:outline-violet-500" : ""} ${selectedId === item.id ? "ui-table-selected" : ""}`}
                 >
                   {columns.map((c) => (
                     <td key={c.key} className="px-5 py-4">

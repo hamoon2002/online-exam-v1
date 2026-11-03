@@ -39,7 +39,7 @@ function GroupCard({
         <span className="rounded-md bg-violet-50 px-2 py-1 text-violet-700 dark:bg-violet-500/10 dark:text-violet-200">{group.studentIds.length.toLocaleString('fa-IR')} دانشجو</span>
         {group.approvalStatus && group.approvalStatus !== 'Approved' && (
           <span className="rounded-md bg-amber-50 px-2 py-1 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
-            {group.approvalStatus === 'Pending' ? 'در انتظار تأیید مدیر' : 'تأیید نشده'}
+            {group.approvalStatus === 'Pending' ? 'منتظر تأیید مدیر' : 'تأیید نشده'}
           </span>
         )}
       </div>

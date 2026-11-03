@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { XCircle, CheckCircle2, Layout, Send, RotateCcw, FolderOpen } from 'lucide-react';
+import { XCircle, Layout, Send, RotateCcw, FolderOpen } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Spinner from '../../components/Spinner/Spinner';
-import Toast from '../../components/Toast/Toast';
 import useAdminSiteContent from '../../hooks/useAdminSiteContent';
 import { SITE_CONTENT_SECTIONS, type SiteContentSection } from '../../api/cmsApi';
 
@@ -28,8 +27,6 @@ function AdminSiteContentPage() {
     loading,
     error,
     clearError,
-    successMessage,
-    clearSuccessMessage,
     savingSection,
     saveSection,
     publishing,
@@ -68,17 +65,7 @@ function AdminSiteContentPage() {
 
   return (
     <AppLayout title="محتوای فرود">
-      {error && (
-        <Toast message={error} tone="danger" icon={XCircle} onDismiss={clearError} />
-      )}
-      {successMessage && (
-        <Toast
-          message={successMessage}
-          tone="success"
-          icon={CheckCircle2}
-          onDismiss={clearSuccessMessage}
-        />
-      )}
+      {error && <div role="alert" className="form-inline-error mb-4 flex items-center justify-between gap-2"><span>{error}</span><button aria-label="بستن خطا" type="button" onClick={clearError}><XCircle size={17}/></button></div>}
 
       <div className="mb-6 flex items-center gap-3">
         <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600 dark:bg-brand-500/15 dark:text-brand-300">

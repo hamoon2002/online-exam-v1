@@ -56,12 +56,6 @@ export const navigationItems: NavigationItem[] = [
     roles: ['Instructor'],
   },
   {
-    label: 'تأیید گروه‌ها',
-    to: '/group-approvals',
-    icon: ShieldCheck,
-    roles: ['SuperAdmin'],
-  },
-  {
     label: 'آزمون‌ها',
     adminLabel: 'آزمون‌ها',
     to: '/exams',
@@ -128,6 +122,13 @@ export const navigationItems: NavigationItem[] = [
   {
     label: 'تایید مدرس‌ها',
     to: '/instructor-approvals',
+    icon: ShieldCheck,
+    roles: ['SuperAdmin'],
+    group: 'users',
+  },
+  {
+    label: 'تأیید گروه‌ها',
+    to: '/group-approvals',
     icon: ShieldCheck,
     roles: ['SuperAdmin'],
     group: 'users',

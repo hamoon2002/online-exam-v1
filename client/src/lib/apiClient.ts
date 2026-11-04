@@ -1,7 +1,6 @@
 // Access tokens stay in memory; the refresh token is an HttpOnly cookie.
 export type ServiceLocation = { hostname: string; protocol: string };
 
-const LOCAL_SERVICE_URL = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\/?$/i;
 const CODESPACES_FRONTEND_HOST = /-5173\.app\.github\.dev$/i;
 
 /**

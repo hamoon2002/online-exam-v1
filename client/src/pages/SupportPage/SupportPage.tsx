@@ -1,3 +1,4 @@
+import Spinner from '../../components/Spinner/Spinner';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
 import { ArrowRight, CheckCircle2, ClipboardList, Plus, Send, Ticket } from 'lucide-react';
 import UiSelect from '../../components/UiSelect';
@@ -233,7 +234,7 @@ export default function SupportPage() {
               <div className="flex items-center gap-2"><Status status={selectedTicket.status}/><button type="button" disabled={saving} onClick={() => void toggleTicketStatus()} className="rounded-xl border border-violet-200 px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-50 disabled:opacity-50 dark:border-violet-400/25 dark:text-violet-200">{selectedTicket.status === 'Closed' ? 'بازکردن تیکت' : 'بستن تیکت'}</button></div>
             </div>
             <div ref={chatRef} role="log" aria-label="پیام‌های تیکت" className="max-h-[55dvh] min-h-72 space-y-4 overflow-y-auto bg-violet-50/20 px-5 py-5 dark:bg-slate-950/20 sm:px-7">
-              {detailLoading ? <p className="text-center text-sm text-slate-500">در حال بارگذاری پیام‌ها…</p> : messages.map(message => {
+              {detailLoading ? <Spinner label="در حال دریافت پیام‌ها…" compact /> : messages.map(message => {
                 const mine = isAdmin ? message.fromStaff : !message.fromStaff;
                 return <div key={message.id} className={`flex ${mine ? 'justify-start' : 'justify-end'}`}>
                   <div className={`max-w-[85%] rounded-2xl border px-4 py-3 shadow-sm sm:max-w-[75%] ${mine ? 'border-violet-200 bg-violet-100 text-slate-800 dark:border-violet-400/25 dark:bg-violet-500/20 dark:text-white' : 'border-slate-200 bg-white text-slate-800 dark:border-slate-600 dark:bg-slate-800 dark:text-white'}`}>

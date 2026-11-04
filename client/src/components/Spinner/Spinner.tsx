@@ -9,9 +9,9 @@ export default function Spinner({ label = 'در حال بارگذاری…', com
       aria-label={label}
       dir="rtl"
     >
-      <span className="site-loading-orbit" aria-hidden="true">
-        <span className="site-loading-orbit-ring" />
-        <span className="site-loading-orbit-core" />
+      <span className="site-loading-spinner" aria-hidden="true">
+        <span className="site-loading-spinner-ring" />
+        <span className="site-loading-spinner-core" />
       </span>
       <span className="sr-only">{label}</span>
     </div>

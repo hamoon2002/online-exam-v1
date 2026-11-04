@@ -1,3 +1,4 @@
+import Spinner from '../../components/Spinner/Spinner';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, BookOpenCheck, Pencil, Plus, Trash2, LibraryBig, Layers } from 'lucide-react';
@@ -55,7 +56,7 @@ export default function PracticePage() {
               <p>{list.error}</p><button type="button" onClick={list.reload} className="mt-2 underline">تلاش مجدد</button>
             </div>
           ) : list.loading ? (
-            <p role="status" className="py-12 text-center text-slate-500">در حال دریافت تمرین‌ها…</p>
+            <Spinner label="در حال دریافت تمرین‌ها…" />
           ) : !list.items.length ? (
             <div className="py-12 text-center">
               <BookOpenCheck className="mx-auto mb-4 text-violet-400" size={36}/>

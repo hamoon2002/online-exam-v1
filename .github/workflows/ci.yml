@@ -56,7 +56,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: node scripts/prepare-vendor.cjs && npm ci
+        run: npm ci
 
       - name: Generate Prisma client
         run: npx prisma generate

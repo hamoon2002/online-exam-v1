@@ -174,8 +174,15 @@ test('Postgres practice: concurrent retry, immutable snapshot, group revocation 
     // Deletion is instructor-only and must preserve submitted student history.
     assert.equal((await r(`Student:${student}`, 'DELETE', `/${id}`)).status, 403);
     const protectedDelete = await r(`Instructor:${owner}`, 'DELETE', `/${id}`);
-    assert.equal(protectedDelete.status, 409, JSON.stringify(protectedDelete.body));
-    assert.equal(await db.practiceAttempt.count({ where: { studentId: student } }), 2);
+    assert.equal(
+      protectedDelete.status,
+      409,
+      JSON.stringify(protectedDelete.body),
+    );
+    assert.equal(
+      await db.practiceAttempt.count({ where: { studentId: student } }),
+      2,
+    );
 
     // An untouched draft can be removed and disappears from the owner's list.
     const second = await r(`Instructor:${owner}`, 'POST', '', {
@@ -188,8 +195,11 @@ test('Postgres practice: concurrent retry, immutable snapshot, group revocation 
     await db.question.create({
       data: {
         id: prefix + '-new-question',
-        bankId, text: 'Fresh', options: ['A', 'B'],
-        correctOptionIndex: 0, difficulty: 'Easy',
+        bankId,
+        text: 'Fresh',
+        options: ['A', 'B'],
+        correctOptionIndex: 0,
+        difficulty: 'Easy',
       },
     });
     const draft = await r(`Instructor:${owner}`, 'POST', '', {
@@ -198,7 +208,13 @@ test('Postgres practice: concurrent retry, immutable snapshot, group revocation 
       questionIds: [prefix + '-new-question'],
     });
     assert.equal(draft.status, 201, JSON.stringify(draft.body));
-    assert.equal((await r(`Instructor:${owner}`, 'DELETE', `/${draft.body.id}`)).status, 204);
-    assert.equal((await r(`Instructor:${owner}`, 'GET', `/${draft.body.id}`)).status, 404);
+    assert.equal(
+      (await r(`Instructor:${owner}`, 'DELETE', `/${draft.body.id}`)).status,
+      204,
+    );
+    assert.equal(
+      (await r(`Instructor:${owner}`, 'GET', `/${draft.body.id}`)).status,
+      404,
+    );
   });
 });

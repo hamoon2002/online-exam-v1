@@ -57,7 +57,11 @@ function AppLayout({ children, title }: AppLayoutProps) {
         ? existing.map(tab => tab.path === currentPath ? { ...tab, title } : tab)
         : [...existing, { path: currentPath, title }];
       const updated = next.slice(-20);
-      sessionStorage.setItem(accountKey, JSON.stringify(updated));
+      try {
+        sessionStorage.setItem(accountKey, JSON.stringify(updated));
+      } catch {
+        // Browsers may block session storage; keep the dashboard usable.
+      }
       return { accountKey, tabs: updated };
     });
   }, [accountKey, currentPath, title]);
@@ -80,7 +84,11 @@ function AppLayout({ children, title }: AppLayoutProps) {
     const index = tabs.findIndex(tab => tab.path === path);
     if (index < 0) return;
     const remaining = tabs.filter(tab => tab.path !== path);
-    sessionStorage.setItem(accountKey, JSON.stringify(remaining));
+    try {
+      sessionStorage.setItem(accountKey, JSON.stringify(remaining));
+    } catch {
+      // Closing a tab should still work when storage is unavailable.
+    }
     setTabState({ accountKey, tabs: remaining });
     if (path === currentPath) {
       const next = remaining[Math.min(index, remaining.length - 1)];

@@ -126,7 +126,9 @@ async function request(
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(token ? { 'X-Exam-Client': clientId ?? defaultClientId(examId) } : {}),
+      ...(token
+        ? { 'X-Exam-Client': clientId ?? defaultClientId(examId) }
+        : {}),
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });

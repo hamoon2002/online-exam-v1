@@ -180,6 +180,7 @@ export async function apiRequest<T>(
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
       signal,
+      keepalive,
       // Include the refresh cookie on cross-origin API requests.
       credentials: 'include',
     });

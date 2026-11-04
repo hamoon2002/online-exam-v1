@@ -121,7 +121,13 @@ jobs:
         run: npm test -w server
 
       - name: Lint and check server formatting
-        run: npm run lint -w server && npm run format:check -w server
+        run: |
+          npm run lint -w server
+          npm run format:check -w server || {
+            npx prettier --write server/tests/examSecurity.integration.test.ts
+            git diff -- server/tests/examSecurity.integration.test.ts
+            exit 1
+          }
 
   container-build:
     runs-on: ubuntu-latest

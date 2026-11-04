@@ -257,7 +257,6 @@ test('HTTP permissions and answer key: guest, unrelated users, owner, admin, act
   );
 });
 
-
 test('server refuses a second exam browser while allowing the original browser to resume', async (t) => {
   if (!ready) return unavailable(t, 'PostgreSQL/Redis unavailable');
   const f = await fixture();
@@ -277,7 +276,8 @@ test('server refuses a second exam browser while allowing the original browser t
     409,
   );
   assert.equal(
-    (await request(f.exam.id, 'attempts/me', token, 'GET', undefined, b)).status,
+    (await request(f.exam.id, 'attempts/me', token, 'GET', undefined, b))
+      .status,
     409,
   );
   assert.equal(
@@ -307,7 +307,8 @@ test('server refuses a second exam browser while allowing the original browser t
     201,
   );
   assert.equal(
-    (await request(f.exam.id, 'attempts/me', token, 'GET', undefined, a)).status,
+    (await request(f.exam.id, 'attempts/me', token, 'GET', undefined, a))
+      .status,
     200,
   );
 });

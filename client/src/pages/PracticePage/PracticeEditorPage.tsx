@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { ArrowRight, BookOpenCheck, CheckCircle2, Layers, LibraryBig } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../components/AppLayout/AppLayout";
 import { notifySaveSuccess } from "../../components/Toast/Toast";
@@ -122,16 +123,17 @@ function Editor({ id }: { id?: string }) {
   return (
     <AppLayout title={id ? "ویرایش مجموعهٔ تمرین" : "مجموعهٔ تمرین جدید"}>
       <div className="mx-auto max-w-5xl space-y-5" dir="rtl">
-        <Link to="/practice" className="text-sm text-gray-500">
-          ← بازگشت به تمرین‌ها
-        </Link>
-        <h1 className="text-2xl font-bold">
-          {id ? "تنظیم مجموعهٔ تمرین" : "یک مسیر تازه برای تمرین"}
-        </h1>
-        <p className="text-sm leading-7 text-gray-500">
-          مشخصات، سؤال‌ها و گروه‌های مجاز را انتخاب کنید. پس از ذخیره، پیش‌نمایش
-          را ببینید و منتشر کنید.
-        </p>
+        <Link to="/practice" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-violet-600"><ArrowRight size={16}/> بازگشت به تمرین‌ها</Link>
+        <header className="rounded-3xl border border-violet-200/50 bg-gradient-to-bl from-violet-50 via-white to-white p-6 dark:border-violet-400/20 dark:from-violet-500/10 dark:via-slate-900 dark:to-slate-900">
+          <div className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-violet-600 dark:text-violet-300"><BookOpenCheck size={18}/> ساخت و مدیریت تمرین</div>
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{id ? "ویرایش مجموعه تمرین" : "ساخت مجموعه تمرین"}</h1>
+          <p className="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400">سه مرحله ساده: مشخصات تمرین، انتخاب سؤال از بانک‌ها و تعیین گروه‌های مجاز. ابتدا ذخیره کنید؛ سپس تمرین را بازبینی و منتشر کنید.</p>
+          <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-violet-700 dark:text-violet-200">
+            <span className="rounded-full bg-violet-100 px-3 py-1.5 dark:bg-violet-500/20">۱. مشخصات</span>
+            <span className="rounded-full bg-violet-100 px-3 py-1.5 dark:bg-violet-500/20">۲. سؤال‌ها</span>
+            <span className="rounded-full bg-violet-100 px-3 py-1.5 dark:bg-violet-500/20">۳. گروه‌ها</span>
+          </div>
+        </header>
         {loading ? (
           <p role="status">در حال دریافت اطلاعات…</p>
         ) : loadError ? (
@@ -148,7 +150,7 @@ function Editor({ id }: { id?: string }) {
           <form onSubmit={save} noValidate className="space-y-5">
             {error && <p role="alert" className="form-inline-error">{error}</p>}
             <fieldset disabled={busy} className={`${panel} space-y-4`}>
-              <h2 className="text-lg font-bold">۱. مشخصات مجموعه</h2>
+              <h2 className="inline-flex items-center gap-2 text-lg font-bold"><BookOpenCheck size={19} className="text-violet-600"/>۱. مشخصات تمرین</h2>
               <label className="block text-sm">
                 نام تمرین
                 <input
@@ -176,7 +178,7 @@ function Editor({ id }: { id?: string }) {
             </fieldset>
             {frozen ? (
               <section className={panel}>
-                <h2 className="font-bold">سؤال‌های این مجموعه ثابت هستند</h2>
+                <h2 className="inline-flex items-center gap-2 font-bold"><LibraryBig size={18} className="text-violet-600"/>سؤال‌های این مجموعه ثابت هستند</h2>
                 <p className="mt-2 text-sm leading-7 text-gray-500">
                   برای حفظ اعتبار سابقهٔ کارآموز، سؤال‌ها پس از اولین انتشار
                   تغییر نمی‌کنند. می‌توانید نام، توضیح و دسترسی گروه‌ها را
@@ -192,7 +194,7 @@ function Editor({ id }: { id?: string }) {
               />
             )}
             <fieldset disabled={busy} className={panel}>
-              <h2 className="text-lg font-bold">۳. دسترسی گروه‌ها</h2>
+              <h2 className="inline-flex items-center gap-2 text-lg font-bold"><Layers size={19} className="text-violet-600"/>۳. دسترسی گروه‌ها</h2>
               <p className="mb-4 mt-2 text-sm text-gray-500">
                 فقط اعضای گروه‌های انتخاب‌شده، پس از انتشار این تمرین را
                 می‌بینند.
@@ -206,7 +208,7 @@ function Editor({ id }: { id?: string }) {
                   {groups.map((g) => (
                     <label
                       key={g.id}
-                      className="flex items-center gap-3 rounded-xl border border-gray-200 p-3 text-sm dark:border-gray-700"
+                      className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 text-sm transition-colors ${groupIds.includes(g.id) ? "border-violet-400 bg-violet-50 text-violet-800 dark:border-violet-400/45 dark:bg-violet-500/10 dark:text-violet-200" : "border-slate-200 hover:border-violet-300 dark:border-slate-700"}`}
                     >
                       <input
                         type="checkbox"
@@ -220,26 +222,19 @@ function Editor({ id }: { id?: string }) {
                         }
                         className="h-4 w-4 accent-brand-600"
                       />
-                      {g.name}
+                      <span className="min-w-0 flex-1 break-words">{g.name}</span>
+                      {groupIds.includes(g.id) && <CheckCircle2 size={17} className="shrink-0 text-violet-600"/>}
                     </label>
                   ))}
                 </div>
               )}
             </fieldset>
-            {error && (
-              <p
-                role="alert"
-                className="rounded-xl bg-rose-50 p-4 text-sm text-rose-700 dark:bg-rose-950 dark:text-rose-300"
-              >
-                {error}
-              </p>
-            )}
             <footer
               className={`${panel} flex flex-wrap items-center justify-between gap-4`}
             >
               <p className="text-sm text-gray-500">
-                {groupIds.length.toLocaleString("fa-IR")} گروه انتخاب شده •
-                انتشار در مرحلهٔ بعد
+                {groupIds.length.toLocaleString("fa-IR")} گروه • {selected.length.toLocaleString("fa-IR")} سؤال
+                {frozen ? " • سؤال‌ها پس از انتشار ثابت می‌مانند" : " • انتشار پس از بازبینی"}
               </p>
               <button className={primary} disabled={busy}>
                 {busy ? "در حال ذخیره…" : "ذخیره و بازبینی"}

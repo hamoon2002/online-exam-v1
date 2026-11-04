@@ -28,8 +28,6 @@ export async function requireExamClientLease(
   claim = true,
 ): Promise<void> {
   const raw = req.header('X-Exam-Client');
-  // Older integration fixtures intentionally omit this header; real apps never do.
-  if (!raw && process.env.NODE_ENV === 'test') return;
   if (!raw || !ID_PATTERN.test(raw)) {
     throw badRequest(
       'شناسه نشست آزمون معتبر نیست. آزمون را از صفحه خودش باز کنید.',

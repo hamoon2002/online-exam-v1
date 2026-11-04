@@ -1578,7 +1578,7 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
   visibility: hidden;
   pointer-events: none;
   transform: none;
-  transition: opacity 400ms ease, visibility 400ms ease;
+  transition: opacity 650ms cubic-bezier(.22, 1, .36, 1), visibility 650ms ease;
 }
 .site-toast.site-toast-css.show {
   opacity: 1;

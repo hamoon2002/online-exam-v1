@@ -17,21 +17,20 @@ type AppLayoutProps = {
 
 type PanelTab = { path: string; title: string };
 export const TABS_KEY_PREFIX = 'exam-panel-tabs-account:';
-const DESK_TAB: PanelTab = { path: '/workspace', title: 'میز کار' };
 
 function readTabs(key: string): PanelTab[] {
   try {
     const saved: unknown = JSON.parse(sessionStorage.getItem(key) ?? '[]');
-    if (!Array.isArray(saved)) return [DESK_TAB];
+    if (!Array.isArray(saved)) return [];
     const valid = saved.filter((tab): tab is PanelTab =>
       typeof tab === 'object' && tab !== null &&
       typeof tab.path === 'string' && tab.path.startsWith('/') &&
       typeof tab.title === 'string'
     );
     const restored = Array.from(new Map(valid.map(tab => [tab.path.split('?')[0], { ...tab, path: tab.path.split('?')[0] }])).values());
-    return [DESK_TAB, ...restored.filter(tab => tab.path !== DESK_TAB.path)].slice(-20);
+    return restored.filter(tab => tab.path !== '/workspace').slice(-20);
   } catch {
-    return [DESK_TAB];
+    return [];
   }
 }
 
@@ -51,13 +50,13 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const currentPath = location.pathname;
 
   useEffect(() => {
-    if (!accountKey) return;
+    if (!accountKey || currentPath === '/workspace') return;
     setTabState(previous => {
       const existing = previous.accountKey === accountKey ? previous.tabs : readTabs(accountKey);
       const next = existing.some(tab => tab.path === currentPath)
         ? existing.map(tab => tab.path === currentPath ? { ...tab, title } : tab)
         : [...existing, { path: currentPath, title }];
-      const updated = [DESK_TAB, ...next.filter(tab => tab.path !== DESK_TAB.path)].slice(-20);
+      const updated = next.slice(-20);
       sessionStorage.setItem(accountKey, JSON.stringify(updated));
       return { accountKey, tabs: updated };
     });
@@ -77,7 +76,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
   }
 
   function closeTab(path: string) {
-    if (!accountKey || path === DESK_TAB.path) return;
+    if (!accountKey) return;
     const index = tabs.findIndex(tab => tab.path === path);
     if (index < 0) return;
     const remaining = tabs.filter(tab => tab.path !== path);
@@ -105,18 +104,16 @@ function AppLayout({ children, title }: AppLayoutProps) {
             onToggleTheme={toggleTheme}
             onOpenSidebar={() => setIsSidebarOpen(true)}
           />
-          {showTabs && (
+          {showTabs && tabs.length > 0 && (
             <nav aria-label="تب‌های باز پنل" className="panel-internal-tabs">
               {tabs.map(tab => (
                 <div key={tab.path} onMouseDown={(event) => { if (event.button === 1) { event.preventDefault(); closeTab(tab.path); } }} className={`panel-internal-tab ${tab.path === currentPath ? 'is-active' : ''}`}>
                   <button type="button" className="panel-internal-tab-label" onClick={() => guardNavigation(() => navigate(tab.path))} aria-current={tab.path === currentPath ? 'page' : undefined} title={tab.title}>
                     {tab.title}
                   </button>
-                  {tab.path !== DESK_TAB.path && (
-                    <button type="button" className="panel-internal-tab-close" onClick={() => closeTab(tab.path)} aria-label={`بستن تب ${tab.title}`} title="بستن تب">
-                      <X size={14} />
-                    </button>
-                  )}
+                  <button type="button" className="panel-internal-tab-close" onClick={() => closeTab(tab.path)} aria-label={`بستن تب ${tab.title}`} title="بستن تب">
+                    <X size={14} />
+                  </button>
                 </div>
               ))}
             </nav>

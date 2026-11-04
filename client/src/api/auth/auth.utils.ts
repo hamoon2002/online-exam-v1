@@ -16,7 +16,7 @@ export function userFromMe(data: MeResponse): User {
 export function messageOf(err: unknown): string {
   if (err instanceof ApiError) {
     if (err.status === 0) {
-      return 'اتصال به سرور برقرار نشد. اینترنتت رو چک کن';
+      return 'ارتباط با API قطع است. در Codespaces باید بک‌اند روی پورت ۴۰۰۰ اجرا باشد.';
     }
     return err.message;
   }

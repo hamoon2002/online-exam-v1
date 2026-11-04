@@ -1,3 +1,4 @@
+import Spinner from '../../components/Spinner/Spinner';
 import { useEffect, useRef, useState } from "react";
 import { ArrowRight, BookOpenCheck, CheckCircle2, Layers, LibraryBig } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -131,7 +132,7 @@ function Editor({ id }: { id?: string }) {
           </div>
         </header>
         {loading ? (
-          <p role="status">در حال دریافت اطلاعات…</p>
+          <Spinner label="در حال دریافت اطلاعات تمرین…" />
         ) : loadError ? (
           <div role="alert">
             {loadError}

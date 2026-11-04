@@ -5,9 +5,9 @@ if ! docker info >/dev/null 2>&1; then
   echo 'Docker is not ready. Start/reopen the Codespace and retry.' >&2
   exit 1
 fi
-if ! docker compose -p online-exam-v1 up -d postgres redis minio; then
+if ! docker compose -p online-exam-v1 up -d postgres redis redis-replica minio; then
   echo 'Docker startup failed. If the error was RWLayer unexpectedly nil, run:' >&2
-  echo 'docker compose -p online-exam-v1 up -d --force-recreate postgres redis minio' >&2
+  echo 'docker compose -p online-exam-v1 up -d --force-recreate postgres redis redis-replica minio' >&2
   exit 1
 fi
 ready=false

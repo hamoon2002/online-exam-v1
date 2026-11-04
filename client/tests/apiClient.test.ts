@@ -327,3 +327,21 @@ test('Codespaces: production-style /api config must use the Vite proxy', () => {
   assert.equal(resolveServiceBaseUrl('/__api', location), '');
   assert.equal(buildApiUrl('/auth/login/password', resolveServiceBaseUrl('/api', location)), '/__api/auth/login/password');
 });
+
+
+test('Codespaces: stale external API URL cannot override the same-origin proxy', () => {
+  const location = { hostname: 'quiet-river-5173.app.github.dev', protocol: 'https:' };
+  assert.equal(resolveServiceBaseUrl('https://old-codespace-4000.app.github.dev', location), '');
+  assert.equal(resolveServiceBaseUrl('https://api.example.com', location), '');
+  assert.equal(buildApiUrl('/auth/entry', resolveServiceBaseUrl('https://old-codespace-4000.app.github.dev', location)), '/__api/auth/entry');
+});
+
+test('public auth endpoints return their 401 directly without refreshing a stale session', async () => {
+  install(() => json(401, { error: 'شناسه یا رمز اشتباهه' }));
+  await assert.rejects(
+    apiRequest('/auth/login/password', { method: 'POST', body: { identifier: 'a', password: 'b' } }),
+    (error: unknown) => error instanceof ApiError && error.status === 401 && error.message === 'شناسه یا رمز اشتباهه',
+  );
+  assert.equal(refreshCalls(), 0);
+  assert.equal(calls.length, 1);
+});

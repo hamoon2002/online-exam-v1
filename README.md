@@ -14,7 +14,6 @@ React/Vite + Express/Prisma + PostgreSQL، Redis و MinIO.
 
 ```bash
 node scripts/setup-local.cjs
-node scripts/prepare-vendor.cjs
 npm ci
 docker compose -p online-exam-v1 up -d postgres redis minio minio-init
 cd server

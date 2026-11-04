@@ -1,151 +1,114 @@
+import { useEffect, useState } from 'react';
+import { Check, LibraryBig, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import Spinner from '../../../components/Spinner/Spinner';
-import { useEffect, useState } from "react";
-import { ArrowDown, ArrowUp, CheckCircle2, X, LibraryBig } from "lucide-react";
-import UiSelect from "../../../components/UiSelect";
+import UiSelect from '../../../components/UiSelect';
 import {
   getBankQuestionsPage,
   type BankQuestion,
   type QuestionBank,
-} from "../../../api/questionBankApi";
-import usePagedList from "../../../hooks/usePagedList";
-import ListPagination from "../../../components/ListPagination/ListPagination";
-import Difficulty from "../../../components/QuestionDifficultyBadge/QuestionDifficultyBadge";
-import { panel } from "../practiceUi";
-export type PickedQuestion = Pick<BankQuestion, "id" | "text" | "difficulty">;
+} from '../../../api/questionBankApi';
+import usePagedList from '../../../hooks/usePagedList';
+import ListPagination from '../../../components/ListPagination/ListPagination';
+import { panel } from '../practiceUi';
+
+export type PickedQuestion = Pick<BankQuestion, 'id' | 'text' | 'difficulty'>;
+
 type Props = {
   banks: QuestionBank[];
   selected: PickedQuestion[];
   onChange: (items: PickedQuestion[]) => void;
   disabled: boolean;
 };
-export default function PracticeQuestionPicker({
-  banks,
-  selected,
-  onChange,
-  disabled,
-}: Props) {
-  const [bankId, setBankId] = useState(banks[0]?.id ?? "");
+
+export default function PracticeQuestionPicker({ banks, selected, onChange, disabled }: Props) {
+  const [bankId, setBankId] = useState(banks[0]?.id ?? '');
   useEffect(() => {
     if (banks.length && !banks.some(bank => bank.id === bankId)) setBankId(banks[0].id);
   }, [banks, bankId]);
-  const list = usePagedList(
-    (query) => getBankQuestionsPage(bankId, query),
-    bankId,
-    !!bankId,
-  );
-  const ids = new Set(selected.map((q) => q.id));
+
+  const list = usePagedList(query => getBankQuestionsPage(bankId, query), bankId, !!bankId);
+  const selectedIds = new Set(selected.map(question => question.id));
+
+  function toggle(question: BankQuestion) {
+    if (disabled) return;
+    if (selectedIds.has(question.id)) {
+      onChange(selected.filter(item => item.id !== question.id));
+    } else if (selected.length < 100) {
+      onChange([...selected, { id: question.id, text: question.text, difficulty: question.difficulty }]);
+    }
+  }
+
   return (
-    <section className={panel}>
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-2"><h2 className="inline-flex items-center gap-2 text-lg font-bold"><LibraryBig size={19} className="text-violet-600"/>۲. انتخاب سؤال‌ها</h2><span className="rounded-full bg-violet-50 px-3 py-1 text-sm font-bold text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">{selected.length.toLocaleString("fa-IR")} / ۱۰۰ سؤال</span></div>
-      <p className="mb-5 text-sm text-gray-500">
-        حداکثر ۱۰۰ سؤال از بانک‌های خود انتخاب کنید؛ انتخاب‌ها هنگام جابه‌جایی
-        بین بانک‌ها باقی می‌مانند.
-      </p>
+    <section className={`${panel} space-y-4`}>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div>
+          <h2 className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white"><LibraryBig size={18} className="text-violet-600" /> سؤال‌های تمرین</h2>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">بانک را انتخاب کنید و روی سؤال‌های موردنظر تیک بزنید.</p>
+        </div>
+        <span className="rounded-full bg-violet-100 px-3 py-1.5 text-xs font-bold text-violet-700 dark:bg-violet-500/20 dark:text-violet-200">
+          {selected.length.toLocaleString('fa-IR')} سؤال انتخاب شده
+        </span>
+      </div>
+
       {!banks.length ? (
-        <p>ابتدا در بخش «بانک سؤال» سؤال بسازید یا فایل اکسل وارد کنید.</p>
+        <div className="rounded-xl border border-dashed border-violet-200 px-4 py-7 text-center text-sm text-slate-500 dark:border-violet-400/20">
+          <p>هنوز بانک سؤال ندارید.</p>
+          <Link className="mt-3 inline-block font-semibold text-violet-600 underline dark:text-violet-300" to="/question-banks">رفتن به بانک سؤال</Link>
+        </div>
       ) : (
-        <fieldset
-          disabled={disabled}
-          className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_300px]"
-        >
-          <div className="min-w-0">
-            <label className="mb-4 block text-sm">
-              بانک سؤال
-              <UiSelect
-                className="mt-2 w-full"
-                aria-label="بانک سؤال"
-                value={bankId}
-                onChange={(e) => setBankId(e.target.value)}
-              >
-                {banks.map((bank) => (
-                  <option key={bank.id} value={bank.id}>
-                    {bank.name}
-                  </option>
-                ))}
-              </UiSelect>
-            </label>
+        <>
+          <label className="block max-w-md text-sm font-semibold text-slate-700 dark:text-slate-200">
+            بانک سؤال
+            <UiSelect className="mt-2 w-full" aria-label="بانک سؤال" value={bankId} onChange={event => setBankId(event.target.value)}>
+              {banks.map(bank => <option key={bank.id} value={bank.id}>{bank.name}</option>)}
+            </UiSelect>
+          </label>
+          <div className="rounded-xl border border-slate-200 p-3 dark:border-slate-700">
             <ListPagination {...list} />
             {list.error ? (
-              <p role="alert">
-                {list.error}
-                <button
-                  type="button"
-                  onClick={list.reload}
-                  className="mr-2 underline"
-                >
-                  تلاش مجدد
-                </button>
-              </p>
+              <div role="alert" className="py-4 text-sm text-rose-600">
+                {list.error} <button type="button" className="mr-2 underline" onClick={list.reload}>تلاش مجدد</button>
+              </div>
             ) : list.loading ? (
-              <Spinner label="در حال دریافت سؤال‌ها…" />
+              <Spinner label="در حال دریافت سؤال‌ها…" compact />
             ) : !list.items.length ? (
-              <p className="rounded-2xl border border-dashed border-violet-200 p-8 text-center text-sm text-slate-500 dark:border-violet-400/25">در این بانک سؤالی پیدا نشد. از بخش بانک سؤال، سؤال جدید اضافه کنید.</p>
+              <p className="py-6 text-center text-sm text-slate-500">در این بانک سؤالی پیدا نشد.</p>
             ) : (
-              <div className="max-h-[32rem] space-y-3 overflow-y-auto">
-                {list.items.map((q) => (
-                  <label
-                    key={q.id}
-                    className={`flex cursor-pointer gap-3 rounded-xl border p-4 transition-colors ${ids.has(q.id) ? "border-violet-500 bg-violet-50 dark:border-violet-400/50 dark:bg-violet-500/10" : "border-slate-200 hover:border-violet-300 hover:bg-violet-50/30 dark:border-slate-700"}`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={ids.has(q.id)}
-                      disabled={!ids.has(q.id) && selected.length >= 100}
-                      onChange={() =>
-                        onChange(
-                          ids.has(q.id)
-                            ? selected.filter((item) => item.id !== q.id)
-                            : [
-                                ...selected,
-                                {
-                                  id: q.id,
-                                  text: q.text,
-                                  difficulty: q.difficulty,
-                                },
-                              ],
-                        )
-                      }
-                      className="mt-1 h-4 w-4 shrink-0 accent-brand-600"
-                    />
-                    <span className="min-w-0 flex-1">
-                      <span className="mb-2 block break-words text-sm leading-7">
-                        {q.text}
-                      </span>
-                      <Difficulty difficulty={q.difficulty} />
-                      <span className="mt-2 block text-xs text-slate-500">
-                        پاسخ صحیح: {q.options[q.correctOptionIndex]}
-                      </span>
-                    </span>
-                    {ids.has(q.id) && <CheckCircle2 size={19} className="mt-1 shrink-0 text-violet-600"/>}
-                  </label>
-                ))}
+              <div className="max-h-80 space-y-2 overflow-y-auto">
+                {list.items.map(question => {
+                  const checked = selectedIds.has(question.id);
+                  return (
+                    <label key={question.id} className={`flex cursor-pointer items-start gap-3 rounded-xl border px-3 py-2.5 transition-colors ${checked ? 'border-violet-400 bg-violet-50 dark:border-violet-400/40 dark:bg-violet-500/10' : 'border-slate-200 hover:border-violet-300 dark:border-slate-700'}`}>
+                      <input type="checkbox" checked={checked} disabled={disabled || (!checked && selected.length >= 100)}
+                        onChange={() => toggle(question)} className="mt-1 h-4 w-4 shrink-0 accent-violet-600" />
+                      <span className="min-w-0 flex-1 break-words text-sm leading-6 text-slate-700 dark:text-slate-200">{question.text}</span>
+                      {checked && <Check size={16} aria-hidden="true" className="mt-1 shrink-0 text-violet-600" />}
+                    </label>
+                  );
+                })}
               </div>
             )}
           </div>
-          <aside className="rounded-2xl border border-violet-100 bg-violet-50/40 p-4 dark:border-violet-400/20 dark:bg-violet-500/5">
-            <h3 className="font-bold">
-              انتخاب‌شده‌ها ({selected.length.toLocaleString("fa-IR")})
-            </h3>
-            <p className="my-3 text-xs leading-6 text-gray-500">
-              ترتیب این فهرست، ترتیب سؤال‌های تمرین است.
-            </p>
-            {!selected.length && <p className="rounded-xl border border-dashed border-violet-200 p-5 text-center text-xs text-slate-500 dark:border-violet-400/20">با تیک‌زدن سؤال‌ها، فهرست انتخاب‌شده‌ها اینجا نمایش داده می‌شود.</p>}
-            <ol className="max-h-[32rem] space-y-2 overflow-y-auto">
-              {selected.map((q, i) => (
-                <li key={q.id} className="flex items-start gap-2 rounded-xl border border-violet-100 bg-white p-2 text-sm dark:border-violet-400/15 dark:bg-slate-800">
-                  <span className="min-w-0 flex-1 break-words">
-                    {(i + 1).toLocaleString("fa-IR")}. {q.text}
-                  </span>
-                  <div className="flex shrink-0 items-center gap-1">
-                    <button type="button" disabled={disabled || i === 0} aria-label={`بالا بردن سؤال ${i + 1}`} onClick={() => { const next = [...selected]; [next[i-1], next[i]] = [next[i], next[i-1]]; onChange(next); }} className="rounded p-1 text-violet-600 disabled:opacity-25"><ArrowUp size={15}/></button>
-                    <button type="button" disabled={disabled || i === selected.length - 1} aria-label={`پایین بردن سؤال ${i + 1}`} onClick={() => { const next = [...selected]; [next[i+1], next[i]] = [next[i], next[i+1]]; onChange(next); }} className="rounded p-1 text-violet-600 disabled:opacity-25"><ArrowDown size={15}/></button>
-                    <button type="button" disabled={disabled} aria-label={`حذف سؤال ${i + 1} از انتخاب`} onClick={() => onChange(selected.filter(item => item.id !== q.id))} className="rounded p-1 text-rose-500"><X size={15}/></button>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </aside>
-        </fieldset>
+          {selected.length > 0 && (
+            <details className="group rounded-xl border border-violet-200/70 bg-violet-50/40 p-3 dark:border-violet-400/20 dark:bg-violet-500/5">
+              <summary className="cursor-pointer text-sm font-semibold text-violet-700 dark:text-violet-200">
+                مشاهده {selected.length.toLocaleString('fa-IR')} سؤال انتخاب‌شده
+                <span className="mr-2 text-xs font-normal text-slate-500">(برای حذف سؤال، فهرست را باز کنید)</span>
+              </summary>
+              <ol className="mt-3 max-h-48 space-y-2 overflow-y-auto">
+                {selected.map((question, index) => (
+                  <li key={question.id} className="flex items-start gap-2 rounded-lg bg-white px-3 py-2 text-sm dark:bg-slate-800">
+                    <span className="min-w-0 flex-1 break-words">{(index + 1).toLocaleString('fa-IR')}. {question.text}</span>
+                    <button type="button" disabled={disabled} aria-label={`حذف سؤال ${index + 1} از انتخاب`}
+                      onClick={() => onChange(selected.filter(item => item.id !== question.id))}
+                      className="rounded-md p-1 text-rose-500 hover:bg-rose-50 disabled:opacity-40"><X size={15} /></button>
+                  </li>
+                ))}
+              </ol>
+            </details>
+          )}
+        </>
       )}
     </section>
   );

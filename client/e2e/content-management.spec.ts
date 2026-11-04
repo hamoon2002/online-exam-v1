@@ -39,7 +39,7 @@ test('instructor can create, rename, and delete a question bank from the unified
     await route.fulfill({ status, ...(status === 204 ? {} : { contentType: 'application/json', body: JSON.stringify(body) }) });
   });
   await page.goto('/question-banks');
-  await expect(page.getByRole('heading', { name: 'بانک سؤال' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'بانک سؤال', exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'بانک جدید' }).click();
   const dialog = page.getByRole('dialog', { name: 'ایجاد بانک سؤال' });
   await dialog.getByPlaceholder('مثلاً ریاضی دهم ـ فصل اول').fill('بانک ریاضی');

@@ -1,9 +1,7 @@
-import AppLayout from '../../components/AppLayout/AppLayout';
+import DashboardPage from '../DashboardPage/DashboardPage';
 
+// The desk is the instructor/admin landing view, not an empty panel.
+// AppLayout intentionally keeps /workspace out of the closable tab strip.
 export default function WorkspacePage() {
-  return (
-    <AppLayout title="فضای کاری">
-      <div className="workspace-empty-stage" aria-label="فضای کاری خالی" />
-    </AppLayout>
-  );
+  return <DashboardPage />;
 }

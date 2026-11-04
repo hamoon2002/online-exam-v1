@@ -318,3 +318,12 @@ test('API paths keep explicitly configured local or external origins', () => {
     'https://api.example.com/auth/refresh',
   );
 });
+
+
+test('Codespaces: production-style /api config must use the Vite proxy', () => {
+  const location = { hostname: 'quiet-river-5173.app.github.dev', protocol: 'https:' };
+  assert.equal(resolveServiceBaseUrl('/api', location), '');
+  assert.equal(resolveServiceBaseUrl('/api/', location), '');
+  assert.equal(resolveServiceBaseUrl('/__api', location), '');
+  assert.equal(buildApiUrl('/auth/login/password', resolveServiceBaseUrl('/api', location)), '/__api/auth/login/password');
+});

@@ -16,7 +16,7 @@ function ToastNotification({ message, tone = 'warning', duration = 3000, icon, o
   const onDismissRef = useRef(onDismiss);
   onDismissRef.current = onDismiss;
   const lifetime = Number.isFinite(duration) ? Math.max(0, duration) : 3000;
-  const exitDuration = 400;
+  const exitDuration = 650;
   const progressDuration = Math.max(0, lifetime - exitDuration);
   const toneStyles = tone === 'danger' ? 'toast-danger' : tone === 'success' ? 'toast-success' : 'toast-warning';
   const Icon = icon ?? (tone === 'danger' ? TimerOff : tone === 'success' ? CheckCircle2 : AlertTriangle);

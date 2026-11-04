@@ -7,10 +7,11 @@ import DataTable from '../../components/AdminUI/DataTable';
 import { useAuth } from '../../context/AuthContext';
 import {
   createSupportTicket, getInstructorTickets, getMyTickets,
+  getAssignedStudentTickets, getStudentInstructors,
   getSupportInstructors, getTicket, getTicketMessages,
   postTicketMessage, updateTicketStatus,
   ticketCategoryLabels, ticketPriorityLabels, ticketStatusLabels,
-  type SupportTicket, type SupportInstructor, type TicketMessage,
+  type SupportTicket, type SupportInstructor, type AvailableInstructor, type TicketMessage,
   type TicketCategory, type TicketPriority,
 } from '../../api/supportTicketApi';
 
@@ -35,8 +36,13 @@ function Status({ status }: { status: SupportTicket['status'] }) {
 export default function SupportPage() {
   const { user } = useAuth();
   const isAdmin = user?.role === 'SuperAdmin';
+  const isTeacher = user?.role === 'Instructor';
+  const isStudent = user?.role === 'Student';
   const [instructors, setInstructors] = useState<SupportInstructor[]>([]);
   const [instructorId, setInstructorId] = useState<string | null>(null);
+  const [ticketView, setTicketView] = useState<'mine' | 'students'>('mine');
+  const [availableInstructors, setAvailableInstructors] = useState<AvailableInstructor[]>([]);
+  const [assigneeId, setAssigneeId] = useState('');
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [messages, setMessages] = useState<TicketMessage[]>([]);
@@ -58,9 +64,26 @@ export default function SupportPage() {
 
   const loadList = useCallback(async () => {
     if (isAdmin && !instructorId) return;
-    const items = isAdmin ? await getInstructorTickets(instructorId!, page) : await getMyTickets(page);
+    const items = isAdmin
+      ? await getInstructorTickets(instructorId!, page)
+      : isTeacher && ticketView === 'students'
+        ? await getAssignedStudentTickets(page)
+        : await getMyTickets(page);
     setTickets(items);
-  }, [isAdmin, instructorId, page]);
+  }, [isAdmin, instructorId, page, isTeacher, ticketView]);
+
+  useEffect(() => {
+    if (!isStudent) return;
+    let active = true;
+    getStudentInstructors()
+      .then(items => {
+        if (!active) return;
+        setAvailableInstructors(items);
+        setAssigneeId(previous => items.some(item => item.id === previous) ? previous : items.length === 1 ? items[0].id : '');
+      })
+      .catch(() => { if (active) setError('دریافت فهرست مدرس‌ها ممکن نشد.'); });
+    return () => { active = false; };
+  }, [isStudent]);
 
   useEffect(() => {
     let active = true;
@@ -72,7 +95,7 @@ export default function SupportPage() {
           const items = await getSupportInstructors();
           if (active) setInstructors(items);
         } else {
-          const items = isAdmin ? await getInstructorTickets(instructorId!, page) : await getMyTickets(page);
+          const items = isAdmin ? await getInstructorTickets(instructorId!, page) : isTeacher && ticketView === 'students' ? await getAssignedStudentTickets(page) : await getMyTickets(page);
           if (active) setTickets(items);
         }
       } catch (err) {
@@ -81,7 +104,7 @@ export default function SupportPage() {
     };
     void run();
     return () => { active = false; };
-  }, [isAdmin, instructorId, page, refreshKey]);
+  }, [isAdmin, instructorId, page, refreshKey, isTeacher, ticketView]);
 
   const openTicket = useCallback(async (ticket: SupportTicket) => {
     setSelectedTicket(ticket);
@@ -119,11 +142,11 @@ export default function SupportPage() {
 
   async function submitTicket(event: FormEvent) {
     event.preventDefault();
-    if (saving || subject.trim().length < 3 || body.trim().length < 5) return;
+    if (saving || subject.trim().length < 3 || body.trim().length < 5 || (isStudent && !assigneeId)) return;
     setSaving(true);
     setError('');
     try {
-      const created = await createSupportTicket({ subject: subject.trim(), category, priority, body: body.trim() });
+      const created = await createSupportTicket({ subject: subject.trim(), category, priority, body: body.trim(), ...(isStudent ? { assignedInstructorId: assigneeId } : {}) });
       setCreateOpen(false);
       setSubject(''); setBody(''); setPriority('Normal'); setCategory('Technical');
       setPage(0);
@@ -163,7 +186,7 @@ export default function SupportPage() {
   }
 
   const currentInstructor = instructors.find(item => item.id === instructorId);
-  const sectionTitle = selectedTicket ? 'جزئیات تیکت' : isAdmin && !instructorId ? 'تیکت‌های مدرس‌ها' : isAdmin ? `تیکت‌های ${currentInstructor?.name || currentInstructor?.username || 'مدرس'}` : 'تیکت‌های من';
+  const sectionTitle = selectedTicket ? 'جزئیات تیکت' : isAdmin && !instructorId ? 'تیکت‌های مدرس‌ها' : isAdmin ? `تیکت‌های ${currentInstructor?.name || currentInstructor?.username || 'مدرس'}` : isTeacher && ticketView === 'students' ? 'تیکت‌های دانشجویان من' : 'تیکت‌های من';
 
   return (
     <AppLayout title="پشتیبانی">
@@ -185,6 +208,12 @@ export default function SupportPage() {
           {!isAdmin && !selectedTicket && <button type="button" onClick={() => setCreateOpen(true)} className="ui-primary-gradient inline-flex min-h-10 items-center gap-2 rounded-xl px-5 text-sm font-semibold"><Plus size={17}/> ثبت تیکت جدید</button>}
         </div>
 
+        {isTeacher && !selectedTicket && (
+          <div role="group" aria-label="نمایش تیکت‌ها" className="inline-flex rounded-xl border border-violet-200/60 bg-white/80 p-1 dark:border-violet-400/20 dark:bg-slate-900/80">
+            <button type="button" aria-pressed={ticketView === 'mine'} onClick={() => { setTicketView('mine'); setPage(0); }} className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${ticketView === 'mine' ? 'bg-violet-600 text-white' : 'text-slate-600 hover:bg-violet-50 dark:text-slate-300 dark:hover:bg-violet-500/10'}`}>تیکت‌های من</button>
+            <button type="button" aria-pressed={ticketView === 'students'} onClick={() => { setTicketView('students'); setPage(0); }} className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${ticketView === 'students' ? 'bg-violet-600 text-white' : 'text-slate-600 hover:bg-violet-50 dark:text-slate-300 dark:hover:bg-violet-500/10'}`}>تیکت‌های دانشجویان</button>
+          </div>
+        )}
         {error && <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700 dark:border-rose-500/20 dark:bg-rose-500/10 dark:text-rose-300">{error}</p>}
 
         {selectedTicket ? (
@@ -192,6 +221,7 @@ export default function SupportPage() {
             <div className="flex flex-wrap items-start justify-between gap-3 border-b border-violet-100 px-5 py-5 dark:border-violet-400/15 sm:px-7">
               <div className="min-w-0">
                 <p className="text-xs font-semibold text-violet-600 dark:text-violet-300" dir="ltr">{selectedTicket.trackingCode}</p>
+                {isTeacher && selectedTicket.user && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">دانشجو: {selectedTicket.user.name || selectedTicket.user.username || 'بدون نام'}</p>}
                 <h2 className="mt-1 break-words text-lg font-bold text-slate-900 dark:text-white">{selectedTicket.subject}</h2>
                 <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                   <span>{ticketCategoryLabels[selectedTicket.category]}</span>
@@ -235,6 +265,7 @@ export default function SupportPage() {
             <DataTable items={tickets} loading={loading} empty="تیکتی ثبت نشده است." onSelect={item => void openTicket(item)}
               columns={[
                 { key: 'code', label: 'کد رهگیری', render: item => <span dir="ltr" className="font-mono text-xs font-semibold text-violet-700 dark:text-violet-300">{item.trackingCode}</span> },
+                ...(isTeacher && ticketView === 'students' ? [{ key: 'student', label: 'دانشجو', render: (item: SupportTicket) => item.user?.name || item.user?.username || 'دانشجو' }] : []),
                 { key: 'subject', label: 'موضوع', render: item => <span className="font-semibold">{item.subject}</span> },
                 { key: 'category', label: 'دسته‌بندی', render: item => ticketCategoryLabels[item.category] },
                 { key: 'priority', label: 'اهمیت', render: item => <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${priorityColor[item.priority]}`}>{ticketPriorityLabels[item.priority]}</span> },
@@ -260,13 +291,22 @@ export default function SupportPage() {
           </div>
           <form onSubmit={e => void submitTicket(e)} className="space-y-4">
             <div><label htmlFor="ticket-subject" className="mb-1.5 block text-sm font-semibold dark:text-white">موضوع</label><input id="ticket-subject" required minLength={3} maxLength={160} value={subject} onChange={e => setSubject(e.target.value)} placeholder="مثلاً مشکل نمایش نتایج آزمون" className="min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-violet-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"/></div>
+            {isStudent && <div>
+              <label htmlFor="ticket-assignee" className="mb-1.5 block text-sm font-semibold dark:text-white">مدرس مربوطه</label>
+              {availableInstructors.length ? (
+                <UiSelect id="ticket-assignee" aria-label="مدرس مربوطه" value={assigneeId} onChange={e => setAssigneeId(e.target.value)}>
+                  <option value="">انتخاب مدرس</option>
+                  {availableInstructors.map(instructor => <option key={instructor.id} value={instructor.id}>{instructor.name || instructor.username || 'مدرس'}</option>)}
+                </UiSelect>
+              ) : <p className="rounded-xl bg-amber-50 px-4 py-3 text-xs text-amber-800 dark:bg-amber-500/10 dark:text-amber-200">برای ارسال تیکت به مدرس، ابتدا باید عضو یکی از گروه‌های آموزشی باشید.</p>}
+            </div>}
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div><label htmlFor="ticket-category" className="mb-1.5 block text-sm font-semibold dark:text-white">دسته‌بندی</label><UiSelect id="ticket-category" value={category} onChange={e => setCategory(e.target.value as TicketCategory)} className="min-h-11 w-full rounded-xl border border-violet-200 bg-white px-3 text-sm dark:border-violet-400/25 dark:bg-slate-800 dark:text-white">{(Object.keys(ticketCategoryLabels) as TicketCategory[]).map(key => <option key={key} value={key}>{ticketCategoryLabels[key]}</option>)}</UiSelect></div>
               <div><label htmlFor="ticket-priority" className="mb-1.5 block text-sm font-semibold dark:text-white">درجه اهمیت</label><UiSelect id="ticket-priority" value={priority} onChange={e => setPriority(e.target.value as TicketPriority)} className="min-h-11 w-full rounded-xl border border-violet-200 bg-white px-3 text-sm dark:border-violet-400/25 dark:bg-slate-800 dark:text-white">{(Object.keys(ticketPriorityLabels) as TicketPriority[]).map(key => <option key={key} value={key}>{ticketPriorityLabels[key]}</option>)}</UiSelect></div>
             </div>
             <div><label htmlFor="ticket-body" className="mb-1.5 block text-sm font-semibold dark:text-white">شرح درخواست</label><textarea id="ticket-body" required minLength={5} maxLength={2000} rows={5} value={body} onChange={e => setBody(e.target.value)} placeholder="مشکل یا درخواست خود را با جزئیات توضیح دهید…" className="w-full resize-y rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm leading-7 outline-none focus:border-violet-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"/></div>
             <p className="flex items-center gap-2 text-xs text-slate-500"><ClipboardList size={15}/> پس از ثبت، کد رهگیری یکتا دریافت می‌کنید.</p>
-            <button type="submit" disabled={saving || subject.trim().length < 3 || body.trim().length < 5} className="ui-primary-gradient inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl font-bold disabled:opacity-40"><CheckCircle2 size={17}/>{saving ? 'در حال ثبت…' : 'ثبت تیکت'}</button>
+            <button type="submit" disabled={saving || subject.trim().length < 3 || body.trim().length < 5 || (isStudent && !assigneeId)} className="ui-primary-gradient inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl font-bold disabled:opacity-40"><CheckCircle2 size={17}/>{saving ? 'در حال ثبت…' : 'ثبت تیکت'}</button>
           </form>
         </div>
       </Modal>

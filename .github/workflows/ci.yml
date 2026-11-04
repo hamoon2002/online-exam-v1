@@ -76,23 +76,21 @@ jobs:
         run: npx prisma migrate diff --from-url "$DATABASE_URL" --to-schema-datamodel prisma/schema.prisma --exit-code
         working-directory: server
 
-      - name: Lint and check server formatting
-        run: npm run lint -w server && npm run format:check -w server
-
-      - name: Build server
-        run: npm run build -w server
-
+      # Build the client before unrelated server formatting checks, so UI regressions are visible.
       - name: Build client
         run: npm run build -w client
-
-      - name: Check initial client transfer budget
-        run: node scripts/check-client-budget.cjs
 
       - name: Lint client
         run: npm run lint -w client
 
       - name: Run client tests
         run: npm test -w client
+
+      - name: Build server
+        run: npm run build -w server
+
+      - name: Check initial client transfer budget
+        run: node scripts/check-client-budget.cjs
 
       - name: Install browser for UI checks
         run: npx playwright install --with-deps chromium
@@ -121,6 +119,9 @@ jobs:
       - name: Run server tests
         if: ${{ success() }}
         run: npm test -w server
+
+      - name: Lint and check server formatting
+        run: npm run lint -w server && npm run format:check -w server
 
   container-build:
     runs-on: ubuntu-latest

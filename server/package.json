@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "prisma generate && prisma migrate deploy",
     "dev": "node --watch --require ts-node/register/transpile-only src/server.ts",
     "build": "tsc",
     "test": "node scripts/run-tests.cjs",

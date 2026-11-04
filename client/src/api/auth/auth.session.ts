@@ -17,11 +17,18 @@ async function hydrateCurrentUser(): Promise<void> {
     if (currentUser?.id === me.id) setCurrentUser(userFromMe(me));
   } catch {  }
 }
+const TABS_KEY_PREFIX = 'exam-panel-tabs-account:';
+function clearPanelTabs(userId: string | undefined): void {
+  if (!userId || typeof window === 'undefined') return;
+  try { window.sessionStorage.removeItem(`${TABS_KEY_PREFIX}${userId}`); } catch { /* Storage may be blocked by the browser. */ }
+}
 export function applySession(user: User, accessToken: string, options: { hydrate?: boolean } = {}): void {
+  // A new login starts a fresh workspace; silent cookie refresh does not.
+  if (options.hydrate !== false) clearPanelTabs(user.id);
   setCurrentUser(user); setAuthToken(accessToken); connectSocket(getAuthToken, reason => { clearSession(); window.location.href = sessionLogoutUrl(reason); });
   if (options.hydrate !== false) void hydrateCurrentUser();
 }
-export function clearSession(): void { setCurrentUser(null); setAuthToken(null); disconnectSocket(); }
+export function clearSession(): void { clearPanelTabs(currentUser?.id); setCurrentUser(null); setAuthToken(null); disconnectSocket(); }
 setOnSessionExpired(() => { if (!currentUser) return; clearSession(); window.location.href = '/login?sessionExpired=1'; });
 export type BootstrapResult =
   | { status: 'authenticated'; user: User }

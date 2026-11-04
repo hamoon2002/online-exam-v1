@@ -25,4 +25,6 @@ if [[ "$ready" != true ]]; then
 fi
 # A PONG inside the container is insufficient: verify the URL used by Node too.
 node server/scripts/check-redis.cjs
+# The server workspace predev hook generates Prisma and deploys pending
+# migrations before the API listener starts, including when npm run dev is used directly.
 exec npm run dev -w server

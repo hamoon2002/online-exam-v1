@@ -16,20 +16,22 @@ type AppLayoutProps = {
 };
 
 type PanelTab = { path: string; title: string };
-const TABS_KEY_PREFIX = 'exam-panel-tabs-account:';
+export const TABS_KEY_PREFIX = 'exam-panel-tabs-account:';
+const DESK_TAB: PanelTab = { path: '/workspace', title: 'میز کار' };
 
 function readTabs(key: string): PanelTab[] {
   try {
     const saved: unknown = JSON.parse(sessionStorage.getItem(key) ?? '[]');
-    if (!Array.isArray(saved)) return [];
+    if (!Array.isArray(saved)) return [DESK_TAB];
     const valid = saved.filter((tab): tab is PanelTab =>
       typeof tab === 'object' && tab !== null &&
       typeof tab.path === 'string' && tab.path.startsWith('/') &&
       typeof tab.title === 'string'
     );
-    return Array.from(new Map(valid.map(tab => [tab.path.split('?')[0], { ...tab, path: tab.path.split('?')[0] }])).values()).slice(-20);
+    const restored = Array.from(new Map(valid.map(tab => [tab.path.split('?')[0], { ...tab, path: tab.path.split('?')[0] }])).values());
+    return [DESK_TAB, ...restored.filter(tab => tab.path !== DESK_TAB.path)].slice(-20);
   } catch {
-    return [];
+    return [DESK_TAB];
   }
 }
 
@@ -45,17 +47,17 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const showTabs = user?.role === 'Instructor' || user?.role === 'SuperAdmin';
   const accountKey = showTabs && user?.id ? `${TABS_KEY_PREFIX}${user.id}` : '';
   const [tabState, setTabState] = useState<{ accountKey: string; tabs: PanelTab[] }>(() => ({ accountKey: '', tabs: [] }));
-  const tabs = tabState.accountKey === accountKey ? tabState.tabs : [];
+  const tabs = !accountKey ? [] : tabState.accountKey === accountKey ? tabState.tabs : readTabs(accountKey);
   const currentPath = location.pathname;
 
   useEffect(() => {
-    if (!accountKey || currentPath === '/workspace') return;
+    if (!accountKey) return;
     setTabState(previous => {
       const existing = previous.accountKey === accountKey ? previous.tabs : readTabs(accountKey);
       const next = existing.some(tab => tab.path === currentPath)
         ? existing.map(tab => tab.path === currentPath ? { ...tab, title } : tab)
         : [...existing, { path: currentPath, title }];
-      const updated = next.slice(-20);
+      const updated = [DESK_TAB, ...next.filter(tab => tab.path !== DESK_TAB.path)].slice(-20);
       sessionStorage.setItem(accountKey, JSON.stringify(updated));
       return { accountKey, tabs: updated };
     });
@@ -75,7 +77,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
   }
 
   function closeTab(path: string) {
-    if (!accountKey) return;
+    if (!accountKey || path === DESK_TAB.path) return;
     const index = tabs.findIndex(tab => tab.path === path);
     if (index < 0) return;
     const remaining = tabs.filter(tab => tab.path !== path);
@@ -110,9 +112,11 @@ function AppLayout({ children, title }: AppLayoutProps) {
                   <button type="button" className="panel-internal-tab-label" onClick={() => guardNavigation(() => navigate(tab.path))} aria-current={tab.path === currentPath ? 'page' : undefined} title={tab.title}>
                     {tab.title}
                   </button>
-                  <button type="button" className="panel-internal-tab-close" onClick={() => closeTab(tab.path)} aria-label={`بستن تب ${tab.title}`} title="بستن تب">
-                    <X size={14} />
-                  </button>
+                  {tab.path !== DESK_TAB.path && (
+                    <button type="button" className="panel-internal-tab-close" onClick={() => closeTab(tab.path)} aria-label={`بستن تب ${tab.title}`} title="بستن تب">
+                      <X size={14} />
+                    </button>
+                  )}
                 </div>
               ))}
             </nav>

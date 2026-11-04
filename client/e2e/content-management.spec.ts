@@ -121,3 +121,49 @@ test('instructor can create a practice from a bank question, edit it, then delet
   await expect(page.getByText('هنوز تمرینی ثبت نشده است')).toBeVisible();
   expect(methods).toEqual(['POST', 'PUT', 'DELETE']);
 });
+
+test('instructor can create, edit and delete an individual question inside a bank', async ({ page }) => {
+  let questions: typeof question[] = [];
+  const operations: string[] = [];
+  await page.route('http://127.0.0.1:4109/**', async route => {
+    const url = new URL(route.request().url());
+    const method = route.request().method();
+    let status = 200;
+    let body: unknown = [];
+    if (url.pathname === '/auth/refresh') body = { accessToken: 'test-token' };
+    else if (url.pathname === '/auth/me') body = teacher;
+    else if (url.pathname === '/banks/bank-1' && method === 'GET') body = { ...firstBank, questionCount: questions.length };
+    else if (url.pathname === '/banks/bank-1/questions' && method === 'GET') body = { items: questions, total: questions.length, page: 1, pageSize: 25 };
+    else if (url.pathname === '/banks/bank-1/questions' && method === 'POST') {
+      operations.push('POST');
+      questions = [{ ...question, ...route.request().postDataJSON() }];
+      body = questions[0]; status = 201;
+    } else if (url.pathname === '/banks/bank-1/questions/question-1' && method === 'PUT') {
+      operations.push('PUT');
+      questions = [{ ...questions[0], ...route.request().postDataJSON() }];
+      body = questions[0];
+    } else if (url.pathname === '/banks/bank-1/questions/question-1' && method === 'DELETE') {
+      operations.push('DELETE');
+      questions = []; body = null; status = 204;
+    }
+    await route.fulfill({ status, ...(status === 204 ? {} : { contentType: 'application/json', body: JSON.stringify(body) }) });
+  });
+  await page.goto('/question-banks/bank-1');
+  await page.getByRole('button', { name: 'سؤال جدید' }).click();
+  const dialog = page.getByRole('dialog', { name: 'سؤال جدید بانک' });
+  await dialog.getByRole('textbox', { name: 'متن سوال' }).fill(question.text);
+  for (const [index, answer] of question.options.entries()) {
+    await dialog.getByRole('textbox', { name: `گزینه ${index + 1}` }).fill(answer);
+  }
+  await dialog.getByRole('radio', { name: 'گزینه 2 جواب درست است' }).check();
+  await dialog.getByRole('button', { name: 'افزودن سؤال' }).click();
+  await expect(page.getByText(question.text, { exact: false })).toBeVisible();
+  await page.getByRole('button', { name: 'ویرایش سوال' }).click();
+  await page.getByRole('dialog', { name: 'ویرایش سؤال بانک' }).getByRole('textbox', { name: 'متن سوال' }).fill('سؤال ویرایش‌شده');
+  await page.getByRole('button', { name: 'ذخیره تغییرات' }).click();
+  await expect(page.getByText('سؤال ویرایش‌شده')).toBeVisible();
+  await page.getByRole('button', { name: 'حذف سوال' }).click();
+  await page.getByRole('dialog', { name: 'حذف سؤال بانک' }).getByRole('button', { name: 'حذف', exact: true }).click();
+  await expect(page.getByText('هنوز سوالی وجود ندارد')).toBeVisible();
+  expect(operations).toEqual(['POST', 'PUT', 'DELETE']);
+});

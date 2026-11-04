@@ -23,6 +23,14 @@ const userIds: string[] = [];
 const examIds: string[] = [];
 const groupIds: string[] = [];
 const defaultClientIds = new Map<string, string>();
+function defaultClientId(examId: string): string {
+  let id = defaultClientIds.get(examId);
+  if (!id) {
+    id = randomUUID();
+    defaultClientIds.set(examId, id);
+  }
+  return id;
+}
 before(async () => {
   try {
     await prisma.$queryRaw`SELECT 1`;
@@ -118,18 +126,7 @@ async function request(
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(token
-        ? {
-            'X-Exam-Client':
-              clientId ??
-              (defaultClientIds.get(examId) ??
-                (() => {
-                  const id = randomUUID();
-                  defaultClientIds.set(examId, id);
-                  return id;
-                })()),
-          }
-        : {}),
+      ...(token ? { 'X-Exam-Client': clientId ?? defaultClientId(examId) } : {}),
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });

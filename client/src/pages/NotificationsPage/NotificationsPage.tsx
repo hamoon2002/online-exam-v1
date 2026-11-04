@@ -1,3 +1,4 @@
+import Spinner from '../../components/Spinner/Spinner';
 import { useState } from 'react';
 import { Bell, BellRing, CheckCheck, Trash2, RefreshCw, Info, Users, Award } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
@@ -64,7 +65,7 @@ export default function NotificationsPage() {
             })}
           </tbody>
         </table>
-        {loading && <p role="status" className="px-5 py-6 text-sm text-gray-500">در حال دریافت اعلان‌ها…</p>}
+        {loading && <Spinner label="در حال دریافت اعلان‌ها…" />}
         {!loading && !items.length && <div className="flex flex-col items-center gap-3 px-5 py-12 text-sm text-gray-500"><Bell size={26} className="text-violet-400"/> اعلانی در این بخش وجود ندارد.</div>}
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-violet-200/50 bg-violet-50/30 px-4 py-4 dark:border-violet-400/15 dark:bg-violet-500/5">
           <span className="text-xs font-semibold text-violet-700 dark:text-violet-200">{unreadCount.toLocaleString('fa-IR')} خوانده‌نشده</span>

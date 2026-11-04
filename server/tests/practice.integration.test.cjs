@@ -172,7 +172,10 @@ test('Postgres practice: concurrent retry, immutable snapshot, group revocation 
     );
 
     // Deletion is instructor-only and must preserve submitted student history.
-    assert.equal((await r(`Student:${student}`, 'DELETE', `/${id}`)).status, 403);
+    assert.equal(
+      (await r(`Student:${student}`, 'DELETE', `/${id}`)).status,
+      403,
+    );
     const protectedDelete = await r(`Instructor:${owner}`, 'DELETE', `/${id}`);
     assert.equal(
       protectedDelete.status,

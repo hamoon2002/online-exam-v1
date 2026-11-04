@@ -56,7 +56,13 @@ router.post(
 
     const attempt = await prisma.examAttempt.findUnique({
       where: { examId_studentId: { examId: exam.id, studentId: sub } },
-      select: { id: true, examId: true, studentId: true, finishedAt: true, expiresAt: true },
+      select: {
+        id: true,
+        examId: true,
+        studentId: true,
+        finishedAt: true,
+        expiresAt: true,
+      },
     });
     if (!attempt) throw notFound('هنوز این آزمون رو شروع نکردی');
     if (attempt.finishedAt) throw conflict('این آزمون قبلاً ثبت شده');

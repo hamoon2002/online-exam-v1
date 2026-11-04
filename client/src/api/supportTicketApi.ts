@@ -8,6 +8,8 @@ export type SupportTicket = {
   id: string;
   trackingCode: string;
   userId: string;
+  assignedInstructorId?: string | null;
+  user?: { id: string; name: string | null; username: string | null };
   subject: string;
   category: TicketCategory;
   priority: TicketPriority;
@@ -44,7 +46,13 @@ export const ticketStatusLabels: Record<TicketStatus, string> = {
 export const getMyTickets = (page = 0) => apiRequest<SupportTicket[]>(`/support/mine/tickets?page=${page}`);
 export const createSupportTicket = (input: {
   subject: string; category: TicketCategory; priority: TicketPriority; body: string;
+  assignedInstructorId?: string;
 }) => apiRequest<SupportTicket>('/support/tickets', { method: 'POST', body: input });
+export type AvailableInstructor = { id: string; name: string | null; username: string | null };
+export const getStudentInstructors = () =>
+  apiRequest<AvailableInstructor[]>('/support/student/instructors');
+export const getAssignedStudentTickets = (page = 0) =>
+  apiRequest<SupportTicket[]>(`/support/assigned/tickets?page=${page}`);
 export const getSupportInstructors = () => apiRequest<SupportInstructor[]>('/support/instructors');
 export const getInstructorTickets = (id: string, page = 0) =>
   apiRequest<SupportTicket[]>(`/support/instructors/${encodeURIComponent(id)}/tickets?page=${page}`);

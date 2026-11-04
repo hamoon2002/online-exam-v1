@@ -1,3 +1,4 @@
+import { useLocation } from 'react-router-dom';
 import { XCircle, UsersRound, LogIn } from 'lucide-react';
 import useGroupMembership from '../../hooks/useGroupMembership';
 import AppLayout from '../../components/AppLayout/AppLayout';
@@ -19,6 +20,7 @@ import {
 } from './Dashboard.utils';
 
 function MemberDashboard() {
+  const location = useLocation();
   const { user, exams, attempts, studentCount, error, clearError } =
     useDashboardData();
 
@@ -32,7 +34,7 @@ function MemberDashboard() {
   const progressData = buildProgressData(attempts);
 
   return (
-    <AppLayout title="داشبورد">
+    <AppLayout title={location.pathname === '/workspace' ? 'میز کار' : 'داشبورد'}>
       {error && (
         <Toast
           message={error}

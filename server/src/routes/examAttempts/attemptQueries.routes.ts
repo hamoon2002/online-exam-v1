@@ -132,7 +132,7 @@ router.get(
       where: { examId: exam.id, studentId: sub },
     });
     if (!attempt) throw notFound('هنوز تو این آزمون شرکت نکردی');
-    if (!attempt.finishedAt) await requireExamClientLease(req, attempt);
+    if (!attempt.finishedAt) await requireExamClientLease(req, attempt, false);
 
     // Unfinished attempts always return saved answers for re-entry, regardless of allowReview.
     if (attempt.finishedAt && !exam.allowReview) {

@@ -36,45 +36,62 @@ router.use('/admin', requireAuth, requireRole('SuperAdmin'));
 const draftKey = (section: string) => `draft:${section}`;
 
 // Drafts are stored separately from published content. Public GET never reads them.
-router.get('/admin/drafts', asyncHandler(async (_req, res) => {
-  const rows = await prisma.siteContent.findMany();
-  const lookup = new Map(rows.map(row => [row.section, row.data]));
-  const sections: Record<string, unknown> = {};
-  for (const section of SITE_CONTENT_SECTIONS) {
-    sections[section] = lookup.get(draftKey(section)) ?? lookup.get(section) ?? {};
-  }
-  res.json({ sections });
-}));
+router.get(
+  '/admin/drafts',
+  asyncHandler(async (_req, res) => {
+    const rows = await prisma.siteContent.findMany();
+    const lookup = new Map(rows.map((row) => [row.section, row.data]));
+    const sections: Record<string, unknown> = {};
+    for (const section of SITE_CONTENT_SECTIONS) {
+      sections[section] =
+        lookup.get(draftKey(section)) ?? lookup.get(section) ?? {};
+    }
+    res.json({ sections });
+  }),
+);
 
+router.delete(
+  '/admin/drafts/:section',
+  asyncHandler(async (req, res) => {
+    const { sub } = req.user!;
+    const { section } = req.params;
+    if (!isSiteContentSection(section)) throw badRequest('بخش نامعتبره');
+    await prisma.siteContent.upsert({
+      where: { section: draftKey(section) },
+      create: { section: draftKey(section), data: {}, updatedById: sub },
+      update: { data: {}, updatedById: sub },
+    });
+    res.json({ section, data: {} });
+  }),
+);
 
-router.delete('/admin/drafts/:section', asyncHandler(async (req, res) => {
-  const { sub } = req.user!;
-  const { section } = req.params;
-  if (!isSiteContentSection(section)) throw badRequest('بخش نامعتبره');
-  await prisma.siteContent.upsert({
-    where: { section: draftKey(section) },
-    create: { section: draftKey(section), data: {}, updatedById: sub },
-    update: { data: {}, updatedById: sub },
-  });
-  res.json({ section, data: {} });
-}));
-
-router.post('/admin/publish', asyncHandler(async (req, res) => {
-  const { sub } = req.user!;
-  const rows = await prisma.siteContent.findMany();
-  const lookup = new Map(rows.map(row => [row.section, row.data]));
-  const published = await prisma.$transaction(
-    SITE_CONTENT_SECTIONS.filter(section => lookup.has(draftKey(section))).map(section =>
-      prisma.siteContent.upsert({
-        where: { section },
-        create: { section, data: lookup.get(draftKey(section)) as Prisma.InputJsonValue, updatedById: sub },
-        update: { data: lookup.get(draftKey(section)) as Prisma.InputJsonValue, updatedById: sub },
-      })
-    )
-  );
-  res.json({ publishedCount: published.length });
-}));
-
+router.post(
+  '/admin/publish',
+  asyncHandler(async (req, res) => {
+    const { sub } = req.user!;
+    const rows = await prisma.siteContent.findMany();
+    const lookup = new Map(rows.map((row) => [row.section, row.data]));
+    const published = await prisma.$transaction(
+      SITE_CONTENT_SECTIONS.filter((section) =>
+        lookup.has(draftKey(section)),
+      ).map((section) =>
+        prisma.siteContent.upsert({
+          where: { section },
+          create: {
+            section,
+            data: lookup.get(draftKey(section)) as Prisma.InputJsonValue,
+            updatedById: sub,
+          },
+          update: {
+            data: lookup.get(draftKey(section)) as Prisma.InputJsonValue,
+            updatedById: sub,
+          },
+        }),
+      ),
+    );
+    res.json({ publishedCount: published.length });
+  }),
+);
 
 router.put(
   '/admin/:section',

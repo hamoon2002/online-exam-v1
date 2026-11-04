@@ -127,44 +127,41 @@ export async function updateExam(
   // Editing an existing exam does not create another exam.
   // Preserve the attempt lock below, but do not apply creation quota to rescheduling.
   // Recheck edit eligibility under the same lock used by start.
-  return withExamWriteLock(
-    examId,
-    async (tx, { attemptCount }) => {
-      // Read current state after taking the lock.
-      const current = await tx.exam.findUniqueOrThrow({
-        where: { id: examId },
-        select: {
-          scheduledAt: true,
-          durationMinutes: true,
-          groups: { select: { id: true } },
-        },
-      });
-      const scheduledAt = resolveScheduledAt(
-        current.scheduledAt,
-        requestedScheduledAt,
-      );
-      assertScheduleEditable(
-        attemptCount,
-        computeChangesLockedFields(
-          current,
-          scheduledAt,
-          data.durationMinutes,
-          newGroupIds,
-        ),
-      );
+  return withExamWriteLock(examId, async (tx, { attemptCount }) => {
+    // Read current state after taking the lock.
+    const current = await tx.exam.findUniqueOrThrow({
+      where: { id: examId },
+      select: {
+        scheduledAt: true,
+        durationMinutes: true,
+        groups: { select: { id: true } },
+      },
+    });
+    const scheduledAt = resolveScheduledAt(
+      current.scheduledAt,
+      requestedScheduledAt,
+    );
+    assertScheduleEditable(
+      attemptCount,
+      computeChangesLockedFields(
+        current,
+        scheduledAt,
+        data.durationMinutes,
+        newGroupIds,
+      ),
+    );
 
-      return tx.exam.update({
-        where: { id: examId },
-        data: {
-          title: data.title,
-          category: data.category,
-          scheduledAt,
-          durationMinutes: data.durationMinutes,
-          allowReview: data.allowReview,
-          groups: { set: data.groupIds.map((id) => ({ id })) },
-        },
-        include: examInclude,
-      });
-    },
-  );
+    return tx.exam.update({
+      where: { id: examId },
+      data: {
+        title: data.title,
+        category: data.category,
+        scheduledAt,
+        durationMinutes: data.durationMinutes,
+        allowReview: data.allowReview,
+        groups: { set: data.groupIds.map((id) => ({ id })) },
+      },
+      include: examInclude,
+    });
+  });
 }

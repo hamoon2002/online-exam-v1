@@ -14,9 +14,15 @@ const TOO_MANY_MESSAGE =
 
 const ipKey = (ip: string) => `otp:send:ip:${ip}`;
 const identifierKey = (identifier: string) => `otp:send:id:${identifier}`;
-const verifiedSendKey = (ip: string, identifier: string) => `otp:captcha:login:${createHash('sha256').update(JSON.stringify([ip,identifier])).digest('hex')}`;
+const verifiedSendKey = (ip: string, identifier: string) =>
+  `otp:captcha:login:${createHash('sha256')
+    .update(JSON.stringify([ip, identifier]))
+    .digest('hex')}`;
 /** Proof is scoped to this IP and identifier, and cannot be used to request more OTPs. */
-export async function rememberLoginOtpChallenge(ip: string, identifier: string): Promise<void> {
+export async function rememberLoginOtpChallenge(
+  ip: string,
+  identifier: string,
+): Promise<void> {
   await redis.set(verifiedSendKey(ip, identifier), '1', { EX: 120 });
 }
 

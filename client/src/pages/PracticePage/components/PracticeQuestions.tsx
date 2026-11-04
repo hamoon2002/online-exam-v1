@@ -1,3 +1,4 @@
+import Spinner from '../../../components/Spinner/Spinner';
 import { useState } from "react";
 import {
   getPracticeQuestions,
@@ -83,9 +84,7 @@ export default function PracticeQuestions({
           </button>
         </div>
       ) : list.loading ? (
-        <p role="status" className="p-8 text-center">
-          در حال دریافت سؤال‌ها…
-        </p>
+        <Spinner label="در حال دریافت سؤال‌ها…" />
       ) : !active ? (
         <p className={`${panel} text-center`}>سؤالی با این فیلتر پیدا نشد.</p>
       ) : (

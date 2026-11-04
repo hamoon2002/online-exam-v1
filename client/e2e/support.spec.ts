@@ -76,6 +76,7 @@ test('student can create a ticket with tracking code and open the conversation',
   });
   await page.goto('/support');
   await page.getByRole('button', { name: 'ثبت تیکت جدید' }).click();
+  await expect(page.getByRole('dialog').getByRole('button', { name: 'بستن' })).toHaveCount(1);
   await page.getByLabel('موضوع').fill(ticket.subject);
   await page.getByLabel('شرح درخواست').fill(messages[0].body);
   await page.getByRole('button', { name: 'ثبت تیکت', exact: true }).click();

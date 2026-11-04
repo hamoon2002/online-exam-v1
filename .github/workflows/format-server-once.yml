@@ -1,0 +1,40 @@
+name: Format server sources once
+
+on:
+  push:
+    branches: [design/glassmorphism-home-dashboard]
+    paths: ['.github/workflows/format-server-once.yml']
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: design/glassmorphism-home-dashboard
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Apply repository Prettier rules
+        run: |
+          npx prettier --write \
+            server/src/lib/otpAbuseGuard.ts \
+            server/src/routes/cms.ts \
+            server/src/routes/exams/exams.service.ts \
+            server/src/routes/support.ts \
+            server/tests/authErrors.test.cjs \
+            server/tests/support.integration.test.ts
+      - name: Commit formatting
+        run: |
+          if [ -z "$(git status --porcelain)" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/src/lib/otpAbuseGuard.ts server/src/routes/cms.ts server/src/routes/exams/exams.service.ts server/src/routes/support.ts server/tests/authErrors.test.cjs server/tests/support.integration.test.ts
+          git commit -m "style(server): apply Prettier formatting for CI"
+          git push origin HEAD:design/glassmorphism-home-dashboard

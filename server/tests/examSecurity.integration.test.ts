@@ -264,17 +264,52 @@ test('server refuses a second exam browser while allowing the original browser t
   const a = randomUUID();
   const b = randomUUID();
   const token = f.student.accessToken;
-  assert.equal((await request(f.exam.id, 'attempts/start', token, 'POST', {}, a)).status, 201);
-  assert.equal((await request(f.exam.id, 'attempts/start', token, 'POST', {}, a)).status, 200);
-  assert.equal((await request(f.exam.id, 'attempts/start', token, 'POST', {}, b)).status, 409);
-  assert.equal((await request(f.exam.id, 'attempts/me', token, 'GET', undefined, b)).status, 409);
-  assert.equal((await request(f.exam.id, 'attempts/answers', token, 'PATCH', {
-    answers: {}, revision: 1,
-  }, b)).status, 409);
-  assert.equal((await request(f.exam.id, 'attempts/events', token, 'POST', {
-    type: 'TAB_HIDDEN',
-  }, a)).status, 201);
-  assert.equal((await request(f.exam.id, 'attempts/me', token, 'GET', undefined, a)).status, 200);
+  assert.equal(
+    (await request(f.exam.id, 'attempts/start', token, 'POST', {}, a)).status,
+    201,
+  );
+  assert.equal(
+    (await request(f.exam.id, 'attempts/start', token, 'POST', {}, a)).status,
+    200,
+  );
+  assert.equal(
+    (await request(f.exam.id, 'attempts/start', token, 'POST', {}, b)).status,
+    409,
+  );
+  assert.equal(
+    (await request(f.exam.id, 'attempts/me', token, 'GET', undefined, b)).status,
+    409,
+  );
+  assert.equal(
+    (
+      await request(
+        f.exam.id,
+        'attempts/answers',
+        token,
+        'PATCH',
+        { answers: {}, revision: 1 },
+        b,
+      )
+    ).status,
+    409,
+  );
+  assert.equal(
+    (
+      await request(
+        f.exam.id,
+        'attempts/events',
+        token,
+        'POST',
+        { type: 'TAB_HIDDEN' },
+        a,
+      )
+    ).status,
+    201,
+  );
+  assert.equal(
+    (await request(f.exam.id, 'attempts/me', token, 'GET', undefined, a)).status,
+    200,
+  );
 });
 
 test('HTTP autosave/submit races preserve final answers, ignore stale revisions and make duplicate finish idempotent', async (t) => {

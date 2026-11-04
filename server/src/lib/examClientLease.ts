@@ -9,6 +9,7 @@ const ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-
 const LEASE_SCRIPT = [
   "local owner = redis.call('GET', KEYS[1])",
   'if owner and owner ~= ARGV[1] then return 0 end',
+  'if not owner and ARGV[3] == "0" then return 1 end',
   "if not owner then redis.call('SET', KEYS[1], ARGV[1], 'EX', tonumber(ARGV[2]))",
   "else redis.call('EXPIRE', KEYS[1], tonumber(ARGV[2])) end",
   'return 1',
@@ -16,7 +17,7 @@ const LEASE_SCRIPT = [
 
 export type AttemptLease = { examId: string; studentId: string; expiresAt: Date };
 
-export async function requireExamClientLease(req: Request, attempt: AttemptLease): Promise<void> {
+export async function requireExamClientLease(req: Request, attempt: AttemptLease, claim = true): Promise<void> {
   const raw = req.header('X-Exam-Client');
   // Older integration fixtures intentionally omit this header; real apps never do.
   if (!raw && process.env.NODE_ENV === 'test') return;
@@ -27,7 +28,7 @@ export async function requireExamClientLease(req: Request, attempt: AttemptLease
   const ttl = Math.max(60, Math.ceil((attempt.expiresAt.getTime() - Date.now()) / 1000) + 360);
   const result = await withSessionStore(() => redis.eval(LEASE_SCRIPT, {
     keys: [`exam-client:v1:${attempt.examId}:${attempt.studentId}`],
-    arguments: [raw, String(ttl)],
+    arguments: [raw, String(ttl), claim ? '1' : '0'],
   }));
 
   if (Number(result) !== 1) {

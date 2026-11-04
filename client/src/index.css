@@ -229,10 +229,13 @@ input[type="checkbox"], input[type="radio"]:checked {
   accent-color: #7c3aed;
 }
 
-/* Minimal critical loader styles for session bootstrap and lazy routes.
-   Full dashboard styling remains deferred until AppLayout mounts. */
-@keyframes site-loading-rotate {
+/* Lightweight loading indicator. Scoped to avoid changing other page animations. */
+@keyframes site-loader-spin {
   to { transform: rotate(360deg); }
+}
+@keyframes site-loader-breathe {
+  0%, 100% { transform: scale(.88); opacity: .7; }
+  50% { transform: scale(1); opacity: 1; }
 }
 .site-loading {
   display: flex;
@@ -241,25 +244,38 @@ input[type="checkbox"], input[type="radio"]:checked {
   min-height: 145px;
   padding: 24px 16px;
 }
-.site-loading-compact {
-  min-height: 72px;
-  padding: 12px;
+.site-loading-compact { min-height: 72px; padding: 12px; }
+.site-loading-spinner {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
 }
-.site-loading-minimal {
-  display: block;
-  width: 31px;
-  height: 31px;
+.site-loading-compact .site-loading-spinner { width: 32px; height: 32px; }
+.site-loading-spinner-ring {
+  position: absolute;
+  inset: 0;
   border-radius: 50%;
-  border: 2.5px solid rgba(133, 98, 221, .17);
-  border-top-color: #6546c6;
-  border-right-color: #8562dd;
-  animation: site-loading-rotate .85s linear infinite;
+  border: 3px solid rgba(139, 92, 246, .13);
+  border-top-color: #7c3aed;
+  border-right-color: #a78bfa;
+  box-shadow: 0 0 22px rgba(124, 58, 237, .1);
+  animation: site-loader-spin .85s linear infinite;
 }
-.dark .site-loading-minimal {
-  border-color: rgba(172, 147, 249, .2);
-  border-top-color: #a18af6;
-  border-right-color: #8562dd;
+.site-loading-spinner-core {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #a78bfa, #6d28d9);
+  box-shadow: 0 0 12px rgba(124, 58, 237, .32);
+  animation: site-loader-breathe 1.4s ease-in-out infinite;
+}
+.dark .site-loading-spinner-ring {
+  border-color: rgba(172, 147, 249, .15);
+  border-top-color: #c4b5fd;
+  border-right-color: #8b5cf6;
 }
 @media (prefers-reduced-motion: reduce) {
-  .site-loading-minimal { animation: none; border-right-color: transparent; }
+  .site-loading-spinner-ring, .site-loading-spinner-core { animation-duration: 3s; }
 }

@@ -164,7 +164,7 @@ export async function getMyAttempt(
   try {
     return await apiRequest<ExamAttempt>(`/exams/${examId}/attempts/me`, { headers: examClientHeaders(examId) });
   } catch (err) {
-    if (err instanceof ApiError && (err.status === 404 || err.status === 403)) {
+    if (err instanceof ApiError && (err.status === 404 || err.status === 403 || err.status === 409)) {
       return undefined;
     }
     throw err;

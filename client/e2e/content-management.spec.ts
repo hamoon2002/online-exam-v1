@@ -153,6 +153,7 @@ test('instructor can create, edit and delete an individual question inside a ban
   const dialog = page.getByRole('dialog', { name: 'سؤال جدید بانک' });
   await dialog.getByRole('textbox', { name: 'متن سوال' }).fill(question.text);
   for (const [index, answer] of question.options.entries()) {
+    if (index >= 2) await dialog.getByRole('button', { name: 'افزودن گزینه' }).click();
     await dialog.getByRole('textbox', { name: `گزینه ${index + 1}` }).fill(answer);
   }
   await dialog.getByRole('radio', { name: 'گزینه 2 جواب درست است' }).check();

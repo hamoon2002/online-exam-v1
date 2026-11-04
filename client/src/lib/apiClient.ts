@@ -1,7 +1,6 @@
 // Access tokens stay in memory; the refresh token is an HttpOnly cookie.
 export type ServiceLocation = { hostname: string; protocol: string };
 
-const LOCAL_SERVICE_URL = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\/?$/i;
 const CODESPACES_FRONTEND_HOST = /-5173\.app\.github\.dev$/i;
 
 /**
@@ -25,30 +24,10 @@ export function resolveServiceBaseUrl(
   const hostname = location?.hostname.toLowerCase();
 
   if (location && hostname && CODESPACES_FRONTEND_HOST.test(hostname)) {
-    const apiHostname = hostname.replace(
-      /-5173(?=\.app\.github\.dev$)/i,
-      '-4000',
-    );
-    // A production-style /api setting accidentally hits Vite's SPA on Codespaces.
-    // Always use the dedicated same-origin API proxy in that environment.
-    const isLocalUrl =
-      !value ||
-      LOCAL_SERVICE_URL.test(value) ||
-      /^\/(?:api|__api)\/?$/i.test(value);
-    let isPairedForwardedApiUrl = false;
-
-    if (value) {
-      try {
-        const configuredUrl = new URL(value);
-        isPairedForwardedApiUrl =
-          configuredUrl.protocol === location.protocol &&
-          configuredUrl.hostname.toLowerCase() === apiHostname;
-      } catch {
-        // Preserve invalid/custom values so configuration issues remain visible.
-      }
-    }
-
-    if (isLocalUrl || isPairedForwardedApiUrl) return '';
+    // Codespaces port-forward URLs and VITE_API_BASE_URL values are ephemeral.
+    // Always target the local same-origin proxy so a stale setting cannot
+    // break login, captcha, refresh or the dashboard.
+    return '';
   }
 
   return value || 'http://localhost:4000';
@@ -198,7 +177,7 @@ export async function apiRequest<T>(
   if (
     response.status === 401 &&
     !isRetryAfterRefresh &&
-    path !== '/auth/refresh'
+    !path.startsWith('/auth/')
   ) {
     if (await refreshForRetry()) {
       return apiRequest<T>(path, options, true);

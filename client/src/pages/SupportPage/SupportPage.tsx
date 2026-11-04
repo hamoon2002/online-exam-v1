@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
-import { ArrowRight, CheckCircle2, ClipboardList, Plus, Send, Ticket, X } from 'lucide-react';
+import { ArrowRight, CheckCircle2, ClipboardList, Plus, Send, Ticket } from 'lucide-react';
 import UiSelect from '../../components/UiSelect';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Modal from '../../components/Modal/Modal';
@@ -287,7 +287,7 @@ export default function SupportPage() {
         <div dir="rtl">
           <div className="mb-5 flex items-center justify-between">
             <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Ticket size={20}/><h2 className="text-lg font-bold text-slate-900 dark:text-white">ثبت تیکت جدید</h2></div>
-            <button type="button" onClick={() => setCreateOpen(false)} aria-label="بستن" className="text-slate-400"><X size={20}/></button>
+
           </div>
           <form onSubmit={e => void submitTicket(e)} className="space-y-4">
             <div><label htmlFor="ticket-subject" className="mb-1.5 block text-sm font-semibold dark:text-white">موضوع</label><input id="ticket-subject" required minLength={3} maxLength={160} value={subject} onChange={e => setSubject(e.target.value)} placeholder="مثلاً مشکل نمایش نتایج آزمون" className="min-h-11 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm outline-none focus:border-violet-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"/></div>

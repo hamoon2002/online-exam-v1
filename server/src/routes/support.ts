@@ -66,6 +66,7 @@ const ticketInput = z.object({
   category: z.enum(['Technical','Exams','Payments','Account','Other']),
   priority: z.enum(['Low','Normal','High','Urgent']).default('Normal'),
   body: z.string().trim().min(5).max(2000),
+  assignedInstructorId: z.string().min(1).optional(),
 }).strict();
 const ticketMessageInput = z.object({
   body: z.string().trim().min(1).max(2000),
@@ -80,7 +81,8 @@ async function ticketAccess(id: string, userId: string, role: string) {
   if (!ticket) throw notFound('تیکت پیدا نشد');
   const ownsTicket = ticket.userId === userId;
   const adminCanAccess = role === 'SuperAdmin' && ticket.user.role === 'Instructor';
-  if (!ownsTicket && !adminCanAccess) throw notFound('تیکت پیدا نشد');
+  const assignedTeacherCanAccess = role === 'Instructor' && ticket.user.role === 'Student' && ticket.assignedInstructorId === userId;
+  if (!ownsTicket && !adminCanAccess && !assignedTeacherCanAccess) throw notFound('تیکت پیدا نشد');
   return ticket;
 }
 router.get('/mine/tickets', asyncHandler(async (req, res) => {
@@ -92,13 +94,42 @@ router.get('/mine/tickets', asyncHandler(async (req, res) => {
     take: 50,
   }));
 }));
+router.get('/student/instructors', requireRole('Student'), asyncHandler(async (req, res) => {
+  // Only instructors of groups the student actually belongs to are assignable.
+  const groups = await prisma.group.findMany({
+    where: { students: { some: { id: req.user!.sub } } },
+    select: { instructor: { select: { id: true, name: true, username: true } } },
+  });
+  const unique = new Map(groups.map(({ instructor }) => [instructor.id, instructor]));
+  res.json([...unique.values()]);
+}));
+router.get('/assigned/tickets', requireRole('Instructor'), asyncHandler(async (req, res) => {
+  const page = z.coerce.number().int().min(0).max(10000).parse(req.query.page ?? 0);
+  res.json(await prisma.supportTicket.findMany({
+    where: { assignedInstructorId: req.user!.sub, user: { role: 'Student' } },
+    orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
+    skip: page * 50, take: 50,
+    include: { user: { select: { id: true, name: true, username: true } } },
+  }));
+}));
 router.post('/tickets', limit('support-new-ticket', 10), asyncHandler(async (req, res) => {
   if (req.user!.role === 'SuperAdmin') throw badRequest('مدیر ارشد تنها به تیکت‌های مدرس‌ها پاسخ می‌دهد');
   const input = ticketInput.parse(req.body);
+  if (req.user!.role === 'Student') {
+    if (!input.assignedInstructorId) throw badRequest('برای ثبت تیکت، مدرس مربوطه را انتخاب کنید');
+    const relatedGroup = await prisma.group.findFirst({
+      where: { instructorId: input.assignedInstructorId, students: { some: { id: req.user!.sub } } },
+      select: { id: true },
+    });
+    if (!relatedGroup) throw badRequest('مدرس انتخاب‌شده متعلق به گروه‌های شما نیست');
+  } else if (input.assignedInstructorId) {
+    throw badRequest('تیکت شخصی مدرس قابل ارجاع به مدرس دیگری نیست');
+  }
   const trackingCode = `TK-${Date.now().toString(36).toUpperCase()}-${randomBytes(5).toString('hex').toUpperCase()}`;
   const ticket = await prisma.supportTicket.create({
     data: {
       userId: req.user!.sub, trackingCode, subject: input.subject,
+      assignedInstructorId: req.user!.role === 'Student' ? input.assignedInstructorId : null,
       category: input.category, priority: input.priority,
       messages: { create: { body: input.body, clientId: randomUUID(), fromStaff: false } },
     },
@@ -151,7 +182,7 @@ router.post('/tickets/:id/messages', limit('support-ticket-message', 20), asyncH
   const ticket = await ticketAccess(req.params.id, req.user!.sub, req.user!.role);
   if (ticket.status === 'Closed') throw badRequest('این تیکت بسته شده است');
   const input = ticketMessageInput.parse(req.body);
-  const fromStaff = req.user!.role === 'SuperAdmin';
+  const fromStaff = req.user!.role === 'SuperAdmin' || (req.user!.role === 'Instructor' && ticket.assignedInstructorId === req.user!.sub && ticket.user.role === 'Student');
   await prisma.$transaction(async (tx) => {
     const created = await tx.supportTicketMessage.createMany({
       data: [{ ticketId: ticket.id, clientId: input.clientId, body: input.body, fromStaff }],

@@ -245,15 +245,15 @@ input[type="checkbox"], input[type="radio"]:checked {
   padding: 24px 16px;
 }
 .site-loading-compact { min-height: 72px; padding: 12px; }
-.site-loading-orbit {
+.site-loading-spinner {
   position: relative;
   display: grid;
   place-items: center;
   width: 48px;
   height: 48px;
 }
-.site-loading-compact .site-loading-orbit { width: 32px; height: 32px; }
-.site-loading-orbit-ring {
+.site-loading-compact .site-loading-spinner { width: 32px; height: 32px; }
+.site-loading-spinner-ring {
   position: absolute;
   inset: 0;
   border-radius: 50%;
@@ -263,7 +263,7 @@ input[type="checkbox"], input[type="radio"]:checked {
   box-shadow: 0 0 22px rgba(124, 58, 237, .1);
   animation: site-loader-spin .85s linear infinite;
 }
-.site-loading-orbit-core {
+.site-loading-spinner-core {
   width: 12px;
   height: 12px;
   border-radius: 50%;
@@ -271,11 +271,11 @@ input[type="checkbox"], input[type="radio"]:checked {
   box-shadow: 0 0 12px rgba(124, 58, 237, .32);
   animation: site-loader-breathe 1.4s ease-in-out infinite;
 }
-.dark .site-loading-orbit-ring {
+.dark .site-loading-spinner-ring {
   border-color: rgba(172, 147, 249, .15);
   border-top-color: #c4b5fd;
   border-right-color: #8b5cf6;
 }
 @media (prefers-reduced-motion: reduce) {
-  .site-loading-orbit-ring, .site-loading-orbit-core { animation-duration: 3s; }
+  .site-loading-spinner-ring, .site-loading-spinner-core { animation-duration: 3s; }
 }

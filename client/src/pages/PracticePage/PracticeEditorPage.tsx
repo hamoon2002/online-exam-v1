@@ -119,17 +119,12 @@ function Editor({ id }: { id?: string }) {
   }
   return (
     <AppLayout title={id ? "ویرایش مجموعهٔ تمرین" : "مجموعهٔ تمرین جدید"}>
-      <div className="mx-auto max-w-5xl space-y-5" dir="rtl">
+      <div className="mx-auto max-w-4xl space-y-4" dir="rtl">
         <Link to="/practice" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-violet-600"><ArrowRight size={16}/> بازگشت به تمرین‌ها</Link>
-        <header className="rounded-3xl border border-violet-200/50 bg-gradient-to-bl from-violet-50 via-white to-white p-6 dark:border-violet-400/20 dark:from-violet-500/10 dark:via-slate-900 dark:to-slate-900">
+        <header className="rounded-3xl border border-violet-200/50 bg-gradient-to-bl from-violet-50 via-white to-white p-4 sm:p-5 dark:border-violet-400/20 dark:from-violet-500/10 dark:via-slate-900 dark:to-slate-900">
           <div className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-violet-600 dark:text-violet-300"><BookOpenCheck size={18}/> ساخت و مدیریت تمرین</div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{id ? "ویرایش مجموعه تمرین" : "ساخت مجموعه تمرین"}</h1>
-          <p className="mt-3 text-sm leading-7 text-slate-500 dark:text-slate-400">سه مرحله ساده: مشخصات تمرین، انتخاب سؤال از بانک‌ها و تعیین گروه‌های مجاز. ابتدا ذخیره کنید؛ سپس تمرین را بازبینی و منتشر کنید.</p>
-          <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold text-violet-700 dark:text-violet-200">
-            <span className="rounded-full bg-violet-100 px-3 py-1.5 dark:bg-violet-500/20">۱. مشخصات</span>
-            <span className="rounded-full bg-violet-100 px-3 py-1.5 dark:bg-violet-500/20">۲. سؤال‌ها</span>
-            <span className="rounded-full bg-violet-100 px-3 py-1.5 dark:bg-violet-500/20">۳. گروه‌ها</span>
-          </div>
+          <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">نام تمرین را بنویسید، سؤال‌ها و گروه‌ها را انتخاب کنید و ذخیره بزنید.</p>
         </header>
         {loading ? (
           <Spinner label="در حال دریافت اطلاعات تمرین…" />
@@ -144,10 +139,10 @@ function Editor({ id }: { id?: string }) {
             </button>
           </div>
         ) : (
-          <form onSubmit={save} noValidate className="space-y-5">
+          <form onSubmit={save} noValidate className="space-y-4">
             {error && <p role="alert" className="form-inline-error">{error}</p>}
-            <fieldset disabled={busy} className={`${panel} space-y-4`}>
-              <h2 className="inline-flex items-center gap-2 text-lg font-bold"><BookOpenCheck size={19} className="text-violet-600"/>۱. مشخصات تمرین</h2>
+            <fieldset disabled={busy} className={`${panel} space-y-3`}>
+              <h2 className="inline-flex items-center gap-2 text-base font-bold"><BookOpenCheck size={19} className="text-violet-600"/>مشخصات تمرین</h2>
               <label className="block text-sm">
                 نام تمرین
                 <input
@@ -162,10 +157,10 @@ function Editor({ id }: { id?: string }) {
                 />
               </label>
               <label className="block text-sm">
-                راهنمای کوتاه برای کارآموز
+                توضیحات (اختیاری)
                 <textarea
                   className={`${input} mt-2`}
-                  rows={3}
+                  rows={2}
                   maxLength={2000}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -191,8 +186,8 @@ function Editor({ id }: { id?: string }) {
               />
             )}
             <fieldset disabled={busy} className={panel}>
-              <h2 className="inline-flex items-center gap-2 text-lg font-bold"><Layers size={19} className="text-violet-600"/>۳. دسترسی گروه‌ها</h2>
-              <p className="mb-4 mt-2 text-sm text-gray-500">
+              <h2 className="inline-flex items-center gap-2 text-lg font-bold"><Layers size={19} className="text-violet-600"/>گروه‌های مجاز</h2>
+              <p className="mb-3 mt-1 text-xs leading-6 text-gray-500">
                 می‌توانید تمرین را بدون گروه به‌صورت پیش‌نویس ذخیره کنید. برای انتشار، حداقل یک گروه لازم است.
               </p>
               {!groups.length ? (
@@ -200,7 +195,7 @@ function Editor({ id }: { id?: string }) {
                   ابتدا گروه بسازید
                 </Link>
               ) : (
-                <div className="grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-2 sm:grid-cols-2">
                   {groups.map((g) => (
                     <label
                       key={g.id}
@@ -226,7 +221,7 @@ function Editor({ id }: { id?: string }) {
               )}
             </fieldset>
             <footer
-              className={`${panel} flex flex-wrap items-center justify-between gap-4`}
+              className={`${panel} flex flex-wrap items-center justify-between gap-3`}
             >
               <p className="text-sm text-gray-500">
                 {groupIds.length.toLocaleString("fa-IR")} گروه • {selected.length.toLocaleString("fa-IR")} سؤال

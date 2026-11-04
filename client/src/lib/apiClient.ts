@@ -87,6 +87,7 @@ type RequestOptions = {
   body?: unknown;
   signal?: AbortSignal;
   headers?: Record<string, string>;
+  keepalive?: boolean;
 };
 
 // Concurrent 401 responses share one refresh request.

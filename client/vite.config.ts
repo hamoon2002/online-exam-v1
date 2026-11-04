@@ -1,3 +1,4 @@
+import { normalizedDevProxyOrigin } from './src/lib/proxyOrigin';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import tailwindcss from '@tailwindcss/vite';
@@ -22,21 +23,12 @@ export default defineConfig({
           // Host, then normalize the Origin for the local server's CSRF guard.
           // Cross-site requests preserve their Origin and remain rejected.
           proxy.on('proxyReq', (proxyReq, req) => {
-            const origin = req.headers.origin;
-            const host = req.headers.host;
-            if (!origin || !host) return;
-            try {
-              const parsed = new URL(origin);
-              const isSameOrigin =
-                parsed.host.toLowerCase() === host.toLowerCase() &&
-                (parsed.protocol === 'https:' || parsed.protocol === 'http:') &&
-                parsed.origin === origin;
-              if (isSameOrigin && process.env.NODE_ENV !== 'production') {
-                proxyReq.setHeader('Origin', 'http://localhost:5173');
-              }
-            } catch {
-              // Invalid or opaque origins remain unchanged and are rejected.
-            }
+            if (process.env.NODE_ENV === 'production') return;
+            const localOrigin = normalizedDevProxyOrigin(
+              req.headers.origin,
+              req.headers.host,
+            );
+            if (localOrigin) proxyReq.setHeader('Origin', localOrigin);
           });
           proxy.on('proxyRes', (proxyRes) => {
             const cookies = proxyRes.headers['set-cookie'];

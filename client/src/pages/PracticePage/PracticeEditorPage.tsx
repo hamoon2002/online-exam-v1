@@ -86,10 +86,6 @@ function Editor({ id }: { id?: string }) {
       setError("نام تمرین الزامی است و باید حداقل دو حرف داشته باشد.");
       return;
     }
-    if (groupIds.length === 0) {
-      setError("حداقل یک گروه برای دسترسی به تمرین انتخاب کنید.");
-      return;
-    }
     if (!frozen && !selected.length) {
       setError("حداقل یک سؤال انتخاب کنید.");
       return;
@@ -196,8 +192,7 @@ function Editor({ id }: { id?: string }) {
             <fieldset disabled={busy} className={panel}>
               <h2 className="inline-flex items-center gap-2 text-lg font-bold"><Layers size={19} className="text-violet-600"/>۳. دسترسی گروه‌ها</h2>
               <p className="mb-4 mt-2 text-sm text-gray-500">
-                فقط اعضای گروه‌های انتخاب‌شده، پس از انتشار این تمرین را
-                می‌بینند.
+                می‌توانید تمرین را بدون گروه به‌صورت پیش‌نویس ذخیره کنید. برای انتشار، حداقل یک گروه لازم است.
               </p>
               {!groups.length ? (
                 <Link to="/groups" className="text-brand-600 underline">

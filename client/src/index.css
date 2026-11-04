@@ -228,3 +228,38 @@ input[type="checkbox"], input[type="radio"]:focus-visible {
 input[type="checkbox"], input[type="radio"]:checked {
   accent-color: #7c3aed;
 }
+
+/* Minimal critical loader styles for session bootstrap and lazy routes.
+   Full dashboard styling remains deferred until AppLayout mounts. */
+@keyframes site-loading-rotate {
+  to { transform: rotate(360deg); }
+}
+.site-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 145px;
+  padding: 24px 16px;
+}
+.site-loading-compact {
+  min-height: 72px;
+  padding: 12px;
+}
+.site-loading-minimal {
+  display: block;
+  width: 31px;
+  height: 31px;
+  border-radius: 50%;
+  border: 2.5px solid rgba(133, 98, 221, .17);
+  border-top-color: #6546c6;
+  border-right-color: #8562dd;
+  animation: site-loading-rotate .85s linear infinite;
+}
+.dark .site-loading-minimal {
+  border-color: rgba(172, 147, 249, .2);
+  border-top-color: #a18af6;
+  border-right-color: #8562dd;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-loading-minimal { animation: none; border-right-color: transparent; }
+}

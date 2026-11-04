@@ -215,3 +215,16 @@ select:not([multiple]):not([size]) option {
   background: #1e293b;
   color: #f8fafc;
 }
+
+/* Consistent brand-purple checkmarks and selected radio indicators throughout the site. */
+:where(input[type="checkbox"], input[type="radio"]) {
+  accent-color: #7c3aed;
+}
+:where(input[type="checkbox"], input[type="radio"]):focus-visible {
+  outline: 2px solid #a78bfa;
+  outline-offset: 2px;
+}
+/* Tailwind accent utilities must not turn native checks blue elsewhere. */
+:where(input[type="checkbox"], input[type="radio"]):checked {
+  accent-color: #7c3aed;
+}

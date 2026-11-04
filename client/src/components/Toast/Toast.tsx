@@ -10,24 +10,31 @@ interface ToastProps {
 }
 
 function ToastNotification({ message, tone = 'warning', duration = 3000, icon, onDismiss }: ToastProps) {
-  const [closing, setClosing] = useState(false);
+  const [show, setShow] = useState(false);
   const dismissed = useRef(false);
   const onDismissRef = useRef(onDismiss);
   onDismissRef.current = onDismiss;
   const lifetime = Number.isFinite(duration) ? Math.max(0, duration) : 3000;
-  const exitDuration = 320;
+  const exitDuration = 400;
   const progressDuration = Math.max(0, lifetime - exitDuration);
   const toneStyles = tone === 'danger' ? 'toast-danger' : tone === 'success' ? 'toast-success' : 'toast-warning';
   const Icon = icon ?? (tone === 'danger' ? TimerOff : tone === 'success' ? CheckCircle2 : AlertTriangle);
 
   useEffect(() => {
-    if (lifetime === 0) return;
-    const timer = window.setTimeout(() => setClosing(true), progressDuration);
-    return () => window.clearTimeout(timer);
-  }, [lifetime]);
+    // Add the 'show' class after the initial hidden frame so CSS transitions
+    // handle both mounting and dismissing without JS-driven opacity changes.
+    const frame = window.requestAnimationFrame(() => setShow(true));
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
-    if (!closing) return;
+    if (lifetime === 0) return;
+    const timer = window.setTimeout(() => setShow(false), progressDuration);
+    return () => window.clearTimeout(timer);
+  }, [lifetime, progressDuration]);
+
+  useEffect(() => {
+    if (show) return;
     const timer = window.setTimeout(() => {
       if (!dismissed.current) {
         dismissed.current = true;
@@ -35,11 +42,11 @@ function ToastNotification({ message, tone = 'warning', duration = 3000, icon, o
       }
     }, exitDuration);
     return () => window.clearTimeout(timer);
-  }, [closing]);
+  }, [show]);
 
   return (
     <div
-      className={`site-toast site-toast-css fixed bottom-6 left-4 right-4 z-50 overflow-hidden rounded-2xl text-sm font-semibold shadow-xl sm:left-6 sm:right-auto sm:w-[min(420px,calc(100%-3rem))] ${toneStyles} ${closing ? 'is-closing' : ''}`}
+      className={`site-toast site-toast-css fixed bottom-6 left-4 right-4 z-50 overflow-hidden rounded-2xl text-sm font-semibold shadow-xl sm:left-6 sm:right-auto sm:w-[min(420px,calc(100%-3rem))] ${toneStyles} ${show ? 'show' : ''}`}
       dir="rtl"
     >
       <div className="flex items-start gap-2.5 px-4 py-3">
@@ -48,8 +55,8 @@ function ToastNotification({ message, tone = 'warning', duration = 3000, icon, o
         <button
           type="button"
           aria-label="بستن اعلان"
-          onClick={() => setClosing(true)}
-          disabled={closing}
+          onClick={() => setShow(false)}
+          disabled={!show}
           className="-mt-1 -me-1 flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg transition-colors hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:cursor-default"
         >
           <X size={18} aria-hidden="true" />

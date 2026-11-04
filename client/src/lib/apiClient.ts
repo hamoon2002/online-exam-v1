@@ -86,6 +86,8 @@ type RequestOptions = {
   method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   body?: unknown;
   signal?: AbortSignal;
+  headers?: Record<string, string>;
+  keepalive?: boolean;
 };
 
 // Concurrent 401 responses share one refresh request.
@@ -161,10 +163,11 @@ export async function apiRequest<T>(
   options: RequestOptions = {},
   isRetryAfterRefresh = false
 ): Promise<T> {
-  const { method = 'GET', body, signal } = options;
+  const { method = 'GET', body, signal, headers: extraHeaders, keepalive } = options;
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
+    ...extraHeaders,
   };
   if (accessToken) {
     headers.Authorization = `Bearer ${accessToken}`;
@@ -177,6 +180,7 @@ export async function apiRequest<T>(
       headers,
       body: body !== undefined ? JSON.stringify(body) : undefined,
       signal,
+      keepalive,
       // Include the refresh cookie on cross-origin API requests.
       credentials: 'include',
     });

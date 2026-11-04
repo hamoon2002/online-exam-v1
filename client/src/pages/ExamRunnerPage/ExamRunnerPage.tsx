@@ -70,6 +70,18 @@ function ExamRunnerPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasStarted, isFinished]);
 
+  useEffect(() => {
+    if (!hasStarted || isFinished || !examId) return;
+    // Visibility changes are evidence for instructor review, never proof of cheating.
+    function onVisibilityChange() {
+      if (document.visibilityState === 'hidden') {
+        void recordAttemptEvent(examId!, 'TAB_HIDDEN').catch(() => undefined);
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange);
+  }, [examId, hasStarted, isFinished]);
+
   const wasFullscreenRef = useRef(false);
   const currentExamId = examId;
 

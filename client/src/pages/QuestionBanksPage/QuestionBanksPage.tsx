@@ -102,7 +102,7 @@ export default function QuestionBanksPage() {
         </header>
         <section className="rounded-2xl border border-violet-100 bg-white p-4 shadow-sm dark:border-violet-400/15 dark:bg-slate-900 sm:p-6">
           <ListPagination {...{ page, pageSize, total, loading, q, setPage, setSearch }} />
-          {loading ? <div className="flex justify-center py-12"><Spinner/></div> : error && !banks.length ? (
+          {loading ? <Spinner label="در حال دریافت بانک‌های سؤال…" /> : error && !banks.length ? (
             <div className="py-8 text-center text-sm text-rose-600" role="alert"><p>{error}</p><button type="button" onClick={reload} className="mt-3 underline">تلاش مجدد</button></div>
           ) : !banks.length ? (
             <div className="py-12 text-center">

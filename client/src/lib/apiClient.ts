@@ -29,7 +29,12 @@ export function resolveServiceBaseUrl(
       /-5173(?=\.app\.github\.dev$)/i,
       '-4000',
     );
-    const isLocalUrl = !value || LOCAL_SERVICE_URL.test(value);
+    // A production-style /api setting accidentally hits Vite's SPA on Codespaces.
+    // Always use the dedicated same-origin API proxy in that environment.
+    const isLocalUrl =
+      !value ||
+      LOCAL_SERVICE_URL.test(value) ||
+      /^\/(?:api|__api)\/?$/i.test(value);
     let isPairedForwardedApiUrl = false;
 
     if (value) {
@@ -186,7 +191,7 @@ export async function apiRequest<T>(
     });
   } catch {
     // Status zero represents a transport failure, not an HTTP response.
-    throw new ApiError(0, 'اتصال به سرور برقرار نشد');
+    throw new ApiError(0, 'ارتباط با API برقرار نشد؛ مطمئن شوید سرور پورت ۴۰۰۰ اجراست.');
   }
 
   // Retry once after refreshing; never recursively refresh the refresh endpoint.
@@ -245,7 +250,7 @@ export async function apiMultipartRequest<T>(
       credentials: 'include',
     });
   } catch {
-    throw new ApiError(0, 'اتصال به سرور برقرار نشد');
+    throw new ApiError(0, 'ارتباط با API برقرار نشد؛ مطمئن شوید سرور پورت ۴۰۰۰ اجراست.');
   }
 
   if (response.status === 401 && !isRetryAfterRefresh) {

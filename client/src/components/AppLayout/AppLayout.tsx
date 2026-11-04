@@ -9,28 +9,20 @@ import { useAuth } from '../../context/AuthContext';
 import { useExamGuard } from '../../context/ExamGuardContext';
 import Sidebar from './SideBar';
 import Header from './Header';
+import { restorePanelTabs, upsertPanelTab, type PanelTab } from './panelTabs';
 
 type AppLayoutProps = {
   children: ReactNode;
   title: string;
 };
 
-type PanelTab = { path: string; title: string };
 export const TABS_KEY_PREFIX = 'exam-panel-tabs-account:';
 
 function readTabs(key: string): PanelTab[] {
   try {
-    const saved: unknown = JSON.parse(sessionStorage.getItem(key) ?? '[]');
-    if (!Array.isArray(saved)) return [];
-    const valid = saved.filter((tab): tab is PanelTab =>
-      typeof tab === 'object' && tab !== null &&
-      typeof tab.path === 'string' && tab.path.startsWith('/') &&
-      typeof tab.title === 'string'
-    );
-    const restored = Array.from(new Map(valid.map(tab => [tab.path.split('?')[0], { ...tab, path: tab.path.split('?')[0] }])).values());
-    return restored.filter(tab => tab.path !== '/workspace').slice(-20);
+    return restorePanelTabs(sessionStorage.getItem(key));
   } catch {
-    return [];
+    return restorePanelTabs(null);
   }
 }
 
@@ -48,15 +40,15 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const [tabState, setTabState] = useState<{ accountKey: string; tabs: PanelTab[] }>(() => ({ accountKey: '', tabs: [] }));
   const tabs = !accountKey ? [] : tabState.accountKey === accountKey ? tabState.tabs : readTabs(accountKey);
   const currentPath = location.pathname;
+  const reopenWorkspace =
+    (location.state as { reopenWorkspace?: boolean } | null)?.reopenWorkspace === true;
+  const workspaceIsOpen = tabs.some(tab => tab.path === '/workspace');
 
   useEffect(() => {
-    if (!accountKey || currentPath === '/workspace') return;
+    if (!accountKey || (currentPath === '/workspace' && !reopenWorkspace)) return;
     setTabState(previous => {
       const existing = previous.accountKey === accountKey ? previous.tabs : readTabs(accountKey);
-      const next = existing.some(tab => tab.path === currentPath)
-        ? existing.map(tab => tab.path === currentPath ? { ...tab, title } : tab)
-        : [...existing, { path: currentPath, title }];
-      const updated = next.slice(-20);
+      const updated = upsertPanelTab(existing, currentPath, title);
       try {
         sessionStorage.setItem(accountKey, JSON.stringify(updated));
       } catch {
@@ -64,7 +56,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
       }
       return { accountKey, tabs: updated };
     });
-  }, [accountKey, currentPath, title]);
+  }, [accountKey, currentPath, title, reopenWorkspace]);
 
   function selectPlainTableRow(event: React.MouseEvent<HTMLElement>) {
     const target = event.target;
@@ -92,7 +84,10 @@ function AppLayout({ children, title }: AppLayoutProps) {
     setTabState({ accountKey, tabs: remaining });
     if (path === currentPath) {
       const next = remaining[Math.min(index, remaining.length - 1)];
-      guardNavigation(() => navigate(next?.path ?? '/workspace'));
+      guardNavigation(() => navigate(next?.path ?? '/workspace', {
+        replace: !next,
+        state: next ? undefined : { workspaceClosed: true },
+      }));
     }
   }
 
@@ -107,7 +102,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
         />
         <main onClickCapture={selectPlainTableRow} className={`min-w-0 flex-1 transition-all duration-300 motion-reduce:transition-none ${isCollapsed ? 'md:w-[calc(100%-5rem)]' : 'md:w-[calc(100%-16rem)]'}`}>
           <Header
-            title={title}
+            title={showTabs && currentPath === '/workspace' && !workspaceIsOpen ? 'پنل' : title}
             isDark={isDark}
             onToggleTheme={toggleTheme}
             onOpenSidebar={() => setIsSidebarOpen(true)}
@@ -127,7 +122,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
             </nav>
           )}
           <div className="mx-auto w-full max-w-none px-3 py-5 sm:px-4 md:px-5 md:py-7 xl:px-6 xl:py-8">
-            {children}
+            {showTabs && currentPath === '/workspace' && !workspaceIsOpen ? null : children}
           </div>
         </main>
       </div>

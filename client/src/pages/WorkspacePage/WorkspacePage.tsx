@@ -1,7 +1,7 @@
 import DashboardPage from '../DashboardPage/DashboardPage';
 
-// The desk is the instructor/admin landing view, not an empty panel.
-// AppLayout intentionally keeps /workspace out of the closable tab strip.
+// The desk is the instructor/admin landing view.
+// AppLayout manages the closable /workspace tab and the empty state.
 export default function WorkspacePage() {
   return <DashboardPage />;
 }

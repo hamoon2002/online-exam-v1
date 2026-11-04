@@ -170,7 +170,7 @@ input:autofill:active {
  * violet surface, border, sizing and focus ring as UiSelect's combobox.
  * Do not override multi-select controls or custom combobox menus.
  */
-:where(select:not([multiple]):not([size])) {
+select:not([multiple]):not([size]) {
   appearance: none;
   -webkit-appearance: none;
   min-height: 44px;
@@ -189,29 +189,29 @@ input:autofill:active {
   background-size: 18px;
   background-position: left 13px center;
 }
-:where(select:not([multiple]):not([size])):hover:not(:disabled) {
+select:not([multiple]):not([size]):hover:not(:disabled) {
   border-color: #a78bfa;
 }
-:where(select:not([multiple]):not([size])):focus-visible {
+select:not([multiple]):not([size]):focus-visible {
   outline: none;
   border-color: #8b5cf6;
   box-shadow: 0 0 0 3px rgba(139, 92, 246, .17);
 }
-:where(select:not([multiple]):not([size])):disabled {
+select:not([multiple]):not([size]):disabled {
   cursor: not-allowed;
   opacity: .5;
 }
-:where(select:not([multiple]):not([size])) option {
+select:not([multiple]):not([size]) option {
   background: #fff;
   color: #334155;
 }
-.dark :where(select:not([multiple]):not([size])) {
+.dark select:not([multiple]):not([size]) {
   background-color: rgba(30, 41, 59, .95);
   border-color: rgba(167, 139, 250, .34);
   color: #f8fafc;
   color-scheme: dark;
 }
-.dark :where(select:not([multiple]):not([size])) option {
+.dark select:not([multiple]):not([size]) option {
   background: #1e293b;
   color: #f8fafc;
 }

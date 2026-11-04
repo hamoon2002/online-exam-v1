@@ -12,6 +12,7 @@ interface ToastProps {
 function ToastNotification({ message, tone = 'warning', duration = 3000, icon, onDismiss }: ToastProps) {
   const [show, setShow] = useState(false);
   const dismissed = useRef(false);
+  const hasShown = useRef(false);
   const onDismissRef = useRef(onDismiss);
   onDismissRef.current = onDismiss;
   const lifetime = Number.isFinite(duration) ? Math.max(0, duration) : 3000;
@@ -34,7 +35,11 @@ function ToastNotification({ message, tone = 'warning', duration = 3000, icon, o
   }, [lifetime, progressDuration]);
 
   useEffect(() => {
-    if (show) return;
+    if (show) {
+      hasShown.current = true;
+      return;
+    }
+    if (!hasShown.current) return;
     const timer = window.setTimeout(() => {
       if (!dismissed.current) {
         dismissed.current = true;

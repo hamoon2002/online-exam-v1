@@ -31,7 +31,9 @@ export async function requireExamClientLease(
   // Older integration fixtures intentionally omit this header; real apps never do.
   if (!raw && process.env.NODE_ENV === 'test') return;
   if (!raw || !ID_PATTERN.test(raw)) {
-    throw badRequest('شناسه نشست آزمون معتبر نیست. آزمون را از صفحه خودش باز کنید.');
+    throw badRequest(
+      'شناسه نشست آزمون معتبر نیست. آزمون را از صفحه خودش باز کنید.',
+    );
   }
 
   const ttl = Math.max(

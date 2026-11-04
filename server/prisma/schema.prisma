@@ -91,7 +91,8 @@ model User {
   avatarKey           String?
 
   supportThread      SupportThread?
-  supportTickets     SupportTicket[]
+  supportTickets     SupportTicket[] @relation("SupportTicketOwner")
+  assignedSupportTickets SupportTicket[] @relation("SupportTicketAssignee")
   otpCodes           OtpCode[]
   instructedGroups   Group[]            @relation("GroupInstructor")
   groupsMember       Group[]            @relation("GroupMembers")
@@ -581,7 +582,9 @@ model SupportTicket {
   id           String                @id @default(cuid())
   trackingCode String                @unique
   userId       String
-  user         User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User                  @relation("SupportTicketOwner", fields: [userId], references: [id], onDelete: Cascade)
+  assignedInstructorId String?
+  assignedInstructor User? @relation("SupportTicketAssignee", fields: [assignedInstructorId], references: [id], onDelete: SetNull)
   subject      String
   category     SupportTicketCategory
   priority     SupportTicketPriority @default(Normal)
@@ -591,6 +594,7 @@ model SupportTicket {
   messages     SupportTicketMessage[]
 
   @@index([userId, updatedAt])
+  @@index([assignedInstructorId, updatedAt])
   @@index([status, priority, updatedAt])
 }
 

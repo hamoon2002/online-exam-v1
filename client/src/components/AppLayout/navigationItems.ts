@@ -20,7 +20,6 @@ import {
 
 import type { Role } from '../../api/authApi';
 
-import { ALL_ROLES } from '../../constants/roles';
 
 export type NavigationGroupId = 'users' | 'content' | 'finance' | 'system';
 
@@ -43,11 +42,16 @@ export type NavigationItem = {
 export const navigationItems: NavigationItem[] = [
   { label: 'پشتیبانی', to: '/support', icon: Users, roles: ['Instructor', 'Student'] },
   {
+    label: 'میز کار',
+    to: '/workspace',
+    icon: LayoutDashboard,
+    roles: ['Instructor', 'SuperAdmin'],
+  },
+  {
     label: 'داشبورد',
-    adminLabel: 'میزکار',
     to: '/dashboard',
     icon: LayoutDashboard,
-    roles: ALL_ROLES,
+    roles: ['Student'],
   },
   {
     label: 'گروه‌ها',

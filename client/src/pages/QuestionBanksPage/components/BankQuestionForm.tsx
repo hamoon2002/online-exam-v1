@@ -10,6 +10,8 @@ type BankQuestionFormProps = {
   canSubmit: boolean;
   onTextChange: (value: string) => void;
   onOptionChange: (index: number, value: string) => void;
+  onAddOption: () => void;
+  onRemoveOption: (index: number) => void;
   onCorrectOptionChange: (index: number) => void;
   onDifficultyChange: (value: QuestionDifficulty) => void;
   onSubmit: (event: React.FormEvent) => void;
@@ -18,7 +20,7 @@ type BankQuestionFormProps = {
 
 export default function BankQuestionForm({
   form, isEditing, saving, error, canSubmit,
-  onTextChange, onOptionChange, onCorrectOptionChange, onDifficultyChange,
+  onTextChange, onOptionChange, onAddOption, onRemoveOption, onCorrectOptionChange, onDifficultyChange,
   onSubmit, onCancel,
 }: BankQuestionFormProps) {
   return (
@@ -34,6 +36,8 @@ export default function BankQuestionForm({
         difficulty={form.difficulty}
         onTextChange={onTextChange}
         onOptionChange={onOptionChange}
+        onAddOption={onAddOption}
+        onRemoveOption={onRemoveOption}
         onCorrectOptionChange={onCorrectOptionChange}
         onDifficultyChange={onDifficultyChange}
         disabled={saving}

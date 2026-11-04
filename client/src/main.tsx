@@ -4,8 +4,6 @@ import { BrowserRouter } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import '@fontsource-variable/vazirmatn';
 import './index.css';
-// Load the shared spinner styles before lazy routes and auth bootstrapping.
-import './glass-theme.css';
 import App from './App.tsx';
 import { ExamGuardProvider } from './context/ExamGuardContext.tsx';
 

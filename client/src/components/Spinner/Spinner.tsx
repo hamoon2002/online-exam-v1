@@ -4,7 +4,7 @@ export default function Spinner({ label = 'در حال بارگذاری…', com
   return (
     <div className={`site-loading ${compact ? 'site-loading-compact' : ''}`} role="status" aria-live="polite" aria-label={label} dir="rtl">
       <span className="site-loading-minimal" aria-hidden="true" />
-      <span className="site-loading-label">{label}</span>
+      <span className="sr-only">{label}</span>
     </div>
   );
 }

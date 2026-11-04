@@ -22,6 +22,7 @@ let base: string;
 const userIds: string[] = [];
 const examIds: string[] = [];
 const groupIds: string[] = [];
+const defaultClientIds = new Map<string, string>();
 before(async () => {
   try {
     await prisma.$queryRaw`SELECT 1`;
@@ -117,7 +118,18 @@ async function request(
     headers: {
       'Content-Type': 'application/json',
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(clientId ? { 'X-Exam-Client': clientId } : {}),
+      ...(token
+        ? {
+            'X-Exam-Client':
+              clientId ??
+              (defaultClientIds.get(examId) ??
+                (() => {
+                  const id = randomUUID();
+                  defaultClientIds.set(examId, id);
+                  return id;
+                })()),
+          }
+        : {}),
     },
     ...(body ? { body: JSON.stringify(body) } : {}),
   });
@@ -256,7 +268,6 @@ test('HTTP permissions and answer key: guest, unrelated users, owner, admin, act
     undefined,
   );
 });
-
 test('server refuses a second exam browser while allowing the original browser to resume', async (t) => {
   if (!ready) return unavailable(t, 'PostgreSQL/Redis unavailable');
   const f = await fixture();

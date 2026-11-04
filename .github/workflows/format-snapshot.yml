@@ -1,0 +1,17 @@
+name: Format snapshot (temporary)
+on:
+  pull_request:
+    branches: [main]
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - run: npm ci --workspace server --ignore-scripts
+      - name: Print exact prettier diff for review
+        run: |
+          npx --no-install prettier --write server/src/lib/examClientLease.ts server/tests/examSecurity.integration.test.ts
+          git --no-pager diff -- server/src/lib/examClientLease.ts server/tests/examSecurity.integration.test.ts

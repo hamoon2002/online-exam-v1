@@ -63,17 +63,16 @@ export const navigationItems: NavigationItem[] = [
     roles: ALL_ROLES,
   },
   {
-    label: 'تمرین‌ها',
-
-    to: '/practice',
-    icon: BookOpenCheck,
-    roles: ['Instructor', 'Student'],
-  },
-  {
-    label: 'بانک سوال',
+    label: 'بانک سؤال',
     to: '/question-banks',
     icon: LibraryBig,
     roles: ['Instructor'],
+  },
+  {
+    label: 'تمرین‌ها',
+    to: '/practice',
+    icon: BookOpenCheck,
+    roles: ['Instructor', 'Student'],
   },
   {
     label: 'دانشجویان',

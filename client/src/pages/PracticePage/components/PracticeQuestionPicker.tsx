@@ -1,3 +1,4 @@
+import Spinner from '../../../components/Spinner/Spinner';
 import { useEffect, useState } from "react";
 import { ArrowDown, ArrowUp, CheckCircle2, X, LibraryBig } from "lucide-react";
 import UiSelect from "../../../components/UiSelect";
@@ -76,7 +77,7 @@ export default function PracticeQuestionPicker({
                 </button>
               </p>
             ) : list.loading ? (
-              <p role="status">در حال دریافت سؤال‌ها…</p>
+              <Spinner label="در حال دریافت سؤال‌ها…" />
             ) : !list.items.length ? (
               <p className="rounded-2xl border border-dashed border-violet-200 p-8 text-center text-sm text-slate-500 dark:border-violet-400/25">در این بانک سؤالی پیدا نشد. از بخش بانک سؤال، سؤال جدید اضافه کنید.</p>
             ) : (

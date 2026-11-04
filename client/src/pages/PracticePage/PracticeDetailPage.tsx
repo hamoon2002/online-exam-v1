@@ -1,3 +1,4 @@
+import Spinner from '../../components/Spinner/Spinner';
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Trash2 } from "lucide-react";
@@ -106,7 +107,7 @@ function Detail({ id }: { id: string }) {
           </div>
         )}
         {loading ? (
-          <p role="status">در حال دریافت تمرین…</p>
+          <Spinner label="در حال دریافت تمرین…" />
         ) : (
           practice && (
             <>

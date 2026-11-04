@@ -64,8 +64,10 @@ test('student can create a ticket with tracking code and open the conversation',
     let body: unknown = [];
     if (path === '/auth/refresh') body = { accessToken: 'token' };
     else if (path === '/auth/me') body = user;
+    else if (path === '/support/student/instructors') body = [{ id: 'teacher-1', name: 'مدرس دانشجو', username: 'teacher' }];
     else if (path === '/support/mine/tickets') body = created ? [ticket] : [];
     else if (path === '/support/tickets' && route.request().method() === 'POST') {
+      expect(route.request().postDataJSON().assignedInstructorId).toBe('teacher-1');
       created = true;
       body = ticket;
     } else if (path === '/support/tickets/ticket-1') body = ticket;
@@ -79,6 +81,52 @@ test('student can create a ticket with tracking code and open the conversation',
   await page.getByRole('button', { name: 'ثبت تیکت', exact: true }).click();
   await expect(page.getByText(ticket.trackingCode)).toBeVisible();
   await expect(page.getByRole('log', { name: 'پیام‌های تیکت' })).toContainText(messages[0].body);
+});
+
+
+test('instructor views assigned student tickets separately from their own and can answer', async ({ page }) => {
+  const user = {
+    id: 'teacher-1', role: 'Instructor', name: 'مدرس تست', username: 'teacher',
+    approvalStatus: 'Approved', onboardingCompleted: true,
+  };
+  const ticket = {
+    id: 'student-ticket-1', userId: 'student-1', assignedInstructorId: user.id,
+    trackingCode: 'TK-STUDENT-001', subject: 'مشکل نمره آزمون',
+    category: 'Exams', priority: 'Normal', status: 'Open',
+    user: { id: 'student-1', name: 'دانشجوی تست', username: 'student' },
+    createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
+  };
+  let messages = [{
+    id: 'msg-1', ticketId: ticket.id, clientId: 'uuid-1', fromStaff: false,
+    body: 'نمره من نمایش داده نمی‌شود.', createdAt: new Date().toISOString(),
+  }];
+  await page.route('http://127.0.0.1:4109/**', async route => {
+    const path = new URL(route.request().url()).pathname;
+    let body: unknown = [];
+    if (path === '/auth/refresh') body = { accessToken: 'test-token' };
+    else if (path === '/auth/me') body = user;
+    else if (path === '/support/mine/tickets') body = [];
+    else if (path === '/support/assigned/tickets') body = [ticket];
+    else if (path === '/support/tickets/student-ticket-1') body = ticket;
+    else if (path === '/support/tickets/student-ticket-1/messages') {
+      if (route.request().method() === 'POST') {
+        const input = route.request().postDataJSON();
+        messages = [...messages, {
+          id: 'msg-2', ticketId: ticket.id, clientId: input.clientId, fromStaff: true,
+          body: input.body, createdAt: new Date().toISOString(),
+        }];
+        body = { id: ticket.id };
+      } else body = messages;
+    }
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
+  });
+  await page.goto('/support');
+  await page.getByRole('button', { name: 'تیکت‌های دانشجویان' }).click();
+  await expect(page.getByText('دانشجوی تست')).toBeVisible();
+  await page.getByRole('button', { name: 'جزئیات' }).click();
+  await page.getByRole('textbox', { name: 'پاسخ به تیکت' }).fill('نمره شما بررسی شد.');
+  await page.getByRole('button', { name: 'ارسال', exact: true }).click();
+  await expect(page.getByRole('log', { name: 'پیام‌های تیکت' })).toContainText('نمره شما بررسی شد.');
 });
 
 test('super admin sees teachers before their tickets and can reply', async ({ page }) => {

@@ -31,7 +31,8 @@ export default function UiSelect({ className = '', children, value, defaultValue
     if (value === undefined) setInternal(choice.value);
     onChange?.({ target: { value: choice.value, name }, currentTarget: { value: choice.value, name } } as ChangeEvent<HTMLSelectElement>);
     setOpen(false);
-    ref.current?.querySelector<HTMLButtonElement>('[role="combobox"]')?.focus();
+    // Restoring keyboard focus must not reposition the surrounding page/modal.
+    ref.current?.querySelector<HTMLButtonElement>('[role="combobox"]')?.focus({ preventScroll: true });
   }
   function keyboard(event: KeyboardEvent<HTMLButtonElement>) {
     if (event.key === 'Escape') { setOpen(false); return; }
@@ -62,6 +63,9 @@ export default function UiSelect({ className = '', children, value, defaultValue
       {open && <div id={menuId} role="listbox" aria-label={ariaLabel} className="ui-select-menu absolute inset-x-0 top-full z-50 mt-2 max-h-60 overflow-y-auto rounded-2xl border border-violet-200 bg-white p-1.5 shadow-xl shadow-violet-950/10 dark:border-violet-400/25 dark:bg-slate-800">
         {choices.map((choice, index) => (
           <button key={index} type="button" role="option" aria-selected={choice.value === selected} disabled={choice.disabled}
+            // Keep the trigger focused while choosing; native option-button focus
+            // can scroll the document even though the menu is absolutely placed.
+            onMouseDown={event => event.preventDefault()}
             onMouseEnter={() => setActive(index)} onClick={() => choose(choice)}
             className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-right text-sm transition-colors disabled:opacity-40 ${active === index ? 'bg-violet-100 text-violet-800 dark:bg-violet-500/20 dark:text-violet-100' : 'text-slate-700 hover:bg-violet-50 dark:text-slate-200 dark:hover:bg-violet-500/10'}`}>
             <span>{choice.label}</span>{choice.value === selected && <Check size={15} className="text-violet-600 dark:text-violet-300" />}

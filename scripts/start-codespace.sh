@@ -25,4 +25,9 @@ if [[ "$ready" != true ]]; then
 fi
 # A PONG inside the container is insufficient: verify the URL used by Node too.
 node server/scripts/check-redis.cjs
+# Always bring a persistent Codespaces database up to the checked-out schema.
+# Migrate before opening the HTTP listener so support routes never query missing tables.
+echo 'Applying pending Prisma migrations…'
+npm run prisma:generate -w server
+npx prisma migrate deploy --schema=server/prisma/schema.prisma
 exec npm run dev -w server

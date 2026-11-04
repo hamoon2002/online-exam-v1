@@ -1,4 +1,3 @@
-import '../../glass-theme.css';
 import { useEffect, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';

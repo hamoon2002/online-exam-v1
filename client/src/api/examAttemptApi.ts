@@ -102,6 +102,7 @@ export function recordAttemptEvent(
     method: 'POST',
     body: { type },
     headers: examClientHeaders(examId),
+    keepalive: true,
   });
 }
 

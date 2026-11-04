@@ -16,7 +16,7 @@ import BankQuestionList from './components/BankQuestionList';
 
 import { getQuestionBankById, type BankQuestion, type BankQuestionInput, type QuestionBank } from '../../api/questionBankApi';
 
-const EMPTY_OPTIONS = ['', '', '', ''];
+const EMPTY_OPTIONS = ['', ''];
 
 const EMPTY_FORM: BankQuestionInput = {
   text: '',
@@ -102,6 +102,27 @@ function QuestionBankDetailsPage() {
         optionIndex === index ? value : option
       ),
     }));
+  }
+
+  function addOption() {
+    setForm(current => current.options.length >= 6
+      ? current
+      : { ...current, options: [...current.options, ''] });
+  }
+
+  function removeOption(index: number) {
+    setForm(current => {
+      if (current.options.length <= 2) return current;
+      return {
+        ...current,
+        options: current.options.filter((_, i) => i !== index),
+        correctOptionIndex: current.correctOptionIndex === index
+          ? 0
+          : current.correctOptionIndex > index
+            ? current.correctOptionIndex - 1
+            : current.correctOptionIndex,
+      };
+    });
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -193,6 +214,8 @@ function QuestionBankDetailsPage() {
           canSubmit={canSubmit}
           onTextChange={(text) => setForm((current) => ({ ...current, text }))}
           onOptionChange={updateOption}
+          onAddOption={addOption}
+          onRemoveOption={removeOption}
           onCorrectOptionChange={(index) => setForm((current) => ({ ...current, correctOptionIndex: index }))}
           onDifficultyChange={(difficulty) => setForm((current) => ({ ...current, difficulty }))}
           onSubmit={handleSubmit}

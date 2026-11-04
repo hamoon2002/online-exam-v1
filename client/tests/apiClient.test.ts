@@ -282,13 +282,13 @@ test('service URL maps the paired forwarded API URL to the same-origin proxy', (
   );
 });
 
-test('service URL preserves an explicit non-local API URL', () => {
+test('service URL ignores stale external API URLs inside Codespaces', () => {
   assert.equal(
     resolveServiceBaseUrl('https://api.example.com', {
       hostname: 'quiet-river-5173.app.github.dev',
       protocol: 'https:',
     }),
-    'https://api.example.com',
+    '',
   );
 });
 

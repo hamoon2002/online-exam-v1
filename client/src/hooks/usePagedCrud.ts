@@ -20,7 +20,7 @@ export default function usePagedCrud<T extends { id: string }, Input>(
     try {
       const result = await operation();
       list.reload();
-      if (!fallback.startsWith('حذف')) notifySaveSuccess(fallback.startsWith('افزودن') ? 'مورد جدید با موفقیت ثبت شد' : 'تغییرات با موفقیت ذخیره شد');
+      notifySaveSuccess(fallback.startsWith('حذف') ? 'مورد انتخاب‌شده با موفقیت حذف شد' : fallback.startsWith('افزودن') ? 'مورد جدید با موفقیت ثبت شد' : 'تغییرات با موفقیت ذخیره شد');
       return result;
     } catch (err) {
       list.setError(err instanceof ApiError ? err.message : fallback);

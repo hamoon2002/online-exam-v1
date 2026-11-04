@@ -171,3 +171,31 @@ test('super admin sees teachers before their tickets and can reply', async ({ pa
   await page.getByRole('button', { name: 'ارسال', exact: true }).click();
   await expect(page.getByRole('log', { name: 'پیام‌های تیکت' })).toContainText('در حال بررسی است.');
 });
+
+test('session automatically recovers from transient refresh errors without showing the outage page', async ({ page }) => {
+  const user = {
+    id: 'teacher-1', role: 'Instructor', name: 'مدرس تست', username: 'teacher',
+    approvalStatus: 'Approved', onboardingCompleted: true,
+  };
+  let refreshAttempts = 0;
+  await page.route('http://127.0.0.1:4109/**', async route => {
+    const path = new URL(route.request().url()).pathname;
+    if (path === '/auth/refresh') {
+      refreshAttempts++;
+      await route.fulfill({
+        status: refreshAttempts === 1 ? 503 : 200,
+        contentType: 'application/json',
+        body: JSON.stringify(refreshAttempts === 1 ? { error: 'موقتاً قطع' } : { accessToken: 'restored-token' }),
+      });
+      return;
+    }
+    const body = path === '/auth/me' ? user : [];
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
+  });
+  await page.goto('/support');
+  await expect(page.getByRole('heading', { name: 'تیکت‌های من' })).toBeVisible();
+  expect(refreshAttempts).toBeGreaterThanOrEqual(2);
+  await expect(page.getByText('سرویس موقتاً در دسترس نیست', { exact: false })).toHaveCount(0);
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'تیکت‌های من' })).toBeVisible();
+});

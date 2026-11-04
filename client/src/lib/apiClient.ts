@@ -163,7 +163,7 @@ export async function apiRequest<T>(
   options: RequestOptions = {},
   isRetryAfterRefresh = false
 ): Promise<T> {
-  const { method = 'GET', body, signal, headers: extraHeaders } = options;
+  const { method = 'GET', body, signal, headers: extraHeaders, keepalive } = options;
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

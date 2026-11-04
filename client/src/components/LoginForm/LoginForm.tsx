@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
-import { resolveAuthEntry, type CaptchaAnswer } from '../../api/authApi';
+import { getCurrentUser, resolveAuthEntry, type CaptchaAnswer } from '../../api/authApi';
 import { detectIdentifierType } from '../../utils/identifier';
 import { ApiError } from '../../lib/apiClient';
 import { sessionNotice } from '../../lib/sessionNotice';
@@ -37,7 +37,8 @@ export default function LoginForm() {
   const code = useLoginCode();
   const notice = sessionNotice(searchParams);
   function success() {
-    navigate('/dashboard');
+    const role = getCurrentUser()?.role;
+    navigate(role === 'Instructor' || role === 'SuperAdmin' ? '/workspace' : '/dashboard', { replace: true });
   }
   function go(next: Step) {
     code.clearError();

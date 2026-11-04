@@ -10,11 +10,43 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => subscribeToAuth(setUser), []);
   const initializeSession = useCallback(async (isActive: () => boolean) => {
     setSessionState('loading');
-    let next: SessionState = 'unavailable';
-    try { const result = await bootstrapSession(); next = result.status === 'unavailable' ? 'unavailable' : 'ready'; } catch { next = 'unavailable'; }
-    if (isActive()) setSessionState(next);
+    // The Codespaces forwarded API often needs a moment after a page reload.
+    // Keep authentication guarded and retry a temporary network/server failure
+    // before showing a connection warning; never retry an explicit 401.
+    for (let attempt = 0; attempt < 4 && isActive(); attempt++) {
+      let next: SessionState = 'unavailable';
+      try {
+        const result = await bootstrapSession();
+        next = result.status === 'unavailable' ? 'unavailable' : 'ready';
+      } catch {
+        next = 'unavailable';
+      }
+      if (!isActive()) return;
+      if (next === 'ready') {
+        setSessionState('ready');
+        return;
+      }
+      if (attempt < 3) {
+        await new Promise<void>(resolve => setTimeout(resolve, 500 * (attempt + 1)));
+      }
+    }
+    if (isActive()) setSessionState('unavailable');
   }, []);
-  useEffect(() => { let active = true; void initializeSession(() => active); return () => { active = false; }; }, [initializeSession]);
+  useEffect(() => {
+    let active = true;
+    void initializeSession(() => active);
+    return () => { active = false; };
+  }, [initializeSession]);
+  // A startup outage is not a logout: reconnect automatically without
+  // forcing the user to repeatedly press Refresh or log in again.
+  useEffect(() => {
+    if (sessionState !== 'unavailable') return;
+    let active = true;
+    const timer = window.setTimeout(() => {
+      void initializeSession(() => active);
+    }, 6000);
+    return () => { active = false; window.clearTimeout(timer); };
+  }, [sessionState, initializeSession]);
   const retrySession = useCallback(() => { void initializeSession(() => true); }, [initializeSession]);
   function logout(): void { logoutRequest(); }
   const value = useMemo<AuthContextValue>(() => ({ user, isAuthenticated: user !== null, isSessionReady: sessionState === 'ready', isSessionUnavailable: sessionState === 'unavailable', retrySession, logout }), [user, sessionState, retrySession]);

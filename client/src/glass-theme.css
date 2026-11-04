@@ -1570,3 +1570,23 @@ select option:checked{background:#7758d3 linear-gradient(#7758d3,#7758d3);color:
  .support-instructor-page .support-modern-messages .support-message-bubble{max-width:88%!important}
  .support-instructor-page .support-modern-compose .support-modern-send{width:auto!important}
 }
+
+/* Unified alerts: class-based, 400ms opacity + visibility fade in/out. */
+.site-toast.site-toast-css {
+  animation: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: none;
+  transition: opacity 400ms ease, visibility 400ms ease;
+}
+.site-toast.site-toast-css.show {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-toast.site-toast-css {
+    transition-duration: 0ms;
+  }
+}

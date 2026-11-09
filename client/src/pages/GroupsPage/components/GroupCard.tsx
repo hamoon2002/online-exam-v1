@@ -29,8 +29,8 @@ function GroupCard({
 
   return (
     <article className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-violet-200 shadow-sm dark:border-violet-400/30">
-      <div className="relative isolate flex flex-1 flex-col overflow-hidden bg-linear-to-bl from-violet-800 to-indigo-950 p-4 text-white dark:from-violet-950 dark:to-indigo-950">
-        <div aria-hidden="true" className="pointer-events-none absolute -end-12 -bottom-23 -z-10 size-52 rounded-full border border-violet-200/30 shadow-[0_0_0_16px_rgba(216,180,254,.08),0_0_0_32px_rgba(216,180,254,.05)]" />
+      <div className="relative isolate flex flex-1 flex-col overflow-hidden bg-linear-to-bl from-[#655184] to-[#38304f] p-4 text-white dark:from-[#47385f] dark:to-[#2b2740]">
+        <div aria-hidden="true" className="pointer-events-none absolute -end-12 -bottom-23 -z-10 size-52 rounded-full border border-violet-200/20 shadow-[0_0_0_16px_rgba(216,180,254,.06),0_0_0_32px_rgba(216,180,254,.035)]" />
         <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
           <span className="inline-flex items-center gap-2 text-xs font-semibold text-violet-100">
             <span className="grid size-8 place-items-center rounded-lg border border-white/25 bg-white/10">

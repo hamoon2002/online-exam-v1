@@ -97,15 +97,15 @@ function AppLayout({ children, title }: AppLayoutProps) {
   }
 
   return (
-    <div className={`glass-app-shell workspace-theme-${workspaceBackground} min-h-screen bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white`}>
-      <div className="flex min-h-screen flex-col md:flex-row">
+    <div className={`glass-app-shell workspace-theme-${workspaceBackground} h-dvh overflow-hidden bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white`}>
+      <div className="flex h-full min-h-0 flex-col md:flex-row">
         <Sidebar
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
           isCollapsed={isCollapsed}
           onToggleCollapse={toggleCollapse}
         />
-        <main onClickCapture={selectPlainTableRow} className={`min-w-0 flex-1 transition-all duration-300 motion-reduce:transition-none ${isCollapsed ? 'md:w-[calc(100%-5rem)]' : 'md:w-[calc(100%-16rem)]'}`}>
+        <main onClickCapture={selectPlainTableRow} className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden transition-all duration-300 motion-reduce:transition-none ${isCollapsed ? 'md:w-[calc(100%-5rem)]' : 'md:w-[calc(100%-16rem)]'}`}>
           <Header
             title={title}
             isDark={isDark}
@@ -126,7 +126,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
               ))}
             </nav>
           )}
-          <div className="mx-auto w-full max-w-none px-3 py-5 sm:px-4 md:px-5 md:py-7 xl:px-6 xl:py-8">
+          <div data-testid="panel-scroll-region" className="mx-auto min-h-0 w-full max-w-none flex-1 overflow-y-auto overscroll-contain px-3 py-5 sm:px-4 md:px-5 md:py-7 xl:px-6 xl:py-8">
             {children}
           </div>
         </main>

@@ -1,4 +1,4 @@
-import { Users, Pencil, Trash2, Copy, Check, RotateCw, KeyRound } from 'lucide-react';
+import { Check, Copy, IdCard, Pencil, RotateCw, Trash2, Users } from 'lucide-react';
 import type { Group } from '../../../api/groupApi';
 
 type GroupCardProps = {
@@ -11,6 +11,10 @@ type GroupCardProps = {
   onDelete: (group: Group) => void;
 };
 
+const iconButton = 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg motion-safe:transition-colors focus-visible:outline-2 focus-visible:outline-offset-2';
+const cardAction = `${iconButton} text-violet-100 hover:bg-white/15 focus-visible:outline-white`;
+const codeAction = `${iconButton} text-violet-700 hover:bg-violet-100 focus-visible:outline-violet-700 dark:text-violet-200 dark:hover:bg-violet-400/20 dark:focus-visible:outline-violet-200`;
+
 function GroupCard({
   group,
   isCopied,
@@ -20,49 +24,72 @@ function GroupCard({
   onEdit,
   onDelete,
 }: GroupCardProps) {
+  const isPending = group.approvalStatus === 'Pending';
+  const canInvite = !group.approvalStatus || group.approvalStatus === 'Approved';
+
   return (
-    <article className="group-premium-card flex flex-col gap-3 rounded-xl border border-violet-200/50 bg-white p-3.5 shadow-sm transition-shadow hover:shadow-md dark:border-gray-800 dark:bg-gray-900 sm:p-4">
-      <div className="flex min-w-0 items-start gap-2.5">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600 dark:bg-brand-600/15 dark:text-brand-400">
-          <Users size={17} />
-        </div>
-        <div className="min-w-0 flex-1 text-right">
-          <h2 className="truncate text-sm font-bold leading-6 text-gray-900 dark:text-white" title={group.name}>{group.name}</h2>
-          <p className="truncate text-xs text-gray-500 dark:text-gray-400" title={group.category}>{group.category}</p>
-        </div>
-        <div className="flex shrink-0 items-center gap-0.5">
-          <button type="button" onClick={() => onEdit(group)} aria-label={`ویرایش گروه ${group.name}`} title="ویرایش" className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-brand-50 hover:text-brand-600 dark:text-gray-400 dark:hover:bg-brand-950/40 dark:hover:text-brand-400"><Pencil size={15} /></button>
-          <button type="button" onClick={() => onDelete(group)} aria-label={`حذف گروه ${group.name}`} title="حذف" className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-500 transition hover:bg-danger-50 hover:text-danger-600 dark:text-gray-400 dark:hover:bg-danger-950/40 dark:hover:text-danger-400"><Trash2 size={15} /></button>
-        </div>
-      </div>
-      <div className="flex flex-wrap items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-        <span className="rounded-md bg-violet-50 px-2 py-1 text-violet-700 dark:bg-violet-500/10 dark:text-violet-200">{group.studentIds.length.toLocaleString('fa-IR')} دانشجو</span>
-        {group.approvalStatus && group.approvalStatus !== 'Approved' && (
-          <span className="rounded-md bg-amber-50 px-2 py-1 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">
-            {group.approvalStatus === 'Pending' ? 'منتظر تأیید مدیر' : 'تأیید نشده'}
+    <article className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-violet-200 shadow-sm dark:border-violet-400/30">
+      <div className="relative isolate flex flex-1 flex-col overflow-hidden bg-linear-to-bl from-violet-800 to-indigo-950 p-4 text-white dark:from-violet-950 dark:to-indigo-950">
+        <div aria-hidden="true" className="pointer-events-none absolute -end-12 -bottom-23 -z-10 size-52 rounded-full border border-violet-200/30 shadow-[0_0_0_16px_rgba(216,180,254,.08),0_0_0_32px_rgba(216,180,254,.05)]" />
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+          <span className="inline-flex items-center gap-2 text-xs font-semibold text-violet-100">
+            <span className="grid size-8 place-items-center rounded-lg border border-white/25 bg-white/10">
+              <IdCard size={17} aria-hidden="true" />
+            </span>
+            کارت عضویت
           </span>
-        )}
-      </div>
-      {group.approvalStatus && group.approvalStatus !== 'Approved' && (
-        <p className="text-xs leading-5 text-amber-700 dark:text-amber-300">
-          {group.approvalStatus === 'Pending' ? 'عضویت و استفاده از گروه پس از تأیید مدیر فعال می‌شود.' : 'برای بررسی مجدد با مدیر تماس بگیرید.'}
-        </p>
-      )}
-      {(!group.approvalStatus || group.approvalStatus === 'Approved') && (
-        <div className="flex min-w-0 flex-wrap items-center gap-2 rounded-lg border border-gray-100 bg-gray-50/80 px-2.5 py-2 dark:border-gray-700/50 dark:bg-gray-800/50">
-          <KeyRound size={14} className="shrink-0 text-gray-400" />
-          <span className="shrink-0 text-xs text-gray-500 dark:text-gray-400">کد عضویت</span>
-          <span dir="ltr" className="min-w-0 flex-1 select-all truncate text-center font-mono text-xs font-bold tracking-wide text-gray-800 dark:text-white" title={group.joinCode}>{group.joinCode}</span>
-          <div className="flex shrink-0 items-center gap-0.5">
-            <button type="button" onClick={() => onCopyCode(group)} aria-label="کپی کد عضویت" title="کپی کد" className="flex h-7 w-7 items-center justify-center rounded-md text-gray-500 transition hover:bg-white hover:text-brand-600 dark:text-gray-400 dark:hover:bg-gray-700">
-              {isCopied ? <Check size={14} className="text-success-600" /> : <Copy size={14} />}
+          <div className="flex gap-1">
+            <button type="button" onClick={() => onEdit(group)} aria-label={`ویرایش گروه ${group.name}`} title="ویرایش" className={cardAction}>
+              <Pencil size={15} aria-hidden="true" />
             </button>
-            <button type="button" onClick={() => onRegenerateCode(group)} aria-label="ساخت کد عضویت جدید" title="تولید کد جدید (کد قبلی دیگر کار نمی‌کند)" disabled={isRegenerating} className="flex h-7 w-7 items-center justify-center rounded-md text-gray-500 transition hover:bg-white hover:text-brand-600 disabled:opacity-50 dark:text-gray-400 dark:hover:bg-gray-700">
-              <RotateCw size={14} className={isRegenerating ? 'animate-spin' : ''} />
+            <button type="button" onClick={() => onDelete(group)} aria-label={`حذف گروه ${group.name}`} title="حذف" className={`${cardAction} hover:text-rose-200`}>
+              <Trash2 size={15} aria-hidden="true" />
             </button>
           </div>
         </div>
-      )}
+
+        <h2 className="mt-3 text-lg font-bold leading-snug [overflow-wrap:anywhere]">
+          <bdi>{group.name}</bdi>
+        </h2>
+        <div className="mt-auto flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pt-2 text-xs leading-5 text-violet-100">
+          <bdi className="min-w-0 [overflow-wrap:anywhere]">{group.category}</bdi>
+          <span className="inline-flex items-center gap-1.5">
+            <Users size={14} aria-hidden="true" />
+            {group.studentIds.length.toLocaleString('fa-IR')} دانشجو
+          </span>
+        </div>
+      </div>
+
+      <div className="flex min-h-18 min-w-0 flex-wrap items-center justify-between gap-2 border-t border-dashed border-violet-300 bg-violet-50 px-4 py-2.5 dark:border-violet-400/40 dark:bg-[#231e38]">
+        {canInvite ? (
+          <>
+            <div className="min-w-0">
+              <p className="text-xs text-violet-700 dark:text-violet-200">کد عضویت</p>
+              <code dir="ltr" className="block select-all text-start font-mono text-base font-bold tracking-widest text-violet-950 [overflow-wrap:anywhere] dark:text-violet-50">
+                {group.joinCode}
+              </code>
+            </div>
+            <div className="flex gap-1">
+              <button type="button" onClick={() => onCopyCode(group)} aria-label="کپی کد عضویت" title="کپی کد عضویت" className={codeAction}>
+                {isCopied ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
+              </button>
+              <button type="button" onClick={() => onRegenerateCode(group)} aria-label="ساخت کد عضویت جدید" title="تولید کد جدید (کد قبلی دیگر کار نمی‌کند)" disabled={isRegenerating} className={`${codeAction} disabled:cursor-wait disabled:opacity-50`}>
+                <RotateCw size={16} aria-hidden="true" className={isRegenerating ? 'motion-safe:animate-spin' : ''} />
+              </button>
+            </div>
+            <span role="status" className="sr-only">{isCopied ? 'کد عضویت کپی شد' : ''}</span>
+          </>
+        ) : (
+          <div className="min-w-0 text-xs leading-5">
+            <p className="font-bold text-amber-800 dark:text-amber-200">
+              {isPending ? 'منتظر تأیید مدیر' : 'تأیید نشده'}
+            </p>
+            <p className="text-slate-700 dark:text-slate-200">
+              {isPending ? 'عضویت و استفاده از گروه پس از تأیید مدیر فعال می‌شود.' : 'برای بررسی مجدد با مدیر تماس بگیرید.'}
+            </p>
+          </div>
+        )}
+      </div>
     </article>
   );
 }

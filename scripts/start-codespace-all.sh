@@ -31,6 +31,19 @@ if ! curl --fail --silent --max-time 2 http://127.0.0.1:4000/health >/dev/null; 
   fi
 fi
 
+if [[ -n "${CODESPACE_NAME:-}" ]]; then
+  frontend_origin="https://${CODESPACE_NAME}-5173.${GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN:-app.github.dev}"
+  # An anonymous refresh should reach session validation and return 401.
+  # A healthy API can still be an older process rejecting the forwarded origin.
+  status="$(curl --silent --max-time 5 --output /dev/null --write-out '%{http_code}' \
+    --request POST --header "Origin: $frontend_origin" http://127.0.0.1:4000/auth/refresh)" || status=000
+  if [[ "$status" != 401 ]]; then
+    echo "Session refresh check failed for $frontend_origin (HTTP $status)." >&2
+    echo "Stop the API currently running on port 4000, then run npm run dev:codespace again." >&2
+    exit 1
+  fi
+fi
+
 echo "API is ready on port 4000. Starting the frontend on port 5173."
 # Fail explicitly if another Vite instance is already using 5173.
 npm run dev -w client -- --host 0.0.0.0 --port 5173 --strictPort

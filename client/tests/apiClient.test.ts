@@ -134,6 +134,35 @@ test('a password login 401 preserves the credential error and captcha flag', asy
   assert.equal(refreshCalls(), 0);
 });
 
+test('a new credential request cancels an older session refresh', async () => {
+  install(c => {
+    if (!isRefresh(c)) return json(200, { accessToken: 'new-login' });
+    const signal = c.init.signal!;
+    return new Promise<Response>((_resolve, reject) => {
+      signal.addEventListener('abort', () => reject(signal.reason), { once: true });
+    });
+  });
+  const refresh = refreshSession();
+  assert.deepEqual(
+    await apiRequest('/auth/login/password', { method: 'POST' }),
+    { accessToken: 'new-login' },
+  );
+  assert.deepEqual(await refresh, { status: 'unavailable' });
+  assert.equal(refreshCalls(), 1);
+});
+
+test('a timed out password request returns a retryable message', async ({ mock }) => {
+  mock.method(AbortSignal, 'timeout', () => AbortSignal.abort());
+  install(c => {
+    assert.equal(c.init.signal?.aborted, true);
+    return c.init.signal?.reason;
+  });
+  await assert.rejects(
+    apiRequest('/auth/login/password', { method: 'POST' }),
+    (error: unknown) => error instanceof ApiError && error.status === 504,
+  );
+});
+
 // ---------------------------------------------------------------------------
 // multipart
 // ---------------------------------------------------------------------------

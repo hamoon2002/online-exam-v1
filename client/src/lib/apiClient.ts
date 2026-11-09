@@ -104,28 +104,40 @@ export type RefreshOutcome =
   | { status: 'expired' }
   | { status: 'unavailable' };
 
+export const AUTH_REQUEST_TIMEOUT_MS = 15_000;
 let refreshPromise: Promise<RefreshOutcome> | null = null;
+let refreshController: AbortController | null = null;
+let pendingCredentialRequests = 0;
 
 export async function refreshSession(): Promise<RefreshOutcome> {
+  if (pendingCredentialRequests > 0) return { status: 'unavailable' };
   if (!refreshPromise) {
+    refreshController = new AbortController();
+    const signal = AbortSignal.any([
+      refreshController.signal,
+      AbortSignal.timeout(AUTH_REQUEST_TIMEOUT_MS),
+    ]);
     refreshPromise = fetch(buildApiUrl('/auth/refresh'), {
       method: 'POST',
       credentials: 'include',
+      signal,
     })
       .then(async (res): Promise<RefreshOutcome> => {
+        if (signal.aborted) return { status: 'unavailable' };
         if (res.status === 401) return { status: 'expired' };
         if (!res.ok) return { status: 'unavailable' };
         const data = (await res.json().catch(() => null)) as {
           accessToken?: string;
         } | null;
         // A successful response without a token is unavailable, not an expired session.
-        return data?.accessToken
+        return !signal.aborted && data?.accessToken
           ? { status: 'ok', token: data.accessToken }
           : { status: 'unavailable' };
       })
       .catch((): RefreshOutcome => ({ status: 'unavailable' }))
       .finally(() => {
         refreshPromise = null;
+        refreshController = null;
       });
   }
   return refreshPromise;
@@ -145,7 +157,9 @@ export function setOnSessionExpired(handler: () => void): void {
 
 // Retry once after refresh; only an explicit refresh rejection ends the session.
 async function refreshForRetry(): Promise<boolean> {
+  const previousToken = accessToken;
   const outcome = await refreshSession();
+  if (accessToken !== previousToken) return accessToken !== null;
   if (outcome.status === 'ok') {
     accessToken = outcome.token;
     return true;
@@ -170,6 +184,34 @@ export async function apiRequest<T>(
   path: string,
   options: RequestOptions = {},
   isRetryAfterRefresh = false
+): Promise<T> {
+  if (!credentialEndpoints.has(path)) {
+    return requestJson<T>(path, options, isRetryAfterRefresh);
+  }
+
+  // An older refresh must not replace the session cookie from a new login.
+  pendingCredentialRequests++;
+  refreshController?.abort();
+  const timeout = AbortSignal.timeout(AUTH_REQUEST_TIMEOUT_MS);
+  const signal = options.signal ? AbortSignal.any([options.signal, timeout]) : timeout;
+  try {
+    const data = await requestJson<T>(path, { ...options, signal }, true);
+    timeout.throwIfAborted();
+    return data;
+  } catch (error) {
+    if (timeout.aborted) {
+      throw new ApiError(504, 'پاسخ ورود از سرور نرسید. دوباره تلاش کنید.');
+    }
+    throw error;
+  } finally {
+    pendingCredentialRequests--;
+  }
+}
+
+async function requestJson<T>(
+  path: string,
+  options: RequestOptions,
+  isRetryAfterRefresh: boolean,
 ): Promise<T> {
   const { method = 'GET', body, signal, headers: extraHeaders, keepalive } = options;
 
@@ -197,15 +239,14 @@ export async function apiRequest<T>(
     throw new ApiError(0, 'ارتباط با API برقرار نشد؛ مطمئن شوید سرور پورت ۴۰۰۰ اجراست.');
   }
 
-  // A rejected credential belongs to the login form, even if a session cookie exists.
+  // Retry protected requests once with the renewed access token.
   if (
     response.status === 401 &&
     !isRetryAfterRefresh &&
-    path !== '/auth/refresh' &&
-    !credentialEndpoints.has(path)
+    path !== '/auth/refresh'
   ) {
     if (await refreshForRetry()) {
-      return apiRequest<T>(path, options, true);
+      return requestJson<T>(path, options, true);
     }
   }
 

@@ -31,3 +31,9 @@ test('dashboard local reload does not call browser-wide reload', () => {
   assert.match(admin, /بارگذاری مجدد/);
   assert.doesNotMatch(admin, /location\.reload\(/);
 });
+
+test('unavailable session screen allows direct login instead of trapping users', () => {
+  const screen = readFileSync('src/components/SessionStatus/SessionUnavailable.tsx', 'utf8');
+  assert.match(screen, /to="\/login"/);
+  assert.match(screen, /ورود مجدد/);
+});

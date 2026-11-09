@@ -79,7 +79,7 @@ function Sidebar({
       </AnimatePresence>
 
       <aside
-        className={`fixed inset-y-0 right-0 z-50 flex w-72 flex-col border-s border-gray-100 bg-white shadow-2xl transition-all duration-300 dark:border-white/5 dark:bg-gray-900 md:relative md:z-auto md:translate-x-0 md:border-e md:border-s-0 md:shadow-none ${
+        className={`fixed inset-y-0 right-0 z-50 flex h-dvh w-72 min-h-0 flex-col border-s border-gray-100 bg-white shadow-2xl transition-all duration-300 dark:border-white/5 dark:bg-gray-900 md:relative md:z-auto md:translate-x-0 md:border-e md:border-s-0 md:shadow-none ${
           isCollapsed ? 'md:w-20' : 'md:w-64'
         } ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
@@ -96,9 +96,9 @@ function Sidebar({
           )}
         </button>
 
-        <div className="flex h-full flex-col justify-between overflow-y-auto">
-          <div>
-            <div className="flex items-center justify-between px-5 pb-3 pt-6">
+        <div className="flex h-full min-h-0 flex-col overflow-hidden">
+          <div className="flex min-h-0 flex-1 flex-col">
+            <div className="flex shrink-0 items-center justify-between px-5 pb-3 pt-6">
               <button
                 onClick={handleLogoClick}
                 className="flex cursor-pointer items-center"
@@ -115,7 +115,7 @@ function Sidebar({
               </button>
             </div>
 
-            <nav aria-label="منوی اصلی" className="flex flex-col gap-4 px-3 py-4">
+            <nav aria-label="منوی اصلی" className="sidebar-navigation flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain px-3 py-2">
               {sections.map((section, sectionIndex) => (
                 <div
                   key={section.group ?? 'main'}
@@ -162,7 +162,7 @@ function Sidebar({
           </div>
 
           <div
-            className={`m-3 flex items-center rounded-xl bg-gray-50 p-3 transition-all duration-300 dark:bg-gray-800/60 ${
+            className={`m-3 flex shrink-0 items-center rounded-xl bg-gray-50 p-3 transition-all duration-300 dark:bg-gray-800/60 ${
               isCollapsed ? 'flex-col gap-2' : 'justify-between'
             }`}
           >

@@ -163,7 +163,7 @@ function GroupsPage() {
               action={{ label: '+ گروه جدید', onClick: openAddModal }}
             />
           ) : (
-            <div className="groups-premium-grid grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,17rem),1fr))] gap-4">
               {visibleGroups.map((group) => (
                 <GroupCard
                   key={group.id}

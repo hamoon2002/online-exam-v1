@@ -12,7 +12,7 @@ type GroupCardProps = {
 };
 
 const iconButton = 'inline-flex size-9 shrink-0 items-center justify-center rounded-lg motion-safe:transition-colors focus-visible:outline-2 focus-visible:outline-offset-2';
-const cardAction = `${iconButton} text-violet-100 hover:bg-white/15 focus-visible:outline-white`;
+const cardAction = `${iconButton} text-violet-800 hover:bg-violet-200/80 focus-visible:outline-violet-700 dark:text-violet-100 dark:hover:bg-white/15 dark:focus-visible:outline-white`;
 const codeAction = `${iconButton} text-violet-700 hover:bg-violet-100 focus-visible:outline-violet-700 dark:text-violet-200 dark:hover:bg-violet-400/20 dark:focus-visible:outline-violet-200`;
 
 function GroupCard({
@@ -29,11 +29,11 @@ function GroupCard({
 
   return (
     <article className="flex min-w-0 flex-col overflow-hidden rounded-2xl border border-violet-200 shadow-sm dark:border-violet-400/30">
-      <div className="relative isolate flex flex-1 flex-col overflow-hidden bg-linear-to-bl from-[#655184] to-[#38304f] p-4 text-white dark:from-[#47385f] dark:to-[#2b2740]">
-        <div aria-hidden="true" className="pointer-events-none absolute -end-12 -bottom-23 -z-10 size-52 rounded-full border border-violet-200/20 shadow-[0_0_0_16px_rgba(216,180,254,.06),0_0_0_32px_rgba(216,180,254,.035)]" />
+      <div className="relative isolate flex flex-1 flex-col overflow-hidden bg-linear-to-bl from-violet-200 via-violet-100 to-violet-50 p-4 text-violet-950 dark:from-[#624b83] dark:via-[#4f3e6c] dark:to-[#3b2f55] dark:text-white">
+        <div aria-hidden="true" className="pointer-events-none absolute -end-12 -bottom-23 -z-10 size-52 rounded-full border border-violet-400/25 shadow-[0_0_0_16px_rgba(139,92,246,.07),0_0_0_32px_rgba(139,92,246,.04)] dark:border-violet-200/25 dark:shadow-[0_0_0_16px_rgba(216,180,254,.07),0_0_0_32px_rgba(216,180,254,.04)]" />
         <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
-          <span className="inline-flex items-center gap-2 text-xs font-semibold text-violet-100">
-            <span className="grid size-8 place-items-center rounded-lg border border-white/25 bg-white/10">
+          <span className="inline-flex items-center gap-2 text-xs font-semibold text-violet-800 dark:text-violet-100">
+            <span className="grid size-8 place-items-center rounded-lg border border-violet-300/70 bg-white/55 dark:border-white/25 dark:bg-white/10">
               <IdCard size={17} aria-hidden="true" />
             </span>
             کارت عضویت
@@ -42,7 +42,7 @@ function GroupCard({
             <button type="button" onClick={() => onEdit(group)} aria-label={`ویرایش گروه ${group.name}`} title="ویرایش" className={cardAction}>
               <Pencil size={15} aria-hidden="true" />
             </button>
-            <button type="button" onClick={() => onDelete(group)} aria-label={`حذف گروه ${group.name}`} title="حذف" className={`${cardAction} hover:text-rose-200`}>
+            <button type="button" onClick={() => onDelete(group)} aria-label={`حذف گروه ${group.name}`} title="حذف" className={`${cardAction} hover:text-rose-700 dark:hover:text-rose-200`}>
               <Trash2 size={15} aria-hidden="true" />
             </button>
           </div>
@@ -51,7 +51,7 @@ function GroupCard({
         <h2 className="mt-3 text-lg font-bold leading-snug [overflow-wrap:anywhere]">
           <bdi>{group.name}</bdi>
         </h2>
-        <div className="mt-auto flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pt-2 text-xs leading-5 text-violet-100">
+        <div className="mt-auto flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 pt-2 text-xs leading-5 text-violet-800 dark:text-violet-100">
           <bdi className="min-w-0 [overflow-wrap:anywhere]">{group.category}</bdi>
           <span className="inline-flex items-center gap-1.5">
             <Users size={14} aria-hidden="true" />
@@ -60,7 +60,7 @@ function GroupCard({
         </div>
       </div>
 
-      <div className="flex min-h-18 min-w-0 flex-wrap items-center justify-between gap-2 border-t border-dashed border-violet-300 bg-violet-50 px-4 py-2.5 dark:border-violet-400/40 dark:bg-[#231e38]">
+      <div className="flex min-h-18 min-w-0 flex-wrap items-center justify-between gap-2 border-t border-dashed border-violet-300 bg-[#fcfaff] px-4 py-2.5 dark:border-violet-400/40 dark:bg-[#231e38]">
         {canInvite ? (
           <>
             <div className="min-w-0">

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { getAuthToken } from '../lib/apiClient';
 import { bootstrapSession, getCurrentUser, logout as logoutRequest, subscribeToAuth, type User } from '../api/authApi';
 type SessionState = 'loading' | 'ready' | 'unavailable';
 export type AuthContextValue = { user: User | null; isAuthenticated: boolean; isSessionReady: boolean; isSessionUnavailable: boolean; retrySession: () => void; logout: () => void; };
@@ -7,13 +8,20 @@ export const AuthContext = createContext<AuthContextValue | undefined>(undefined
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(() => getCurrentUser());
   const [sessionState, setSessionState] = useState<SessionState>('loading');
-  useEffect(() => subscribeToAuth(setUser), []);
-  const initializeSession = useCallback(async (isActive: () => boolean) => {
-    setSessionState('loading');
+  useEffect(() => subscribeToAuth(currentUser => {
+    setUser(currentUser);
+    if (currentUser && getAuthToken()) setSessionState('ready');
+  }), []);
+  const initializeSession = useCallback(async (isActive: () => boolean, showLoading = true) => {
+    if (showLoading) setSessionState('loading');
     // The Codespaces forwarded API often needs a moment after a page reload.
     // Keep authentication guarded and retry a temporary network/server failure
     // before showing a connection warning; never retry an explicit 401.
     for (let attempt = 0; attempt < 4 && isActive(); attempt++) {
+      if (getCurrentUser() && getAuthToken()) {
+        setSessionState('ready');
+        return;
+      }
       let next: SessionState = 'unavailable';
       try {
         const result = await bootstrapSession();
@@ -42,9 +50,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     if (sessionState !== 'unavailable') return;
     let active = true;
-    const timer = window.setTimeout(() => {
-      void initializeSession(() => active);
-    }, 6000);
+    const reconnect = async () => {
+      // Keep the recovery screen mounted while a background attempt is running.
+      await initializeSession(() => active, false);
+      if (active) timer = window.setTimeout(reconnect, 6000);
+    };
+    let timer = window.setTimeout(reconnect, 6000);
     return () => { active = false; window.clearTimeout(timer); };
   }, [sessionState, initializeSession]);
   const retrySession = useCallback(() => { void initializeSession(() => true); }, [initializeSession]);

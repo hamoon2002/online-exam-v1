@@ -3,6 +3,13 @@ export type ServiceLocation = { hostname: string; protocol: string };
 
 const LOCAL_SERVICE_URL = /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\/?$/i;
 const CODESPACES_FRONTEND_HOST = /-5173\.app\.github\.dev$/i;
+const CODESPACES_API_HOST = /-4000\.app\.github\.dev$/i;
+
+const credentialEndpoints = new Set([
+  '/auth/login/password',
+  '/auth/google',
+  '/auth/otp/verify',
+]);
 
 /**
  * In Codespaces, use the same-origin Vite proxy for API and Socket.IO requests.
@@ -25,30 +32,26 @@ export function resolveServiceBaseUrl(
   const hostname = location?.hostname.toLowerCase();
 
   if (location && hostname && CODESPACES_FRONTEND_HOST.test(hostname)) {
-    const apiHostname = hostname.replace(
-      /-5173(?=\.app\.github\.dev$)/i,
-      '-4000',
-    );
     // A production-style /api setting accidentally hits Vite's SPA on Codespaces.
-    // Always use the dedicated same-origin API proxy in that environment.
+    // Forwarded API URLs can also point to a previous Codespace.
     const isLocalUrl =
       !value ||
       LOCAL_SERVICE_URL.test(value) ||
       /^\/(?:api|__api)\/?$/i.test(value);
-    let isPairedForwardedApiUrl = false;
+    let isForwardedApiUrl = false;
 
     if (value) {
       try {
         const configuredUrl = new URL(value);
-        isPairedForwardedApiUrl =
+        isForwardedApiUrl =
           configuredUrl.protocol === location.protocol &&
-          configuredUrl.hostname.toLowerCase() === apiHostname;
+          CODESPACES_API_HOST.test(configuredUrl.hostname);
       } catch {
         // Preserve invalid/custom values so configuration issues remain visible.
       }
     }
 
-    if (isLocalUrl || isPairedForwardedApiUrl) return '';
+    if (isLocalUrl || isForwardedApiUrl) return '';
   }
 
   return value || 'http://localhost:4000';
@@ -194,11 +197,12 @@ export async function apiRequest<T>(
     throw new ApiError(0, 'ارتباط با API برقرار نشد؛ مطمئن شوید سرور پورت ۴۰۰۰ اجراست.');
   }
 
-  // Retry once after refreshing; never recursively refresh the refresh endpoint.
+  // A rejected credential belongs to the login form, even if a session cookie exists.
   if (
     response.status === 401 &&
     !isRetryAfterRefresh &&
-    path !== '/auth/refresh'
+    path !== '/auth/refresh' &&
+    !credentialEndpoints.has(path)
   ) {
     if (await refreshForRetry()) {
       return apiRequest<T>(path, options, true);

@@ -121,6 +121,19 @@ test('apiRequest: refresh با 429/5xx/شبکه => 503 بدون logout', async (
   }
 });
 
+test('a password login 401 preserves the credential error and captcha flag', async () => {
+  const body = { error: 'شناسه یا رمز اشتباهه', captchaRequired: true };
+  install((c) => (isRefresh(c) ? json(403, {}) : json(401, body)));
+  await assert.rejects(
+    apiRequest('/auth/login/password', { method: 'POST' }),
+    (error: unknown) =>
+      error instanceof ApiError && error.status === 401 &&
+      error.message === body.error &&
+      (error.body as typeof body).captchaRequired === true,
+  );
+  assert.equal(refreshCalls(), 0);
+});
+
 // ---------------------------------------------------------------------------
 // multipart
 // ---------------------------------------------------------------------------
@@ -275,6 +288,16 @@ test('service URL maps an unset value to the same-origin Vite proxy', () => {
 test('service URL maps the paired forwarded API URL to the same-origin proxy', () => {
   assert.equal(
     resolveServiceBaseUrl('https://quiet-river-4000.app.github.dev', {
+      hostname: 'quiet-river-5173.app.github.dev',
+      protocol: 'https:',
+    }),
+    '',
+  );
+});
+
+test('service URL maps a stale Codespaces API to the active same-origin proxy', () => {
+  assert.equal(
+    resolveServiceBaseUrl('https://old-codespace-4000.app.github.dev', {
       hostname: 'quiet-river-5173.app.github.dev',
       protocol: 'https:',
     }),

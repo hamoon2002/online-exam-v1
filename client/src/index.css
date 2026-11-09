@@ -279,3 +279,27 @@ input[type="checkbox"], input[type="radio"]:checked {
 @media (prefers-reduced-motion: reduce) {
   .site-loading-spinner-ring, .site-loading-spinner-core { animation-duration: 3s; }
 }
+
+/* Keep the workspace chrome fixed; scroll only within the selected panel.
+   The sidebar remains operable on short screens instead of clipping links. */
+.glass-app-shell .sidebar-navigation {
+  scrollbar-width: none;
+}
+.glass-app-shell .sidebar-navigation::-webkit-scrollbar {
+  display: none;
+}
+@media (max-height: 850px) {
+  .glass-app-shell .sidebar-navigation {
+    gap: 0.25rem;
+  }
+  .glass-app-shell .sidebar-navigation a {
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+  }
+  .glass-app-shell .sidebar-navigation [role="group"] > p {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    padding-top: 0.375rem;
+    padding-bottom: 0.375rem;
+  }
+}

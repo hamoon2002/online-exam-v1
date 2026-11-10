@@ -1,3 +1,4 @@
+import './contentLibrary.css';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -210,7 +211,7 @@ export default function ContentLibraryPage() {
           <button type="button" disabled={loading} onClick={() => void reload()} title="بارگذاری مجدد" aria-label="بارگذاری مجدد" className="grid h-10 w-10 place-items-center rounded-xl text-slate-500 hover:bg-violet-50 disabled:opacity-50 dark:hover:bg-white/10"><RotateCw size={17}/></button>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <label className={surface + ' flex min-h-11 min-w-50 flex-1 items-center gap-2 px-4'}>
+          <label className={surface + ' content-library-search flex min-h-11 min-w-50 flex-1 items-center gap-2 px-4'}>
             <Search size={18} className="shrink-0 text-slate-400"/>
             <input value={search} onChange={event => setSearch(event.target.value)} type="search" aria-label="جستجوی محتوا" placeholder="جستجوی عنوان یا توضیحات..." className="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 dark:text-white"/>
           </label>

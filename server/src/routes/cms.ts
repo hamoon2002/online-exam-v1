@@ -26,9 +26,13 @@ router.get(
     // Missing CMS sections return empty data so the client can use defaults.
     const sections: Record<string, unknown> = {};
     for (const section of SITE_CONTENT_SECTIONS) {
-      sections[section] = bySection.get(section) ?? {};
+      sections[section] = bySection.has(`hidden:${section}`)
+        ? {}
+        : (bySection.get(section) ?? {});
     }
-    const hiddenSections = SITE_CONTENT_SECTIONS.filter(section => bySection.has(`hidden:${section}`));
+    const hiddenSections = SITE_CONTENT_SECTIONS.filter((section) =>
+      bySection.has(`hidden:${section}`),
+    );
     res.json({ sections, hiddenSections });
   }),
 );
@@ -74,17 +78,31 @@ router.post(
     const { sub } = req.user!;
     const { section } = req.params;
     if (!isSiteContentSection(section)) throw badRequest('بخش نامعتبره');
+
     const rows = await prisma.siteContent.findMany();
-    const draft = rows.find(row => row.section === draftKey(section));
+    const draft = rows.find((row) => row.section === draftKey(section));
     const operations = [];
     if (draft) {
-      operations.push(prisma.siteContent.upsert({
-        where: { section },
-        create: { section, data: draft.data as Prisma.InputJsonValue, updatedById: sub },
-        update: { data: draft.data as Prisma.InputJsonValue, updatedById: sub },
-      }));
+      operations.push(
+        prisma.siteContent.upsert({
+          where: { section },
+          create: {
+            section,
+            data: draft.data as Prisma.InputJsonValue,
+            updatedById: sub,
+          },
+          update: {
+            data: draft.data as Prisma.InputJsonValue,
+            updatedById: sub,
+          },
+        }),
+      );
     }
-    operations.push(prisma.siteContent.deleteMany({ where: { section: hiddenKey(section) } }));
+    operations.push(
+      prisma.siteContent.deleteMany({
+        where: { section: hiddenKey(section) },
+      }),
+    );
     await prisma.$transaction(operations);
     res.json({ section, published: true });
   }),
@@ -97,9 +115,14 @@ router.post(
     const { sub } = req.user!;
     const { section } = req.params;
     if (!isSiteContentSection(section)) throw badRequest('بخش نامعتبره');
+
     await prisma.siteContent.upsert({
       where: { section: hiddenKey(section) },
-      create: { section: hiddenKey(section), data: { hidden: true }, updatedById: sub },
+      create: {
+        section: hiddenKey(section),
+        data: { hidden: true },
+        updatedById: sub,
+      },
       update: { data: { hidden: true }, updatedById: sub },
     });
     res.json({ section, published: false });
@@ -112,14 +135,29 @@ router.post(
     const { sub } = req.user!;
     const rows = await prisma.siteContent.findMany();
     const lookup = new Map(rows.map((row) => [row.section, row.data]));
-    const publishable = SITE_CONTENT_SECTIONS.filter(section => lookup.has(draftKey(section)));
+    const publishable = SITE_CONTENT_SECTIONS.filter((section) =>
+      lookup.has(draftKey(section)),
+    );
     await prisma.$transaction([
-      ...publishable.map(section => prisma.siteContent.upsert({
-        where: { section },
-        create: { section, data: lookup.get(draftKey(section)) as Prisma.InputJsonValue, updatedById: sub },
-        update: { data: lookup.get(draftKey(section)) as Prisma.InputJsonValue, updatedById: sub },
-      })),
-      ...publishable.map(section => prisma.siteContent.deleteMany({ where: { section: hiddenKey(section) } })),
+      ...publishable.map((section) =>
+        prisma.siteContent.upsert({
+          where: { section },
+          create: {
+            section,
+            data: lookup.get(draftKey(section)) as Prisma.InputJsonValue,
+            updatedById: sub,
+          },
+          update: {
+            data: lookup.get(draftKey(section)) as Prisma.InputJsonValue,
+            updatedById: sub,
+          },
+        }),
+      ),
+      ...publishable.map((section) =>
+        prisma.siteContent.deleteMany({
+          where: { section: hiddenKey(section) },
+        }),
+      ),
     ]);
     res.json({ publishedCount: publishable.length });
   }),

@@ -64,8 +64,8 @@ function readString(
 
 function Pricing({ data }: PricingProps) {
   const navigate = useNavigate();
-  const { user, isSessionReady } = useAuth();
-  const account = getLandingAccountView({ user, isSessionReady });
+  const { user, isSessionReady, isSessionUnavailable } = useAuth();
+  const account = getLandingAccountView({ user, isSessionReady, isSessionUnavailable });
   const title = readString(data, 'title') || 'تعرفه‌ای متناسب با نیازت';
   const subtitle =
     readString(data, 'subtitle') ||
@@ -167,7 +167,7 @@ function Pricing({ data }: PricingProps) {
                 ))}
               </ul>
 
-              {account.status !== 'pending' && <button
+              {(account.status === 'guest' || account.status === 'authenticated') && <button
                 type="button"
                 onClick={() => navigate(account.status === 'guest' ? '/signup' : account.user.role === 'Instructor' ? '/plans' : account.dashboardPath)}
                 className={`mt-7 w-full cursor-pointer rounded-xl px-4 py-2.5 text-sm font-bold transition duration-300 hover:-translate-y-0.5 ${

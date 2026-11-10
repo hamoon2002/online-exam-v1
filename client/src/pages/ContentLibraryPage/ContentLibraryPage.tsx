@@ -169,9 +169,9 @@ export default function ContentLibraryPage() {
   }
 
   async function confirmDelete() {
-    if (!deleteTarget?.blogId || pendingKey) return;
+    const blogId = deleteTarget?.blogId;
+    if (!blogId || pendingKey) return;
     const target = deleteTarget;
-    const blogId = target.blogId;
     setPendingKey(target.key);
     setError('');
     try {

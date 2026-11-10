@@ -8,6 +8,7 @@ import type { User } from '../src/api/authApi';
 import { getLandingAccountView } from '../src/pages/LandingPage/components/landingAccountView';
 import Navbar from '../src/pages/LandingPage/components/Navbar';
 import Hero from '../src/pages/LandingPage/components/Hero';
+import Pricing from '../src/pages/LandingPage/components/Pricing';
 
 const instructor: User = {
   id: 'instructor-1', role: 'Instructor', name: 'مریم رضایی',
@@ -25,6 +26,7 @@ function renderLanding(user: User | null, isSessionReady = true) {
         createElement(Fragment, {},
           createElement(Navbar),
           createElement(Hero),
+          createElement(Pricing),
         ),
       ),
     ),
@@ -37,7 +39,8 @@ test('authenticated user sees glass profile and panel action instead of guest lo
   assert.match(html, /profile\.jpg/);
   assert.match(html, /منوی حساب کاربری/);
   assert.match(html, /ورود به میزکار/);
-  assert.doesNotMatch(html, /ثبت‌نام رایگان|شروع رایگان/);
+  assert.doesNotMatch(html, /ثبت‌نام رایگان|>شروع رایگان<\\/button>/);
+  assert.match(html, /مدیریت اشتراک/);
   assert.doesNotMatch(html, />ورود<\/button>/);
 });
 
@@ -45,6 +48,7 @@ test('guest sees login, signup and free-start CTAs', () => {
   const html = renderLanding(null);
   assert.match(html, /ثبت‌نام رایگان/);
   assert.match(html, /شروع رایگان/);
+  assert.doesNotMatch(html, /مدیریت اشتراک/);
   assert.match(html, />ورود<\/button>/);
   assert.doesNotMatch(html, /منوی حساب کاربری/);
 });

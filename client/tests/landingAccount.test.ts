@@ -15,10 +15,10 @@ const instructor: User = {
   username: 'maryam', onboardingCompleted: true, avatarUrl: '/images/profile.jpg',
 };
 
-function renderLanding(user: User | null, isSessionReady = true) {
+function renderLanding(user: User | null, isSessionReady = true, isSessionUnavailable = false) {
   const auth: AuthContextValue = {
     user, isSessionReady, isAuthenticated: !!user,
-    isSessionUnavailable: false, retrySession: () => {}, logout: () => {},
+    isSessionUnavailable, retrySession: () => {}, logout: () => {},
   };
   return renderToString(
     createElement(MemoryRouter, {},
@@ -54,11 +54,26 @@ test('guest sees login, signup and free-start CTAs', () => {
   assert.doesNotMatch(html, /منوی حساب کاربری/);
 });
 
-test('unverified session shows neither a stale profile nor guest login buttons', () => {
+test('unverified session shows a labelled status rather than an empty placeholder or stale profile', () => {
   const html = renderLanding(instructor, false);
+  assert.match(html, /در حال بررسی حساب/);
+  assert.match(html, /role="status"/);
+  assert.doesNotMatch(html, /h-10 w-36 rounded-2xl/);
   assert.doesNotMatch(html, /مریم رضایی|ثبت‌نام رایگان|ورود به میزکار/);
   assert.equal(html.includes('>شروع رایگان</button>'), false);
   assert.doesNotMatch(html, /منوی حساب کاربری/);
+});
+
+test('connection outage offers a visible retry instead of a permanent blank rectangle', () => {
+  const html = renderLanding(instructor, false, true);
+  assert.match(html, /اتصال حساب برقرار نیست/);
+  assert.match(html, /تلاش مجدد/);
+  assert.doesNotMatch(html, /h-10 w-36 rounded-2xl/);
+  assert.doesNotMatch(html, /ثبت‌نام رایگان|ورود به میزکار|مریم رضایی/);
+  assert.equal(
+    getLandingAccountView({ user: instructor, isSessionReady: false, isSessionUnavailable: true }).status,
+    'unavailable',
+  );
 });
 
 test('destination and display name match the signed-in role with safe fallbacks', () => {

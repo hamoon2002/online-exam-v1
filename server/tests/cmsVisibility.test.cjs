@@ -75,7 +75,7 @@ test('CMS: publish and unpublish one section without deleting the saved content'
   assert.deepEqual(publicPage.hiddenSections, []);
   assert.equal((await request('POST', '/admin/unpublish/hero')).status, 200);
   publicPage = await (await request('GET', '/', undefined, null)).json();
-  assert.equal(publicPage.sections.hero.title, 'بنر اول');
+  assert.deepEqual(publicPage.sections.hero, {});
   assert.deepEqual(publicPage.hiddenSections, ['hero']);
   assert.equal((await (await request('GET', '/admin/drafts')).json()).sections.hero.title, 'بنر اول');
   assert.equal((await request('POST', '/admin/publish/hero')).status, 200);

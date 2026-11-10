@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle2, ArrowLeft, Sparkles, ShieldCheck, BarChart3, Users } from 'lucide-react';
+import { CheckCircle2, ArrowLeft, Sparkles, ShieldCheck, BarChart3, Users, LoaderCircle, RefreshCw } from 'lucide-react';
 import ExamHeroIllustration from './ExamHeroIllustration';
 import { useAuth } from '../../../context/AuthContext';
 import { getLandingAccountView } from './landingAccountView';
@@ -23,8 +23,8 @@ function readString(
 
 function Hero({ data }: HeroProps) {
   const navigate = useNavigate();
-  const { user, isSessionReady } = useAuth();
-  const account = getLandingAccountView({ user, isSessionReady });
+  const { user, isSessionReady, isSessionUnavailable, retrySession } = useAuth();
+  const account = getLandingAccountView({ user, isSessionReady, isSessionUnavailable });
 
   const title = readString(data, 'title');
   const subtitle = readString(data, 'subtitle');
@@ -66,7 +66,7 @@ function Hero({ data }: HeroProps) {
           </p>
 
           <div className="glass-delay-2 glass-enter mt-8 flex flex-wrap items-center gap-3">
-            {account.status !== 'pending' && (
+            {account.status === 'guest' || account.status === 'authenticated' ? (
               <button
                 type="button"
                 onClick={() => navigate(account.status === 'authenticated' ? account.dashboardPath : '/signup')}
@@ -74,6 +74,17 @@ function Hero({ data }: HeroProps) {
               >
                 {account.status === 'authenticated' ? 'ورود به میزکار' : ctaText}
                 <ArrowLeft size={16} className="mr-2 inline-block" aria-hidden="true" />
+              </button>
+            ) : account.status === 'pending' ? (
+              <span role="status" className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-violet-200/70 bg-white/70 px-5 py-3 text-sm text-violet-700 dark:border-violet-400/25 dark:bg-slate-900/60 dark:text-violet-200">
+                <LoaderCircle size={16} className="animate-spin" aria-hidden="true" />
+                در حال بررسی حساب…
+              </span>
+            ) : (
+              <button type="button" onClick={retrySession}
+                className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-amber-300/60 bg-amber-50 px-5 py-3 text-sm font-semibold text-amber-800 transition hover:bg-amber-100 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-200">
+                <RefreshCw size={16} aria-hidden="true" />
+                اتصال حساب برقرار نیست — تلاش مجدد
               </button>
             )}
             <a

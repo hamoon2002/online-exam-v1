@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, X, Sun, Moon, LogIn, LoaderCircle, RefreshCw } from 'lucide-react';
+import { Menu, X, Sun, Moon, LogIn } from 'lucide-react';
 import { collapseFade } from '../../../components/motion/variants';
 import useTheme from '../../../hooks/useTheme';
 import Logo from '../../../components/Logo/Logo';
@@ -21,8 +21,8 @@ function Navbar() {
   const location = useLocation();
   const { isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-  const { user, isSessionReady, isSessionUnavailable, retrySession, logout } = useAuth();
-  const account = getLandingAccountView({ user, isSessionReady, isSessionUnavailable });
+  const { user, isSessionReady, logout } = useAuth();
+  const account = getLandingAccountView({ user, isSessionReady });
 
   function openProfileRoute(path: string) {
     setIsMenuOpen(false);
@@ -101,39 +101,12 @@ function Navbar() {
                 ثبت‌نام رایگان
               </button>
             </>
-          ) : account.status === 'pending' ? (
-            <span role="status" className="inline-flex h-10 items-center gap-2 rounded-xl border border-violet-200/60 bg-violet-50/50 px-3 text-xs font-medium text-violet-700 dark:border-violet-400/20 dark:bg-violet-400/10 dark:text-violet-200">
-              <LoaderCircle size={15} className="animate-spin" aria-hidden="true" />
-              در حال بررسی حساب…
-            </span>
-          ) : (
-            <button
-              type="button"
-              onClick={retrySession}
-              title="بررسی مجدد وضعیت ورود"
-              className="inline-flex h-10 items-center gap-2 rounded-xl border border-amber-300/50 bg-amber-50/70 px-3 text-xs font-medium text-amber-800 transition hover:bg-amber-100 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-200 dark:hover:bg-amber-400/15"
-            >
-              <RefreshCw size={15} aria-hidden="true" />
-              اتصال حساب برقرار نیست — تلاش مجدد
-            </button>
           )}
         </div>
 
         <div className="flex items-center gap-2 md:hidden">
           {account.status === 'authenticated' && (
             <LandingProfileMenu account={account} onNavigate={openProfileRoute} onLogout={signOut} />
-          )}
-          {account.status === 'pending' && (
-            <span role="status" className="inline-flex items-center gap-1 text-[11px] text-violet-700 dark:text-violet-200">
-              <LoaderCircle size={14} className="animate-spin" aria-hidden="true" />
-              بررسی حساب…
-            </span>
-          )}
-          {account.status === 'unavailable' && (
-            <button type="button" onClick={retrySession} title="اتصال حساب برقرار نیست — تلاش مجدد" aria-label="اتصال حساب برقرار نیست — تلاش مجدد"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-amber-300/50 bg-amber-50/70 text-amber-800 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-200">
-              <RefreshCw size={17} aria-hidden="true" />
-            </button>
           )}
           <button
             type="button"

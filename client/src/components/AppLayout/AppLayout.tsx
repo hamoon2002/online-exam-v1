@@ -111,6 +111,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
             isDark={isDark}
             onToggleTheme={toggleTheme}
             onOpenSidebar={() => setIsSidebarOpen(true)}
+            onGoHome={() => guardNavigation(() => navigate('/'))}
           />
           {showTabs && tabs.length > 0 && (
             <nav aria-label="تب‌های باز پنل" className="panel-internal-tabs">

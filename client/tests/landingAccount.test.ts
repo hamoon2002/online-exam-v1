@@ -50,14 +50,14 @@ test('guest sees login, signup and free-start CTAs', () => {
   assert.match(html, /ثبت‌نام رایگان/);
   assert.match(html, /شروع رایگان/);
   assert.doesNotMatch(html, /مدیریت اشتراک/);
-  assert.match(html, />ورود<\/button>/);
+  assert.equal(html.includes('>ورود</button>'), true);
   assert.doesNotMatch(html, /منوی حساب کاربری/);
 });
 
 test('opening the public site before login shows guest actions immediately without a spinner', () => {
   const html = renderLanding(null, false);
   assert.match(html, /ثبت‌نام رایگان/);
-  assert.match(html, />ورود<\\/button>/);
+  assert.equal(html.includes('>ورود</button>'), true);
   assert.match(html, /شروع رایگان/);
   assert.doesNotMatch(html, /در حال بررسی حساب|اتصال حساب برقرار نیست|تلاش مجدد|animate-spin/);
 });

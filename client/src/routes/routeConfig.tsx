@@ -98,8 +98,8 @@ const AdminSiteContentPage = React.lazy(() =>
   import('../pages/AdminSiteContentPage/AdminSiteContentPage')
 );
 
-const AdminBlogPostsPage = React.lazy(() =>
-  import('../pages/AdminBlogPostsPage/AdminBlogPostsPage')
+const ContentLibraryPage = React.lazy(() =>
+  import('../pages/ContentLibraryPage/ContentLibraryPage')
 );
 
 const AdminBlogPostEditorPage = React.lazy(() =>
@@ -271,7 +271,7 @@ export const routes: RouteConfig[] = [
   },
   {
     path: '/blog-posts',
-    Component: AdminBlogPostsPage,
+    Component: ContentLibraryPage,
     protected: true,
     allowedRoles: ['SuperAdmin'],
   },

@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { CheckCircle2, ArrowLeft, Sparkles, ShieldCheck, BarChart3, Users } from 'lucide-react';
 import ExamHeroIllustration from './ExamHeroIllustration';
+import { useAuth } from '../../../context/AuthContext';
+import { getLandingAccountView } from './landingAccountView';
 
 const DEFAULT_TRUST_POINTS = [
   'بدون نیاز به کارت بانکی',
@@ -21,6 +23,8 @@ function readString(
 
 function Hero({ data }: HeroProps) {
   const navigate = useNavigate();
+  const { user, isSessionReady } = useAuth();
+  const account = getLandingAccountView({ user, isSessionReady });
 
   const title = readString(data, 'title');
   const subtitle = readString(data, 'subtitle');
@@ -62,12 +66,16 @@ function Hero({ data }: HeroProps) {
           </p>
 
           <div className="glass-delay-2 glass-enter mt-8 flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => navigate('/signup')}
-              className="ui-primary-gradient rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition duration-300 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-600/40"
-            >
-              {ctaText} <ArrowLeft size={16} className="mr-2 inline-block" />
-            </button>
+            {account.status !== 'pending' && (
+              <button
+                type="button"
+                onClick={() => navigate(account.status === 'authenticated' ? account.dashboardPath : '/signup')}
+                className="ui-primary-gradient rounded-xl px-6 py-3 text-sm font-bold text-white shadow-lg shadow-brand-600/25 transition duration-300 hover:bg-brand-700 hover:shadow-xl hover:shadow-brand-600/40"
+              >
+                {account.status === 'authenticated' ? 'ورود به میزکار' : ctaText}
+                <ArrowLeft size={16} className="mr-2 inline-block" aria-hidden="true" />
+              </button>
+            )}
             <a
               href="#features"
               className="rounded-xl border border-gray-200 px-6 py-3 text-sm font-bold text-gray-700 transition hover:bg-gray-50 dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800"

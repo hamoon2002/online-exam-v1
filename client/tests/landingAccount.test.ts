@@ -54,26 +54,30 @@ test('guest sees login, signup and free-start CTAs', () => {
   assert.doesNotMatch(html, /منوی حساب کاربری/);
 });
 
-test('unverified session shows a labelled status rather than an empty placeholder or stale profile', () => {
-  const html = renderLanding(instructor, false);
-  assert.match(html, /در حال بررسی حساب/);
-  assert.match(html, /role="status"/);
-  assert.doesNotMatch(html, /h-10 w-36 rounded-2xl/);
-  assert.doesNotMatch(html, /مریم رضایی|ثبت‌نام رایگان|ورود به میزکار/);
-  assert.equal(html.includes('>شروع رایگان</button>'), false);
-  assert.doesNotMatch(html, /منوی حساب کاربری/);
+test('opening the public site before login shows guest actions immediately without a spinner', () => {
+  const html = renderLanding(null, false);
+  assert.match(html, /ثبت‌نام رایگان/);
+  assert.match(html, />ورود<\\/button>/);
+  assert.match(html, /شروع رایگان/);
+  assert.doesNotMatch(html, /در حال بررسی حساب|اتصال حساب برقرار نیست|تلاش مجدد|animate-spin/);
 });
 
-test('connection outage offers a visible retry instead of a permanent blank rectangle', () => {
-  const html = renderLanding(instructor, false, true);
-  assert.match(html, /اتصال حساب برقرار نیست/);
-  assert.match(html, /تلاش مجدد/);
-  assert.doesNotMatch(html, /h-10 w-36 rounded-2xl/);
-  assert.doesNotMatch(html, /ثبت‌نام رایگان|ورود به میزکار|مریم رضایی/);
-  assert.equal(
-    getLandingAccountView({ user: instructor, isSessionReady: false, isSessionUnavailable: true }).status,
-    'unavailable',
-  );
+test('session loading or unavailable never replaces guest actions with a loading or retry card', () => {
+  for (const unavailable of [false, true]) {
+    const html = renderLanding(null, false, unavailable);
+    assert.match(html, /ثبت‌نام رایگان|شروع رایگان/);
+    assert.doesNotMatch(html, /در حال بررسی حساب|اتصال حساب برقرار نیست|تلاش مجدد/);
+    assert.doesNotMatch(html, /منوی حساب کاربری/);
+  }
+});
+
+test('logging out swaps profile actions back to guest signup and login', () => {
+  const signedIn = renderLanding(instructor, true);
+  const afterLogout = renderLanding(null, true);
+  assert.match(signedIn, /منوی حساب کاربری/);
+  assert.doesNotMatch(afterLogout, /منوی حساب کاربری|مریم رضایی/);
+  assert.match(afterLogout, /ثبت‌نام رایگان/);
+  assert.match(afterLogout, /شروع رایگان/);
 });
 
 test('destination and display name match the signed-in role with safe fallbacks', () => {
@@ -89,6 +93,7 @@ test('destination and display name match the signed-in role with safe fallbacks'
   const admin = { ...instructor, role: 'SuperAdmin' as const, name: undefined, username: undefined };
   assert.equal(getLandingAccountView({ user: admin, isSessionReady: true }).displayName, 'کاربر');
   assert.equal(getLandingAccountView({ user: admin, isSessionReady: true }).dashboardPath, '/workspace');
-  assert.equal(getLandingAccountView({ user: instructor, isSessionReady: false }).status, 'pending');
-  assert.equal(getLandingAccountView({ user: null, isSessionReady: true }).status, 'guest');
+  assert.equal(getLandingAccountView({ user: instructor, isSessionReady: false }).status, 'guest');
+  assert.equal(getLandingAccountView({ user: null, isSessionReady: false }).status, 'guest');
+  assert.equal(getLandingAccountView({ user: null, isSessionReady: false, isSessionUnavailable: true }).status, 'guest');
 });

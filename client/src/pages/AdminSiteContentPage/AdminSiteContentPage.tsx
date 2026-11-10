@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { XCircle, Layout, Send, RotateCcw, FolderOpen } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Spinner from '../../components/Spinner/Spinner';
@@ -33,7 +34,10 @@ function AdminSiteContentPage() {
     publish,
   } = useAdminSiteContent();
 
-  const [activeTab, setActiveTab] = useState<SiteContentSection>('hero');
+  const [searchParams] = useSearchParams();
+  const requestedSection = searchParams.get('section');
+  const initialSection: SiteContentSection = SITE_CONTENT_SECTIONS.find(section => section === requestedSection) ?? 'hero';
+  const [activeTab, setActiveTab] = useState<SiteContentSection>(initialSection);
   const [draftRevision, setDraftRevision] = useState(0);
   const [showSavedDraft, setShowSavedDraft] = useState(false);
 

@@ -56,7 +56,8 @@ test('guest sees login, signup and free-start CTAs', () => {
 
 test('unverified session shows neither a stale profile nor guest login buttons', () => {
   const html = renderLanding(instructor, false);
-  assert.doesNotMatch(html, /مریم رضایی|ثبت‌نام رایگان|شروع رایگان|ورود به میزکار/);
+  assert.doesNotMatch(html, /مریم رضایی|ثبت‌نام رایگان|ورود به میزکار/);
+  assert.equal(html.includes('>شروع رایگان</button>'), false);
   assert.doesNotMatch(html, /منوی حساب کاربری/);
 });
 

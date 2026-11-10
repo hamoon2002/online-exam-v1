@@ -1,8 +1,6 @@
 import type { User } from '../../../api/authApi';
 
 export type LandingAccountView =
-  | { status: 'pending' }
-  | { status: 'unavailable' }
   | { status: 'guest' }
   | {
       status: 'authenticated';
@@ -15,17 +13,14 @@ export type LandingAccountView =
 export function getLandingAccountView({
   user,
   isSessionReady,
-  isSessionUnavailable = false,
 }: {
   user: User | null;
   isSessionReady: boolean;
   isSessionUnavailable?: boolean;
 }): LandingAccountView {
-  // Treat temporary connection failures separately from loading or a verified guest.
-  if (isSessionUnavailable) return { status: 'unavailable' };
-  // Never reveal a cached profile or flash signup actions before session validation.
-  if (!isSessionReady) return { status: 'pending' };
-  if (!user) return { status: 'guest' };
+  // The public site always shows guest buttons until a login is confirmed.
+  // Connection outages and loading states must never block those buttons.
+  if (!isSessionReady || !user) return { status: 'guest' };
 
   const roleName = {
     SuperAdmin: 'کاربر ارشد',

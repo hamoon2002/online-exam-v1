@@ -83,7 +83,7 @@ function Navbar() {
           </button>
           {account.status === 'authenticated' ? (
             <LandingProfileMenu account={account} onNavigate={openProfileRoute} onLogout={signOut} />
-          ) : account.status === 'guest' ? (
+          ) : (
             <>
               <button
                 type="button"

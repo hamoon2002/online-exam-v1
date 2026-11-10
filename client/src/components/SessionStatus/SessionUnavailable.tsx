@@ -1,4 +1,4 @@
-import { ArrowRight, RefreshCw, WifiOff } from 'lucide-react';
+import { LogIn, RefreshCw, WifiOff } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 type SessionUnavailableProps = { onRetry: () => void };
@@ -20,8 +20,8 @@ function SessionUnavailable({ onRetry }: SessionUnavailableProps) {
           <button type="button" onClick={onRetry} className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-violet-200 px-4 text-sm font-semibold text-violet-700 transition hover:bg-violet-50 dark:border-violet-400/25 dark:text-violet-200 dark:hover:bg-violet-500/10">
             <RefreshCw size={16} /> تلاش مجدد
           </button>
-          <Link to="/" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 text-sm font-semibold text-white transition hover:bg-violet-700">
-            <ArrowRight size={16} /> بازگشت به صفحه اصلی
+          <Link to="/login" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 text-sm font-semibold text-white transition hover:bg-violet-700">
+            <LogIn size={16} /> ورود مجدد
           </Link>
         </div>
       </div>

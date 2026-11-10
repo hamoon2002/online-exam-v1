@@ -335,7 +335,7 @@ export default function AdminDashboard() {
           {loading ? 'در حال به‌روزرسانی اطلاعات…' : updatedAt ? `آخرین به‌روزرسانی: ${updatedAt.toLocaleTimeString('fa-IR', { hour: '2-digit', minute: '2-digit' })}` : 'نمای کلی سامانه'}
         </p>
         <button type="button" onClick={() => refetch()} disabled={loading} className={`${linkBtn} gap-2 disabled:cursor-wait disabled:opacity-50`}>
-          <RotateCw size={14} className={loading ? 'animate-spin motion-reduce:animate-none' : ''} />به‌روزرسانی
+          <RotateCw size={14} className={loading ? 'animate-spin motion-reduce:animate-none' : ''} />بارگذاری مجدد
         </button>
       </div>
       {error && data && <p role="alert" className="mb-4 rounded-xl bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-950/40 dark:text-amber-200">به‌روزرسانی انجام نشد؛ اطلاعات قبلی نمایش داده می‌شود.</p>}

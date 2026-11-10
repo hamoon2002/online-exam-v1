@@ -34,11 +34,11 @@ test('content library search highlights its outer frame without an inner input h
   const root = path.resolve(__dirname, '../src/pages/ContentLibraryPage');
   const page = readFileSync(path.join(root, 'ContentLibraryPage.tsx'), 'utf8');
   const styles = readFileSync(path.join(root, 'contentLibrary.css'), 'utf8');
-  assert.match(page, /content-library-search/);
-  assert.match(page, /import '.\\/contentLibrary.css'/);
-  assert.match(styles, /\\.content-library-search:hover/);
-  assert.match(styles, /\\.content-library-search:focus-within/);
-  assert.match(styles, /input\\[type="search"\\]:focus-visible/);
-  assert.match(styles, /outline:\\s*none\\s*!important/);
-  assert.match(styles, /box-shadow:\\s*none\\s*!important/);
+  assert.ok(page.includes("import './contentLibrary.css'"));
+  assert.ok(page.includes('content-library-search flex'));
+  assert.ok(styles.includes('.content-library-search:hover'));
+  assert.ok(styles.includes('.content-library-search:focus-within'));
+  assert.ok(styles.includes('input[type="search"]:focus-visible'));
+  assert.ok(styles.includes('outline: none !important'));
+  assert.ok(styles.includes('box-shadow: none !important'));
 });

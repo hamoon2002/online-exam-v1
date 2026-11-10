@@ -1,5 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { buildContentCards, filterContentCards } from '../src/pages/ContentLibraryPage/contentCards';
 
 const sections = {
@@ -26,4 +28,17 @@ test('content library can filter published/draft content and search Persian titl
   assert.equal(filterContentCards(cards, 'published', '').length, 5);
   assert.deepEqual(filterContentCards(cards, 'all', 'بنر').map(item => item.key), ['cms:hero']);
   assert.equal(filterContentCards(cards, 'all', 'NOT PRESENT').length, 0);
+});
+
+test('content library search highlights its outer frame without an inner input halo', () => {
+  const root = path.resolve(__dirname, '../src/pages/ContentLibraryPage');
+  const page = readFileSync(path.join(root, 'ContentLibraryPage.tsx'), 'utf8');
+  const styles = readFileSync(path.join(root, 'contentLibrary.css'), 'utf8');
+  assert.match(page, /content-library-search/);
+  assert.match(page, /import '.\\/contentLibrary.css'/);
+  assert.match(styles, /\\.content-library-search:hover/);
+  assert.match(styles, /\\.content-library-search:focus-within/);
+  assert.match(styles, /input\\[type="search"\\]:focus-visible/);
+  assert.match(styles, /outline:\\s*none\\s*!important/);
+  assert.match(styles, /box-shadow:\\s*none\\s*!important/);
 });

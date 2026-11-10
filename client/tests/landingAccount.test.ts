@@ -39,7 +39,8 @@ test('authenticated user sees glass profile and panel action instead of guest lo
   assert.match(html, /profile\.jpg/);
   assert.match(html, /منوی حساب کاربری/);
   assert.match(html, /ورود به میزکار/);
-  assert.doesNotMatch(html, /ثبت‌نام رایگان|>شروع رایگان<\\/button>/);
+  assert.doesNotMatch(html, /ثبت‌نام رایگان/);
+  assert.equal(html.includes('>شروع رایگان</button>'), false);
   assert.match(html, /مدیریت اشتراک/);
   assert.doesNotMatch(html, />ورود<\/button>/);
 });

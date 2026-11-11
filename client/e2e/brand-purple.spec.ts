@@ -39,13 +39,13 @@ test('public, login and instructor actions share the brand purple', async ({ pag
   await page.getByRole('button', { name: 'ورود', exact: true }).click();
   await expect(page).toHaveURL(/\/workspace$/);
 
-  await page.goto('/question-banks');
+  const activeNav = page.getByRole('link', { name: 'بانک سؤال', exact: true });
+  await activeNav.click();
   const card = page.getByRole('article').filter({ has: page.getByRole('heading', { name: 'بانک ریاضی' }) });
   const manage = card.getByRole('button', { name: 'مدیریت سؤال‌ها' });
   const edit = card.getByRole('button', { name: 'ویرایش بانک ریاضی' });
   await expect(manage).toHaveCSS('background-image', primary);
   await expect(edit).toHaveCSS('color', 'rgb(91, 59, 173)');
-  const activeNav = page.getByRole('link', { name: 'بانک سؤال', exact: true });
   await expect(activeNav).toHaveCSS('color', 'rgb(91, 59, 173)');
   await page.getByRole('button', { name: 'فعال کردن حالت تاریک' }).click();
   await expect(manage).toHaveCSS('background-image', primary);

@@ -1,0 +1,78 @@
+import { expect, test } from '@playwright/test';
+
+for (const role of ['Instructor', 'SuperAdmin'] as const) {
+  test(`${role} can close and reopen the desk tab after login`, async ({ page }) => {
+    const identifier = 'member@example.test';
+    const user = {
+      id: 'member', role, name: 'کاربر آزمایشی', username: 'member',
+      onboardingCompleted: true, approvalStatus: 'Approved',
+    };
+    let loggedIn = false;
+    await page.route('http://127.0.0.1:4109/**', route => {
+      const path = new URL(route.request().url()).pathname;
+      switch (path) {
+        case '/auth/refresh':
+          return loggedIn
+            ? route.fulfill({ json: { accessToken: 'fixture-token' } })
+            : route.fulfill({ status: 401, json: {} });
+        case '/auth/entry':
+          return route.fulfill({ json: { identifier, next: 'password' } });
+        case '/auth/login/password':
+          loggedIn = true;
+          return route.fulfill({ json: { accessToken: 'fixture-token', user } });
+        case '/auth/me':
+          return route.fulfill({ json: user });
+        case '/admin/dashboard':
+          return route.fulfill({ status: 503, json: {} });
+        case '/groups':
+          return route.fulfill({ json: { items: [], total: 0, page: 1, pageSize: 25 } });
+        default:
+          return route.fulfill({ json: [] });
+      }
+    });
+
+    await page.goto('/login');
+    await page.locator('#login-identifier').fill(identifier);
+    await page.getByRole('button', { name: 'ادامه', exact: true }).click();
+    await page.locator('#login-password').fill('ExamplePassword123');
+    await page.getByRole('button', { name: 'ورود', exact: true }).click();
+
+    await expect(page).toHaveURL(/\/workspace$/);
+    const tabs = page.getByRole('navigation', { name: 'تب‌های باز پنل' });
+    const deskTab = tabs.getByRole('button', { name: /بستن تب میز\s*کار/ });
+    const sidebar = page.getByRole('navigation', { name: 'منوی اصلی' });
+    const deskLink = sidebar.getByRole('link', { name: 'میز کار', exact: true });
+    const dashboard = page.getByRole('heading', { name: user.name });
+    await expect(deskTab).toBeVisible();
+    await expect(dashboard).toBeVisible();
+
+    if (role === 'Instructor') {
+      await sidebar.getByRole('link', { name: 'پشتیبانی', exact: true }).click();
+      const supportTab = tabs.getByRole('button', { name: 'بستن تب پشتیبانی', exact: true });
+      await expect(supportTab).toBeVisible();
+      await deskTab.click();
+      await expect(page).toHaveURL(/\/support$/);
+      await expect(deskTab).toHaveCount(0);
+      await supportTab.click();
+    } else {
+      await deskTab.click();
+    }
+
+    await expect(page).toHaveURL(/\/workspace\/empty$/);
+    await expect(tabs).toHaveCount(0);
+    await expect(dashboard).toHaveCount(0);
+    await expect(deskLink).not.toHaveAttribute('aria-current', 'page');
+
+    await page.reload();
+    await expect(deskLink).toBeVisible({ timeout: 10000 });
+    await expect(tabs).toHaveCount(0);
+    await expect(dashboard).toHaveCount(0);
+
+    await deskLink.click();
+    await expect(deskTab).toBeVisible();
+    await expect(dashboard).toBeVisible();
+    await deskTab.click();
+    await expect(tabs).toHaveCount(0);
+    await expect(dashboard).toHaveCount(0);
+  });
+}

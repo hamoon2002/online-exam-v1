@@ -120,9 +120,9 @@ function Editor({ id }: { id?: string }) {
   return (
     <AppLayout title={id ? "ویرایش مجموعهٔ تمرین" : "مجموعهٔ تمرین جدید"}>
       <div className="mx-auto max-w-4xl space-y-4" dir="rtl">
-        <Link to="/practice" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-violet-600"><ArrowRight size={16}/> بازگشت به تمرین‌ها</Link>
+        <Link to="/practice" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-brand-ink"><ArrowRight size={16}/> بازگشت به تمرین‌ها</Link>
         <header className="rounded-3xl border border-violet-200/50 bg-gradient-to-bl from-violet-50 via-white to-white p-4 sm:p-5 dark:border-violet-400/20 dark:from-violet-500/10 dark:via-slate-900 dark:to-slate-900">
-          <div className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-violet-600 dark:text-violet-300"><BookOpenCheck size={18}/> ساخت و مدیریت تمرین</div>
+          <div className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-brand-ink"><BookOpenCheck size={18}/> ساخت و مدیریت تمرین</div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{id ? "ویرایش مجموعه تمرین" : "ساخت مجموعه تمرین"}</h1>
           <p className="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">نام تمرین را بنویسید، سؤال‌ها و گروه‌ها را انتخاب کنید و ذخیره بزنید.</p>
         </header>
@@ -142,7 +142,7 @@ function Editor({ id }: { id?: string }) {
           <form onSubmit={save} noValidate className="space-y-4">
             {error && <p role="alert" className="form-inline-error">{error}</p>}
             <fieldset disabled={busy} className={`${panel} space-y-3`}>
-              <h2 className="inline-flex items-center gap-2 text-base font-bold"><BookOpenCheck size={19} className="text-violet-600"/>مشخصات تمرین</h2>
+              <h2 className="inline-flex items-center gap-2 text-base font-bold"><BookOpenCheck size={19} className="text-brand-ink"/>مشخصات تمرین</h2>
               <label className="block text-sm">
                 نام تمرین
                 <input
@@ -170,7 +170,7 @@ function Editor({ id }: { id?: string }) {
             </fieldset>
             {frozen ? (
               <section className={panel}>
-                <h2 className="inline-flex items-center gap-2 font-bold"><LibraryBig size={18} className="text-violet-600"/>سؤال‌های این مجموعه ثابت هستند</h2>
+                <h2 className="inline-flex items-center gap-2 font-bold"><LibraryBig size={18} className="text-brand-ink"/>سؤال‌های این مجموعه ثابت هستند</h2>
                 <p className="mt-2 text-sm leading-7 text-gray-500">
                   برای حفظ اعتبار سابقهٔ کارآموز، سؤال‌ها پس از اولین انتشار
                   تغییر نمی‌کنند. می‌توانید نام، توضیح و دسترسی گروه‌ها را
@@ -186,12 +186,12 @@ function Editor({ id }: { id?: string }) {
               />
             )}
             <fieldset disabled={busy} className={panel}>
-              <h2 className="inline-flex items-center gap-2 text-lg font-bold"><Layers size={19} className="text-violet-600"/>گروه‌های مجاز</h2>
+              <h2 className="inline-flex items-center gap-2 text-lg font-bold"><Layers size={19} className="text-brand-ink"/>گروه‌های مجاز</h2>
               <p className="mb-3 mt-1 text-xs leading-6 text-gray-500">
                 می‌توانید تمرین را بدون گروه به‌صورت پیش‌نویس ذخیره کنید. برای انتشار، حداقل یک گروه لازم است.
               </p>
               {!groups.length ? (
-                <Link to="/groups" className="text-brand-600 underline">
+                <Link to="/groups" className="text-brand-ink underline">
                   ابتدا گروه بسازید
                 </Link>
               ) : (
@@ -199,7 +199,7 @@ function Editor({ id }: { id?: string }) {
                   {groups.map((g) => (
                     <label
                       key={g.id}
-                      className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 text-sm transition-colors ${groupIds.includes(g.id) ? "border-violet-400 bg-violet-50 text-violet-800 dark:border-violet-400/45 dark:bg-violet-500/10 dark:text-violet-200" : "border-slate-200 hover:border-violet-300 dark:border-slate-700"}`}
+                      className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 text-sm transition-colors ${groupIds.includes(g.id) ? "border-violet-400 bg-violet-50 text-brand-ink dark:border-violet-400/45 dark:bg-violet-500/10" : "border-slate-200 hover:border-violet-300 dark:border-slate-700"}`}
                     >
                       <input
                         type="checkbox"
@@ -214,7 +214,7 @@ function Editor({ id }: { id?: string }) {
                         className="h-4 w-4 accent-brand-600"
                       />
                       <span className="min-w-0 flex-1 break-words">{g.name}</span>
-                      {groupIds.includes(g.id) && <CheckCircle2 size={17} className="shrink-0 text-violet-600"/>}
+                      {groupIds.includes(g.id) && <CheckCircle2 size={17} className="shrink-0 text-brand-ink"/>}
                     </label>
                   ))}
                 </div>

@@ -102,7 +102,7 @@ function Pricing({ data }: PricingProps) {
               )}
 
               <div className="flex items-center gap-2">
-                <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-inner ${planId === 'free' ? 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-200' : planId === 'gold' ? 'bg-amber-200 text-amber-800 dark:bg-amber-700/30 dark:text-amber-200' : planId === 'platinum' ? 'bg-sky-200 text-blue-800 dark:bg-sky-700/30 dark:text-sky-200' : 'bg-violet-200/70 text-violet-800 dark:bg-violet-500/30 dark:text-violet-200'}`}><TierIcon size={29} strokeWidth={1.8}/></span>
+                <span className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-inner ${planId === 'free' ? 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-200' : planId === 'gold' ? 'bg-amber-200 text-amber-800 dark:bg-amber-700/30 dark:text-amber-200' : planId === 'platinum' ? 'bg-sky-200 text-blue-800 dark:bg-sky-700/30 dark:text-sky-200' : 'bg-violet-200/70 text-brand-ink dark:bg-violet-500/30'}`}><TierIcon size={29} strokeWidth={1.8}/></span>
                 <div>
                 <h3
                   className={`text-lg font-extrabold ${

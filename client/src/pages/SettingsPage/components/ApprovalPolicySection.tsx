@@ -143,11 +143,11 @@ export default function ApprovalPolicySection() {
           setMessage('');
           setReload((x) => x + 1);
         }}
-        className="text-sm text-brand-600 underline dark:text-brand-400"
+        className="text-sm text-brand-ink underline"
       >
         دریافت دوبارهٔ تنظیمات
       </button>
-      <Link to="/group-approvals" className="mt-4 block text-sm text-brand-600 underline dark:text-brand-400">مشاهده و بررسی درخواست‌های گروه</Link>
+      <Link to="/group-approvals" className="mt-4 block text-sm text-brand-ink underline">مشاهده و بررسی درخواست‌های گروه</Link>
     </section>
   );
 }

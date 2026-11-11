@@ -114,7 +114,7 @@ function Detail({ id }: { id: string }) {
               <header className={panel}>
                 <div className="flex flex-wrap items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <p className="mb-2 text-sm text-brand-600 dark:text-brand-300">
+                    <p className="mb-2 text-sm text-brand-ink">
                       {role === "Student"
                         ? "فضای تمرین شما"
                         : "بازبینی پیش از انتشار"}

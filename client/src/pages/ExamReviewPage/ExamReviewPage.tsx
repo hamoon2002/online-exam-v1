@@ -131,7 +131,7 @@ function ExamReviewPage() {
               {attempt.totalQuestions.toLocaleString('fa-IR')} پاسخ درست
             </p>
           </div>
-          <span className="rounded-full bg-brand-500/10 px-4 py-1.5 text-sm font-bold text-brand-700 dark:bg-brand-500/15 dark:text-brand-400">
+          <span className="rounded-full bg-brand-500/10 px-4 py-1.5 text-sm font-bold text-brand-ink dark:bg-brand-500/15">
             {percent.toLocaleString('fa-IR')}٪
           </span>
         </div>

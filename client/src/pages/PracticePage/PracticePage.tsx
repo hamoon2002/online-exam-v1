@@ -41,7 +41,7 @@ export default function PracticePage() {
       <div className="mx-auto max-w-6xl space-y-5" dir="rtl">
         <header className="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-violet-200/50 bg-gradient-to-bl from-violet-50 via-white to-white p-6 dark:border-violet-400/20 dark:from-violet-500/10 dark:via-slate-900 dark:to-slate-900">
           <div>
-            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-violet-600 dark:text-violet-300"><BookOpenCheck size={18} /> {learner ? 'یادگیری با تمرین' : 'آموزش و تمرین'}</div>
+            <div className="mb-2 flex items-center gap-2 text-sm font-semibold text-brand-ink"><BookOpenCheck size={18} /> {learner ? 'یادگیری با تمرین' : 'آموزش و تمرین'}</div>
             <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{learner ? 'تمرین‌های من' : 'مجموعه‌های تمرین'}</h1>
             <p className="mt-2 max-w-xl text-sm leading-7 text-slate-500 dark:text-slate-400">{learner ? 'تمرین کنید، بازخورد هر پاسخ را ببینید و سابقه خود را مرور کنید.' : 'بانک سؤال را آماده کنید، سؤال‌ها را انتخاب کنید و تمرین را فقط برای گروه‌های موردنظر منتشر کنید.'}</p>
           </div>
@@ -70,7 +70,7 @@ export default function PracticePage() {
               {list.items.map(p => learner ? (
                 <article key={p.id} className="flex min-w-0 flex-col rounded-2xl border border-violet-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:border-violet-400/15 dark:bg-slate-800/60">
                   <div className="mb-3 flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-300"><BookOpenCheck size={19}/><span className="text-xs font-semibold">مجموعه تمرین</span></span>
+                    <span className="inline-flex items-center gap-2 text-brand-ink"><BookOpenCheck size={19}/><span className="text-xs font-semibold">مجموعه تمرین</span></span>
                     <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${p.status === 'Published' ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-200' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-200'}`}>{statusLabels[p.status]}</span>
                   </div>
                   <h2 className="break-words text-base font-bold text-slate-900 dark:text-white">{p.title}</h2>

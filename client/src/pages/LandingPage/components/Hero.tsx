@@ -50,7 +50,7 @@ function Hero({ data }: HeroProps) {
           ) : (
             <h1 className="glass-enter text-4xl font-extrabold leading-[1.3] text-gray-900 dark:text-white sm:text-5xl">
               برگزاری آزمون آنلاین،{' '}
-              <span className="text-brand-600 dark:text-brand-500">
+              <span className="text-brand-ink">
                 به سبک آینده
               </span>
             </h1>

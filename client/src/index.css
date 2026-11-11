@@ -1,5 +1,10 @@
 @import 'tailwindcss';
+@import './brand-purple.css';
 @custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-brand-ink: var(--ui-brand-ink);
+}
 
 @theme {
   --color-brand-50: #f2f1fc;

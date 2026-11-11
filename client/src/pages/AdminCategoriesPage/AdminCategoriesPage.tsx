@@ -115,7 +115,7 @@ function CategoryRow({
               <button
                 onClick={() => setIsEditing(true)}
                 disabled={isActioning}
-                className="inline-flex h-10 min-w-28 items-center justify-center rounded-xl border border-violet-200 bg-violet-50/60 px-3 text-xs font-semibold text-violet-700 hover:bg-violet-100 dark:border-violet-400/25 dark:bg-violet-400/10 dark:text-violet-200 transition disabled:cursor-not-allowed disabled:opacity-50"
+                className="inline-flex h-10 min-w-28 items-center justify-center rounded-xl border border-violet-200 bg-violet-50/60 px-3 text-xs font-semibold text-brand-ink hover:bg-violet-100 dark:border-violet-400/25 dark:bg-violet-400/10 transition disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span className="inline-flex items-center gap-1">
                   <Pencil size={14} />

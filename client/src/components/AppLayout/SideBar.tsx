@@ -140,6 +140,7 @@ function Sidebar({
                     <NavLink
                       key={to}
                       to={to}
+                      end={to === '/workspace'}
                       onClick={(e) => handleNavClick(e, to)}
                       title={isCollapsed ? label : undefined}
                       className={({ isActive }) =>

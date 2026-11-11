@@ -2,6 +2,7 @@ import React, { type ComponentType } from 'react';
 
 import type { Role } from '../api/authApi';
 import { MANAGEMENT_ROLES } from '../constants/roles';
+import { EMPTY_WORKSPACE_PATH } from '../constants/workspace';
 
 export type RouteConfig = {
   path: string;
@@ -117,6 +118,7 @@ const GroupApprovalsPage = React.lazy(() => import('../pages/AdminManagementPage
 
 export const routes: RouteConfig[] = [
   { path: '/workspace', Component: WorkspacePage, protected: true, allowedRoles: MANAGEMENT_ROLES },
+  { path: EMPTY_WORKSPACE_PATH, Component: WorkspacePage, protected: true, allowedRoles: MANAGEMENT_ROLES },
   { path: '/notifications', Component: NotificationsPage, protected: true },
   { path: '/support', Component: SupportPage, protected: true },
   { path: '/subscriptions', Component: SubscriptionsPage, protected: true, allowedRoles: ['SuperAdmin'] },

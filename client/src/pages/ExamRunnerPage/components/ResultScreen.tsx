@@ -52,7 +52,7 @@ function ResultScreen({
           </div>
         ) : attempt ? (
           <>
-            <div className="mb-6 text-5xl font-extrabold text-brand-600">
+            <div className="mb-6 text-5xl font-extrabold text-brand-ink">
               {Math.round(
                 (attempt.correctCount / (attempt.totalQuestions || 1)) * 100
               ).toLocaleString('fa-IR')}

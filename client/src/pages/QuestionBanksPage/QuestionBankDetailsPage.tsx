@@ -171,7 +171,7 @@ function QuestionBankDetailsPage() {
         <button
           type="button"
           onClick={() => navigate('/question-banks')}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-600"
+          className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-ink"
         >
           <ArrowRight size={17} />
           بازگشت به بانک‌ها
@@ -190,7 +190,7 @@ function QuestionBankDetailsPage() {
       </div>
 
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-violet-200/50 bg-gradient-to-bl from-violet-50 via-white to-white p-5 dark:border-violet-400/20 dark:from-violet-500/10 dark:via-slate-900 dark:to-slate-900">
-        <div className="min-w-0"><p className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-violet-600 dark:text-violet-300"><LibraryBig size={17}/> بانک سؤال</p><h1 className="break-words text-xl font-bold text-slate-800 dark:text-white">{bank?.name || "سؤال‌های بانک"}</h1><p className="mt-2 text-xs text-slate-500">{bank ? `دسته‌بندی: ${bank.category} • ${bank.questionCount.toLocaleString("fa-IR")} سؤال` : bankError || "سؤال‌ها را مدیریت کنید و پاسخ صحیح را مشخص کنید."}</p></div>
+        <div className="min-w-0"><p className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-brand-ink"><LibraryBig size={17}/> بانک سؤال</p><h1 className="break-words text-xl font-bold text-slate-800 dark:text-white">{bank?.name || "سؤال‌های بانک"}</h1><p className="mt-2 text-xs text-slate-500">{bank ? `دسته‌بندی: ${bank.category} • ${bank.questionCount.toLocaleString("fa-IR")} سؤال` : bankError || "سؤال‌ها را مدیریت کنید و پاسخ صحیح را مشخص کنید."}</p></div>
         {canManage && <button type="button" onClick={() => { resetForm(); setFormOpen(true); }} className="ui-primary-gradient inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold"><Plus size={17}/> سؤال جدید</button>}
       </div>
       <section className="rounded-2xl border border-violet-100 bg-white p-4 dark:border-violet-400/15 dark:bg-slate-900 sm:p-5">

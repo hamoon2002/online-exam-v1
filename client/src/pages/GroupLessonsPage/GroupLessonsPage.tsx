@@ -112,7 +112,7 @@ function GroupLessonsPage() {
       <button
         type="button"
         onClick={() => navigate('/lessons')}
-        className="mb-4 flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400 transition"
+        className="mb-4 flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand-ink dark:text-gray-400 dark:hover:text-brand-ink transition"
       >
         <ArrowRight size={16} />
         بازگشت به درس‌ها

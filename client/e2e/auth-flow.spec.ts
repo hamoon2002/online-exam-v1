@@ -128,3 +128,56 @@ test('automatic session recovery opens the workspace after a temporary outage', 
   await expect(page.getByRole('heading', { name: 'در حال اتصال مجدد…' })).toBeVisible();
   await expect(page.getByRole('heading', { name: adminUser.name })).toBeVisible({ timeout: 12_000 });
 });
+
+for (const priorSend of [true, false]) {
+  test(`login OTP displays a retry timer and restores sending (prior send: ${priorSend})`, async ({ page }) => {
+    const identifier = 'student@example.test';
+    const acceptedBeforeLimit = priorSend ? 5 : 0;
+    let attempts = 0;
+
+    await page.clock.install();
+    await page.route('http://127.0.0.1:4109/**', async route => {
+      const path = new URL(route.request().url()).pathname;
+      if (path === '/auth/entry') {
+        return route.fulfill({ json: { identifier, next: 'otp' } });
+      }
+      if (path === '/auth/otp/request') {
+        attempts += 1;
+        if (attempts === acceptedBeforeLimit + 1) {
+          return route.fulfill({
+            status: 429,
+            json: { error: 'برای درخواست دوبارهٔ کد صبر کنید.', retryAfterSeconds: 6 },
+          });
+        }
+        return route.fulfill({ json: {} });
+      }
+      return route.fulfill({ status: 401, json: {} });
+    });
+
+    await page.goto('/login');
+    await page.getByRole('textbox', { name: 'شماره تماس یا پست الکترونیکی' }).fill(identifier);
+    await page.getByRole('button', { name: 'ادامه', exact: true }).click();
+    if (priorSend) {
+      const resend = page.getByRole('button', { name: 'ارسال مجدد کد', exact: true });
+      for (let attempt = 2; attempt <= 6; attempt += 1) {
+        await expect(resend).toBeEnabled();
+        await resend.click();
+      }
+    }
+    const waiting = page.getByRole('button', { name: /ارسال مجدد در/ });
+    await expect(waiting).toBeDisabled();
+    await expect(waiting).toContainText(/00:0[56]/);
+    const before = await waiting.innerText();
+    await page.clock.runFor(2000);
+    await expect(waiting).not.toHaveText(before);
+    expect(attempts).toBe(acceptedBeforeLimit + 1);
+
+    await page.clock.runFor(6000);
+    const send = page.getByRole('button', {
+      name: priorSend ? 'ارسال مجدد کد' : 'ارسال کد تأیید', exact: true,
+    });
+    await expect(send).toBeEnabled();
+    await send.click();
+    await expect.poll(() => attempts).toBe(acceptedBeforeLimit + 2);
+  });
+}

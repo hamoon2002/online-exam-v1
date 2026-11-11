@@ -57,7 +57,7 @@ function ExamQuestionsEditor({ examId }: { examId: string }) {
       <div className="mx-auto max-w-5xl space-y-6" dir="rtl">
         <Link
           to="/exams"
-          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-600"
+          className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand-ink"
         >
           <ArrowRight size={16} />
           بازگشت به آزمون‌ها
@@ -70,7 +70,7 @@ function ExamQuestionsEditor({ examId }: { examId: string }) {
             className="rounded-2xl border border-danger-200 p-5"
           >
             <p>{editor.loadError}</p>
-            <button onClick={editor.retry} className="mt-3 text-brand-600">
+            <button onClick={editor.retry} className="mt-3 text-brand-ink">
               تلاش مجدد
             </button>
           </div>

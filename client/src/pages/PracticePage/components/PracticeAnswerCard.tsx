@@ -151,7 +151,7 @@ export default function PracticeAnswerCard({
         <button
           onClick={onHistory}
           disabled={!stats?.attempts || answer.busy}
-          className="mt-3 text-sm text-brand-600 underline disabled:opacity-40 dark:text-brand-300"
+          className="mt-3 text-sm text-brand-ink underline disabled:opacity-40"
         >
           مشاهدهٔ سابقهٔ پاسخ‌ها
         </button>

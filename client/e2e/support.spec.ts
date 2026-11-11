@@ -78,10 +78,13 @@ test('student can create a ticket with tracking code and open the conversation',
   await page.getByRole('button', { name: 'ثبت تیکت جدید' }).click();
   await expect(page.getByRole('dialog').getByRole('button', { name: 'بستن' })).toHaveCount(1);
   await page.getByLabel('موضوع').fill(ticket.subject);
-  await page.getByLabel('شرح درخواست').fill(messages[0].body);
+  const description = page.getByLabel('شرح درخواست');
+  await expect(description).toHaveCSS('resize', 'none');
+  await description.fill(messages[0].body);
   await page.getByRole('button', { name: 'ثبت تیکت', exact: true }).click();
   await expect(page.getByText(ticket.trackingCode)).toBeVisible();
   await expect(page.getByRole('log', { name: 'پیام‌های تیکت' })).toContainText(messages[0].body);
+  await expect(page.getByRole('textbox', { name: 'پاسخ به تیکت' })).toHaveCSS('resize', 'none');
 });
 
 

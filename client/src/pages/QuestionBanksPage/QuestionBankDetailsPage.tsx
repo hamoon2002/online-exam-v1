@@ -1,9 +1,10 @@
 import ListPagination from '../../components/ListPagination/ListPagination';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, Upload, Plus, LibraryBig } from 'lucide-react';
+import { ArrowRight, Plus, LibraryBig } from 'lucide-react';
 
 import AppLayout from '../../components/AppLayout/AppLayout';
+import ExcelImportButton from '../../components/ExcelImportButton/ExcelImportButton';
 import { getCurrentUser } from '../../api/authApi';
 
 import useBankQuestions from '../../hooks/useBankQuestions';
@@ -177,16 +178,7 @@ function QuestionBankDetailsPage() {
           بازگشت به بانک‌ها
         </button>
 
-        {canManage && (
-          <button
-            type="button"
-            onClick={importModal.open}
-            className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800 transition"
-          >
-            <Upload size={16} />
-            ایمپورت از اکسل
-          </button>
-        )}
+        {canManage && <ExcelImportButton onClick={importModal.open} />}
       </div>
 
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-violet-200/50 bg-gradient-to-bl from-violet-50 via-white to-white p-5 dark:border-violet-400/20 dark:from-violet-500/10 dark:via-slate-900 dark:to-slate-900">

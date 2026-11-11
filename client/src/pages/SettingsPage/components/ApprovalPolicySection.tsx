@@ -76,7 +76,7 @@ export default function ApprovalPolicySection() {
     }
   }
   return (
-    <section className="space-y-5 rounded-2xl border border-gray-200 bg-white p-5 text-gray-900 dark:border-gray-800 dark:bg-gray-900 dark:text-white">
+    <section className="space-y-5 text-gray-900 dark:text-white">
       <h2 className="text-lg font-bold">قوانین تأیید مدرس و گروه</h2>
       <p className="text-sm leading-7 text-gray-500 dark:text-gray-400">
         این تنظیمات مستقل هستند. فعال‌کردن تأیید، مدرس‌ها و گروه‌های تأییدشده را

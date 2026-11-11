@@ -17,7 +17,7 @@ function GroupMembershipSection({
   onSubmit: (event: React.FormEvent) => void;
 }) {
   return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900">
+    <div>
       <div className="flex items-center gap-3 mb-4">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-ink dark:bg-brand-950/40">
           <Users size={18} />

@@ -4,7 +4,7 @@ import type {
 } from "../../../api/practiceApi";
 import Difficulty from "../../../components/QuestionDifficultyBadge/QuestionDifficultyBadge";
 import usePracticeAnswer from "../usePracticeAnswer";
-import { panel, primary, secondary } from "../practiceUi";
+import { primary, secondary } from "../practiceUi";
 type Props = {
   practiceId: string;
   question: PracticeQuestion;
@@ -25,7 +25,7 @@ export default function PracticeAnswerCard({
   );
   const stats = question.stats;
   return (
-    <article className={panel}>
+    <>
       <div className="mb-5 flex items-center justify-between gap-3">
         <span className="text-sm text-gray-500">
           سؤال {(question.position + 1).toLocaleString("fa-IR")}
@@ -156,6 +156,6 @@ export default function PracticeAnswerCard({
           مشاهدهٔ سابقهٔ پاسخ‌ها
         </button>
       </footer>
-    </article>
+    </>
   );
 }

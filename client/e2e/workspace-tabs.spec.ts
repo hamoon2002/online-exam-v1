@@ -47,9 +47,15 @@ for (const role of ['Instructor', 'SuperAdmin'] as const) {
     await expect(dashboard).toBeVisible();
 
     if (role === 'SuperAdmin') {
+      await page.setViewportSize({ width: 1920, height: 800 });
       const scrollRegion = page.getByTestId('panel-scroll-region');
       await expect(scrollRegion).toHaveCSS('direction', 'ltr');
       await expect(dashboard).toHaveCSS('direction', 'rtl');
+      await expect.poll(async () => {
+        const panel = await scrollRegion.boundingBox();
+        const sidebarBounds = await sidebar.locator('xpath=ancestor::aside').boundingBox();
+        return panel && sidebarBounds ? Math.abs(sidebarBounds.x - panel.x - panel.width) : Infinity;
+      }).toBeLessThan(1);
     }
 
     if (role === 'Instructor') {

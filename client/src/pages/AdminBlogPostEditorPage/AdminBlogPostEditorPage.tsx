@@ -52,7 +52,7 @@ function AdminBlogPostEditorPage() {
 
       <button
         onClick={() => navigate('/blog-posts')}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition hover:text-brand-600 dark:text-gray-400 dark:hover:text-brand-400"
+        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition hover:text-brand-ink dark:text-gray-400 dark:hover:text-brand-ink"
       >
         <ArrowRight size={15} />
         بازگشت به لیستِ پست‌ها

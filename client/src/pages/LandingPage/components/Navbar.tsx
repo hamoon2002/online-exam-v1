@@ -48,7 +48,7 @@ function Navbar() {
               key={link.href}
               href={navLinkHref(link.href)}
               onClick={(e) => handleNavLinkClick(e, link.href)}
-              className="group relative text-sm font-medium text-gray-600 transition hover:text-brand-600 dark:text-gray-300 dark:hover:text-white"
+              className="group relative text-sm font-medium text-gray-600 transition hover:text-brand-ink dark:text-gray-300 dark:hover:text-white"
             >
               {link.label}
               <span className="absolute -bottom-1.5 right-0 h-0.5 w-0 rounded-full bg-brand-600 transition-all duration-300 group-hover:w-full dark:bg-brand-400" />
@@ -61,17 +61,17 @@ function Navbar() {
             type="button"
             onClick={toggleTheme}
             aria-label={isDark ? 'حالت روشن' : 'حالت شب'}
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition duration-300 hover:bg-violet-50 hover:border-violet-300 hover:text-violet-700 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-violet-500/15"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 text-gray-500 transition duration-300 hover:bg-violet-50 hover:border-violet-300 hover:text-brand-ink dark:border-gray-700 dark:text-gray-300 dark:hover:bg-violet-500/15"
           >
             {isDark ? <Sun size={16} /> : <Moon size={16} />}
           </button>
           <button
             onClick={() => navigate('/login')}
-            className="group flex items-center gap-1.5 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition duration-300 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 dark:border-gray-700 dark:text-gray-200 dark:hover:border-brand-600/50 dark:hover:bg-gray-800 dark:hover:text-white"
+            className="group flex items-center gap-1.5 rounded-xl border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition duration-300 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-ink dark:border-gray-700 dark:text-gray-200 dark:hover:border-brand-600/50 dark:hover:bg-gray-800 dark:hover:text-white"
           >
             <LogIn
               size={15}
-              className="transition-transform duration-300 group-hover:text-violet-600"
+              className="transition-transform duration-300 group-hover:text-brand-ink"
             />
             ورود
           </button>
@@ -129,7 +129,7 @@ function Navbar() {
             </button>
             <button
               onClick={() => navigate('/login')}
-              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-gray-200 py-2 text-sm font-medium text-gray-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700 dark:border-gray-700 dark:text-gray-200 dark:hover:border-brand-600/50 dark:hover:bg-gray-800 dark:hover:text-white"
+              className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-gray-200 py-2 text-sm font-medium text-gray-700 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-ink dark:border-gray-700 dark:text-gray-200 dark:hover:border-brand-600/50 dark:hover:bg-gray-800 dark:hover:text-white"
             >
               <LogIn size={15} />
               ورود

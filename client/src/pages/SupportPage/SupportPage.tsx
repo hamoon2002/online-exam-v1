@@ -30,7 +30,7 @@ function Status({ status }: { status: SupportTicket['status'] }) {
     ? 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-200'
     : status === 'Answered'
       ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
-      : 'bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-200';
+      : 'bg-violet-50 text-brand-ink dark:bg-violet-500/15';
   return <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${color}`}>{ticketStatusLabels[status]}</span>;
 }
 
@@ -199,10 +199,10 @@ export default function SupportPage() {
                 if (selectedTicket) { setSelectedTicket(null); setDraft(''); }
                 else { setInstructorId(null); setPage(0); }
                 setError('');
-              }} aria-label="بازگشت" className="grid h-10 w-10 place-items-center rounded-xl border border-violet-200 bg-white text-violet-700 hover:bg-violet-50 dark:border-violet-400/20 dark:bg-slate-900 dark:text-violet-200"><ArrowRight size={19}/></button>
+              }} aria-label="بازگشت" className="grid h-10 w-10 place-items-center rounded-xl border border-violet-200 bg-white text-brand-ink hover:bg-violet-50 dark:border-violet-400/20 dark:bg-slate-900"><ArrowRight size={19}/></button>
             )}
             <div>
-              <p className="text-xs font-medium text-violet-600 dark:text-violet-300">مرکز پشتیبانی</p>
+              <p className="text-xs font-medium text-brand-ink">مرکز پشتیبانی</p>
               <h1 className="mt-1 text-xl font-extrabold text-slate-900 dark:text-white">{sectionTitle}</h1>
             </div>
           </div>
@@ -221,7 +221,7 @@ export default function SupportPage() {
           <section className="overflow-hidden rounded-2xl border border-violet-200/50 bg-white/90 shadow-sm dark:border-violet-400/20 dark:bg-slate-900/85">
             <div className="flex flex-wrap items-start justify-between gap-3 border-b border-violet-100 px-5 py-5 dark:border-violet-400/15 sm:px-7">
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-violet-600 dark:text-violet-300" dir="ltr">{selectedTicket.trackingCode}</p>
+                <p className="text-xs font-semibold text-brand-ink" dir="ltr">{selectedTicket.trackingCode}</p>
                 {isTeacher && selectedTicket.user && <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">دانشجو: {selectedTicket.user.name || selectedTicket.user.username || 'بدون نام'}</p>}
                 <h2 className="mt-1 break-words text-lg font-bold text-slate-900 dark:text-white">{selectedTicket.subject}</h2>
                 <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
@@ -231,7 +231,7 @@ export default function SupportPage() {
                   <span>·</span><span>{fmt(selectedTicket.createdAt)}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-2"><Status status={selectedTicket.status}/><button type="button" disabled={saving} onClick={() => void toggleTicketStatus()} className="rounded-xl border border-violet-200 px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-50 disabled:opacity-50 dark:border-violet-400/25 dark:text-violet-200">{selectedTicket.status === 'Closed' ? 'بازکردن تیکت' : 'بستن تیکت'}</button></div>
+              <div className="flex items-center gap-2"><Status status={selectedTicket.status}/><button type="button" disabled={saving} onClick={() => void toggleTicketStatus()} className="rounded-xl border border-violet-200 px-3 py-2 text-xs font-semibold text-brand-ink hover:bg-violet-50 disabled:opacity-50 dark:border-violet-400/25">{selectedTicket.status === 'Closed' ? 'بازکردن تیکت' : 'بستن تیکت'}</button></div>
             </div>
             <div ref={chatRef} role="log" aria-label="پیام‌های تیکت" className="max-h-[55dvh] min-h-72 space-y-4 overflow-y-auto bg-violet-50/20 px-5 py-5 dark:bg-slate-950/20 sm:px-7">
               {detailLoading ? <Spinner label="در حال دریافت پیام‌ها…" compact /> : messages.map(message => {
@@ -258,27 +258,27 @@ export default function SupportPage() {
               { key: 'name', label: 'مدرس', render: item => <span className="font-semibold">{item.name || item.username || 'مدرس بدون نام'}</span> },
               { key: 'tickets', label: 'تعداد تیکت', render: item => item.ticketCount.toLocaleString('fa-IR') },
               { key: 'open', label: 'در انتظار رسیدگی', render: item => item.openCount.toLocaleString('fa-IR') },
-              { key: 'action', label: 'عملیات', render: item => <button type="button" onClick={() => {setInstructorId(item.id); setPage(0);}} className="rounded-lg px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-50 dark:text-violet-300">مشاهده تیکت‌ها</button> },
+              { key: 'action', label: 'عملیات', render: item => <button type="button" onClick={() => {setInstructorId(item.id); setPage(0);}} className="rounded-lg px-3 py-2 text-xs font-semibold text-brand-ink hover:bg-violet-50">مشاهده تیکت‌ها</button> },
             ]}
           />
         ) : (
           <>
             <DataTable items={tickets} loading={loading} empty="تیکتی ثبت نشده است." onSelect={item => void openTicket(item)}
               columns={[
-                { key: 'code', label: 'کد رهگیری', render: item => <span dir="ltr" className="font-mono text-xs font-semibold text-violet-700 dark:text-violet-300">{item.trackingCode}</span> },
+                { key: 'code', label: 'کد رهگیری', render: item => <span dir="ltr" className="font-mono text-xs font-semibold text-brand-ink">{item.trackingCode}</span> },
                 ...(isTeacher && ticketView === 'students' ? [{ key: 'student', label: 'دانشجو', render: (item: SupportTicket) => item.user?.name || item.user?.username || 'دانشجو' }] : []),
                 { key: 'subject', label: 'موضوع', render: item => <span className="font-semibold">{item.subject}</span> },
                 { key: 'category', label: 'دسته‌بندی', render: item => ticketCategoryLabels[item.category] },
                 { key: 'priority', label: 'اهمیت', render: item => <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold ${priorityColor[item.priority]}`}>{ticketPriorityLabels[item.priority]}</span> },
                 { key: 'status', label: 'وضعیت', render: item => <Status status={item.status}/> },
                 { key: 'date', label: 'آخرین تغییر', render: item => <span className="whitespace-nowrap text-xs">{fmt(item.updatedAt)}</span> },
-                { key: 'action', label: 'عملیات', render: item => <button type="button" onClick={() => void openTicket(item)} className="rounded-lg px-3 py-2 text-xs font-semibold text-violet-700 hover:bg-violet-50 dark:text-violet-300">جزئیات</button> },
+                { key: 'action', label: 'عملیات', render: item => <button type="button" onClick={() => void openTicket(item)} className="rounded-lg px-3 py-2 text-xs font-semibold text-brand-ink hover:bg-violet-50">جزئیات</button> },
               ]}
             />
             <div className="flex items-center justify-center gap-3">
-              <button type="button" disabled={page === 0 || loading} onClick={() => setPage(p => Math.max(0,p-1))} className="rounded-xl border border-violet-200 px-4 py-2 text-sm text-violet-700 disabled:opacity-40 dark:border-violet-400/25 dark:text-violet-200">قبلی</button>
+              <button type="button" disabled={page === 0 || loading} onClick={() => setPage(p => Math.max(0,p-1))} className="rounded-xl border border-violet-200 px-4 py-2 text-sm text-brand-ink disabled:opacity-40 dark:border-violet-400/25">قبلی</button>
               <span className="text-xs text-slate-500">صفحه {(page+1).toLocaleString('fa-IR')}</span>
-              <button type="button" disabled={loading || tickets.length < 50} onClick={() => setPage(p => p+1)} className="rounded-xl border border-violet-200 px-4 py-2 text-sm text-violet-700 disabled:opacity-40 dark:border-violet-400/25 dark:text-violet-200">بعدی</button>
+              <button type="button" disabled={loading || tickets.length < 50} onClick={() => setPage(p => p+1)} className="rounded-xl border border-violet-200 px-4 py-2 text-sm text-brand-ink disabled:opacity-40 dark:border-violet-400/25">بعدی</button>
             </div>
           </>
         )}
@@ -287,7 +287,7 @@ export default function SupportPage() {
       <Modal isOpen={createOpen} onClose={() => { if (!saving) setCreateOpen(false); }} wide label="ثبت تیکت پشتیبانی">
         <div dir="rtl">
           <div className="mb-5 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300"><Ticket size={20}/><h2 className="text-lg font-bold text-slate-900 dark:text-white">ثبت تیکت جدید</h2></div>
+            <div className="flex items-center gap-2 text-brand-ink"><Ticket size={20}/><h2 className="text-lg font-bold text-slate-900 dark:text-white">ثبت تیکت جدید</h2></div>
 
           </div>
           <form onSubmit={e => void submitTicket(e)} className="space-y-4">

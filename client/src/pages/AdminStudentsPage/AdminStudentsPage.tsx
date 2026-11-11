@@ -46,7 +46,7 @@ export default function AdminStudentsPage() {
           <button
             type="button"
             onClick={() => setSelection('')}
-            className="text-sm text-brand-600"
+            className="text-sm text-brand-ink"
           >
             حذف فیلتر
           </button>

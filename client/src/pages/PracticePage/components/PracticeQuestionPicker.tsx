@@ -43,10 +43,10 @@ export default function PracticeQuestionPicker({ banks, selected, onChange, disa
     <section className={`${panel} space-y-4`}>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white"><LibraryBig size={18} className="text-violet-600" /> سؤال‌های تمرین</h2>
+          <h2 className="flex items-center gap-2 text-base font-bold text-slate-900 dark:text-white"><LibraryBig size={18} className="text-brand-ink" /> سؤال‌های تمرین</h2>
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">بانک را انتخاب کنید و روی سؤال‌های موردنظر تیک بزنید.</p>
         </div>
-        <span className="rounded-full bg-violet-100 px-3 py-1.5 text-xs font-bold text-violet-700 dark:bg-violet-500/20 dark:text-violet-200">
+        <span className="rounded-full bg-violet-100 px-3 py-1.5 text-xs font-bold text-brand-ink dark:bg-violet-500/20">
           {selected.length.toLocaleString('fa-IR')} سؤال انتخاب شده
         </span>
       </div>
@@ -54,7 +54,7 @@ export default function PracticeQuestionPicker({ banks, selected, onChange, disa
       {!banks.length ? (
         <div className="rounded-xl border border-dashed border-violet-200 px-4 py-7 text-center text-sm text-slate-500 dark:border-violet-400/20">
           <p>هنوز بانک سؤال ندارید.</p>
-          <Link className="mt-3 inline-block font-semibold text-violet-600 underline dark:text-violet-300" to="/question-banks">رفتن به بانک سؤال</Link>
+          <Link className="mt-3 inline-block font-semibold text-brand-ink underline" to="/question-banks">رفتن به بانک سؤال</Link>
         </div>
       ) : (
         <>
@@ -83,7 +83,7 @@ export default function PracticeQuestionPicker({ banks, selected, onChange, disa
                       <input type="checkbox" checked={checked} disabled={disabled || (!checked && selected.length >= 100)}
                         onChange={() => toggle(question)} className="mt-1 h-4 w-4 shrink-0 accent-violet-600" />
                       <span className="min-w-0 flex-1 break-words text-sm leading-6 text-slate-700 dark:text-slate-200">{question.text}</span>
-                      {checked && <Check size={16} aria-hidden="true" className="mt-1 shrink-0 text-violet-600" />}
+                      {checked && <Check size={16} aria-hidden="true" className="mt-1 shrink-0 text-brand-ink" />}
                     </label>
                   );
                 })}
@@ -92,7 +92,7 @@ export default function PracticeQuestionPicker({ banks, selected, onChange, disa
           </div>
           {selected.length > 0 && (
             <details className="group rounded-xl border border-violet-200/70 bg-violet-50/40 p-3 dark:border-violet-400/20 dark:bg-violet-500/5">
-              <summary className="cursor-pointer text-sm font-semibold text-violet-700 dark:text-violet-200">
+              <summary className="cursor-pointer text-sm font-semibold text-brand-ink">
                 مشاهده {selected.length.toLocaleString('fa-IR')} سؤال انتخاب‌شده
                 <span className="mr-2 text-xs font-normal text-slate-500">(برای حذف سؤال، فهرست را باز کنید)</span>
               </summary>

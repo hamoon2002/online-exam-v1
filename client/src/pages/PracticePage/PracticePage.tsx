@@ -1,13 +1,14 @@
 import Spinner from '../../components/Spinner/Spinner';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, BookOpenCheck, Pencil, Plus, Trash2, LibraryBig, Layers } from 'lucide-react';
+import { ArrowLeft, BookOpenCheck, Pencil, Plus, Trash2, LibraryBig, Users } from 'lucide-react';
 import { getCurrentUser } from '../../api/authApi';
 import { deletePractice, getPractices, type Practice } from '../../api/practiceApi';
 import { ApiError } from '../../lib/apiClient';
 import { notifySaveSuccess } from '../../components/Toast/Toast';
 import ConfirmDeleteModal from '../../components/Modal/ConfirmDeleteModal';
 import AppLayout from '../../components/AppLayout/AppLayout';
+import LearningContentCard from '../../components/LearningContentCard/LearningContentCard';
 import ListPagination from '../../components/ListPagination/ListPagination';
 import usePagedList from '../../hooks/usePagedList';
 import { panel, secondary, statusLabels } from './practiceUi';
@@ -66,7 +67,7 @@ export default function PracticePage() {
             </div>
           ) : (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {list.items.map(p => (
+              {list.items.map(p => learner ? (
                 <article key={p.id} className="flex min-w-0 flex-col rounded-2xl border border-violet-100 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:border-violet-400/15 dark:bg-slate-800/60">
                   <div className="mb-3 flex items-center justify-between gap-2">
                     <span className="inline-flex items-center gap-2 text-violet-600 dark:text-violet-300"><BookOpenCheck size={19}/><span className="text-xs font-semibold">مجموعه تمرین</span></span>
@@ -76,17 +77,33 @@ export default function PracticePage() {
                   <p className="mt-2 line-clamp-2 min-h-12 text-sm leading-6 text-slate-500 dark:text-slate-400">{p.description || 'مرور سؤال‌ها همراه با بازخورد فوری'}</p>
                   <div className="my-4 flex flex-wrap gap-3 border-y border-slate-100 py-3 text-xs text-slate-500 dark:border-white/10">
                     <span>{p.questionCount.toLocaleString('fa-IR')} سؤال</span>
-                    {!learner && <span className="inline-flex items-center gap-1"><Layers size={13}/>{p.groups.length.toLocaleString('fa-IR')} گروه</span>}
-                    {learner && <span>{p.instructorName || 'مدرس'}</span>}
+                    <span>{p.instructorName || 'مدرس'}</span>
                   </div>
                   <div className="mt-auto flex flex-wrap gap-2">
-                    <Link to={`/practice/${p.id}`} className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-600 px-3 text-sm font-bold text-white hover:bg-violet-700">{learner ? 'شروع تمرین' : 'مشاهده و انتشار'}<ArrowLeft size={15}/></Link>
-                    {!learner && <>
-                      <Link to={`/practice/${p.id}/edit`} aria-label={`ویرایش ${p.title}`} title="ویرایش" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-violet-200 text-violet-700 hover:bg-violet-50 dark:border-violet-400/25 dark:text-violet-200"><Pencil size={16}/></Link>
-                      <button type="button" onClick={() => { setDeleteError(''); setDeleteTarget(p); }} aria-label={`حذف ${p.title}`} title="حذف" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 dark:border-rose-500/25 dark:text-rose-300"><Trash2 size={16}/></button>
-                    </>}
+                    <Link to={`/practice/${p.id}`} className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-xl bg-violet-600 px-3 text-sm font-bold text-white hover:bg-violet-700">شروع تمرین<ArrowLeft size={15}/></Link>
                   </div>
                 </article>
+              ) : (
+                <LearningContentCard
+                  key={p.id}
+                  kind="practice"
+                  title={p.title}
+                  description={p.description || 'مرور سؤال‌ها همراه با بازخورد فوری'}
+                  questionCount={p.questionCount}
+                  status={
+                    <span className={`ms-auto inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs ${p.status === 'Published' ? 'bg-[#e6f5ec] text-[#1c6048] dark:bg-[#29473d] dark:text-[#ace6cb]' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-200'}`}>
+                      {p.status === 'Published' && <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />}
+                      {statusLabels[p.status]}
+                    </span>
+                  }
+                  metadata={<span className="inline-flex items-center gap-1.5"><Users size={14} aria-hidden="true" />{p.groups.length.toLocaleString('fa-IR')} گروه</span>}
+                >
+                  <Link to={`/practice/${p.id}`} className="learning-content-card-primary">
+                    مشاهده و انتشار <ArrowLeft size={15} aria-hidden="true" />
+                  </Link>
+                  <Link to={`/practice/${p.id}/edit`} aria-label={`ویرایش ${p.title}`} title="ویرایش" className="learning-content-card-action"><Pencil size={16} aria-hidden="true" /></Link>
+                  <button type="button" onClick={() => { setDeleteError(''); setDeleteTarget(p); }} aria-label={`حذف ${p.title}`} title="حذف" className="learning-content-card-action learning-content-card-action--delete"><Trash2 size={16} aria-hidden="true" /></button>
+                </LearningContentCard>
               ))}
             </div>
           )}

@@ -189,10 +189,17 @@ test('instructor content cards use the approved light and dark headers', async (
     ['/question-banks', firstBank.name, 'rgb(225, 214, 248)', 'rgb(75, 58, 112)'],
     ['/practice', practice.title, 'rgb(238, 217, 246)', 'rgb(85, 55, 98)'],
   ]) {
-    await page.goto(path);
+    if (path === '/question-banks') await page.goto(path);
+    else await page.getByRole('link', { name: 'مشاهده تمرین‌ها' }).click();
     const card = page.getByRole('article').filter({ has: page.getByRole('heading', { name: title }) });
     const header = card.locator('.learning-content-card-header');
     await expect(card).toBeVisible();
+    await expect(card.locator('.learning-content-card-art')).toBeVisible();
+    expect(await card.evaluate(element => {
+      const art = element.querySelector('.learning-content-card-art')!.getBoundingClientRect();
+      const title = element.querySelector('h2')!.getBoundingClientRect();
+      return art.right <= title.left;
+    })).toBe(true);
     await expect.poll(() => header.evaluate(el => getComputedStyle(el).backgroundImage)).toContain(light);
     await page.getByRole('button', { name: 'فعال کردن حالت تاریک' }).click();
     await expect.poll(() => header.evaluate(el => getComputedStyle(el).backgroundImage)).toContain(dark);

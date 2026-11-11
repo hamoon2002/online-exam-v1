@@ -31,6 +31,10 @@ function Editor({ id }: { id?: string }) {
   const [groupIds, setGroupIds] = useState<string[]>([]);
   const [selected, setSelected] = useState<PickedQuestion[]>([]);
   const [frozen, setFrozen] = useState(false);
+  const [questionCount, setQuestionCount] = useState(0);
+  const [unavailableGroups, setUnavailableGroups] = useState<string[]>([]);
+  const [selecting, setSelecting] = useState(false);
+  const originalQuestionIds = useRef<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [error, setError] = useState("");
@@ -41,32 +45,37 @@ function Editor({ id }: { id?: string }) {
     let active = true;
     setLoading(true);
     setLoadError("");
-    Promise.all([
-      getGroups(),
-      getQuestionBanks(),
-      id ? getPractice(id) : null,
-      id ? collectListPages((query) => getPracticeQuestions(id, query)) : [],
-    ])
-      .then(([g, b, p, qs]) => {
-        if (!active) return;
-        setGroups(g);
-        setBanks(b);
-        if (p) {
-          setTitle(p.title);
-          setDescription(p.description);
-          setGroupIds(p.groups.map((item) => item.id));
-          setFrozen(!!p.publishedAt);
-          setSelected(
-            qs
-              .filter((q) => q.sourceQuestionId)
-              .map((q) => ({
-                id: q.sourceQuestionId!,
-                text: q.text,
-                difficulty: q.difficulty,
-              })),
-          );
-        }
-      })
+    async function load() {
+      const [availableGroups, practice] = await Promise.all([
+        getGroups(),
+        id ? getPractice(id) : null,
+      ]);
+      const locked = Boolean(practice?.publishedAt || practice?.status === 'Published');
+      const [availableBanks, questions] = locked ? [[], []] as const : await Promise.all([
+        getQuestionBanks(),
+        id ? collectListPages(query => getPracticeQuestions(id, query)) : [],
+      ]);
+      if (!active) return;
+      setGroups(availableGroups);
+      setBanks([...availableBanks]);
+      if (!practice) return;
+
+      const approvedGroupIds = new Set(availableGroups.map(group => group.id));
+      setTitle(practice.title);
+      setDescription(practice.description);
+      setGroupIds(practice.groups.filter(group => approvedGroupIds.has(group.id)).map(group => group.id));
+      setUnavailableGroups(practice.groups.filter(group => !approvedGroupIds.has(group.id)).map(group => group.name));
+      setFrozen(locked);
+      setQuestionCount(practice.questionCount);
+      const choices = questions.map(question => ({
+        id: question.sourceQuestionId ?? question.id,
+        text: question.text,
+        difficulty: question.difficulty,
+      }));
+      originalQuestionIds.current = choices.map(question => question.id);
+      setSelected(choices);
+    }
+    load()
       .catch((e) => {
         if (active)
           setLoadError(
@@ -82,7 +91,7 @@ function Editor({ id }: { id?: string }) {
   }, [id, revision]);
   async function save(event: React.FormEvent) {
     event.preventDefault();
-    if (pending.current) return;
+    if (pending.current || selecting) return;
     if (title.trim().length < 2) {
       setError("نام تمرین الزامی است و باید حداقل دو حرف داشته باشد.");
       return;
@@ -95,11 +104,14 @@ function Editor({ id }: { id?: string }) {
     setBusy(true);
     setError("");
     try {
+      const questionIds = selected.map(question => question.id);
+      const changedQuestions = questionIds.length !== originalQuestionIds.current.length ||
+        questionIds.some((questionId, index) => questionId !== originalQuestionIds.current[index]);
       const data = {
         title,
         description,
         groupIds,
-        ...(!frozen ? { questionIds: selected.map((q) => q.id) } : {}),
+        ...(!frozen && (!id || changedQuestions) ? { questionIds } : {}),
       };
       const saved = id
         ? await updatePractice(id, data)
@@ -182,6 +194,8 @@ function Editor({ id }: { id?: string }) {
                 banks={banks}
                 selected={selected}
                 onChange={setSelected}
+                sampling={selecting}
+                onSamplingChange={setSelecting}
                 disabled={busy}
               />
             )}
@@ -190,6 +204,11 @@ function Editor({ id }: { id?: string }) {
               <p className="mb-3 mt-1 text-xs leading-6 text-gray-500">
                 می‌توانید تمرین را بدون گروه به‌صورت پیش‌نویس ذخیره کنید. برای انتشار، حداقل یک گروه لازم است.
               </p>
+              {unavailableGroups.length > 0 && (
+                <p className="mb-3 text-sm text-amber-800 dark:text-amber-300">
+                  این گروه‌ها دیگر در دسترس نیستند و با ذخیره از تمرین حذف می‌شوند: {unavailableGroups.join('، ')}
+                </p>
+              )}
               {!groups.length ? (
                 <Link to="/groups" className="text-brand-ink underline">
                   ابتدا گروه بسازید
@@ -224,10 +243,10 @@ function Editor({ id }: { id?: string }) {
               className={`${panel} flex flex-wrap items-center justify-between gap-3`}
             >
               <p className="text-sm text-gray-500">
-                {groupIds.length.toLocaleString("fa-IR")} گروه • {selected.length.toLocaleString("fa-IR")} سؤال
+                {groupIds.length.toLocaleString("fa-IR")} گروه • {(frozen ? questionCount : selected.length).toLocaleString("fa-IR")} سؤال
                 {frozen ? " • سؤال‌ها پس از انتشار ثابت می‌مانند" : " • انتشار پس از بازبینی"}
               </p>
-              <button className={primary} disabled={busy}>
+              <button type="submit" className={primary} disabled={busy || selecting}>
                 {busy ? "در حال ذخیره…" : "ذخیره و بازبینی"}
               </button>
             </footer>

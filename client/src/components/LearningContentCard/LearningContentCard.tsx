@@ -25,6 +25,7 @@ export default function LearningContentCard({
           <span>{kind === 'bank' ? 'بانک سؤال' : 'مجموعه تمرین'}</span>
           {status}
         </div>
+        <div className="learning-content-card-art" aria-hidden="true"><span /><span /><span /><span /></div>
         <h2 className="mt-3 text-base font-bold [overflow-wrap:anywhere]"><bdi>{title}</bdi></h2>
         <p className="mt-1 line-clamp-2 text-xs leading-6 [overflow-wrap:anywhere]">{description}</p>
       </div>

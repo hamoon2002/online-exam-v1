@@ -46,6 +46,12 @@ for (const role of ['Instructor', 'SuperAdmin'] as const) {
     await expect(deskTab).toBeVisible();
     await expect(dashboard).toBeVisible();
 
+    if (role === 'SuperAdmin') {
+      const scrollRegion = page.getByTestId('panel-scroll-region');
+      await expect(scrollRegion).toHaveCSS('direction', 'ltr');
+      await expect(dashboard).toHaveCSS('direction', 'rtl');
+    }
+
     if (role === 'Instructor') {
       await sidebar.getByRole('link', { name: 'پشتیبانی', exact: true }).click();
       const supportTab = tabs.getByRole('button', { name: 'بستن تب پشتیبانی', exact: true });

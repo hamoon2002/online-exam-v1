@@ -101,6 +101,7 @@ function PasswordLoginForm({
     setServerError('');
     setLoading(true);
 
+    let signedIn = false;
     try {
       const result = await loginWithPassword(
         identifier,
@@ -113,6 +114,7 @@ function PasswordLoginForm({
         onCaptchaChange(null);
 
         onSuccess(result.user.onboardingCompleted);
+        signedIn = true;
 
         return;
       }
@@ -128,7 +130,8 @@ function PasswordLoginForm({
         setCaptchaResetSignal((current) => current + 1);
       }
     } finally {
-      setLoading(false);
+      // Keep the button busy while the destination route loads.
+      if (!signedIn) setLoading(false);
     }
   }
 
@@ -191,8 +194,8 @@ function PasswordLoginForm({
       <Button type="submit" disabled={loading || (captchaRequired && !captcha)}>
         {loading ? (
           <span className="flex items-center justify-center gap-2">
-            <Loader2 size={15} className="animate-spin" />
-            در حال ورود...
+            <Loader2 size={15} aria-hidden="true" className="motion-safe:animate-spin" />
+            در حال ورود…
           </span>
         ) : (
           'ورود'

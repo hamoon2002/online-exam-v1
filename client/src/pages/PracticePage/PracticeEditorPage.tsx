@@ -1,6 +1,6 @@
 import Spinner from '../../components/Spinner/Spinner';
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, BookOpenCheck, CheckCircle2, Layers, LibraryBig } from "lucide-react";
+import { BookOpenCheck, CheckCircle2, Layers, LibraryBig } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import AppLayout from "../../components/AppLayout/AppLayout";
 import { notifySaveSuccess } from "../../components/Toast/Toast";
@@ -17,6 +17,7 @@ import { ApiError } from "../../lib/apiClient";
 import PracticeQuestionPicker, {
   type PickedQuestion,
 } from "./components/PracticeQuestionPicker";
+import PracticeBackLink from "./components/PracticeBackLink";
 import { input, panel, primary, secondary } from "./practiceUi";
 export default function PracticeEditorPage() {
   const { practiceId } = useParams();
@@ -132,7 +133,7 @@ function Editor({ id }: { id?: string }) {
   return (
     <AppLayout title={id ? "ویرایش مجموعهٔ تمرین" : "مجموعهٔ تمرین جدید"}>
       <div className="mx-auto max-w-4xl space-y-4" dir="rtl">
-        <Link to="/practice" className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-brand-ink"><ArrowRight size={16}/> بازگشت به تمرین‌ها</Link>
+        <PracticeBackLink />
         <header className="rounded-3xl border border-violet-200/50 bg-gradient-to-bl from-violet-50 via-white to-white p-4 sm:p-5 dark:border-violet-400/20 dark:from-violet-500/10 dark:via-slate-900 dark:to-slate-900">
           <div className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-brand-ink"><BookOpenCheck size={18}/> ساخت و مدیریت تمرین</div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{id ? "ویرایش مجموعه تمرین" : "ساخت مجموعه تمرین"}</h1>

@@ -14,6 +14,7 @@ import {
 import { ApiError } from "../../lib/apiClient";
 import AppLayout from "../../components/AppLayout/AppLayout";
 import PracticeQuestions from "./components/PracticeQuestions";
+import PracticeBackLink from "./components/PracticeBackLink";
 import { panel, primary, secondary, statusLabels } from "./practiceUi";
 export default function PracticeDetailPage() {
   const { practiceId } = useParams();
@@ -90,9 +91,7 @@ function Detail({ id }: { id: string }) {
       title={role === "Student" ? "تمرین و مرور" : "بازبینی مجموعهٔ تمرین"}
     >
       <div className="mx-auto max-w-6xl space-y-5" dir="rtl">
-        <Link to="/practice" className="text-sm text-gray-500">
-          ← بازگشت به تمرین‌ها
-        </Link>
+        <PracticeBackLink />
         {error && (
           <div
             role="alert"

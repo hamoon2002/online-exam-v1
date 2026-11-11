@@ -61,6 +61,7 @@ export default function OtpVerifyForm({
     pending.current = true;
     setLoading(true);
     setError('');
+    let signedIn = false;
     try {
       const result = await verifyOtp(
         identifier,
@@ -71,6 +72,7 @@ export default function OtpVerifyForm({
       );
       if (result.status === 'success') {
         onSuccess(result.user.onboardingCompleted);
+        signedIn = true;
         return;
       }
       setError(result.message);
@@ -82,8 +84,10 @@ export default function OtpVerifyForm({
         setInputKey((current) => current + 1);
       }
     } finally {
-      pending.current = false;
-      setLoading(false);
+      if (!signedIn) {
+        pending.current = false;
+        setLoading(false);
+      }
     }
   }
   function submit(event: FormEvent) {
@@ -170,7 +174,7 @@ export default function OtpVerifyForm({
               (captchaRequired && !captcha)
             }
           >
-            {loading ? 'در حال تأیید…' : 'تأیید و ورود'}
+            {loading ? 'در حال ورود…' : 'تأیید و ورود'}
           </Button>
         </>
       )}

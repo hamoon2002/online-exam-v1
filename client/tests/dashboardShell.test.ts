@@ -8,7 +8,7 @@ const admin = readFileSync('src/pages/DashboardPage/admin/AdminDashboard.tsx', '
 
 test('dashboard shell is viewport-bound and cannot scroll as a whole', () => {
   assert.match(layout, /glass-app-shell[^\x60]*h-dvh overflow-hidden/);
-  assert.match(layout, /flex h-full min-h-0 flex-col md:flex-row/);
+  assert.match(layout, /flex h-full min-h-0 flex-col/);
   assert.match(layout, /flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden/);
 });
 

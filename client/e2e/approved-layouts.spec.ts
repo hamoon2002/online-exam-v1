@@ -62,7 +62,13 @@ for (const role of ['Student', 'Instructor']) {
     const prev = nav.getByRole('button', { name: 'سؤال قبلی' });
     const next = nav.getByRole('button', { name: 'سؤال بعدی' });
     await expect(prev).toBeDisabled();
-    await expect(nav).toContainText('سؤال ۱ از ۲۶');
+    const counter = nav.getByText('سؤال ۱ از ۲۶');
+    await expect(counter).toBeVisible();
+    const [prevBox, nextBox, counterBox] = await Promise.all([
+      prev.boundingBox(), next.boundingBox(), counter.boundingBox(),
+    ]);
+    expect(prevBox && nextBox && counterBox && nextBox.x < prevBox.x && prevBox.x < counterBox.x).toBe(true);
+    expect(prevBox && nextBox && Math.abs(prevBox.y - nextBox.y)).toBeLessThan(1);
     await page.getByRole('button', { name: 'رفتن به سؤال 25', exact: true }).click();
     await next.click();
     await expect(card.getByRole('heading', { name: 'تمرین شماره 26' })).toBeVisible();

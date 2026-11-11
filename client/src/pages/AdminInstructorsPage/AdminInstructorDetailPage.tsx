@@ -1,5 +1,6 @@
+import PanelBack from '../../components/PanelBack/PanelBack';
 import { useEffect, useState } from 'react';
-import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import ListPagination from '../../components/ListPagination/ListPagination';
 import Spinner from '../../components/Spinner/Spinner';
@@ -33,7 +34,7 @@ export default function AdminInstructorDetailPage() {
   const name = profile?.name || profile?.username || profile?.email || instructorId;
   return (
     <AppLayout title="اطلاعات مدرس">
-      <Link to="/instructors" className="mb-4 inline-block text-brand-ink">بازگشت به مدرس‌ها</Link>
+      <PanelBack to="/instructors" label="بازگشت به مدرس‌ها" className="mb-4" />
       {profileError ? <p role="alert" className="text-danger-600">{profileError}</p> : !profile || profile.id !== instructorId ? <Spinner /> : (
         <>
           <h1 className="mb-2 text-2xl font-bold dark:text-white">{name}</h1>

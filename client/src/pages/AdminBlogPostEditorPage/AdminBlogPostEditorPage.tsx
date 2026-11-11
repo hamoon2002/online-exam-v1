@@ -1,5 +1,6 @@
+import PanelBack from '../../components/PanelBack/PanelBack';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, Save, Loader2, XCircle } from 'lucide-react';
+import { Save, Loader2, XCircle } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Spinner from '../../components/Spinner/Spinner';
 import ToggleSwitch from '../../components/ToggleSwitch/ToggleSwitch';
@@ -50,13 +51,7 @@ function AdminBlogPostEditorPage() {
     <AppLayout title={isEditMode ? 'ویرایشِ پست' : 'پستِ جدید'}>
       {error && <div className="form-inline-error mb-4 flex items-center justify-between gap-3" role="alert"><span>{error}</span><button type="button" aria-label="بستن خطا" onClick={clearError}><XCircle size={17}/></button></div>}
 
-      <button
-        onClick={() => navigate('/blog-posts')}
-        className="mb-4 inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition hover:text-brand-ink dark:text-gray-400 dark:hover:text-brand-ink"
-      >
-        <ArrowRight size={15} />
-        بازگشت به لیستِ پست‌ها
-      </button>
+      <PanelBack onClick={() => navigate('/blog-posts')} label="بازگشت به لیستِ پست‌ها" className="mb-4" />
 
       {loading ? (
         <Spinner />

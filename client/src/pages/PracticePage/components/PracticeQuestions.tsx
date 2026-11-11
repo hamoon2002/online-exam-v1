@@ -48,31 +48,33 @@ export default function PracticeQuestions({
   const navigation = (
     <nav
       aria-label="حرکت بین سؤال‌ها"
-      className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-t border-violet-100 pt-4 dark:border-violet-400/20"
+      className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-violet-100 pt-4 dark:border-violet-400/20"
     >
-      <button
-        type="button"
-        aria-label="سؤال قبلی"
-        className={`${secondary} min-h-11 justify-self-start px-2 text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 sm:px-4`}
-        disabled={questionNumber <= 1}
-        onClick={() => moveQuestion(-1)}
-      >
-        <ArrowRight size={15} aria-hidden="true" />
-        قبلی
-      </button>
-      <span className="text-center text-xs text-gray-600 dark:text-gray-300 sm:text-sm" aria-live="polite">
+      <span className="whitespace-nowrap text-xs text-gray-600 dark:text-gray-300 sm:text-sm" aria-live="polite">
         سؤال {questionNumber.toLocaleString("fa-IR")} از {list.total.toLocaleString("fa-IR")}
       </span>
-      <button
-        type="button"
-        aria-label="سؤال بعدی"
-        className={`${primary} ui-primary-gradient min-h-11 justify-self-end px-2 sm:px-4`}
-        disabled={questionNumber >= list.total}
-        onClick={() => moveQuestion(1)}
-      >
-        بعدی
-        <ArrowLeft size={15} aria-hidden="true" />
-      </button>
+      <div className="ms-auto inline-flex items-center gap-2">
+        <button
+          type="button"
+          aria-label="سؤال قبلی"
+          className={`${secondary} min-h-11 px-2 text-brand-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 sm:px-4`}
+          disabled={questionNumber <= 1}
+          onClick={() => moveQuestion(-1)}
+        >
+          <ArrowRight size={15} aria-hidden="true" />
+          قبلی
+        </button>
+        <button
+          type="button"
+          aria-label="سؤال بعدی"
+          className={`${primary} ui-primary-gradient min-h-11 px-2 sm:px-4`}
+          disabled={questionNumber >= list.total}
+          onClick={() => moveQuestion(1)}
+        >
+          بعدی
+          <ArrowLeft size={15} aria-hidden="true" />
+        </button>
+      </div>
     </nav>
   );
   return (

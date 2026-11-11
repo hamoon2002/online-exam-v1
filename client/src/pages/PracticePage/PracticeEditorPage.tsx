@@ -17,7 +17,7 @@ import { ApiError } from "../../lib/apiClient";
 import PracticeQuestionPicker, {
   type PickedQuestion,
 } from "./components/PracticeQuestionPicker";
-import PracticeBackLink from "./components/PracticeBackLink";
+import PanelBack from "../../components/PanelBack/PanelBack";
 import { input, panel, primary, secondary } from "./practiceUi";
 export default function PracticeEditorPage() {
   const { practiceId } = useParams();
@@ -133,7 +133,7 @@ function Editor({ id }: { id?: string }) {
   return (
     <AppLayout title={id ? "ویرایش مجموعهٔ تمرین" : "مجموعهٔ تمرین جدید"}>
       <div className="mx-auto max-w-4xl space-y-4" dir="rtl">
-        <PracticeBackLink />
+        <PanelBack to="/practice" label="بازگشت به تمرین‌ها" />
         <header className="rounded-3xl border border-violet-200/50 bg-gradient-to-bl from-violet-50 via-white to-white p-4 sm:p-5 dark:border-violet-400/20 dark:from-violet-500/10 dark:via-slate-900 dark:to-slate-900">
           <div className="mb-2 inline-flex items-center gap-2 text-sm font-semibold text-brand-ink"><BookOpenCheck size={18}/> ساخت و مدیریت تمرین</div>
           <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">{id ? "ویرایش مجموعه تمرین" : "ساخت مجموعه تمرین"}</h1>

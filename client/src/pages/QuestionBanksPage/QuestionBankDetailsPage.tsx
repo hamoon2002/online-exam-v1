@@ -1,7 +1,8 @@
+import PanelBack from '../../components/PanelBack/PanelBack';
 import ListPagination from '../../components/ListPagination/ListPagination';
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, Plus, LibraryBig } from 'lucide-react';
+import { Plus, LibraryBig } from 'lucide-react';
 
 import AppLayout from '../../components/AppLayout/AppLayout';
 import ExcelImportButton from '../../components/ExcelImportButton/ExcelImportButton';
@@ -169,14 +170,7 @@ function QuestionBankDetailsPage() {
     <AppLayout title="مدیریت سؤال‌های بانک">
       <div className="mx-auto max-w-6xl" dir="rtl">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-        <button
-          type="button"
-          onClick={() => navigate('/question-banks')}
-          className="flex items-center gap-2 text-sm text-gray-500 hover:text-brand-ink"
-        >
-          <ArrowRight size={17} />
-          بازگشت به بانک‌ها
-        </button>
+        <PanelBack onClick={() => navigate('/question-banks')} label="بازگشت به بانک‌ها" />
 
         {canManage && <ExcelImportButton onClick={importModal.open} />}
       </div>

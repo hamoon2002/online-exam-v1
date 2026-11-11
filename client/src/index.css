@@ -318,14 +318,7 @@ input[type="checkbox"], input[type="radio"]:checked {
   .site-loading-spinner-ring-inner { animation: none; }
 }
 
-/* Keep the workspace chrome fixed; scroll only within the selected panel.
-   The sidebar remains operable on short screens instead of clipping links. */
-.glass-app-shell .sidebar-navigation {
-  scrollbar-width: none;
-}
-.glass-app-shell .sidebar-navigation::-webkit-scrollbar {
-  display: none;
-}
+/* Keep more sidebar links visible on short screens. */
 @media (max-height: 850px) {
   .glass-app-shell .sidebar-navigation {
     gap: 0.25rem;

@@ -1,6 +1,7 @@
+import PanelBack from '../../components/PanelBack/PanelBack';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, XCircle } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Spinner from '../../components/Spinner/Spinner';
 import { getExamById, type Exam } from '../../api/examApi';
@@ -112,14 +113,7 @@ function ExamReviewPage() {
   return (
     <AppLayout title={exam.title}>
       <div className="mx-auto max-w-2xl">
-        <button
-          type="button"
-          onClick={() => navigate('/my-results')}
-          className="mb-6 flex items-center gap-1.5 text-sm font-medium text-gray-500 transition hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-        >
-          <ArrowRight size={15} />
-          بازگشت به نتایج من
-        </button>
+        <PanelBack onClick={() => navigate('/my-results')} label="بازگشت به نتایج من" className="mb-6" />
 
         <div className="mb-6 flex items-center justify-between rounded-2xl bg-white p-6 shadow-sm dark:bg-gray-900">
           <div>

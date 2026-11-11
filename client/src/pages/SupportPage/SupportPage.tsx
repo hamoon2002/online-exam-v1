@@ -1,6 +1,7 @@
+import PanelBack from '../../components/PanelBack/PanelBack';
 import Spinner from '../../components/Spinner/Spinner';
 import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react';
-import { ArrowRight, CheckCircle2, ClipboardList, Plus, Send, Ticket } from 'lucide-react';
+import { CheckCircle2, ClipboardList, Plus, Send, Ticket } from 'lucide-react';
 import UiSelect from '../../components/UiSelect';
 import AppLayout from '../../components/AppLayout/AppLayout';
 import Modal from '../../components/Modal/Modal';
@@ -195,11 +196,11 @@ export default function SupportPage() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             {(selectedTicket || (isAdmin && instructorId)) && (
-              <button type="button" onClick={() => {
+              <PanelBack label="بازگشت" iconOnly onClick={() => {
                 if (selectedTicket) { setSelectedTicket(null); setDraft(''); }
                 else { setInstructorId(null); setPage(0); }
                 setError('');
-              }} aria-label="بازگشت" className="grid h-10 w-10 place-items-center rounded-xl border border-violet-200 bg-white text-brand-ink hover:bg-violet-50 dark:border-violet-400/20 dark:bg-slate-900"><ArrowRight size={19}/></button>
+              }} />
             )}
             <div>
               <p className="text-xs font-medium text-brand-ink">مرکز پشتیبانی</p>

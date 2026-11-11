@@ -1,5 +1,5 @@
 import '../../glass-theme.css';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { X } from 'lucide-react';
 import useTheme from '../../hooks/useTheme';
@@ -44,11 +44,28 @@ function AppLayout({ children, title }: AppLayoutProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const layoutRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const showTabs = user?.role === 'Instructor' || user?.role === 'SuperAdmin';
   const accountKey = showTabs && user?.id ? `${TABS_KEY_PREFIX}${user.id}` : '';
   const [tabState, setTabState] = useState<{ accountKey: string; tabs: PanelTab[] }>(() => ({ accountKey: '', tabs: [] }));
   const tabs = !accountKey ? [] : tabState.accountKey === accountKey ? tabState.tabs : readTabs(accountKey);
   const currentPath = location.pathname;
+
+  useLayoutEffect(() => {
+    const layout = layoutRef.current;
+    const scroll = scrollRef.current;
+    if (!layout || !scroll) return;
+
+    // Match the desktop chrome to the native scrollbar on both classic and overlay systems.
+    const updateGutter = () => {
+      layout.style.setProperty('--panel-scrollbar-gutter', `${scroll.offsetWidth - scroll.clientWidth}px`);
+    };
+    updateGutter();
+    const observer = new ResizeObserver(updateGutter);
+    observer.observe(scroll);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     if (!accountKey || currentPath === EMPTY_WORKSPACE_PATH) return;
@@ -107,38 +124,47 @@ function AppLayout({ children, title }: AppLayoutProps) {
 
   return (
     <div className={`glass-app-shell workspace-theme-${workspaceBackground} h-dvh overflow-hidden bg-surface-light text-gray-900 transition-colors dark:bg-surface-dark dark:text-white`}>
-      <div className="flex h-full min-h-0 flex-col md:flex-row">
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          isCollapsed={isCollapsed}
-          onToggleCollapse={toggleCollapse}
-        />
-        <main onClickCapture={selectPlainTableRow} className={`flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden transition-all duration-300 motion-reduce:transition-none ${isCollapsed ? 'md:w-[calc(100%-5rem)]' : 'md:w-[calc(100%-16rem)]'}`}>
-          <Header
-            title={title}
-            isDark={isDark}
-            onToggleTheme={toggleTheme}
-            onOpenSidebar={() => setIsSidebarOpen(true)}
-            onGoHome={() => guardNavigation(() => navigate('/'))}
+      <div
+        ref={layoutRef}
+        className={`relative flex h-full min-h-0 flex-col ${isCollapsed ? '[--workspace-sidebar-width:5rem]' : '[--workspace-sidebar-width:16rem]'}`}
+      >
+        <div className="contents md:absolute md:inset-y-0 md:right-[var(--panel-scrollbar-gutter,0px)] md:z-40 md:block">
+          <Sidebar
+            isOpen={isSidebarOpen}
+            onClose={() => setIsSidebarOpen(false)}
+            isCollapsed={isCollapsed}
+            onToggleCollapse={toggleCollapse}
           />
-          {showTabs && tabs.length > 0 && (
-            <nav aria-label="تب‌های باز پنل" className="panel-internal-tabs">
-              {tabs.map(tab => (
-                <div key={tab.path} onMouseDown={(event) => { if (event.button === 1) { event.preventDefault(); closeTab(tab.path); } }} className={`panel-internal-tab ${tab.path === currentPath ? 'is-active' : ''}`}>
-                  <button type="button" className="panel-internal-tab-label" onClick={() => guardNavigation(() => navigate(tab.path))} aria-current={tab.path === currentPath ? 'page' : undefined} title={tab.title}>
-                    {tab.title}
-                  </button>
-                  <button type="button" className="panel-internal-tab-close" onClick={() => closeTab(tab.path)} aria-label={`بستن تب ${tab.title}`} title="بستن تب">
-                    <X size={14} />
-                  </button>
-                </div>
-              ))}
-            </nav>
-          )}
-          <div dir="ltr" data-testid="panel-scroll-region" className="min-h-0 w-full flex-1 overflow-y-auto overscroll-contain">
-            <div dir="rtl" className="mx-auto max-w-[90rem] px-3 py-5 sm:px-4 md:px-5 md:py-7 xl:px-6 xl:py-8">
-              {children}
+        </div>
+        <main onClickCapture={selectPlainTableRow} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+          <div className="shrink-0 md:mr-[calc(var(--workspace-sidebar-width)+var(--panel-scrollbar-gutter,0px))] md:transition-[margin] md:duration-300 motion-reduce:transition-none">
+            <Header
+              title={title}
+              isDark={isDark}
+              onToggleTheme={toggleTheme}
+              onOpenSidebar={() => setIsSidebarOpen(true)}
+              onGoHome={() => guardNavigation(() => navigate('/'))}
+            />
+            {showTabs && tabs.length > 0 && (
+              <nav aria-label="تب‌های باز پنل" className="panel-internal-tabs">
+                {tabs.map(tab => (
+                  <div key={tab.path} onMouseDown={(event) => { if (event.button === 1) { event.preventDefault(); closeTab(tab.path); } }} className={`panel-internal-tab ${tab.path === currentPath ? 'is-active' : ''}`}>
+                    <button type="button" className="panel-internal-tab-label" onClick={() => guardNavigation(() => navigate(tab.path))} aria-current={tab.path === currentPath ? 'page' : undefined} title={tab.title}>
+                      {tab.title}
+                    </button>
+                    <button type="button" className="panel-internal-tab-close" onClick={() => closeTab(tab.path)} aria-label={`بستن تب ${tab.title}`} title="بستن تب">
+                      <X size={14} />
+                    </button>
+                  </div>
+                ))}
+              </nav>
+            )}
+          </div>
+          <div ref={scrollRef} dir="ltr" data-testid="panel-scroll-region" className="min-h-0 w-full flex-1 overflow-y-auto overscroll-contain md:[scrollbar-gutter:stable]">
+            <div dir="rtl" className="md:mr-[var(--workspace-sidebar-width)] md:transition-[margin] md:duration-300 motion-reduce:transition-none">
+              <div className="mx-auto max-w-[90rem] px-3 py-5 sm:px-4 md:px-5 md:py-7 xl:px-6 xl:py-8">
+                {children}
+              </div>
             </div>
           </div>
         </main>

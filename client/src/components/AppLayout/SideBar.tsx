@@ -45,7 +45,9 @@ function Sidebar({
   function handleNavClick(event: React.MouseEvent, to: string) {
     event.preventDefault();
     onClose();
-    guardNavigation(() => navigate(to));
+    guardNavigation(() => navigate(to, {
+      state: to === '/workspace' ? { reopenWorkspace: true } : undefined,
+    }));
   }
 
   function handleLogoClick() {

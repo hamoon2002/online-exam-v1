@@ -20,7 +20,7 @@ export function RangeSelect({
     <label className="flex items-center gap-2 text-sm text-gray-500">
       بازهٔ زمانی
       <UiSelect
-        className="min-w-36"
+        className="w-36 [&_.ui-select-menu]:min-w-max [&_.ui-select-menu]:whitespace-nowrap"
         value={days}
         onChange={(e) => onChange(Number(e.target.value))}
       >

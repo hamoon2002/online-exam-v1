@@ -42,6 +42,14 @@ test('report filters reach the API and teacher directory is keyboard accessible'
   await page.getByRole('option', { name: 'قدیمی‌ترین' }).click(); await changed;
   const ranged = page.waitForRequest(r => r.url().includes('/summary?days=7'));
   await page.getByRole('combobox').filter({ hasText: '۳۰ روز اخیر' }).click();
+  const selectedRange = page.getByRole('option', { name: '۳۰ روز اخیر', selected: true });
+  await expect(selectedRange).toBeVisible();
+  const textLines = await selectedRange.locator('span').evaluate(label => {
+    const range = document.createRange();
+    range.selectNodeContents(label);
+    return new Set(Array.from(range.getClientRects(), rect => rect.top)).size;
+  });
+  expect(textLines).toBe(1);
   await page.getByRole('option', { name: '۷ روز اخیر' }).click(); await ranged;
   await page.goto('/instructors');
   await expect(page.getByRole('link', { name: 'مریم احمدی' })).toBeVisible();

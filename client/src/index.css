@@ -318,6 +318,45 @@ input[type="checkbox"], input[type="radio"]:checked {
   .site-loading-spinner-ring-inner { animation: none; }
 }
 
+.panel-scrollbar {
+  scrollbar-gutter: stable;
+}
+
+@media (forced-colors: none) {
+  .panel-scrollbar {
+    --panel-thumb: light-dark(#9c94a7, #857b92);
+    --panel-thumb-active: light-dark(#746982, #b0a2bf);
+    --panel-thumb-color: var(--panel-thumb);
+    scrollbar-width: thin;
+    scrollbar-color: var(--panel-thumb-color) transparent;
+  }
+
+  .panel-scrollbar:is(:hover, :focus-within) {
+    --panel-thumb-color: var(--panel-thumb-active);
+  }
+
+  @supports selector(::-webkit-scrollbar) {
+    .panel-scrollbar {
+      scrollbar-width: auto;
+      scrollbar-color: auto;
+    }
+
+    .panel-scrollbar::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .panel-scrollbar::-webkit-scrollbar-track:vertical {
+      background: transparent;
+    }
+
+    .panel-scrollbar::-webkit-scrollbar-thumb:vertical {
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: var(--panel-thumb-color) padding-box;
+    }
+  }
+}
+
 /* Keep more sidebar links visible on short screens. */
 @media (max-height: 850px) {
   .glass-app-shell .sidebar-navigation {

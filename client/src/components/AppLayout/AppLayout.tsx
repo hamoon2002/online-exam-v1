@@ -136,7 +136,7 @@ function AppLayout({ children, title }: AppLayoutProps) {
               ))}
             </nav>
           )}
-          <div dir="ltr" data-testid="panel-scroll-region" className="min-h-0 w-full flex-1 overflow-y-auto overscroll-contain">
+          <div dir="ltr" data-testid="panel-scroll-region" className="panel-scrollbar min-h-0 w-full flex-1 overflow-y-auto overscroll-contain">
             <div dir="rtl" className="mx-auto max-w-[90rem] px-3 py-5 sm:px-4 md:px-5 md:py-7 xl:px-6 xl:py-8">
               {children}
             </div>

@@ -6,6 +6,8 @@ import {
   MoreHorizontal, Newspaper, Pencil, Plus, RotateCw, Search, Send, Trash2, XCircle, EyeOff,
 } from 'lucide-react';
 import AppLayout from '../../components/AppLayout/AppLayout';
+import UiSelect from '../../components/UiSelect';
+import { singleLineMenuClass } from '../../components/AdminUI/FilterBar';
 import ConfirmDeleteModal from '../../components/Modal/ConfirmDeleteModal';
 import Spinner from '../../components/Spinner/Spinner';
 import { notifySaveSuccess } from '../../components/Toast/Toast';
@@ -215,11 +217,11 @@ export default function ContentLibraryPage() {
             <Search size={18} className="shrink-0 text-slate-400"/>
             <input value={search} onChange={event => setSearch(event.target.value)} type="search" aria-label="جستجوی محتوا" placeholder="جستجوی عنوان یا توضیحات..." className="min-w-0 flex-1 bg-transparent text-sm text-slate-800 outline-none placeholder:text-slate-400 dark:text-white"/>
           </label>
-          <select aria-label="نوع محتوا" value={kindFilter} onChange={event => setKindFilter(event.target.value as typeof kindFilter)} className={surface + ' min-h-11 min-w-38 px-4 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-violet-300 dark:text-slate-200'}>
+          <UiSelect aria-label="نوع محتوا" value={kindFilter} onChange={event => setKindFilter(event.target.value as typeof kindFilter)} className={`w-48 max-w-full ${singleLineMenuClass}`}>
             <option value="all">همه انواع محتوا</option>
             <option value="blog">مقالات بلاگ</option>
             <option value="landing">بخش‌های صفحه اصلی</option>
-          </select>
+          </UiSelect>
         </div>
         {error && <div role="alert" className="flex items-center justify-between gap-3 rounded-xl border border-rose-200 bg-rose-50/60 p-4 text-sm text-rose-700 dark:border-rose-500/25 dark:bg-rose-500/10 dark:text-rose-200"><span>{error}</span><button type="button" onClick={() => setError('')} aria-label="بستن خطا"><XCircle size={18}/></button></div>}
         {loading ? <div className="flex justify-center py-16"><Spinner /></div> :

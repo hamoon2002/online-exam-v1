@@ -115,10 +115,11 @@ function Sidebar({
               </button>
             </div>
 
-            <nav aria-label="منوی اصلی" className="sidebar-navigation flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain px-3 py-2">
+            <nav dir="ltr" aria-label="منوی اصلی" className="sidebar-navigation flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto overscroll-contain px-3 py-2">
               {sections.map((section, sectionIndex) => (
                 <div
                   key={section.group ?? 'main'}
+                  dir="rtl"
                   role={section.group ? 'group' : undefined}
                   aria-label={
                     section.group ? navigationGroupLabel[section.group] : undefined

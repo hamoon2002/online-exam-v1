@@ -52,15 +52,15 @@ for (const role of ['Instructor', 'SuperAdmin'] as const) {
       await expect(scrollRegion).toHaveCSS('direction', 'ltr');
       await expect(dashboard).toHaveCSS('direction', 'rtl');
       const sidebarFrame = sidebar.locator('xpath=ancestor::aside');
-      const main = page.getByRole('main');
+      await expect(sidebar).toHaveCSS('direction', 'ltr');
+      await expect(deskLink).toHaveCSS('direction', 'rtl');
       await expect.poll(async () => {
-        const [panel, menu, layout] = await Promise.all([
-          scrollRegion.boundingBox(), sidebarFrame.boundingBox(), main.boundingBox(),
+        const [panel, menu, sidebarScroll] = await Promise.all([
+          scrollRegion.boundingBox(), sidebarFrame.boundingBox(), sidebar.boundingBox(),
         ]);
-        if (!panel || !menu || !layout) return false;
-        const panelRight = panel.x + panel.width;
-        return Math.abs(layout.x + layout.width - panelRight) < 1 &&
-          panelRight >= menu.x + menu.width - 1;
+        if (!panel || !menu || !sidebarScroll) return false;
+        return Math.abs(panel.x + panel.width - menu.x) < 1 &&
+          Math.abs(sidebarScroll.x + sidebarScroll.width - (menu.x + menu.width)) < 1;
       }).toBe(true);
       await expect(sidebar).not.toHaveCSS('scrollbar-width', 'none');
       const panelTop = await scrollRegion.evaluate(el => el.scrollTop);

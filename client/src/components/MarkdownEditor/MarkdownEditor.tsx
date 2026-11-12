@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import {
   Bold,
   Italic,
@@ -11,6 +11,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 
 type MarkdownEditorProps = {
+  id?: string;
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
@@ -57,12 +58,14 @@ function injectSyntax(
 }
 
 function MarkdownEditor({
+  id,
   value,
   onChange,
   placeholder,
   rows = 12,
   error,
 }: MarkdownEditorProps) {
+  const errorId = useId();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [mobileTab, setMobileTab] = useState<'write' | 'preview'>('write');
 
@@ -119,12 +122,15 @@ function MarkdownEditor({
       <div className="grid grid-cols-1 divide-y divide-gray-200 rounded-b-xl border border-gray-200 dark:divide-gray-700 dark:border-gray-700 md:grid-cols-2 md:divide-x md:divide-y-0 md:divide-x-reverse">
         <textarea
           ref={textareaRef}
+          id={id}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? errorId : undefined}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={rows}
           dir="rtl"
-          className={`resize-y bg-white px-4 py-3 text-sm leading-7 text-gray-800 outline-none dark:bg-gray-900 dark:text-white ${
+          className={`resize-none bg-white px-4 py-3 text-sm leading-7 text-gray-800 outline-none dark:bg-gray-900 dark:text-white ${
             mobileTab === 'preview' ? 'hidden md:block' : ''
           }`}
         />
@@ -144,7 +150,7 @@ function MarkdownEditor({
         </div>
       </div>
 
-      {error && <p className="text-xs text-danger-600 dark:text-danger-400">{error}</p>}
+      {error && <p id={errorId} role="alert" className="text-xs text-danger-600 dark:text-danger-400">{error}</p>}
     </div>
   );
 }

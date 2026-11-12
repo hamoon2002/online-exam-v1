@@ -106,3 +106,23 @@ test('report filters reach the API and teacher directory is keyboard accessible'
   await page.getByRole('option', { name: 'نام مدرس' }).click(); await sorted;
   await expect(page.getByText('teacher@example.test', { exact: true })).toBeVisible();
 });
+
+test('blog post validation stays beside fields and text areas cannot be resized', async ({ page }) => {
+  await page.goto('/blog-posts/new');
+  await page.getByRole('button', { name: 'ذخیره', exact: true }).click();
+
+  await expect(page.getByText('پست ذخیره نشد.', { exact: false })).toHaveCount(0);
+  await expect(page.getByText('لطفاً فیلدهای مشخص‌شده را تکمیل یا اصلاح کنید.')).toHaveCount(0);
+
+  const title = page.getByRole('textbox', { name: 'عنوان', exact: true });
+  const excerpt = page.getByRole('textbox', { name: 'خلاصه' });
+  const content = page.getByRole('textbox', { name: 'محتوا' });
+  await expect(title).toHaveAccessibleDescription('عنوان پست را وارد کنید.');
+  await expect(excerpt).toHaveAccessibleDescription('خلاصه پست را وارد کنید.');
+  await expect(content).toHaveAccessibleDescription('محتوای پست را وارد کنید.');
+  await expect(excerpt).toHaveCSS('resize', 'none');
+  await expect(content).toHaveCSS('resize', 'none');
+  await title.fill('راهنمای ساخت آزمون');
+  await expect(title).toHaveAttribute('aria-invalid', 'false');
+  await expect(content).toHaveAttribute('aria-invalid', 'true');
+});

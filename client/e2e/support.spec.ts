@@ -144,6 +144,7 @@ test('super admin filters the ticket inbox and replies directly from a ticket', 
     status: 'Open', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
     user: { id: 'teacher-1', name: 'مدرس تست', username: 'teacher' },
   };
+  const otherTicket = { ...ticket, id: 'ticket-2', trackingCode: 'TK-TEST-003', subject: 'سؤال درباره اشتراک', status: 'Closed' };
   let messages = [{
     id: 'msg-1', ticketId: ticket.id, clientId: 'uuid-1', fromStaff: false,
     body: 'بانک سؤال ذخیره نمی‌شود.', createdAt: new Date().toISOString(),
@@ -154,7 +155,11 @@ test('super admin filters the ticket inbox and replies directly from a ticket', 
     let body: unknown = [];
     if (path === '/auth/refresh') body = { accessToken: 'token' };
     else if (path === '/auth/me') body = user;
-    else if (path === '/support/inbox/tickets') body = { items: url.searchParams.has('status') && ticket.status !== 'Open' ? [] : [ticket], hasMore: false };
+    else if (path === '/support/inbox/tickets') {
+      const items = [ticket, otherTicket];
+      body = { items: url.searchParams.has('status') ? items.filter(item => item.status === 'Open') : items, hasMore: false };
+    }
+    else if (path === '/support/tickets/ticket-2') body = otherTicket;
     else if (path === '/support/tickets/ticket-1') body = ticket;
     else if (path === '/support/tickets/ticket-1/messages') {
       if (route.request().method() === 'POST') {
@@ -169,18 +174,40 @@ test('super admin filters the ticket inbox and replies directly from a ticket', 
     }
     await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(body) });
   });
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto('/support');
   await expect(page.getByRole('heading', { name: 'صندوق تیکت‌های مدرس‌ها' })).toBeVisible();
+  const selected = page.getByRole('button', { name: /مشکل بانک سؤال.*مدرس تست/ });
+  const other = page.getByRole('button', { name: /سؤال درباره اشتراک.*مدرس تست/ });
+  const conversation = page.getByRole('region', { name: 'گفت‌وگوی تیکت' });
+  await selected.click();
+  await conversation.getByRole('textbox', { name: 'پاسخ به تیکت' }).fill('پیش‌نویس تیکت اول');
+  await other.click();
+  await expect(other).toHaveAttribute('aria-current', 'true');
+  await expect(conversation.getByRole('heading', { name: otherTicket.subject })).toBeFocused();
+  await expect(conversation.getByRole('log')).not.toContainText(messages[0].body);
+  await expect(conversation.getByRole('textbox', { name: 'پاسخ به تیکت' })).toBeHidden();
+  await selected.click();
+  await expect(conversation.getByRole('textbox', { name: 'پاسخ به تیکت' })).toHaveValue('');
+  await conversation.getByRole('button', { name: 'بستن پنل گفت‌وگو' }).click();
+  await expect(selected).toBeFocused();
+
   const filtered = page.waitForRequest(request => request.url().includes('/support/inbox/tickets') && request.url().includes('status=Open'));
   await page.getByRole('button', { name: 'در انتظار پاسخ', exact: true }).click();
   await filtered;
-  await page.getByRole('button', { name: /مشکل بانک سؤال.*مدرس تست/ }).click();
-  const conversation = page.getByRole('dialog', { name: 'گفت‌وگوی تیکت' });
+  await selected.click();
+  await expect(selected).toBeVisible();
+  await expect(selected).toHaveAttribute('aria-current', 'true');
+  expect((await selected.boundingBox())!.x).toBeGreaterThan((await conversation.boundingBox())!.x);
   await expect(conversation.getByRole('log')).toContainText('بانک سؤال ذخیره نمی‌شود.');
   await conversation.getByRole('textbox', { name: 'پاسخ به تیکت' }).fill('در حال بررسی است.');
   await conversation.getByRole('button', { name: 'ارسال', exact: true }).click();
   await expect(conversation.getByRole('log')).toContainText('در حال بررسی است.');
-  await conversation.getByRole('button', { name: 'بستن', exact: true }).click();
+  await page.setViewportSize({ width: 320, height: 844 });
+  await expect(conversation).toBeVisible();
+  expect(await conversation.evaluate(panel => panel.scrollWidth <= panel.clientWidth)).toBe(true);
+  await expect(page.getByRole('region', { name: 'فهرست تیکت‌ها' })).toBeHidden();
+  await conversation.getByRole('button', { name: 'بازگشت به تیکت‌ها' }).click();
   await expect(conversation).toBeHidden();
   await expect(page.getByText('تیکتی در انتظار پاسخ نیست.')).toBeVisible();
 });
